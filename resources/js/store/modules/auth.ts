@@ -1,5 +1,4 @@
 import {computed, ref} from 'vue';
-import {registerAfterMiddleware} from 'services/router';
 import axios from 'axios';
 import type {Credentials, ResetDetails} from 'types/auth';
 import type {User} from 'types/index';
@@ -48,10 +47,10 @@ export const requestNewPassword = async (email: string) => {
     await axios.post('/forgot-password', {email});
 };
 
-registerAfterMiddleware(({meta}) => {
-    if (!isLoggedIn.value && meta.shouldBeLoggedIn) return {name: 'Login'};
+// registerAfterMiddleware(({meta}) => {
+//     if (!isLoggedIn.value && meta.shouldBeLoggedIn) return {name: 'Login'};
 
-    if (isLoggedIn.value && !meta.shouldBeLoggedIn) return {name: 'Registrations.Overview'};
+//     if (isLoggedIn.value && !meta.shouldBeLoggedIn) return {name: 'Registrations.Overview'};
 
-    return true; // isLoggedIn && shouldBeLoggedIn    ||    !isLoggedIn && !shouldBeLoggedIn
-});
+//     return true; // isLoggedIn && shouldBeLoggedIn    ||    !isLoggedIn && !shouldBeLoggedIn
+// });

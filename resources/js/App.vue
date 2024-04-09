@@ -1,16 +1,16 @@
 <template>
     <main>
-        <SideBar v-if="isLoggedIn" />
+        <!-- <SideBar v-if="isLoggedIn" /> -->
         <RouterView />
     </main>
 </template>
 
 <script setup lang="ts">
-import {isLoggedIn} from 'store/auth';
-import SideBar from './pages/SideBar.vue';
+// import {isLoggedIn} from 'store/auth';
+// import SideBar from './pages/SideBar.vue';
 </script>
 
-<style>
+<!-- <style>
 html,
 body {
     height: 100%;
@@ -37,4 +37,4 @@ button {
     font-size: 80%;
     color: #e3342f;
 }
-</style>
+</style> -->

@@ -5,7 +5,6 @@ import {routes} from './routes';
 import App from './App.vue';
 
 import '../css/app.css';
-import './bootstrap';
 
 const app = createApp(App);
 
