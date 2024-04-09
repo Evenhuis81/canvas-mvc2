@@ -1,0 +1,54 @@
+# You can specify a custom docker image from Docker Hub as your build environment.
+
+pipelines:
+    pull-requests:
+        '**': #this runs as default for any branch not elsewhere defined
+            - step:
+                  caches:
+                      - node
+                  name: 'npm install'
+                  image: node:20.10.0
+                  script:
+                      - npm ci
+            - parallel:
+                  - step:
+                        caches:
+                            - node
+                        name: 'Lint check'
+                        image: node:20.10.0
+                        script:
+                            - 'npm run lint:pipeline'
+                        after-script:
+                            - node ./pipeline-scripts/eslint-formatter-reports.js
+                  - step:
+                        caches:
+                            - node
+                        name: 'Build'
+                        image: node:20.10.0
+                        script:
+                            - npm run build
+                  - step:
+                        caches:
+                            - node
+                        name: 'Typescript check'
+                        image: node:20.10.0
+                        script:
+                            - npm run vue-tsc
+                  - step:
+                        caches:
+                            - composer
+                            - node
+                        name: 'phpcs check'
+                        image: composer:latest
+                        script:
+                            - composer install --ignore-platform-req=ext-gd
+                            - ./vendor/bin/parallel-lint ./app
+                            # `set -o pipefail` will force te runner to fail if phpcs errors
+                            - set -o pipefail
+                            - ./vendor/bin/phpcs -s --report=checkstyle | tee checkstyle.xml
+                        after-script:
+                            - pipe: atlassian/checkstyle-report:0.3.1
+                              variables:
+                                  CHECKSTYLE_RESULT_PATTERN: '.*/checkstyle.xml$'
+                                  CHECKSTYLE_REPORT_TITLE: 'phpcs'
+                                  CHECKSTYLE_REPORT_ID: 'phpcs'
