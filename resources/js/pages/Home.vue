@@ -19,6 +19,9 @@ onMounted(() => {
     const animate = () => {
         ctx.clearRect(0, 0, 649, 480);
 
+        ctx.fillStyle = 'red';
+        ctx.fillRect(310, 230, 20, 20);
+
         requestAnimationFrame(animate);
     };
 

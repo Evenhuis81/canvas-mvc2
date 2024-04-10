@@ -13,8 +13,13 @@ const setCanvasOptions = (canvas: HTMLCanvasElement, options: CanvasOptions) => 
     const container = getContainer();
 
     if (options.position === 'center') {
-        //
+        container.style.display = 'flex';
+        container.style.width = '100vw';
+        container.style.justifyContent = 'center';
+        container.style.alignItems = 'center';
     }
+
+    container.appendChild(canvas);
 
     document.body.appendChild(container);
 };
