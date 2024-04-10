@@ -38,13 +38,7 @@
             "jsx": true
         }
     },
-    "plugins": [
-        "vue",
-        "sort-imports-es6-autofix",
-        "promise",
-        "@typescript-eslint",
-        "unused-imports"
-    ],
+    "plugins": ["vue", "sort-imports-es6-autofix", "promise", "@typescript-eslint", "unused-imports"],
     "rules": {
         /**
          * STANDARD ESLINT RULES
@@ -53,23 +47,17 @@
         "capitalized-comments": "off",
         // TODO :: fix these rules
         "complexity": ["error", 5],
-        "max-lines-per-function": [
-            "warn",
-            { "max": 30, "skipBlankLines": true, "skipComments": true }
-        ],
+        "max-lines-per-function": ["warn", {"max": 30, "skipBlankLines": true, "skipComments": true}],
         // TODO :: remove all ignores for this rule
-        "max-lines": [
-            "warn",
-            { "max": 300, "skipBlankLines": true, "skipComments": true }
-        ],
-        "indent": ["warn", 4, { "SwitchCase": 1 }],
+        "max-lines": ["warn", {"max": 300, "skipBlankLines": true, "skipComments": true}],
+        "indent": ["warn", 4, {"SwitchCase": 1}],
         "comma-dangle": ["warn", "always-multiline"],
-        "max-len": ["warn", { "code": 120 }],
+        "max-len": ["warn", {"code": 120}],
         "array-bracket-spacing": ["warn", "never"],
         "space-before-blocks": ["warn", "always"],
-        "arrow-spacing": ["warn", { "before": true, "after": true }],
-        "keyword-spacing": ["warn", { "before": true, "after": true }],
-        "quotes": ["warn", "single", { "avoidEscape": true }],
+        "arrow-spacing": ["warn", {"before": true, "after": true}],
+        "keyword-spacing": ["warn", {"before": true, "after": true}],
+        "quotes": ["warn", "single", {"avoidEscape": true}],
         "no-console": "warn",
         "object-curly-spacing": "warn",
         "arrow-parens": ["warn", "as-needed"],
@@ -78,22 +66,16 @@
         "dot-notation": "warn",
         "grouped-accessor-pairs": ["warn", "getBeforeSet"],
         "no-return-await": "warn",
-        "no-underscore-dangle": [
-            "warn",
-            { "allowAfterThis": true, "allow": ["__key", "__id"] }
-        ],
+        "no-underscore-dangle": ["warn", {"allowAfterThis": true, "allow": ["__key", "__id"]}],
         "spaced-comment": "warn",
         "yoda": "warn",
         // TODO :: reduce the amount of TODO's before accepting this rule
         // "no-warning-comments": "warn",
 
-        "padding-line-between-statements": [
-            "warn",
-            { "blankLine": "always", "prev": "*", "next": "return" }
-        ],
+        "padding-line-between-statements": ["warn", {"blankLine": "always", "prev": "*", "next": "return"}],
 
         "max-depth": ["error", 4],
-        "max-statements-per-line": ["error", { "max": 2 }],
+        "max-statements-per-line": ["error", {"max": 2}],
         "array-callback-return": "error",
         "require-atomic-updates": "error",
         "block-scoped-var": "error",
@@ -101,24 +83,15 @@
         "eqeqeq": "error",
         "func-style": ["error", "expression"],
         // TODO :: should reduce the exceptions size
-        "id-length": [
-            "error",
-            { "exceptions": ["e", "h", "_", "i", "a", "b"] }
-        ],
+        "id-length": ["error", {"exceptions": ["e", "h", "_", "i", "a", "b", "x", "y", "w"]}],
         "max-nested-callbacks": "error",
-        "new-cap": ["error", { "newIsCapExceptions": ["default"] }],
+        "new-cap": ["error", {"newIsCapExceptions": ["default"]}],
 
-        "@typescript-eslint/ban-ts-comment": [
-            "error",
-            { "ts-ignore": "allow-with-description" }
-        ],
+        "@typescript-eslint/ban-ts-comment": ["error", {"ts-ignore": "allow-with-description"}],
 
         "no-unused-vars": "off",
-        "@typescript-eslint/no-unused-vars": [
-            "error",
-            { "argsIgnorePattern": "_" }
-        ],
-        "no-else-return": ["error", { "allowElseIf": false }],
+        "@typescript-eslint/no-unused-vars": ["error", {"argsIgnorePattern": "_"}],
+        "no-else-return": ["error", {"allowElseIf": false}],
         "no-constructor-return": "error",
         "no-duplicate-imports": "error",
         "no-self-compare": "error",
@@ -145,7 +118,7 @@
         "no-new-func": "error",
         "no-new-object": "error",
         "no-new-wrappers": "error",
-        "no-param-reassign": ["error", { "props": false }],
+        "no-param-reassign": ["error", {"props": false}],
         "no-restricted-syntax": [
             "error",
             {
@@ -173,13 +146,13 @@
         "no-useless-return": "error",
         "no-var": "error",
         "no-void": "error",
-        "no-restricted-imports": ["warn", { "patterns": ["../..*"] }],
+        "no-restricted-imports": ["warn", {"patterns": ["../..*"]}],
 
         "object-shorthand": "error",
 
         "prefer-arrow-callback": "error",
         "prefer-const": "error",
-        "prefer-destructuring": ["error", { "array": false, "object": true }],
+        "prefer-destructuring": ["error", {"array": false, "object": true}],
         "prefer-object-spread": "error",
         "prefer-rest-params": "error",
         "prefer-spread": "error",
@@ -253,7 +226,7 @@
             "error",
             {
                 // This is off, cause prettier can't handle it
-                "html": { "void": "always" }
+                "html": {"void": "always"}
             }
         ],
         // this is off, because we mutate
@@ -282,7 +255,7 @@
 
         "unused-imports/no-unused-imports": "error",
 
-        "import/newline-after-import": ["error", { "count": 1 }],
+        "import/newline-after-import": ["error", {"count": 1}],
         "import/max-dependencies": [
             "warn",
             {
