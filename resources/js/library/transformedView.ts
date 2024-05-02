@@ -48,7 +48,6 @@ const world2ScreenLine = (pos: Vector2) => {
 };
 
 const setOptional = (setOffset?: Vector, setScale?: Vector, worldBounds?: Vector2) => {
-    console.log(setScale);
     if (setOffset) offset.set(setOffset);
     if (setScale) scale.set(setScale);
     if (worldBounds) {
