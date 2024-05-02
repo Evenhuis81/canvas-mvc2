@@ -13,6 +13,7 @@ export const resolve = {
         store: path.join(srcPath, 'store/modules'),
         pages: path.join(srcPath, 'pages'),
         services: path.join(srcPath, 'services'),
+        library: path.join(srcPath, 'library'),
     },
 };
 

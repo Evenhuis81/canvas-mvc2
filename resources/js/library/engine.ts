@@ -1,7 +1,7 @@
-import {Show, Shows, Update, Updates} from './types';
+import {Show, Update} from 'types/game';
 
-const updates: Updates = [];
-const shows: Shows = [];
+const updates: Update[] = [];
+const shows: Show[] = [];
 let requestID: number = 0;
 let stop = false;
 
@@ -16,26 +16,23 @@ export const getEngine = () => {
 
     const run = () => loop();
 
+    const runOnce = () => {
+        loop();
+
+        stop = true;
+    };
+
     const halt = () => {
         stop = true;
     };
 
-    return {setUpdate, setShow, run, halt};
+    return {setUpdate, setShow, run, runOnce, halt};
 };
 
 const loop = () => {
     for (const update of updates) update();
 
     for (const show of shows) show();
-
-    // gameStore.state.context.clearRect(0, 0, 640, 480);
-
-    // gameStore.state.player.update();
-
-    // collisions(gameStore.state.player, gameStore.state.platform);
-
-    // gameStore.state.platform.show();
-    // gameStore.state.player.show();
 
     requestID = requestAnimationFrame(loop);
 

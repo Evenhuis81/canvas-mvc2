@@ -50,7 +50,8 @@
         "max-lines-per-function": ["warn", {"max": 30, "skipBlankLines": true, "skipComments": true}],
         // TODO :: remove all ignores for this rule
         "max-lines": ["warn", {"max": 300, "skipBlankLines": true, "skipComments": true}],
-        "indent": ["warn", 4, {"SwitchCase": 1}],
+        // TODO :: fix conflict with prettier for this rule
+        // "indent": ["warn", 4, { "SwitchCase": 1 }],
         "comma-dangle": ["warn", "always-multiline"],
         "max-len": ["warn", {"code": 120}],
         "array-bracket-spacing": ["warn", "never"],
@@ -83,7 +84,7 @@
         "eqeqeq": "error",
         "func-style": ["error", "expression"],
         // TODO :: should reduce the exceptions size
-        "id-length": ["error", {"exceptions": ["e", "h", "_", "i", "a", "b", "x", "y", "w"]}],
+        "id-length": ["error", {"exceptions": ["e", "h", "_", "i", "a", "b", "c", "x", "y", "w", "r"]}],
         "max-nested-callbacks": "error",
         "new-cap": ["error", {"newIsCapExceptions": ["default"]}],
 
