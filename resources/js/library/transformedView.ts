@@ -1,106 +1,132 @@
-import {gameStore} from '../tombraid/store';
+import {FillRect, Line, StrokeRect, StrokeRoundRect, TVOptions, Text, Zoom} from './types/tv';
 import {mouse, setEvent} from '../tombraid/input';
-import {setStatistic} from './statistics';
 import {vector, vector2} from './canvas';
-import type {StrokeRoundRectObj, Vector, Vector2} from 'types/game';
+import type {Vector, Vector2} from 'types/game';
 
-const offset = vector();
-const scale = vector(1, 1);
-const screen = vector2();
-const world = vector();
-const scaleFactor = 0.95;
-// const scaleTo = vector();
-const screenSize = vector();
-const worldTL = vector();
-const worldBR = vector();
-const startPan = vector();
-const worldBeforeZoom = vector();
-const worldAfterZoom = vector();
+let ctx: CanvasRenderingContext2D;
 
-const switches = {
-    zooming: false,
+const tv = {
+    offset: vector(),
+    scale: vector(1, 1),
+    screen: vector2(),
+    world: vector(10, 10),
+    screenSize: vector(300, 150),
+    worldTL: vector(),
+    worldBR: vector(10, 10),
+    startPan: vector(),
+    worldBeforeZoom: vector(),
+    worldAfterZoom: vector(),
+    scaleFactor: 0.95,
+    // gridSize: 0,
 };
 
-const screen2World = (pos: Vector) => {
-    world.x = pos.x / scale.x + offset.x;
-    world.y = pos.y / scale.y + offset.y;
+const screen2World = (x: number, y: number) => {
+    tv.world.x = x / tv.scale.x + tv.offset.x;
+    tv.world.y = y / tv.scale.y + tv.offset.y;
 };
 
-const world2ScreenRect = (pos: Vector, size: Vector) => {
-    screen.x = (pos.x - offset.x) * scale.x;
-    screen.y = (pos.y - offset.y) * scale.y;
-    screen.x2 = (pos.x + size.x - offset.x) * scale.x;
-    screen.y2 = (pos.y + size.y - offset.y) * scale.y;
+const world2Screen = (x: number, y: number) => {
+    tv.screen.x = (x - tv.offset.x) * tv.scale.x;
+    tv.screen.y = (y - tv.offset.y) * tv.scale.y;
 };
 
-const world2ScreenRectXY = (x: number, y: number, sX: number, sY: number) => {
-    screen.x = (x - offset.x) * scale.x;
-    screen.y = (y - offset.y) * scale.y;
-    screen.x2 = (sX - offset.x) * scale.x;
-    screen.y2 = (sY - offset.y) * scale.y;
+const world2Screen2 = (x: number, y: number, x2: number, y2: number) => {
+    tv.screen.x = (x - tv.offset.x) * tv.scale.x;
+    tv.screen.y = (y - tv.offset.y) * tv.scale.y;
+    tv.screen.x2 = (x2 - tv.offset.x) * tv.scale.x;
+    tv.screen.y2 = (y2 - tv.offset.y) * tv.scale.y;
 };
 
-const world2ScreenLine = (pos: Vector2) => {
-    screen.x = (pos.x - offset.x) * scale.x;
-    screen.y = (pos.y - offset.y) * scale.y;
-    screen.x2 = (pos.x2 - offset.x) * scale.x;
-    screen.y2 = (pos.y2 - offset.y) * scale.y;
-};
+const setOptional = (offset?: Vector, scale?: Vector, worldBounds?: Vector2) => {
+    if (offset) tv.offset.set(offset);
 
-const setOptional = (setOffset?: Vector, setScale?: Vector, worldBounds?: Vector2) => {
-    if (setOffset) offset.set(setOffset);
-    if (setScale) scale.set(setScale);
+    if (scale) tv.scale.set(scale);
+
     if (worldBounds) {
-        worldTL.setXY(worldBounds.x, worldBounds.y);
-        worldBR.setXY(worldBounds.x2, worldBounds.y2);
+        tv.worldTL.setXY(worldBounds.x, worldBounds.y);
+        tv.worldBR.setXY(worldBounds.x2, worldBounds.y2);
     }
 };
 
-const getMiddleScreen = () => vector(screenSize.x / 2, screenSize.y / 2);
+const getMiddleScreen = () => vector(tv.screenSize.x / 2, tv.screenSize.y / 2);
 
-const update = () => {
-    if (switches.zooming) {
-        //
-    }
+// type TVOptions = {
+//     context,
+//     vector(canvas.width, canvas.height), // Screen size
+//     vector2(0, 0, canvas.width, canvas.height), // World size
+//     vector(), // Offset
+//     vector(canvas.width / 13, canvas.height / 13), // Scale
+//     true, // show world borders (showWorldBorders function on return object)
+//     0, // show grid + size (undefined or 0 is used as falsy);
+// }
+
+export const getTv = (options: TVOptions) => {
+    ctx = options.context;
+    tv.screenSize.set(options.screenSize);
+    setOptional(options.offset, options.scale, options.worldBorders);
+
+    setEvents();
+
+    return {fillRect, strokeRect, strokeRoundRect, line, text};
 };
 
-export const getTv = (
-    c: CanvasRenderingContext2D,
-    screenSizeInc: Vector,
-    worldBounds?: Vector2,
-    setOffset?: Vector,
-    setScale?: Vector,
-) => {
-    screenSize.set(screenSizeInc);
-    setOptional(setOffset, setScale, worldBounds);
-
-    const fillRect = (pos: Vector, size: Vector, color: string) => fillRectTV(c, pos, size, color);
-    const strokeRect = (x: number, y: number, sX: number, sY: number, color: string) =>
-        strokeRectTV(c, x, y, sX, sY, color);
-    const line = (lineObj: Vector2) => lineTV(c, lineObj);
-    const text = (txt: string, pos: Vector) => textTV(c, txt, pos);
-    const strokeRoundRect = (obj: StrokeRoundRectObj) => strokeRoundRectTV(c, obj);
-
+const setEvents = () => {
     setEvent('keydown', keydownListener);
     setEvent('mousedown', mousedownListener);
     setEvent('mousemove', mousemoveListener);
     setEvent('mouseup', mouseupListener);
     setEvent('wheel', wheelListener);
-
-    setStatistic(() => `scaleX: ${scale.x.toFixed(2)}, scaleY: ${scale.y.toFixed(2)}`);
-    setStatistic(() => `offsetX: ${offset.x.toFixed(2)}, offsetY: ${offset.y.toFixed(2)}`);
-
-    return {update, fillRect, strokeRect, line, text, strokeRoundRect};
 };
 
-const strokeRoundRectTV = (c: CanvasRenderingContext2D, obj: StrokeRoundRectObj) => {
-    world2ScreenRectXY(obj.x, obj.y, obj.sX, obj.sY);
+const fillRect: FillRect = obj => {
+    world2Screen(obj.x, obj.y);
 
-    c.strokeStyle = 'white';
+    ctx.fillStyle = obj.color;
 
-    c.beginPath();
-    c.roundRect(screen.x, screen.y, screen.x2, screen.y2, obj.r);
-    c.stroke();
+    ctx.fillRect(tv.screen.x, tv.screen.y, obj.w * tv.scale.x, obj.h * tv.scale.y);
+};
+
+const strokeRect: StrokeRect = obj => {
+    world2Screen(obj.x, obj.y);
+
+    ctx.strokeStyle = obj.color;
+
+    ctx.strokeRect(tv.screen.x, tv.screen.y, obj.w * tv.scale.x, obj.h * tv.scale.y);
+};
+
+const line: Line = obj => {
+    world2Screen2(obj.x, obj.y, obj.x2, obj.y2);
+
+    ctx.lineWidth = tv.scale.x * 0.1;
+    ctx.strokeStyle = '#00f';
+
+    ctx.beginPath();
+    ctx.moveTo(tv.screen.x, tv.screen.y);
+    ctx.lineTo(tv.screen.x2, tv.screen.y2);
+    ctx.stroke();
+};
+
+const text: Text = obj => {
+    ctx.font = `${tv.scale.x}px serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#fff';
+
+    // const metrics = ctx.measureText(obj.txt);
+    // const fontHeight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent / tv.scale.y;
+
+    world2Screen(obj.x, obj.y);
+
+    ctx.fillText(obj.txt, tv.screen.x, tv.screen.y);
+};
+
+const strokeRoundRect: StrokeRoundRect = obj => {
+    world2Screen(obj.x, obj.y);
+
+    ctx.strokeStyle = 'white';
+    ctx.beginPath();
+    ctx.roundRect(tv.screen.x, tv.screen.y, obj.w * tv.scale.x, obj.h * tv.scale.y, obj.r * tv.scale.x);
+    ctx.stroke();
 };
 
 const keyHeld: boolean[] = [];
@@ -108,18 +134,18 @@ const keyHeld: boolean[] = [];
 const mousedownListener = (evt: MouseEvent) => {
     keyHeld[evt.button] = true;
     if (evt.button === 0) {
-        startPan.setXY(evt.offsetX, evt.offsetY);
+        tv.startPan.setXY(evt.offsetX, evt.offsetY);
 
-        screen2World(vector(evt.offsetX, evt.offsetY)); // = set to world vector
+        screen2World(evt.offsetX, evt.offsetY); // = set to world vector
     }
 };
 
 const mousemoveListener = (evt: MouseEvent) => {
     if (keyHeld[0]) {
-        offset.x -= (evt.offsetX - startPan.x) / scale.x;
-        offset.y -= (evt.offsetY - startPan.y) / scale.y;
+        tv.offset.x -= (evt.offsetX - tv.startPan.x) / tv.scale.x;
+        tv.offset.y -= (evt.offsetY - tv.startPan.y) / tv.scale.y;
 
-        startPan.setXY(evt.offsetX, evt.offsetY);
+        tv.startPan.setXY(evt.offsetX, evt.offsetY);
     }
 };
 
@@ -142,84 +168,38 @@ const wheelListener = (evt: WheelEvent) => {
     zoom(mouse, 'out');
 };
 
-type Zoom = 'in' | 'out';
-
 const zoomMechanic = {
-    in: () => scale.div(scaleFactor),
-    out: () => scale.mult(scaleFactor),
+    in: () => tv.scale.div(tv.scaleFactor),
+    out: () => tv.scale.mult(tv.scaleFactor),
 };
 
 const zoom = (scalePos: Vector, type: Zoom) => {
-    screen2World(scalePos);
+    screen2World(scalePos.x, scalePos.y);
 
-    worldBeforeZoom.set(world);
+    tv.worldBeforeZoom.set(tv.world);
 
     zoomMechanic[type]();
 
-    screen2World(scalePos);
+    screen2World(scalePos.x, scalePos.y);
 
-    worldAfterZoom.set(world);
+    tv.worldAfterZoom.set(tv.world);
 
-    offset.x += worldBeforeZoom.x - worldAfterZoom.x;
-    offset.y += worldBeforeZoom.y - worldAfterZoom.y;
+    tv.offset.x += tv.worldBeforeZoom.x - tv.worldAfterZoom.x;
+    tv.offset.y += tv.worldBeforeZoom.y - tv.worldAfterZoom.y;
 };
 
-const fillRectTV = (c: CanvasRenderingContext2D, pos: Vector, size: Vector, color: string) => {
-    world2ScreenRect(pos, size);
+// const gridPos = vector2();
 
-    c.fillStyle = color;
+// const gridShow = () => {
+//     for (let y = 0; y < gridSize + 1; y++) {
+//         for (let x = 0; x < gridSize + 1; x++) {
+//             // columns (vertical)
+//             gridPos.setManual(x, 0, x, gridSize);
+//             gameStore.state.tv.line(gridPos);
 
-    c.fillRect(screen.x, screen.y, screen.x2 - screen.x, screen.y2 - screen.y);
-};
-
-const strokeRectTV = (c: CanvasRenderingContext2D, x: number, y: number, sX: number, sY: number, color: string) => {
-    world2ScreenRectXY(x, y, sX, sY);
-
-    c.strokeStyle = color;
-
-    c.strokeRect(screen.x, screen.y, screen.x2 - screen.x, screen.y2 - screen.y);
-};
-
-const lineTV = (c: CanvasRenderingContext2D, line: Vector2) => {
-    world2ScreenLine(line);
-
-    c.lineWidth = scale.x * 0.1;
-    c.strokeStyle = '#00f';
-
-    c.beginPath();
-    c.moveTo(screen.x, screen.y);
-    c.lineTo(screen.x2, screen.y2);
-    c.stroke();
-};
-
-const textTV = (c: CanvasRenderingContext2D, txt: string, pos: Vector) => {
-    c.font = '16px serif';
-    c.textAlign = 'center';
-    c.textBaseline = 'middle';
-    c.fillStyle = '#fff';
-
-    const metrics = c.measureText(txt);
-    const fontHeight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
-
-    c.fillText(txt, pos.x + metrics.width / 2, pos.y + fontHeight / 2);
-};
-
-const gridPos = vector2();
-
-export const grid = (size: number) => {
-    const show = () => {
-        for (let y = 0; y < size + 1; y++) {
-            for (let x = 0; x < size + 1; x++) {
-                // columns (vertical)
-                gridPos.setManual(x, 0, x, size);
-                gameStore.state.tv.line(gridPos);
-
-                // rows (horizontal)
-                gridPos.setManual(0, y, size, y);
-                gameStore.state.tv.line(gridPos);
-            }
-        }
-    };
-
-    return {show};
-};
+//             // rows (horizontal)
+//             gridPos.setManual(0, y, gridSize, y);
+//             gameStore.state.tv.line(gridPos);
+//         }
+//     }
+// };

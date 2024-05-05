@@ -1,3 +1,5 @@
+import {TransformedView} from 'library/types/tv';
+
 export interface Engine {
     setUpdate: (update: Update) => void;
     setShow: (show: Show) => void;
@@ -25,25 +27,6 @@ export interface Vector2 {
     add: (vector: Vector2) => void;
     set: (vector: Vector2) => void;
     setManual: (x: number, y: number, x2: number, y2: number) => void;
-}
-
-type StrokeRoundRectObj = {
-    type: string;
-    x: number;
-    y: number;
-    sX: number;
-    sY: number;
-    r: number;
-    color: string;
-};
-
-interface TransformedView {
-    update: Update;
-    fillRect: (pos: Vector, size: Vector, color: string) => void;
-    strokeRect: (x: number, y: number, sX: number, sY: number, color: string) => void;
-    line: (pos: Vector2) => void;
-    text: (txt: string, pos: Vector) => void;
-    strokeRoundRect: (obj: StrokeRoundRectObj) => void;
 }
 
 export interface GameResource {

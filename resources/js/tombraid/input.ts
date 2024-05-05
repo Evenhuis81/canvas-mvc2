@@ -8,9 +8,7 @@ export const setEvent = <EventType extends keyof Partial<WindowEventMap>>(
 export const mouse = vector();
 
 setEvent('mousemove', evt => {
-    //
     // mouse.x = +(evt.clientX - rect.left).toFixed(0);
     // mouse.y = +(evt.clientY - rect.top).toFixed(0);
-
-    mouse.setXY(evt.offsetX, evt.offsetY);
+    mouse.setXY(+evt.offsetX.toFixed(0), +evt.offsetY.toFixed(0));
 });

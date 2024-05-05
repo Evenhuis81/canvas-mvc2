@@ -1,3 +1,4 @@
+import {TVOptions} from 'library/types/tv';
 import {enableStatistics} from '../library/statistics';
 import {gameStore, playerStore} from './store';
 import {getCanvas, getContext2D, vector, vector2} from '../library/canvas';
@@ -19,17 +20,17 @@ export default {
         const engine = getEngine();
         const level = getLevel(2);
 
-        // externally used in player & levels & ...
-        const tv = getTv(
+        const tvOptions: TVOptions = {
             context,
-            vector(canvas.width, canvas.height),
-            vector2(0, 0, level.width, level.height),
-            vector(),
-            vector(canvas.width / 13, canvas.height / 13), // TODO::make dynamic
-        );
+            screenSize: vector(canvas.width, canvas.height),
+            worldBorders: vector2(0, 0, level.width, level.height),
+            scale: vector(canvas.width / 13, canvas.height / 13),
+        };
+
+        // externally used in player & levels & ...
+        const tv = getTv(tvOptions);
 
         engine.setUpdate(() => context.clearRect(0, 0, canvas.width, canvas.height));
-        engine.setUpdate(tv.update);
 
         // const showGrid = grid(levelProperties.width);
         // engine.setShow(showGrid.show);

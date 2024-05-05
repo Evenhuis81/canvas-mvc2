@@ -8,7 +8,8 @@ export const getPlayer = (start: Vector) => {
     const pos = vector(start.x, start.y);
     const vel = vector();
     const acc = vector();
-    const size = vector(1, 1);
+    const w = 1;
+    const h = 1;
     const accSpeed = 0.01;
     const maxSpeed = 0.1;
     const friction = 0.93;
@@ -33,7 +34,7 @@ export const getPlayer = (start: Vector) => {
     };
 
     const show = () => {
-        gameStore.state.tv.fillRect(pos, size, 'red');
+        gameStore.state.tv.fillRect({x: pos.x, y: pos.y, w, h, color: 'blue'});
     };
 
     setStatistic(() => `playerX: ${pos.x.toFixed(2)}, playerY: ${pos.y.toFixed(2)}`);

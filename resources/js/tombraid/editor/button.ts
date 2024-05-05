@@ -1,13 +1,12 @@
+import {StrokeRoundRectObj} from 'library/types/tv';
 import {gameStore} from '../store';
-import {vector} from 'library/canvas';
 
-const properties = {
-    type: 'strokeRoundRect',
-    x: 1,
-    y: 1,
-    sX: 3,
-    sY: 1,
-    r: 10,
+const button: StrokeRoundRectObj = {
+    x: 0,
+    y: 0,
+    w: 6,
+    h: 1,
+    r: 1,
     color: 'purple',
 };
 
@@ -15,8 +14,8 @@ export const getButton = (txt: string) => {
     const {tv} = gameStore.state;
 
     const show = () => {
-        tv.strokeRoundRect(properties);
-        tv.text(txt, vector(2, 2));
+        tv.strokeRoundRect(button);
+        tv.text({txt, x: 3, y: 0.5});
     };
 
     return {show};
