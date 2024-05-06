@@ -1,4 +1,4 @@
-import {Vector, Vector2} from 'types/game';
+import {Update, Vector, Vector2} from 'types/game';
 
 export type StrokeRectObj = {x: number; y: number; w: number; h: number; color: string};
 export type FillRectObj = StrokeRectObj;
@@ -25,6 +25,8 @@ export type TVOptions = {
 };
 
 export interface TransformedView {
+    worldClamp: Vector2;
+    update: Update;
     fillRect: FillRect;
     strokeRect: StrokeRect;
     strokeRoundRect: StrokeRoundRect;

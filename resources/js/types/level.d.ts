@@ -1,6 +1,8 @@
 import {Vector} from './game';
 
-export type Level = string[][];
+type MapElement = 'X' | '.' | 'S' | 'T';
+
+export type Level = MapElement[][];
 
 export type Levels = {[key: number]: Level};
 

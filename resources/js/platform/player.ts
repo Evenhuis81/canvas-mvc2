@@ -1,102 +1,109 @@
 /* eslint-disable complexity */
-/* eslint-disable max-lines-per-function */
-export const getPlayer = (context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
-    const {width: canvasWidth, height: canvasHeight} = canvas;
-    const size = {x: canvasWidth * 0.05, y: canvasHeight * 0.1};
-    const pos = {x: canvasWidth / 2 - size.x / 2, y: canvasHeight / 2 - size.y / 2};
-    const vel = {x: 0, y: 0};
-    // const acc = {x: 0, y: 0.2}; // gravity added
-    const acc = {x: 0, y: 0}; // without gravity
-    const vertAcc = 0.2;
-    const horiAcc = 0.2;
-    const maxVelX = 5;
-    const maxVelY = 10;
-    const move = {
+import {setEvent} from '../tombraid/input';
+import {vector} from 'library/canvas';
+
+const player = {
+    size: vector(),
+    pos: vector(),
+    vel: vector(),
+    acc: vector(),
+    vertAcc: 0.2,
+    horiAcc: 0.2,
+    maxVelX: 5,
+    maxVelY: 10,
+    move: {
         grounded: true,
         left: false,
         right: false,
         up: false,
         down: false,
-    };
+    },
+};
+
+export const getPlayer = (context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
+    const {width: canvasWidth, height: canvasHeight} = canvas;
+
+    player.size.setXY(canvasWidth * 0.05, canvasHeight * 0.1);
+    player.pos.setXY(canvasWidth / 2 - player.size.x / 2, canvasHeight / 2 - player.size.y / 2);
 
     const update = () => {
-        vel.x += acc.x;
-        vel.y += acc.y;
-
-        // friction
-        if (move.grounded && acc.x === 0 && vel.x > 0) vel.x -= vertAcc;
-        else if (move.grounded && acc.x === 0 && vel.x < 0) vel.x += vertAcc;
-        if (move.grounded && acc.y === 0 && vel.y > 0) vel.y -= horiAcc;
-        else if (move.grounded && acc.y === 0 && vel.y < 0) vel.y += horiAcc;
-
-        if (Math.abs(vel.x) < 0.2) vel.x = 0;
-        if (Math.abs(vel.y) < 0.2) vel.y = 0;
-
-        // limit velocity
-        if (vel.x > maxVelX) vel.x = maxVelX;
-        else if (vel.x < -maxVelX) vel.x = -maxVelX;
-
-        if (vel.y > maxVelY) vel.y = maxVelY;
-        else if (vel.y < -maxVelY) vel.y = -maxVelY;
-
-        pos.x += vel.x;
-        pos.y += vel.y;
+        player.vel.add(player.acc);
+        player.pos.add(player.vel);
     };
 
     const show = () => {
         context.fillStyle = '#f00';
-        context.fillRect(pos.x, pos.y, size.x, size.y);
+        context.fillRect(player.pos.x, player.pos.y, player.size.x, player.size.y);
     };
 
-    addEventListener('keydown', ({key}) => {
-        const keyLow = key.toLowerCase();
+    setEvent('keydown', keydownListener);
+    setEvent('keyup', keyupListener);
 
-        if (keyLow === 'a' && !move.left) {
-            move.left = true;
-            acc.x -= vertAcc;
-        }
-        if (keyLow === 'd' && !move.right) {
-            move.right = true;
-            acc.x += vertAcc;
-        }
-        if (keyLow === 'w' && !move.up) {
-            move.up = true;
-            acc.y -= horiAcc;
-        }
-        if (keyLow === 's' && !move.down) {
-            move.down = true;
-            acc.y += horiAcc;
-        }
-    });
-
-    addEventListener('keyup', ({key}) => {
-        const keyLow = key.toLowerCase();
-
-        if (keyLow === 'a' && move.left) {
-            move.left = false;
-            acc.x += vertAcc;
-        }
-        if (keyLow === 'd' && move.right) {
-            move.right = false;
-            acc.x -= vertAcc;
-        }
-        if (keyLow === 'w' && move.up) {
-            move.up = false;
-            acc.y += vertAcc;
-        }
-        if (keyLow === 's' && move.down) {
-            move.down = false;
-            acc.y -= vertAcc;
-        }
-    });
-
-    const colliding = () => {
-        //
+    return {
+        update,
+        show,
+        pos: player.pos,
+        vel: player.vel,
+        acc: player.acc,
+        size: player.size,
+        move: player.move,
     };
-
-    const notColliding = () => {
-        //
-    };
-
-    return {update, show, pos, vel, acc, size, move, colliding, notColliding};
 };
+
+const keydownListener = ({key}: KeyboardEvent) => {
+    const keyLow = key.toLowerCase();
+
+    if (keyLow === 'a' && !player.move.left) {
+        player.move.left = true;
+        player.acc.x -= player.vertAcc;
+    }
+    if (keyLow === 'd' && !player.move.right) {
+        player.move.right = true;
+        player.acc.x += player.vertAcc;
+    }
+    if (keyLow === 'w' && !player.move.up) {
+        player.move.up = true;
+        player.acc.y -= player.horiAcc;
+    }
+    if (keyLow === 's' && !player.move.down) {
+        player.move.down = true;
+        player.acc.y += player.horiAcc;
+    }
+};
+
+const keyupListener = ({key}: KeyboardEvent) => {
+    const keyLow = key.toLowerCase();
+
+    if (keyLow === 'a' && player.move.left) {
+        player.move.left = false;
+        player.acc.x += player.vertAcc;
+    }
+    if (keyLow === 'd' && player.move.right) {
+        player.move.right = false;
+        player.acc.x -= player.vertAcc;
+    }
+    if (keyLow === 'w' && player.move.up) {
+        player.move.up = false;
+        player.acc.y += player.vertAcc;
+    }
+    if (keyLow === 's' && player.move.down) {
+        player.move.down = false;
+        player.acc.y -= player.vertAcc;
+    }
+};
+
+// friction
+// if (player.move.grounded && player.acc.x === 0 && player.vel.x > 0) player.vel.x -= player.vertAcc;
+// else if (player.move.grounded && player.acc.x === 0 && player.vel.x < 0) player.vel.x += player.vertAcc;
+// if (player.move.grounded && player.acc.y === 0 && player.vel.y > 0) player.vel.y -= player.horiAcc;
+// else if (player.move.grounded && player.acc.y === 0 && player.vel.y < 0) player.vel.y += player.horiAcc;
+
+// if (Math.abs(player.vel.x) < 0.2) player.vel.x = 0;
+// if (Math.abs(player.vel.y) < 0.2) player.vel.y = 0;
+
+// limit velocity
+// if (player.vel.x > player.maxVelX) player.vel.x = player.maxVelX;
+// else if (player.vel.x < -player.maxVelX) player.vel.x = -player.maxVelX;
+
+// if (player.vel.y > player.maxVelY) player.vel.y = player.maxVelY;
+// else if (player.vel.y < -player.maxVelY) player.vel.y = -player.maxVelY;

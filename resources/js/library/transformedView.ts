@@ -1,5 +1,6 @@
 import {FillRect, Line, StrokeRect, StrokeRoundRect, TVOptions, Text, Zoom} from './types/tv';
 import {mouse, setEvent} from '../tombraid/input';
+import {setStatistic} from './statistics';
 import {vector, vector2} from './canvas';
 import type {Vector, Vector2} from 'types/game';
 
@@ -50,8 +51,6 @@ const setOptional = (offset?: Vector, scale?: Vector, worldBounds?: Vector2) => 
 
 const getMiddleScreen = () => vector(tv.screenSize.x / 2, tv.screenSize.y / 2);
 
-// type TVOptions = {
-//     context,
 //     vector(canvas.width, canvas.height), // Screen size
 //     vector2(0, 0, canvas.width, canvas.height), // World size
 //     vector(), // Offset
@@ -60,14 +59,30 @@ const getMiddleScreen = () => vector(tv.screenSize.x / 2, tv.screenSize.y / 2);
 //     0, // show grid + size (undefined or 0 is used as falsy);
 // }
 
-export const getTv = (options: TVOptions) => {
+const worldClamp = vector2();
+
+const setWorldClamp = (x: number, y: number, x2: number, y2: number) => {
+    worldClamp.x = x / tv.scale.x + tv.offset.x;
+    worldClamp.y = y / tv.scale.y + tv.offset.y;
+    worldClamp.x2 = x2 / tv.scale.x + tv.offset.x;
+    worldClamp.y2 = y2 / tv.scale.y + tv.offset.y;
+};
+
+export const getTV = (options: TVOptions) => {
     ctx = options.context;
     tv.screenSize.set(options.screenSize);
     setOptional(options.offset, options.scale, options.worldBorders);
 
     setEvents();
 
-    return {fillRect, strokeRect, strokeRoundRect, line, text};
+    const update = () => {
+        setWorldClamp(0, 0, ctx.canvas.width, ctx.canvas.height);
+    };
+
+    setStatistic(() => `offsetX: ${tv.offset.x.toFixed(2)}, Y: ${tv.offset.y.toFixed(2)}`);
+    setStatistic(() => `scale: ${tv.scale.x.toFixed(2)}`);
+
+    return {worldClamp, update, fillRect, strokeRect, strokeRoundRect, line, text};
 };
 
 const setEvents = () => {
@@ -107,15 +122,12 @@ const line: Line = obj => {
 };
 
 const text: Text = obj => {
+    world2Screen(obj.x, obj.y);
+
     ctx.font = `${tv.scale.x}px serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#fff';
-
-    // const metrics = ctx.measureText(obj.txt);
-    // const fontHeight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent / tv.scale.y;
-
-    world2Screen(obj.x, obj.y);
 
     ctx.fillText(obj.txt, tv.screen.x, tv.screen.y);
 };

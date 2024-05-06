@@ -2,7 +2,7 @@ import {gameStore} from '../store';
 import {getButton} from './button';
 import {getCanvas, getContext2D, vector, vector2} from 'library/canvas';
 import {getEngine} from 'library/engine';
-import {getTv} from 'library/transformedView';
+import {getTV} from 'library/transformedView';
 import type {TVOptions} from 'library/types/tv';
 
 const canvasOptions = {
@@ -25,7 +25,7 @@ export default {
             worldBorders: vector2(-6.5, -6.5, 19.5, 19.5),
         };
 
-        const tv = getTv(tvOptions);
+        const tv = getTV(tvOptions);
 
         engine.setUpdate(() => context.clearRect(0, 0, canvas.width, canvas.height));
 

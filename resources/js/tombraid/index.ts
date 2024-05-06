@@ -5,7 +5,7 @@ import {getCanvas, getContext2D, vector, vector2} from '../library/canvas';
 import {getEngine} from '../library/engine';
 import {getLevel} from './levels';
 import {getPlayer} from './player';
-import {getTv} from '../library/transformedView';
+import {getTV} from '../library/transformedView';
 
 const canvasOptions = {
     width: 500,
@@ -18,7 +18,7 @@ export default {
         const canvas = getCanvas(canvasOptions);
         const context = getContext2D(canvas);
         const engine = getEngine();
-        const level = getLevel(2);
+        const level = getLevel(3);
 
         const tvOptions: TVOptions = {
             context,
@@ -28,14 +28,12 @@ export default {
         };
 
         // externally used in player & levels & ...
-        const tv = getTv(tvOptions);
+        const tv = getTV(tvOptions);
 
         engine.setUpdate(() => context.clearRect(0, 0, canvas.width, canvas.height));
 
-        // const showGrid = grid(levelProperties.width);
-        // engine.setShow(showGrid.show);
-
         gameStore.set({canvas, context, engine, tv});
+        engine.setUpdate(tv.update);
 
         const player = getPlayer(level.playerStart);
 

@@ -17,9 +17,9 @@ export const getEngine = () => {
     const run = () => loop();
 
     const runOnce = () => {
-        loop();
-
         stop = true;
+
+        loop();
     };
 
     const halt = () => {

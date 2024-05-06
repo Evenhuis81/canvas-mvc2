@@ -1,68 +1,65 @@
+/* eslint-disable complexity */
 import {gameStore} from './store';
 import {setEvent} from './input';
 import {setStatistic} from 'library/statistics';
 import {vector} from 'library/canvas';
 import type {Vector} from 'types/game';
 
+const player = {
+    pos: vector(),
+    vel: vector(),
+    acc: vector(),
+    w: 1,
+    h: 1,
+    accSpeed: 0.01,
+    maxSpeed: 0.1,
+    moving: false,
+};
+
+// const collision = () => {
+// get up, down, left and right block from player pos perspective
+// const upBlock = functionCall();
+// const downBlock = functionCall();
+// const leftBlock = functionCall();
+// const rightBlock = functionCall();
+// };
+
 export const getPlayer = (start: Vector) => {
     const pos = vector(start.x, start.y);
-    const vel = vector();
-    const acc = vector();
-    const w = 1;
-    const h = 1;
-    const accSpeed = 0.01;
-    const maxSpeed = 0.1;
-    const friction = 0.93;
-
-    const addForce = (force: Vector) => {
-        acc.add(force);
-    };
 
     const update = () => {
-        if (move.up) acc.y -= accSpeed;
-        if (move.down) acc.y += accSpeed;
-        if (move.left) acc.x -= accSpeed;
-        if (move.right) acc.x += accSpeed;
-
-        vel.add(acc);
-        vel.mult(friction);
-
-        vel.limit(maxSpeed);
-        pos.add(vel);
-
-        acc.setXY(0, 0);
+        player.vel.add(player.acc);
+        player.vel.limit(player.maxSpeed);
+        pos.add(player.vel);
+        // collision();
     };
 
     const show = () => {
-        gameStore.state.tv.fillRect({x: pos.x, y: pos.y, w, h, color: 'blue'});
+        gameStore.state.tv.fillRect({x: pos.x, y: pos.y, w: player.w, h: player.h, color: 'blue'});
     };
 
     setStatistic(() => `playerX: ${pos.x.toFixed(2)}, playerY: ${pos.y.toFixed(2)}`);
-    setStatistic(() => `velX: ${vel.x.toFixed(2)}, velY: ${vel.y.toFixed(2)}`);
+    setStatistic(() => `velX: ${player.vel.x.toFixed(2)}, velY: ${player.vel.y.toFixed(2)}`);
 
-    return {update, show, addForce};
-};
-
-const move = {
-    up: false,
-    down: false,
-    left: false,
-    right: false,
+    return {update, show};
 };
 
 const keydownPlayer = ({code}: KeyboardEvent) => {
-    if (code === 'KeyW') move.up = true;
-    else if (code === 'KeyS') move.down = true;
-    else if (code === 'KeyA') move.left = true;
-    else if (code === 'KeyD') move.right = true;
-};
+    if (player.moving) return;
 
-const keyupPlayer = ({code}: KeyboardEvent) => {
-    if (code === 'KeyW') move.up = false;
-    else if (code === 'KeyS') move.down = false;
-    else if (code === 'KeyA') move.left = false;
-    else if (code === 'KeyD') move.right = false;
+    if (code === 'KeyW') {
+        player.moving = true;
+        player.acc.y -= player.accSpeed;
+    } else if (code === 'KeyS') {
+        player.moving = true;
+        player.acc.y += player.accSpeed;
+    } else if (code === 'KeyA') {
+        player.moving = true;
+        player.acc.x -= player.accSpeed;
+    } else if (code === 'KeyD') {
+        player.moving = true;
+        player.acc.x += player.accSpeed;
+    }
 };
 
 setEvent('keydown', keydownPlayer);
-setEvent('keyup', keyupPlayer);

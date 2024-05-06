@@ -1,9 +1,8 @@
-import {Show, Update, Vector} from './game';
+import {Show, Update} from './game';
 
 export interface PlayerResource {
     player: {
         update: Update;
         show: Show;
-        addForce: (force: Vector) => void;
     };
 }
