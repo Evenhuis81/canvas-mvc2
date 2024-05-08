@@ -1,4 +1,4 @@
-import {Update, Vector, Vector2} from 'types/game';
+import {Update, Vector, Vector2} from 'games/tombraid/types/game';
 
 export type StrokeRectObj = {x: number; y: number; w: number; h: number; color: string};
 export type FillRectObj = StrokeRectObj;

@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable max-len */
-import type {CanvasOptions, Vector, Vector2} from '../types/game';
+import type {CanvasOptions, Vector, Vector2} from '../tombraid/types/game';
 
 export const getCanvas = (options: CanvasOptions) => {
     const canvas = document.createElement('canvas');

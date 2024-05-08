@@ -4,11 +4,11 @@
 
 <script setup lang="ts">
 import {onMounted} from 'vue';
-import editor from '../tombraid/editor';
+import tombraid from './tombraid';
 
 onMounted(() => {
-    editor.setup();
+    tombraid.setup();
 
-    editor.run();
+    tombraid.run();
 });
 </script>

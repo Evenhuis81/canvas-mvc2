@@ -24,13 +24,12 @@
         "useUnknownInCatchVariables": true,
         "baseUrl": ".",
         "paths": {
-            "router/*": ["./resources/js/router/*"],
-            "types/*": ["./resources/js/types/*"],
+            "games/*": ["./resources/js/games/*"],
+            "library/*": ["./resources/js/games/library/*"],
+            "tombraid/*": ["./resources/js/games/tombraid/*"],
             "store/*": ["./resources/js/store/modules/*"],
-            "components/*": ["./resources/js/components/*"],
             "pages/*": ["./resources/js/pages/*"],
-            "services/*": ["./resources/js/services/*"],
-            "library/*": ["./resources/js/library/*"]
+            "services/*": ["./resources/js/services/*"]
         }
     },
     "include": ["resources/js/**/*"]

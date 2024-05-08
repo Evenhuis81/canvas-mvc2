@@ -2,7 +2,7 @@ import {FillRect, Line, StrokeRect, StrokeRoundRect, TVOptions, Text, Zoom} from
 import {mouse, setEvent} from '../tombraid/input';
 import {setStatistic} from './statistics';
 import {vector, vector2} from './canvas';
-import type {Vector, Vector2} from 'types/game';
+import type {Vector, Vector2} from 'games/tombraid/types/game';
 
 let ctx: CanvasRenderingContext2D;
 

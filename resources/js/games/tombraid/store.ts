@@ -1,4 +1,4 @@
-import type {GameResource} from 'types/game';
+import type {GameResource} from 'games/tombraid/types/game';
 // import type {LevelResource} from 'types/level';
 import type {PlayerResource} from 'types/tombraid';
 

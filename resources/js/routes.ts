@@ -1,7 +1,7 @@
 import type {RouteRecordRaw} from 'vue-router';
 
-import Editor from 'pages/Editor.vue';
 import Home from 'pages/Home.vue';
+import TR from 'games/TR.vue';
 
 export const routes: RouteRecordRaw[] = [
     {
@@ -13,9 +13,9 @@ export const routes: RouteRecordRaw[] = [
         },
     },
     {
-        path: '/editor',
-        component: Editor,
-        name: 'Editor',
+        path: '/tr',
+        component: TR,
+        name: 'TombRaid',
         meta: {
             shouldBeLoggedIn: false,
         },
