@@ -1,6 +1,7 @@
 import {enableStatistics} from 'library/statistics';
 import {gameStore, playerStore} from './store';
 import {getCanvas, getContext2D, vector, vector2} from 'library/canvas';
+import {getDefaultButton} from 'games/library/button';
 import {getEngine} from 'library/engine';
 import {getLevel} from './levels';
 import {getPlayer} from './player';
@@ -45,6 +46,10 @@ export default {
         const levelShow = level.createShow(level.map, tv);
         engine.setShow(levelShow);
         engine.setShow(player.show);
+
+        // temporary button
+        const button = getDefaultButton(context);
+        engine.setShow(button.show);
 
         // Make this a hidden option inside the canvas
         enableStatistics();

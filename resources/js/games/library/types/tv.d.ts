@@ -1,6 +1,6 @@
 import {Update, Vector, Vector2} from 'games/tombraid/types/game';
 
-export type StrokeRectObj = {x: number; y: number; w: number; h: number; color: string};
+export type StrokeRectObj = {x: number; y: number; w: number; h: number; lw: number; stroke: string};
 export type FillRectObj = StrokeRectObj;
 export type StrokeRoundRectObj = StrokeRectObj & {r: number};
 export type LineObj = {x: number; y: number; x2: number; y2: number; s: number};
