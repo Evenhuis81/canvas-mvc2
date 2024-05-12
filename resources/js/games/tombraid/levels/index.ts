@@ -44,12 +44,12 @@ const createShow = (levelMap: Level['map'], tv: TransformedView) => {
                     // replace switch with an object
                     switch (levelMap[y][noEmptyX[y][x]]) {
                         case 'X':
-                            tv.strokeRect({x: noEmptyX[y][x], y, w: 1, h: 1, color: 'red'});
+                            tv.strokeRect({x: noEmptyX[y][x], y, w: 1, h: 1, stroke: 'red', lw: 1});
 
                             elementsDrawn.nr++;
                             break;
                         case 'T':
-                            tv.strokeRect({x: noEmptyX[y][x], y, w: 1, h: 1, color: 'blue'});
+                            tv.strokeRect({x: noEmptyX[y][x], y, w: 1, h: 1, stroke: 'blue', lw: 1});
 
                             elementsDrawn.nr++;
                             break;

@@ -1,4 +1,4 @@
-import {FillRect, Line, StrokeRect, StrokeRoundRect, TVOptions, Text, Zoom} from './types/tv';
+import {FillRect, Line, RoundFillStrokeRect, StrokeRect, TVOptions, Text, Zoom} from './types/tv';
 import {mouse, setEvent} from '../tombraid/input';
 import {setStatistic} from './statistics';
 import {vector, vector2} from './canvas';
@@ -82,7 +82,7 @@ export const getTV = (options: TVOptions) => {
     setStatistic(() => `offsetX: ${tv.offset.x.toFixed(2)}, Y: ${tv.offset.y.toFixed(2)}`);
     setStatistic(() => `scale: ${tv.scale.x.toFixed(2)}`);
 
-    return {worldClamp, update, fillRect, strokeRect, strokeRoundRect, line, text};
+    return {worldClamp, update, fillRect, strokeRect, roundFillStrokeRect, line, text};
 };
 
 const setEvents = () => {
@@ -93,27 +93,27 @@ const setEvents = () => {
     setEvent('wheel', wheelListener);
 };
 
-const fillRect: FillRect = obj => {
+const fillRect: (obj: FillRect) => void = obj => {
     world2Screen(obj.x, obj.y);
 
-    ctx.fillStyle = obj.color;
+    ctx.fillStyle = obj.fill;
 
     ctx.fillRect(tv.screen.x, tv.screen.y, obj.w * tv.scale.x, obj.h * tv.scale.y);
 };
 
-const strokeRect: StrokeRect = obj => {
+const strokeRect: (obj: StrokeRect) => void = obj => {
     world2Screen(obj.x, obj.y);
 
-    ctx.strokeStyle = obj.color;
+    ctx.strokeStyle = obj.stroke;
 
     ctx.strokeRect(tv.screen.x, tv.screen.y, obj.w * tv.scale.x, obj.h * tv.scale.y);
 };
 
-const line: Line = obj => {
+const line: (obj: Line) => void = obj => {
     world2Screen2(obj.x, obj.y, obj.x2, obj.y2);
 
-    ctx.lineWidth = tv.scale.x * 0.1;
-    ctx.strokeStyle = '#00f';
+    ctx.lineWidth = tv.scale.x * 0.1; // make non-hardcorded
+    ctx.strokeStyle = obj.stroke;
 
     ctx.beginPath();
     ctx.moveTo(tv.screen.x, tv.screen.y);
@@ -121,23 +121,26 @@ const line: Line = obj => {
     ctx.stroke();
 };
 
-const text: Text = obj => {
+const text: (obj: Text) => void = obj => {
     world2Screen(obj.x, obj.y);
 
-    ctx.font = `${tv.scale.x}px serif`;
+    ctx.font = `${tv.scale.x}px serif`; // make non-hardcoded
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = obj.fill;
 
     ctx.fillText(obj.txt, tv.screen.x, tv.screen.y);
 };
 
-const strokeRoundRect: StrokeRoundRect = obj => {
+const roundFillStrokeRect: (obj: RoundFillStrokeRect) => void = obj => {
     world2Screen(obj.x, obj.y);
 
-    ctx.strokeStyle = 'white';
+    ctx.strokeStyle = obj.stroke;
+    ctx.fillStyle = obj.fill;
+
     ctx.beginPath();
     ctx.roundRect(tv.screen.x, tv.screen.y, obj.w * tv.scale.x, obj.h * tv.scale.y, obj.r * tv.scale.x);
+    ctx.fill();
     ctx.stroke();
 };
 

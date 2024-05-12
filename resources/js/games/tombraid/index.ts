@@ -1,11 +1,12 @@
 import {enableStatistics} from 'library/statistics';
 import {gameStore, playerStore} from './store';
 import {getCanvas, getContext2D, vector, vector2} from 'library/canvas';
-import {getDefaultButton} from 'games/library/button';
 import {getEngine} from 'library/engine';
 import {getLevel} from './levels';
+import {getMenuButton} from './button';
 import {getPlayer} from './player';
 import {getTV} from 'library/transformedView';
+import {setMouseInput} from './input';
 import type {Level} from './types/level';
 
 const canvasOptions = {
@@ -28,6 +29,8 @@ export default {
         const engine = getEngine();
         const level = getLevel(3);
 
+        setMouseInput(canvas);
+
         const tVOptions = getTVOptions(context, canvas, level);
         const tv = getTV(tVOptions);
 
@@ -44,11 +47,13 @@ export default {
 
         // when a component use the gamestore, make create functions so they can be used at a later point
         const levelShow = level.createShow(level.map, tv);
+
         engine.setShow(levelShow);
         engine.setShow(player.show);
 
         // temporary button
-        const button = getDefaultButton(context);
+        const button = getMenuButton(context);
+        engine.setUpdate(button.update);
         engine.setShow(button.show);
 
         // Make this a hidden option inside the canvas

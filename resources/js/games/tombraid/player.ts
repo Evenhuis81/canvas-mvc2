@@ -48,7 +48,7 @@ export const getPlayer = (start: Vector) => {
 
     // make createShow
     const show = () => {
-        gameStore.state.tv.fillRect({x: player.pos.x, y: player.pos.y, w: player.w, h: player.h, color: 'blue'});
+        gameStore.state.tv.fillRect({x: player.pos.x, y: player.pos.y, w: player.w, h: player.h, fill: 'blue'});
     };
 
     // bunch these all up outside of a specific module (statistic handler module?)

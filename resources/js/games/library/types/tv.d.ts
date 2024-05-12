@@ -1,18 +1,24 @@
 import {Update, Vector, Vector2} from 'games/tombraid/types/game';
 
-export type StrokeRectObj = {x: number; y: number; w: number; h: number; lw: number; stroke: string};
-export type FillRectObj = StrokeRectObj;
-export type StrokeRoundRectObj = StrokeRectObj & {r: number};
-export type LineObj = {x: number; y: number; x2: number; y2: number; s: number};
-export type TextObj = {txt: string; x: number; y: number};
+type Rect = {x: number; y: number; w: number; h: number};
+type FillRect = Rect & {fill: string};
+type StrokeRect = Rect & {stroke: string; lw: number};
+type FillStrokeRect = FillRect & {stroke: string; lw: number};
+type RoundFillStrokeRect = FillStrokeRect & {r: number};
+type Line = Vector2 & {stroke: string; lw: number};
+type Text = {x: number; y: number; txt: string; font: string; fill: string}; // auto-centered for now
 
 type Zoom = 'in' | 'out';
 
-export type StrokeRect = (obj: StrokeRectObj) => void;
-export type FillRect = (obj: FillRectObj) => void;
-export type StrokeRoundRect = (obj: StrokeRoundRectObj) => void;
-export type Line = (obj: LineObj) => void;
-export type Text = (obj: TextObj) => void;
+export interface TransformedView {
+    worldClamp: Vector2;
+    update: Update;
+    fillRect: (obj: FillRect) => void;
+    strokeRect: (obj: StrokeRect) => void;
+    line: (obj: Line) => void;
+    text: (obj: Text) => void;
+    roundFillStrokeRect: (obj: RoundFillStrokeRect) => void;
+}
 
 export type TVOptions = {
     context: CanvasRenderingContext2D;
@@ -23,13 +29,3 @@ export type TVOptions = {
     showWorldBorders?: boolean;
     showGrid?: number;
 };
-
-export interface TransformedView {
-    worldClamp: Vector2;
-    update: Update;
-    fillRect: FillRect;
-    strokeRect: StrokeRect;
-    strokeRoundRect: StrokeRoundRect;
-    line: Line;
-    text: Text;
-}
