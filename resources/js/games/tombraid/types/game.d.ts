@@ -54,6 +54,11 @@ export interface Events {
     wheel: Wheel;
 }
 
+export interface PlayerResource {
+    update: Update;
+    show: Show;
+}
+
 export type MouseDown = 'mousedown';
 export type MouseMove = 'mousemove';
 export type MouseUp = 'mouseup';

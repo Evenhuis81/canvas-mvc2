@@ -18,6 +18,7 @@ export interface TransformedView {
     line: (obj: Line) => void;
     text: (obj: Text) => void;
     roundFillStrokeRect: (obj: RoundFillStrokeRect) => void;
+    offset: Vector;
 }
 
 export type TVOptions = {
@@ -29,3 +30,33 @@ export type TVOptions = {
     showWorldBorders?: boolean;
     showGrid?: number;
 };
+
+type Methods = {
+    screen2World: (x: number, y: number) => void;
+    world2Screen: (x: number, y: number) => void;
+    world2Screen2: (x: number, y: number, x2: number, y2: number) => void;
+    getMiddleScreen: () => Vector;
+    setWorldClamp: (x: number, y: number, x2: number, y2: number) => void;
+    zoomMechanic: {
+        in: () => void;
+        out: () => void;
+    };
+    zoom: (scalePos: Vector, type: Zoom) => void;
+};
+
+type Properties = {
+    offset: Vector;
+    scale: Vector;
+    screen: Vector2;
+    world: Vector;
+    screenSize: Vector;
+    worldTL: Vector;
+    worldBR: Vector;
+    startPan: Vector;
+    worldBeforeZoom: Vector;
+    worldAfterZoom: Vector;
+    scaleFactor: number;
+    worldClamp: Vector2;
+};
+
+export type TVProperties = Properties & Methods;

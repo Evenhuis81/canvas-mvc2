@@ -1,6 +1,5 @@
-import type {GameResource} from 'games/tombraid/types/game';
-// import type {LevelResource} from 'types/level';
-import type {PlayerResource} from 'types/tombraid';
+import type {GameResource, PlayerResource} from 'games/tombraid/types/game';
+import type {LevelResource} from './types/level';
 
 const createStore = <T extends object>() => {
     const state = <T>{};
@@ -14,4 +13,4 @@ export const gameStore = createStore<GameResource>();
 
 export const playerStore = createStore<PlayerResource>();
 
-// export const levelStore = createStore<LevelResource>();
+export const levelStore = createStore<LevelResource>();

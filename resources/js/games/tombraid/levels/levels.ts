@@ -8,6 +8,16 @@ import {Levels} from 'games/tombraid/types/level';
 
 export const getLevelMap = (id: number) => levels[id];
 
+export const getCoinMap = (id: number) => coins[id];
+
+interface Coins {
+    [key: number]: number[][];
+}
+
+const coins: Coins = {
+    1: [[], [1, 2, 3], [1], [2, 3]],
+};
+
 const levels: Levels = {
     1: [
         ['X', 'X', 'X', 'X', 'X'],

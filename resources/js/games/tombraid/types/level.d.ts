@@ -7,7 +7,7 @@ export type LevelMap = MapElement[][];
 
 export type Levels = {[key: number]: LevelMap};
 
-export interface Level {
+export interface LevelResource {
     map: LevelMap;
     width: number;
     height: number;

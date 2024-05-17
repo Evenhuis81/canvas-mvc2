@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
-import {getLevelMap} from './levels';
+import {getCoinMap, getLevelMap} from './levels';
 import {setStatistic} from 'library/statistics';
 import {vector} from 'library/canvas';
-import type {Level, MapElement} from 'games/tombraid/types/level';
+import type {LevelMap, MapElement} from 'games/tombraid/types/level';
 import type {TransformedView} from 'games/library/types/tv';
 
 const getEmptyXFromRow = (levelMapRow: MapElement[], emptiesRow: number[], count = 0) => {
@@ -15,7 +15,7 @@ const getEmptyXFromRow = (levelMapRow: MapElement[], emptiesRow: number[], count
     getEmptyXFromRow(levelMapRow, emptiesRow, count);
 };
 
-const getEmptyX = (levelMap: Level['map']) => {
+const getEmptyX = (levelMap: LevelMap) => {
     const empties: number[][] = [];
 
     for (let y = 0; y < levelMap.length; y++) {
@@ -27,7 +27,7 @@ const getEmptyX = (levelMap: Level['map']) => {
     return empties;
 };
 
-const createShow = (levelMap: Level['map'], tv: TransformedView) => {
+const createShow = (levelMap: LevelMap, tv: TransformedView) => {
     // TODO::Make this optional or make it an option (goes for all statistic elements)
     const elementsDrawn = {nr: 0};
     setStatistic(() => `elements drawn: ${elementsDrawn.nr}`);
@@ -64,6 +64,7 @@ const createShow = (levelMap: Level['map'], tv: TransformedView) => {
 
 export const getLevel = (id: number) => {
     const levelMap = getLevelMap(id);
+    const coinMap = getCoinMap(id);
 
     return {
         map: levelMap,
@@ -71,10 +72,11 @@ export const getLevel = (id: number) => {
         height: levelMap.length,
         playerStart: getPlayerStart(levelMap),
         createShow,
+        coins: coinMap,
     };
 };
 
-export const getPlayerStart = (levelMap: Level['map']) => {
+export const getPlayerStart = (levelMap: LevelMap) => {
     for (let y = 0; y < levelMap.length; y++) {
         const playerX = levelMap[y].indexOf('S');
 

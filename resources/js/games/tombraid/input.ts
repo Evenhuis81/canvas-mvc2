@@ -7,6 +7,8 @@ export const setEvent = <EventType extends keyof Partial<WindowEventMap>>(
 
 export const mouse = vector();
 
+export const keyHeld: boolean[] = [];
+
 export const setMouseInput = (canvas: HTMLCanvasElement) => {
     const rect = canvas.getBoundingClientRect();
 
