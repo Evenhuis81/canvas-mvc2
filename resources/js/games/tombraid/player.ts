@@ -1,9 +1,13 @@
 /* eslint-disable complexity */
 import {gameStore, levelStore} from './store';
-import {setEvent} from './input';
 import {setStatistic} from 'library/statistics';
 import {vector} from 'library/canvas';
 import type {Vector} from 'games/tombraid/types/game';
+
+// TODO::Tasks for player module
+// 1. make separate modules getplayer methods / inputs / movement / collisions (whatever methods is getting too large);
+// 2. expend animations / use phases;
+// 3. create a 'facing' property (which direction is the player actually facing);
 
 type PlayerProperties = {
     pos: Vector;
@@ -20,8 +24,10 @@ type PlayerProperties = {
     topLeft: string;
     bottomLeft: string;
     topRight: string;
+    bottomRight: string;
     xInt: number;
     yInt: number;
+    movement: 'free' | 'strict';
 };
 
 const player: PlayerProperties = {
@@ -39,8 +45,10 @@ const player: PlayerProperties = {
     topLeft: '',
     bottomLeft: '',
     topRight: '',
+    bottomRight: '',
     xInt: 0,
     yInt: 0,
+    movement: 'strict',
 };
 
 const reset = () => {
@@ -49,32 +57,50 @@ const reset = () => {
     player.acc.setXY(0, 0);
 };
 
-const collide = {
-    up: () => {
-        if (player.topLeft === 'X') {
-            player.pos.y = player.yInt + 1;
-            reset();
-        }
-    },
-    down: () => {
-        if (player.bottomLeft === 'X') {
-            player.pos.y = player.yInt;
-            reset();
-        }
-    },
-    left: () => {
-        if (player.topLeft === 'X') {
-            player.pos.x = player.xInt + 1;
-            reset();
-        }
-    },
-    right: () => {
-        if (player.topRight === 'X') {
-            player.pos.x = player.xInt;
-            reset();
-        }
-    },
-};
+// export const direction = {
+//     up: () => {
+//         // check top
+//         // check left
+//         // check right
+//         player.acc.y = -player.accSpeed;
+//     },
+//     down: () => {
+//         player.acc.y = player.accSpeed;
+//     },
+//     left: () => {
+//         player.acc.x = -player.accSpeed;
+//     },
+//     right: () => {
+//         player.acc.x = player.accSpeed;
+//     },
+// };
+
+// const collide = {
+//     up: () => {
+//         if (player.topLeft === 'X') {
+//             player.pos.y = player.yInt + 1;
+//             reset();
+//         }
+//     },
+//     down: () => {
+//         if (player.bottomLeft === 'X') {
+//             player.pos.y = player.yInt;
+//             reset();
+//         }
+//     },
+//     left: () => {
+//         if (player.topLeft === 'X') {
+//             player.pos.x = player.xInt + 1;
+//             reset();
+//         }
+//     },
+//     right: () => {
+//         if (player.topRight === 'X') {
+//             player.pos.x = player.xInt;
+//             reset();
+//         }
+//     },
+// };
 
 const collisionAndResolve = () => {
     if (player.direction === 'none') return;
@@ -87,18 +113,16 @@ const collisionAndResolve = () => {
     player.topLeft = levelMap[player.yInt][player.xInt];
     player.bottomLeft = levelMap[player.yInt + 1][player.xInt];
     player.topRight = levelMap[player.yInt][player.xInt + 1];
+    player.bottomRight = levelMap[player.yInt + 1][player.xInt + 1];
 
-    collide[player.direction]();
+    // collide[player.direction]();
 };
 
-export const setFriction = () => {
-    // make this better
-    if (player.direction === 'none') {
-        player.vel.mult(player.friction);
+export const friction = () => {
+    player.vel.mult(player.friction);
 
-        if (player.vel.x < 0.01 && player.vel.x > -0.01) player.vel.x = 0;
-        if (player.vel.y < 0.01 && player.vel.y > -0.01) player.vel.y = 0;
-    }
+    if (player.vel.x < 0.01 && player.vel.x > -0.01) player.vel.x = 0;
+    if (player.vel.y < 0.01 && player.vel.y > -0.01) player.vel.y = 0;
 };
 
 export const getPlayer = (start: Vector) => {
@@ -106,11 +130,12 @@ export const getPlayer = (start: Vector) => {
     player.lastPos.setXY(start.x, start.y);
 
     const update = () => {
+        // make multiple updates for different situations
         player.lastPos.setXY(player.pos.x, player.pos.y);
 
         player.vel.add(player.acc);
 
-        setFriction();
+        if (player.movement === 'free') friction(); // only in free mode
 
         player.vel.limit(player.maxSpeed);
 
@@ -134,6 +159,8 @@ export const getPlayer = (start: Vector) => {
         gameStore.state.tv.fillRect({x: player.pos.x, y: player.pos.y, w: player.w, h: player.h, fill: 'blue'});
     };
 
+    switchMovement.initiate();
+
     // bunch these all up outside of a specific module (statistic handler module?)
     setStatistic(() => `playerX: ${player.pos.x.toFixed(2)}, playerY: ${player.pos.y.toFixed(2)}`);
     setStatistic(() => `velX: ${player.vel.x.toFixed(2)}, velY: ${player.vel.y.toFixed(2)}`);
@@ -141,65 +168,60 @@ export const getPlayer = (start: Vector) => {
     return {update, show};
 };
 
-// const keyListener =
-//     (flag: boolean) =>
-//     ({code}: KeyboardEvent) => {
-//         if (code === 'KeyW') player.up = flag;
-//         if (code === 'KeyS') player.down = flag;
-//         if (code === 'KeyA') player.left = flag;
-//         if (code === 'KeyD') player.right = flag;
-//     };
+// Input
+const switchMovement = {
+    free: () => {
+        player.movement = 'strict';
+        player.maxSpeed = 0.75; // default
+        removeEventListener('keyup', keyupListenerFree);
+        removeEventListener('keydown', keydownListenerFree);
+        addEventListener('keydown', keydownListenerStrict);
+    },
+    strict: () => {
+        player.movement = 'free';
+        player.maxSpeed = 0.05;
+        addEventListener('keyup', keyupListenerFree);
+        removeEventListener('keydown', keydownListenerStrict);
+        addEventListener('keydown', keydownListenerFree);
+    },
+    initiate: () => {
+        addEventListener('keydown', keydownListenerStrict);
+    },
+};
 
-const keydownListener = ({code}: KeyboardEvent) => {
+const keydownListenerStrict = ({code}: KeyboardEvent) => {
+    if (code === 'KeyF') return switchMovement[player.movement]();
+
     if (player.direction !== 'none') return;
 
     if (code === 'KeyW') {
         player.acc.y = -player.accSpeed;
 
         player.direction = 'up';
-    }
-    if (code === 'KeyS') {
+    } else if (code === 'KeyS') {
         player.acc.y = player.accSpeed;
 
         player.direction = 'down';
-    }
-    if (code === 'KeyA') {
+    } else if (code === 'KeyA') {
         player.acc.x = -player.accSpeed;
 
         player.direction = 'left';
-    }
-    if (code === 'KeyD') {
+    } else if (code === 'KeyD') {
         player.acc.x = player.accSpeed;
 
         player.direction = 'right';
     }
 };
 
-// const keyupListener = ({code}: KeyboardEvent) => {
-//     if (code === 'KeyW' || code === 'KeyS' || code === 'KeyA' || code === 'KeyD') {
-//         player.direction = 'none';
-//         player.acc.setXY(0, 0);
-//         player.vel.setXY(0, 0);
-//     }
-// };
+const keydownListenerFree = ({code}: KeyboardEvent) => {
+    if (code === 'KeyF') return switchMovement[player.movement]();
 
-setEvent('keydown', keydownListener);
-// setEvent('keyup', keyupListener);
+    if (code === 'KeyW') player.acc.y = -player.accSpeed;
+    if (code === 'KeyS') player.acc.y = player.accSpeed;
+    if (code === 'KeyA') player.acc.x = -player.accSpeed;
+    if (code === 'KeyD') player.acc.x = player.accSpeed;
+};
 
-// export const direction = {
-//     up: () => {
-//         // check top
-//         // check left
-//         // check right
-//         player.acc.y = -player.accSpeed;
-//     },
-//     down: () => {
-//         player.acc.y = player.accSpeed;
-//     },
-//     left: () => {
-//         player.acc.x = -player.accSpeed;
-//     },
-//     right: () => {
-//         player.acc.x = player.accSpeed;
-//     },
-// };
+const keyupListenerFree = ({code}: KeyboardEvent) => {
+    if (code === 'KeyW' || code === 'KeyS' || code === 'KeyA' || code === 'KeyD') reset();
+};

@@ -1,7 +1,7 @@
 import type {TransformedView} from 'games/library/types/tv';
 import type {Vector} from './game';
 
-export type MapElement = 'X' | '.' | 'S' | 'T';
+export type MapElement = 'X' | '.' | 'S' | 'C';
 
 export type LevelMap = MapElement[][];
 

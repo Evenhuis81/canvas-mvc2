@@ -4,7 +4,7 @@ import {Levels} from 'games/tombraid/types/level';
 // X = solid block all sides
 // S = player start position
 // . = empty space
-// T = trap floor
+// C = cannon
 
 export const getLevelMap = (id: number) => levels[id];
 
@@ -16,6 +16,8 @@ interface Coins {
 
 const coins: Coins = {
     1: [[], [1, 2, 3], [1], [2, 3]],
+    2: [[], [1, 3], [1], [2, 3], [2, 3]],
+    3: [[]],
 };
 
 const levels: Levels = {
@@ -30,8 +32,8 @@ const levels: Levels = {
         ['X', 'X', 'X', 'X', 'X'],
         ['X', '.', 'X', '.', 'X'],
         ['X', '.', '.', 'S', 'X'],
-        ['X', 'X', 'X', '.', 'X'],
-        ['X', 'T', '.', '.', 'X'],
+        ['X', 'X', '.', '.', 'X'],
+        ['X', 'C', '.', '.', 'X'],
         ['X', 'X', 'X', 'X', 'X'],
     ],
     3: [
