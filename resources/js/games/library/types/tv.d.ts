@@ -10,15 +10,19 @@ type Text = {x: number; y: number; txt: string; font: string; fill: string}; // 
 
 type Zoom = 'in' | 'out';
 
-export interface TransformedView {
+export interface TransformedView extends PaintMethods {
     worldClamp: Vector2;
-    update: Update;
+    offset: Vector;
+    createTVUpdateSetWorldClamp: (context: CanvasRenderingContext2D) => Update;
+}
+
+interface PaintMethods {
     fillRect: (obj: FillRect) => void;
     strokeRect: (obj: StrokeRect) => void;
     line: (obj: Line) => void;
     text: (obj: Text) => void;
+    fillStrokeRect: (obj: FillStrokeRect) => void;
     roundFillStrokeRect: (obj: RoundFillStrokeRect) => void;
-    offset: Vector;
 }
 
 export type TVOptions = {

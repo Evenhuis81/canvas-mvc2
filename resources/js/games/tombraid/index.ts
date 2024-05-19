@@ -35,7 +35,11 @@ export default {
         setMouseInput(canvas);
 
         const tVOptions = getTVOptions(context, canvas, level);
-        const tv = getTV(tVOptions);
+        const tv = getTV(tVOptions, context);
+
+        const tvUpdate = tv.createTVUpdateSetWorldClamp(context);
+
+        engine.setUpdate(tvUpdate);
 
         gameStore.set({canvas, context, engine, tv});
 
@@ -45,7 +49,7 @@ export default {
         // 1. refresh to blank screen in engine loop (has to be first in)
         // 2. bunch up all updates and shows and set them in order somewhere else (expand setUpdate/Show)
         engine.setUpdate(() => context.clearRect(0, 0, canvas.width, canvas.height));
-        engine.setUpdate(tv.update);
+        engine.setUpdate(tvUpdate);
         engine.setUpdate(player.update);
 
         // when a component use the gamestore, make create functions so they can be used at a later point

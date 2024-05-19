@@ -9,7 +9,6 @@ const mousedownHandler = (tv: TVProperties) => (evt: MouseEvent) => {
         tv.screen2World(evt.offsetX, evt.offsetY); // = set to world vector
     }
 };
-
 const mousemoveHandler = (tv: TVProperties) => (evt: MouseEvent) => {
     if (keyHeld[0]) {
         tv.offset.x -= (evt.offsetX - tv.startPan.x) / tv.scale.x;
@@ -18,7 +17,6 @@ const mousemoveHandler = (tv: TVProperties) => (evt: MouseEvent) => {
         tv.startPan.setXY(evt.offsetX, evt.offsetY);
     }
 };
-
 const mouseupHandler =
     () =>
     ({button}: MouseEvent) => {

@@ -1,12 +1,12 @@
-import {FillRect, Line, RoundFillStrokeRect, StrokeRect, TVOptions, Text, Zoom} from '../types/tv';
+import {getTVMethods} from './paint';
 import {setStatistic} from '../statistics';
 import {setTVEvents} from './input';
 import {vector, vector2} from '../canvas';
+import type {TVOptions, Zoom} from '../types/tv';
 import type {Vector, Vector2} from 'games/tombraid/types/game';
 
-let ctx: CanvasRenderingContext2D;
+// let ctx: CanvasRenderingContext2D;
 
-// methods
 const screen2World = (x: number, y: number) => {
     tv.world.x = x / tv.scale.x + tv.offset.x;
     tv.world.y = y / tv.scale.y + tv.offset.y;
@@ -74,83 +74,27 @@ const methods = {
     zoom,
 };
 
-export const getTV = (options: TVOptions) => {
-    ctx = options.context;
-
+export const getTV = (options: TVOptions, ctx: CanvasRenderingContext2D) => {
     tv.screenSize.set(options.screenSize);
 
     setOptional(options.offset, options.scale, options.worldBorders);
 
     setTVEvents(tv);
 
-    const update = () => {
-        setWorldClamp(0, 0, ctx.canvas.width, ctx.canvas.height);
-    };
+    const paintMethods = getTVMethods(tv, ctx);
+
+    const createTVUpdateSetWorldClamp = (context: CanvasRenderingContext2D) => () =>
+        setWorldClamp(0, 0, context.canvas.width, context.canvas.height);
 
     setStatistic(() => `offsetX: ${tv.offset.x.toFixed(2)}, Y: ${tv.offset.y.toFixed(2)}`);
     setStatistic(() => `scale: ${tv.scale.x.toFixed(2)}`);
 
     return {
         worldClamp: tv.worldClamp,
-        update,
-        fillRect,
-        strokeRect,
-        roundFillStrokeRect,
-        line,
-        text,
         offset: tv.offset,
+        createTVUpdateSetWorldClamp,
+        ...paintMethods,
     };
-};
-
-const fillRect: (obj: FillRect) => void = obj => {
-    world2Screen(obj.x, obj.y);
-
-    ctx.fillStyle = obj.fill;
-
-    ctx.fillRect(tv.screen.x, tv.screen.y, obj.w * tv.scale.x, obj.h * tv.scale.y);
-};
-
-const strokeRect: (obj: StrokeRect) => void = obj => {
-    world2Screen(obj.x, obj.y);
-
-    ctx.strokeStyle = obj.stroke;
-
-    ctx.strokeRect(tv.screen.x, tv.screen.y, obj.w * tv.scale.x, obj.h * tv.scale.y);
-};
-
-const line: (obj: Line) => void = obj => {
-    world2Screen2(obj.x, obj.y, obj.x2, obj.y2);
-
-    ctx.lineWidth = tv.scale.x * 0.1; // make non-hardcorded
-    ctx.strokeStyle = obj.stroke;
-
-    ctx.beginPath();
-    ctx.moveTo(tv.screen.x, tv.screen.y);
-    ctx.lineTo(tv.screen.x2, tv.screen.y2);
-    ctx.stroke();
-};
-
-const text: (obj: Text) => void = obj => {
-    world2Screen(obj.x, obj.y);
-
-    ctx.font = `${tv.scale.x}px serif`; // make non-hardcoded
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillStyle = obj.fill;
-
-    ctx.fillText(obj.txt, tv.screen.x, tv.screen.y);
-};
-
-const roundFillStrokeRect: (obj: RoundFillStrokeRect) => void = obj => {
-    world2Screen(obj.x, obj.y);
-
-    ctx.strokeStyle = obj.stroke;
-    ctx.fillStyle = obj.fill;
-
-    ctx.beginPath();
-    ctx.roundRect(tv.screen.x, tv.screen.y, obj.w * tv.scale.x, obj.h * tv.scale.y, obj.r * tv.scale.x);
-    ctx.fill();
-    ctx.stroke();
 };
 
 const tv = {
