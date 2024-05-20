@@ -3,7 +3,7 @@ import {getCoinMap, getLevelMap} from './levels';
 import {setStatistic} from 'library/statistics';
 import {vector} from 'library/canvas';
 import type {LevelMap, MapElement} from 'games/tombraid/types/level';
-import type {PaintMethods, StrokeRect, TransformedView} from 'games/library/types/tv';
+import type {TransformedView} from 'games/library/types/tv';
 
 const getEmptyXFromRow = (levelMapRow: MapElement[], emptiesRow: number[], count = 0) => {
     // This works only if right side ends with no '.' or 'S'
@@ -28,13 +28,13 @@ const getEmptyX = (levelMap: LevelMap) => {
     return empties;
 };
 
-type Block = StrokeRect & {
-    type: keyof PaintMethods;
-};
+// type Block = StrokeRect & {
+//     type: keyof PaintMethods;
+// };
 
-type BlockMap = Block[][];
+// type BlockMap = Block[][];
 
-const createShow = (levelMap: LevelMap, blockMap: BlockMap, tv: TransformedView) => {
+const createShow = (levelMap: LevelMap, tv: TransformedView) => {
     // TODO::Make this optional or make it an option (goes for all statistic elements)
     const elementsDrawn = {nr: 0};
     setStatistic(() => `elements drawn: ${elementsDrawn.nr}`);
@@ -48,24 +48,24 @@ const createShow = (levelMap: LevelMap, blockMap: BlockMap, tv: TransformedView)
         for (let y = 0; y < levelMap.length; y++) {
             if (y > tv.worldClamp.y - 1 && y <= tv.worldClamp.y2) {
                 for (let x = 0; x < noEmptyX[y].length; x++) {
-                    const blockType = blockMap[y][noEmptyX[y][x]].type;
-                    if (blockType === 'strokeRect') tv.strokeRect(blockMap[y][noEmptyX[y][x]]);
+                    // const blockType = blockMap[y][noEmptyX[y][x]].type;
+                    // if (blockType === 'strokeRect') tv.strokeRect(blockMap[y][noEmptyX[y][x]]);
+                    // replace switch with an object
+                    switch (levelMap[y][noEmptyX[y][x]]) {
+                        case 'X':
+                            tv.strokeRect({x: noEmptyX[y][x], y, w: 1, h: 1, stroke: 'red', lw: 1});
+
+                            elementsDrawn.nr++;
+                            break;
+                        case 'C':
+                            tv.strokeRect({x: noEmptyX[y][x], y, w: 1, h: 1, stroke: 'blue', lw: 1});
+
+                            elementsDrawn.nr++;
+                            break;
+                        default:
+                            break;
+                    }
                 }
-                // replace switch with an object
-                // switch (levelMap[y][noEmptyX[y][x]]) {
-                //     case 'X':
-                //         tv.strokeRect({x: noEmptyX[y][x], y, w: 1, h: 1, stroke: 'red', lw: 1});
-
-                //         elementsDrawn.nr++;
-                //         break;
-                //     case 'C':
-                //         tv.strokeRect({x: noEmptyX[y][x], y, w: 1, h: 1, stroke: 'blue', lw: 1});
-
-                //         elementsDrawn.nr++;
-                //         break;
-                //     default:
-                //         break;
-                // }
             }
         }
     };
@@ -112,26 +112,26 @@ export const blocks = {
     }),
 };
 
-const getBlockMap = (levelMap: LevelMap) => {
-    const blockMap: BlockMap = [];
-    for (let y = 0; y < levelMap.length; y++) {
-        blockMap.push([]);
-        for (let x = 0; x < levelMap[y].length; x++) blockMap[y].push(blocks[levelMap[y][x]](x, y));
-    }
+// const getBlockMap = (levelMap: LevelMap) => {
+//     const blockMap: BlockMap = [];
+//     for (let y = 0; y < levelMap.length; y++) {
+//         blockMap.push([]);
+//         for (let x = 0; x < levelMap[y].length; x++) blockMap[y].push(blocks[levelMap[y][x]](x, y));
+//     }
 
-    return blockMap;
-};
+//     return blockMap;
+// };
 
 export const getLevel = (id: number) => {
     const levelMap = getLevelMap(id);
     const coinMap = getCoinMap(id);
-    const blockMap = getBlockMap(levelMap);
+    // const blockMap = getBlockMap(levelMap);
 
-    console.log(blockMap);
+    // console.log(blockMap);
 
     return {
         map: levelMap,
-        blocks: blockMap,
+        // blocks: blockMap,
         width: levelMap[0].length,
         height: levelMap.length,
         playerStart: getPlayerStart(levelMap),

@@ -92,9 +92,16 @@ export const getTV = (options: TVOptions, ctx: CanvasRenderingContext2D) => {
     return {
         worldClamp: tv.worldClamp,
         offset: tv.offset,
+        scale: tv.scale,
         createTVUpdateSetWorldClamp,
         ...paintMethods,
+        zoom,
+        setScaleFactor,
     };
+};
+
+const setScaleFactor = (factor: number) => {
+    tv.scaleFactor = factor;
 };
 
 const tv = {

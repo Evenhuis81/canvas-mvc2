@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 /* eslint-disable complexity */
 import {gameStore, levelStore} from './store';
 import {setStatistic} from 'library/statistics';
@@ -57,50 +58,32 @@ const reset = () => {
     player.acc.setXY(0, 0);
 };
 
-// export const direction = {
-//     up: () => {
-//         // check top
-//         // check left
-//         // check right
-//         player.acc.y = -player.accSpeed;
-//     },
-//     down: () => {
-//         player.acc.y = player.accSpeed;
-//     },
-//     left: () => {
-//         player.acc.x = -player.accSpeed;
-//     },
-//     right: () => {
-//         player.acc.x = player.accSpeed;
-//     },
-// };
-
-// const collide = {
-//     up: () => {
-//         if (player.topLeft === 'X') {
-//             player.pos.y = player.yInt + 1;
-//             reset();
-//         }
-//     },
-//     down: () => {
-//         if (player.bottomLeft === 'X') {
-//             player.pos.y = player.yInt;
-//             reset();
-//         }
-//     },
-//     left: () => {
-//         if (player.topLeft === 'X') {
-//             player.pos.x = player.xInt + 1;
-//             reset();
-//         }
-//     },
-//     right: () => {
-//         if (player.topRight === 'X') {
-//             player.pos.x = player.xInt;
-//             reset();
-//         }
-//     },
-// };
+const collide = {
+    up: () => {
+        if (player.topLeft === 'X') {
+            player.pos.y = player.yInt + 1;
+            reset();
+        }
+    },
+    down: () => {
+        if (player.bottomLeft === 'X') {
+            player.pos.y = player.yInt;
+            reset();
+        }
+    },
+    left: () => {
+        if (player.topLeft === 'X') {
+            player.pos.x = player.xInt + 1;
+            reset();
+        }
+    },
+    right: () => {
+        if (player.topRight === 'X') {
+            player.pos.x = player.xInt;
+            reset();
+        }
+    },
+};
 
 const collisionAndResolve = () => {
     if (player.direction === 'none') return;
@@ -115,7 +98,7 @@ const collisionAndResolve = () => {
     player.topRight = levelMap[player.yInt][player.xInt + 1];
     player.bottomRight = levelMap[player.yInt + 1][player.xInt + 1];
 
-    // collide[player.direction]();
+    collide[player.direction]();
 };
 
 export const friction = () => {
@@ -126,6 +109,7 @@ export const friction = () => {
 };
 
 export const getPlayer = (start: Vector) => {
+    const {tv} = gameStore.state;
     player.pos.setXY(start.x, start.y);
     player.lastPos.setXY(start.x, start.y);
 
@@ -138,6 +122,19 @@ export const getPlayer = (start: Vector) => {
         if (player.movement === 'free') friction(); // only in free mode
 
         player.vel.limit(player.maxSpeed);
+
+        // Create seperate function for this, which you can call like 'maxSpeed zoom method' or something
+        // Make setScale a 'hardcoded' option (not running in every loop)
+        if (
+            tv.scale.x > 20 &&
+            (Math.abs(player.vel.x) === player.maxSpeed || Math.abs(player.vel.y) === player.maxSpeed)
+        ) {
+            tv.setScaleFactor(0.99);
+            tv.zoom(vector(250, 250), 'out');
+        } else if (tv.scale.x < 38.48 && player.vel.x === 0 && player.vel.y === 0) {
+            tv.setScaleFactor(0.95);
+            tv.zoom(vector(250, 250), 'in');
+        }
 
         player.pos.add(player.vel);
 
@@ -156,7 +153,7 @@ export const getPlayer = (start: Vector) => {
 
     // make createShow
     const show = () => {
-        gameStore.state.tv.fillRect({x: player.pos.x, y: player.pos.y, w: player.w, h: player.h, fill: 'blue'});
+        tv.fillRect({x: player.pos.x, y: player.pos.y, w: player.w, h: player.h, fill: 'blue'});
     };
 
     switchMovement.initiate();

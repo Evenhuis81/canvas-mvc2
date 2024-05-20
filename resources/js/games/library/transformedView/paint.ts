@@ -9,13 +9,15 @@ export const getTVMethods = (tv: TVProperties, ctx: CanvasRenderingContext2D) =>
     roundFillStrokeRect: createRoundFillStrokeRect(tv, ctx),
 });
 
-const createFillRect = (tv: TVProperties, ctx: CanvasRenderingContext2D) => (obj: FillRect) => {
-    tv.world2Screen(obj.x, obj.y);
+const createFillRect =
+    (tv: TVProperties, ctx: CanvasRenderingContext2D) =>
+    <T extends FillRect>(obj: T) => {
+        tv.world2Screen(obj.x, obj.y);
 
-    ctx.fillStyle = obj.fill;
+        ctx.fillStyle = obj.fill;
 
-    ctx.fillRect(tv.screen.x, tv.screen.y, obj.w * tv.scale.x, obj.h * tv.scale.y);
-};
+        ctx.fillRect(tv.screen.x, tv.screen.y, obj.w * tv.scale.x, obj.h * tv.scale.y);
+    };
 
 const createStrokeRect = (tv: TVProperties, ctx: CanvasRenderingContext2D) => (obj: StrokeRect) => {
     tv.world2Screen(obj.x, obj.y);

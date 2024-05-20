@@ -28,7 +28,7 @@ export default {
         const canvas = getCanvas(canvasOptions);
         const context = getContext2D(canvas);
         const engine = getEngine();
-        const level = getLevel(3);
+        const level = getLevel(4);
 
         levelStore.set(level);
 
@@ -42,6 +42,8 @@ export default {
         engine.setUpdate(tvUpdate);
 
         gameStore.set({canvas, context, engine, tv});
+
+        // tv.setScaleFactor(0.99); // put this somewhere else (abstract)
 
         const player = getPlayer(level.playerStart);
         playerStore.set(player);
