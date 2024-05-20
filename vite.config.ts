@@ -7,13 +7,12 @@ const srcPath = path.resolve('./resources/js');
 
 export const resolve = {
     alias: {
-        components: path.join(srcPath, 'components'),
-        router: path.join(srcPath, 'router'),
-        types: path.join(srcPath, 'types'),
+        games: path.join(srcPath, 'games'),
+        library: path.join(srcPath, 'games/library'),
+        tombraid: path.join(srcPath, 'games/tombraid'),
         store: path.join(srcPath, 'store/modules'),
         pages: path.join(srcPath, 'pages'),
         services: path.join(srcPath, 'services'),
-        library: path.join(srcPath, 'library'),
     },
 };
 

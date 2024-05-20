@@ -84,7 +84,7 @@
         "eqeqeq": "error",
         "func-style": ["error", "expression"],
         // TODO :: should reduce the exceptions size
-        "id-length": ["error", {"exceptions": ["e", "h", "_", "i", "a", "b", "c", "x", "y", "w", "r"]}],
+        // "id-length": ["error", {"exceptions": ["e", "h", "_", "i", "a", "b", "c"]}],
         "max-nested-callbacks": "error",
         "new-cap": ["error", {"newIsCapExceptions": ["default"]}],
 
