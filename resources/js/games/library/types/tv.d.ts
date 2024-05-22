@@ -11,13 +11,21 @@ type FillCircle = {x: number; y: number; r: number; fill: string};
 
 type Zoom = 'in' | 'out';
 
+// tv.setScreenSize(vector(context.canvas.width, context.canvas.height));
+// tv.setWorldBorders(vector2(0, 0, level.width, level.height));
+// tv.setOffset(vector(-6 + level.playerStart.x, -6 + level.playerStart.y));
+
 export interface TransformedView extends Paint {
     worldClamp: Vector2;
     offset: Vector;
     scale: Vector;
     createTVUpdateSetWorldClamp: (canvas: HTMLCanvasElement) => Update;
     zoom: (scalePos: Vector, type: Zoom) => void;
+    setScale: (scale: Vector) => void;
     setScaleFactor: (factor: number) => void;
+    setScreenSize: (size: Vector) => void;
+    setWorldBorders: (borders: Vector2) => void;
+    setOffset: (offset: Vector) => void;
 }
 
 export interface Paint {

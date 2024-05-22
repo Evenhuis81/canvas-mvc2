@@ -6,6 +6,8 @@ export interface Engine {
     run: () => void;
     runOnce: () => void;
     halt: () => void;
+    showsOverview: () => void;
+    updatesOverview: () => void;
 }
 
 export interface Vector {

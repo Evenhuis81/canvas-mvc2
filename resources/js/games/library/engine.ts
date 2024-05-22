@@ -26,7 +26,7 @@ export const getEngine = () => {
         stop = true;
     };
 
-    return {setUpdate, setShow, run, runOnce, halt, showOverview, updateOverview};
+    return {setUpdate, setShow, run, runOnce, halt, showsOverview, updatesOverview};
 };
 
 const loop = () => {
@@ -43,10 +43,10 @@ const loop = () => {
     }
 };
 
-const showOverview = () => {
+const showsOverview = () => {
     console.log(shows);
 };
 
-const updateOverview = () => {
+const updatesOverview = () => {
     console.log(updates);
 };

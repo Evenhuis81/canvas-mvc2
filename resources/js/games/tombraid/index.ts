@@ -1,4 +1,6 @@
 /* eslint-disable max-lines-per-function */
+import {Engine} from './types/game';
+import {TransformedView} from 'games/library/types/tv';
 import {enableStatistics} from 'library/statistics';
 import {gameStore, levelStore, playerStore} from './store';
 import {getCanvas, getContext2D, vector, vector2} from 'library/canvas';
@@ -13,6 +15,20 @@ const canvasOptions = {
     width: 500,
     height: 500,
     backgroundColor: '#000',
+};
+
+const goToMenu = (
+    context: CanvasRenderingContext2D,
+    engine: Engine,
+    tv: TransformedView,
+    canvas: HTMLCanvasElement,
+) => {
+    const startButton = getStartButton(context);
+    engine.setShow(startButton.show);
+
+    addEventListener('mouseup', () => {
+        if (startButton.inside()) startLevel(2, tv, context, canvas, engine);
+    });
 };
 
 export default {
@@ -36,13 +52,8 @@ export default {
         const tvUpdate = tv.createTVUpdateSetWorldClamp(canvas);
         engine.setUpdate(tvUpdate);
 
-        // Abstract this
-        const startButton = getStartButton(context);
-        engine.setShow(startButton.show);
-
-        addEventListener('mouseup', () => {
-            if (startButton.inside()) startLevel(2);
-        });
+        // Menu Screen
+        goToMenu(context, engine, tv, canvas);
 
         // dot in middle of screen
         const s = {
@@ -60,30 +71,38 @@ export default {
         // Make this a hidden option inside the canvas
         enableStatistics();
 
-        const startLevel = (levelNr: number) => {
-            const level = getLevel(levelNr);
-            levelStore.set(level);
-            tv.setScale(vector(context.canvas.width / 13, canvas.height / 13));
-            tv.setScaleFactor(0.99);
-            tv.setScreenSize(vector(context.canvas.width, context.canvas.height));
-            tv.setWorldBorders(vector2(0, 0, level.width, level.height));
-            tv.setOffset(vector(-6 + level.playerStart.x, -6 + level.playerStart.y));
-            const player = getPlayer(level.playerStart);
-            playerStore.set(player);
-            // bunch up all updates and shows and set them in order somewhere else (expand setUpdate/Show)
-            engine.setUpdate(player.update);
-            // when a component use the gamestore, make create functions so they can be used at a later point
-            const levelShow = level.createShow(level.map, level.coins, tv);
-            engine.setShow(levelShow);
-            engine.setShow(player.show);
+        // StartLevel = here
 
-            engine.showOverview();
-            engine.updateOverview();
-        };
-
-        engine.showOverview();
-        engine.updateOverview();
+        engine.showsOverview();
+        engine.updatesOverview();
     },
     run: () => gameStore.state.engine.run(),
     runOnce: () => gameStore.state.engine.runOnce(),
+};
+
+const startLevel = (
+    levelNr: number,
+    tv: TransformedView,
+    context: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    engine: Engine,
+) => {
+    const level = getLevel(levelNr);
+    levelStore.set(level);
+    tv.setScale(vector(context.canvas.width / 13, canvas.height / 13));
+    tv.setScaleFactor(0.99);
+    tv.setScreenSize(vector(context.canvas.width, context.canvas.height));
+    tv.setWorldBorders(vector2(0, 0, level.width, level.height));
+    tv.setOffset(vector(-6 + level.playerStart.x, -6 + level.playerStart.y));
+    const player = getPlayer(level.playerStart);
+    playerStore.set(player);
+    // bunch up all updates and shows and set them in order somewhere else (expand setUpdate/Show)
+    engine.setUpdate(player.update);
+    // when a component use the gamestore, make create functions so they can be used at a later point
+    const levelShow = level.createShow(level.map, level.coins, tv);
+    engine.setShow(levelShow);
+    engine.setShow(player.show);
+
+    engine.showsOverview();
+    engine.updatesOverview();
 };
