@@ -98,6 +98,7 @@ const collisionAndResolve = () => {
     player.topRight = levelMap[player.yInt][player.xInt + 1];
     player.bottomRight = levelMap[player.yInt + 1][player.xInt + 1];
 
+    // add collision for coinMap
     collide[player.direction]();
 };
 

@@ -5,8 +5,9 @@ export type FillRect = Rect & {fill: string};
 export type StrokeRect = Rect & {stroke: string; lw: number};
 type FillStrokeRect = FillRect & {stroke: string; lw: number};
 type RoundFillStrokeRect = FillStrokeRect & {r: number};
-type Line = Vector2 & {stroke: string; lw: number};
+type Line = Omit<Vector2, 'add' | 'set' | 'setManual'> & {stroke: string; lw: number};
 type Text = {x: number; y: number; txt: string; font: string; fill: string}; // auto-centered for now
+type FillCircle = {x: number; y: number; r: number; fill: string};
 
 type Zoom = 'in' | 'out';
 
@@ -26,6 +27,7 @@ export interface Paint {
     text: (obj: Text) => void;
     fillStrokeRect: (obj: FillStrokeRect) => void;
     roundFillStrokeRect: (obj: RoundFillStrokeRect) => void;
+    fillCircle: (obj: FillCircle) => void;
 }
 
 export type TVOptions = {

@@ -1,4 +1,13 @@
-import type {FillRect, FillStrokeRect, Line, RoundFillStrokeRect, StrokeRect, TVProperties, Text} from '../types/tv';
+import type {
+    FillCircle,
+    FillRect,
+    FillStrokeRect,
+    Line,
+    RoundFillStrokeRect,
+    StrokeRect,
+    TVProperties,
+    Text,
+} from '../types/tv';
 
 export const getTVMethods = (tv: TVProperties, ctx: CanvasRenderingContext2D) => ({
     fillRect: createFillRect(tv, ctx),
@@ -7,7 +16,20 @@ export const getTVMethods = (tv: TVProperties, ctx: CanvasRenderingContext2D) =>
     text: createText(tv, ctx),
     fillStrokeRect: createFillStrokeRect(tv, ctx),
     roundFillStrokeRect: createRoundFillStrokeRect(tv, ctx),
+    fillCircle: createFillCircle(tv, ctx),
 });
+
+const createFillCircle = (tv: TVProperties, ctx: CanvasRenderingContext2D) => (obj: FillCircle) => {
+    tv.world2Screen(obj.x, obj.y);
+
+    ctx.fillStyle = obj.fill;
+
+    ctx.beginPath();
+
+    ctx.arc(tv.screen.x, tv.screen.y, obj.r * tv.scale.x, 0, Math.PI * 2);
+
+    ctx.fill();
+};
 
 const createFillRect =
     (tv: TVProperties, ctx: CanvasRenderingContext2D) =>
