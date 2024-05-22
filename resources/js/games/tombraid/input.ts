@@ -1,9 +1,9 @@
 import {vector} from '../library/canvas';
 
-export const setEvent = <EventType extends keyof Partial<WindowEventMap>>(
-    type: EventType,
-    listener: (evt: WindowEventMap[EventType]) => void,
-) => addEventListener<EventType>(type, listener);
+// export const setEvent = <EventType extends keyof Partial<WindowEventMap>>(
+//     type: EventType,
+//     listener: (evt: WindowEventMap[EventType]) => void,
+// ) => addEventListener<EventType>(type, listener);
 
 export const mouse = vector();
 

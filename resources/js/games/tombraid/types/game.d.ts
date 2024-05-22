@@ -6,6 +6,8 @@ export interface Engine {
     run: () => void;
     runOnce: () => void;
     halt: () => void;
+    showsOverview: () => void;
+    updatesOverview: () => void;
 }
 
 export interface Vector {
@@ -42,8 +44,13 @@ export interface CanvasOptions {
     backgroundColor: string;
 }
 
-export type Update = () => void;
-export type Show = () => void;
+export type Update = {
+    id: number;
+    name: string;
+    fn: () => void;
+};
+
+export type Show = Update;
 
 export interface Events {
     mousedown: MouseDown;

@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
 /* eslint-disable no-param-reassign */
 import {getCoinMap, getLevelMap} from './levels';
@@ -58,81 +59,70 @@ const createMapShow = (levelMap: LevelMap, coinMap: CoinMap, tv: TransformedView
     const noEmptyX = getEmptyX(levelMap);
 
     // eslint-disable-next-line complexity
-    return () => {
-        elementsDrawn.nr = 0;
+    return {
+        id: 4,
+        name: 'level',
+        fn: () => {
+            elementsDrawn.nr = 0;
 
-        for (let y = 0; y < levelMap.length; y++) {
-            if (y > tv.worldClamp.y - 1 && y <= tv.worldClamp.y2) {
-                for (let x = 0; x < noEmptyX[y].length; x++) {
-                    // replace switch with an object
-                    switch (levelMap[y][noEmptyX[y][x]]) {
-                        case 'X':
-                            tv.strokeRect({x: noEmptyX[y][x], y, w: 1, h: 1, stroke: 'red', lw: 1});
+            for (let y = 0; y < levelMap.length; y++) {
+                if (y > tv.worldClamp.y - 1 && y <= tv.worldClamp.y2) {
+                    for (let x = 0; x < noEmptyX[y].length; x++) {
+                        // replace switch with an object
+                        switch (levelMap[y][noEmptyX[y][x]]) {
+                            case 'X':
+                                tv.strokeRect({x: noEmptyX[y][x], y, w: 1, h: 1, stroke: 'red', lw: 1});
 
-                            elementsDrawn.nr++;
-                            break;
-                        case 'C': // for now C stand for cannon to the right
-                            // put this in a wireframemodel (for rotation)
-                            tv.line({
-                                x: noEmptyX[y][x],
-                                y: y + 0.5,
-                                x2: noEmptyX[y][x] + 1,
-                                y2: y + 0.5,
-                                stroke: '#00f',
-                                lw: 5,
-                            });
-                            tv.line({
-                                x: noEmptyX[y][x] + 1,
-                                y: y + 0.5,
-                                x2: noEmptyX[y][x] + 0.5,
-                                y2: y + 0.8,
-                                stroke: '#00f',
-                                lw: 5,
-                            });
-                            tv.line({
-                                x: noEmptyX[y][x] + 1,
-                                y: y + 0.5,
-                                x2: noEmptyX[y][x] + 0.5,
-                                y2: y + 0.2,
-                                stroke: '#00f',
-                                lw: 5,
-                            });
+                                elementsDrawn.nr++;
+                                break;
+                            case 'C': // for now C stand for cannon to the right
+                                // put this in a wireframemodel (for rotation)
+                                tv.line({
+                                    x: noEmptyX[y][x],
+                                    y: y + 0.5,
+                                    x2: noEmptyX[y][x] + 1,
+                                    y2: y + 0.5,
+                                    stroke: '#00f',
+                                    lw: 5,
+                                });
+                                tv.line({
+                                    x: noEmptyX[y][x] + 1,
+                                    y: y + 0.5,
+                                    x2: noEmptyX[y][x] + 0.5,
+                                    y2: y + 0.8,
+                                    stroke: '#00f',
+                                    lw: 5,
+                                });
+                                tv.line({
+                                    x: noEmptyX[y][x] + 1,
+                                    y: y + 0.5,
+                                    x2: noEmptyX[y][x] + 0.5,
+                                    y2: y + 0.2,
+                                    stroke: '#00f',
+                                    lw: 5,
+                                });
 
-                            elementsDrawn.nr++;
-                            break;
-                        default:
-                            break;
+                                elementsDrawn.nr++;
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
             }
-        }
 
-        for (let y = 0; y < coinMap.length; y++) {
-            for (let x = 0; x < coinMap[y].length; x++)
-                tv.fillCircle({x: coinMap[y][x] + 0.5, y: y + 0.5, r: 0.1, fill: 'yellow'});
-        }
+            for (let y = 0; y < coinMap.length; y++) {
+                for (let x = 0; x < coinMap[y].length; x++)
+                    tv.fillCircle({x: coinMap[y][x] + 0.5, y: y + 0.5, r: 0.1, fill: 'yellow'});
+            }
+        },
     };
 };
-
-// const createBulletUpdate = (cannon: Cannon) => {
-//     const bullet = {x}
-//     return () => {
-//         //
-//     };
-// }
 
 export const getLevel = (id: number) => {
     const levelMap = getLevelMap(id);
     // coin could also be a character on the map and this can be switched out (ie. lamba functions from javid9x)
     const coinMap = getCoinMap(id);
-
-    // Is multidimensional array really the best way to store the positions of these cannons?
-    // const cannons = getCannons(levelMap);
-
-    // console.log(cannons);
-
-    // const BulletUpdates = createBulletUpdates(bulletPositions);
-    // const bulletShows = createBulletShows(bulletPositions);
 
     return {
         map: levelMap,
@@ -154,13 +144,3 @@ export const getPlayerStart = (levelMap: LevelMap) => {
 
     throw new Error('start position "S" for player not found in level map');
 };
-
-// const getBlockMap = (levelMap: LevelMap) => {
-//     const blockMap: BlockMap = [];
-//     for (let y = 0; y < levelMap.length; y++) {
-//         blockMap.push([]);
-//         for (let x = 0; x < levelMap[y].length; x++) blockMap[y].push(blocks[levelMap[y][x]](x, y));
-//     }
-
-//     return blockMap;
-// };
