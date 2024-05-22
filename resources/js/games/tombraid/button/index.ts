@@ -96,26 +96,30 @@ const startButton = {
 export const getStartButton = (ctx: CanvasRenderingContext2D) => {
     const {txt, x, y, w, h, r, lw, stroke, fill, textColor, font} = startButton;
 
-    const show = () => {
-        // make 2 seperate non-tv functions for rendering rects (round/fill/stroke) and text (text-project)
+    const show = {
+        id: 2,
+        name: 'start button',
+        fn: () => {
+            // make 2 seperate non-tv functions for rendering rects (round/fill/stroke) and text (text-project)
 
-        // button
-        ctx.fillStyle = fill;
-        ctx.strokeStyle = stroke;
-        ctx.lineWidth = lw;
+            // button
+            ctx.fillStyle = fill;
+            ctx.strokeStyle = stroke;
+            ctx.lineWidth = lw;
 
-        ctx.beginPath();
-        ctx.roundRect(x - w / 2, y - h / 2, w, h, r);
-        ctx.fill();
-        ctx.stroke();
+            ctx.beginPath();
+            ctx.roundRect(x - w / 2, y - h / 2, w, h, r);
+            ctx.fill();
+            ctx.stroke();
 
-        // text
-        ctx.fillStyle = textColor;
-        ctx.font = font;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+            // text
+            ctx.fillStyle = textColor;
+            ctx.font = font;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
 
-        ctx.fillText(txt, x, y);
+            ctx.fillText(txt, x, y);
+        },
     };
 
     const inside = () => mouse.x >= x - w / 2 && mouse.x < x + w / 2 && mouse.y >= y - h / 2 && mouse.y < y + h / 2;
@@ -165,7 +169,7 @@ export const getMenuButton = (ctx: CanvasRenderingContext2D) => {
     const inside = () => mouse.x >= x && mouse.x < x + w && mouse.y >= y && mouse.y < y + h;
 
     addEventListener('mouseup', ({button}) => {
-        if (button === 0 && inside()) gameStore.state.engine.setShow(openMenu());
+        if (button === 0 && inside()) gameStore.state.engine.setShow({id: 0, name: 'open menu', fn: openMenu()});
     });
 
     return {show, update};

@@ -114,47 +114,55 @@ export const getPlayer = (start: Vector) => {
     player.pos.setXY(start.x, start.y);
     player.lastPos.setXY(start.x, start.y);
 
-    const update = () => {
-        // make multiple updates for different situations
-        player.lastPos.setXY(player.pos.x, player.pos.y);
+    const update = {
+        id: 3,
+        name: 'player',
+        fn: () => {
+            // make multiple updates for different situations
+            player.lastPos.setXY(player.pos.x, player.pos.y);
 
-        player.vel.add(player.acc);
+            player.vel.add(player.acc);
 
-        if (player.movement === 'free') friction(); // only in free mode
+            if (player.movement === 'free') friction(); // only in free mode
 
-        player.vel.limit(player.maxSpeed);
+            player.vel.limit(player.maxSpeed);
 
-        // Create seperate function for this, which you can call like 'maxSpeed zoom method' or something
-        // Make setScale a 'hardcoded' option (not running in every loop)
-        if (
-            tv.scale.x > 20 &&
-            (Math.abs(player.vel.x) === player.maxSpeed || Math.abs(player.vel.y) === player.maxSpeed)
-        ) {
-            tv.setScaleFactor(0.99);
-            tv.zoom(vector(250, 250), 'out');
-        } else if (tv.scale.x < 38.48 && player.vel.x === 0 && player.vel.y === 0) {
-            tv.setScaleFactor(0.95);
-            tv.zoom(vector(250, 250), 'in');
-        }
+            // Create seperate function for this, which you can call like 'maxSpeed zoom method' or something
+            // Make setScale a 'hardcoded' option (not running in every loop)
+            if (
+                tv.scale.x > 20 &&
+                (Math.abs(player.vel.x) === player.maxSpeed || Math.abs(player.vel.y) === player.maxSpeed)
+            ) {
+                tv.setScaleFactor(0.99);
+                tv.zoom(vector(250, 250), 'out');
+            } else if (tv.scale.x < 38.48 && player.vel.x === 0 && player.vel.y === 0) {
+                tv.setScaleFactor(0.95);
+                tv.zoom(vector(250, 250), 'in');
+            }
 
-        player.pos.add(player.vel);
+            player.pos.add(player.vel);
 
-        collisionAndResolve();
+            collisionAndResolve();
 
-        // integrated in transformed view
-        const xChange = player.lastPos.x - player.pos.x;
-        const yChange = player.lastPos.y - player.pos.y;
+            // integrated in transformed view
+            const xChange = player.lastPos.x - player.pos.x;
+            const yChange = player.lastPos.y - player.pos.y;
 
-        player.posChangeHistory.shift();
-        player.posChangeHistory.push(vector(-xChange, -yChange));
+            player.posChangeHistory.shift();
+            player.posChangeHistory.push(vector(-xChange, -yChange));
 
-        gameStore.state.tv.offset.x += player.posChangeHistory[0].x;
-        gameStore.state.tv.offset.y += player.posChangeHistory[0].y;
+            gameStore.state.tv.offset.x += player.posChangeHistory[0].x;
+            gameStore.state.tv.offset.y += player.posChangeHistory[0].y;
+        },
     };
 
     // make createShow
-    const show = () => {
-        tv.fillRect({x: player.pos.x, y: player.pos.y, w: player.w, h: player.h, fill: 'blue'});
+    const show = {
+        id: 3,
+        name: 'player',
+        fn: () => {
+            tv.fillRect({x: player.pos.x, y: player.pos.y, w: player.w, h: player.h, fill: 'blue'});
+        },
     };
 
     switchMovement.initiate();

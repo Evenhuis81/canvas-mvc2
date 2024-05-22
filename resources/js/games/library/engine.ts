@@ -14,33 +14,25 @@ export const getEngine = () => {
         shows.push(show);
     };
 
-    const run = () => loop(0);
+    const run = () => loop();
 
     const runOnce = () => {
         stop = true;
 
-        loop(0);
+        loop();
     };
 
     const halt = () => {
         stop = true;
     };
 
-    return {setUpdate, setShow, run, runOnce, halt};
+    return {setUpdate, setShow, run, runOnce, halt, showOverview, updateOverview};
 };
 
-let timePassed = 0;
-let lastTime = 0;
+const loop = () => {
+    for (const update of updates) update.fn();
 
-const loop = (timestamp: DOMHighResTimeStamp) => {
-    timePassed += timestamp - lastTime;
-    lastTime = timestamp;
-
-    // console.log(timePassed);
-
-    for (const update of updates) update();
-
-    for (const show of shows) show();
+    for (const show of shows) show.fn();
 
     requestID = requestAnimationFrame(loop);
 
@@ -49,4 +41,12 @@ const loop = (timestamp: DOMHighResTimeStamp) => {
 
         stop = false;
     }
+};
+
+const showOverview = () => {
+    console.log(shows);
+};
+
+const updateOverview = () => {
+    console.log(updates);
 };

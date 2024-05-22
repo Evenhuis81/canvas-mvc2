@@ -66,8 +66,11 @@ export const getTV = (ctx: CanvasRenderingContext2D) => {
 
     const paintMethods = getTVMethods(tv, ctx);
 
-    const createTVUpdateSetWorldClamp = (context: CanvasRenderingContext2D) => () =>
-        setWorldClamp(0, 0, context.canvas.width, context.canvas.height);
+    const createTVUpdateSetWorldClamp = ({width, height}: HTMLCanvasElement) => ({
+        id: 1,
+        name: 'update world clamp',
+        fn: () => setWorldClamp(0, 0, width, height),
+    });
 
     setStatistic(() => `offsetX: ${tv.offset.x.toFixed(2)}, Y: ${tv.offset.y.toFixed(2)}`);
     setStatistic(() => `scale: ${tv.scale.x.toFixed(2)}`);

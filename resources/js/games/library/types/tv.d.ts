@@ -15,7 +15,7 @@ export interface TransformedView extends Paint {
     worldClamp: Vector2;
     offset: Vector;
     scale: Vector;
-    createTVUpdateSetWorldClamp: (context: CanvasRenderingContext2D) => Update;
+    createTVUpdateSetWorldClamp: (canvas: HTMLCanvasElement) => Update;
     zoom: (scalePos: Vector, type: Zoom) => void;
     setScaleFactor: (factor: number) => void;
 }

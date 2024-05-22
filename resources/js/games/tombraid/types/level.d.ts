@@ -1,5 +1,5 @@
+import type {Show, Vector} from './game';
 import type {TransformedView} from 'games/library/types/tv';
-import type {Vector} from './game';
 
 export type MapElement = 'X' | '.' | 'S' | 'C';
 
@@ -15,5 +15,5 @@ export interface LevelResource {
     width: number;
     height: number;
     playerStart: Vector;
-    createShow: (levelMap: LevelMap, coins: CoinMap, tv: TransformedView) => () => void;
+    createShow: (levelMap: LevelMap, coins: CoinMap, tv: TransformedView) => Show;
 }
