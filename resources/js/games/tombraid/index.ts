@@ -28,7 +28,7 @@ export default {
         const canvas = getCanvas(canvasOptions);
         const context = getContext2D(canvas);
         const engine = getEngine();
-        const level = getLevel(4);
+        const level = getLevel(2);
 
         levelStore.set(level);
 
@@ -55,7 +55,7 @@ export default {
         engine.setUpdate(player.update);
 
         // when a component use the gamestore, make create functions so they can be used at a later point
-        const levelShow = level.createShow(level.map, tv);
+        const levelShow = level.createShow(level.map, level.coins, tv);
 
         engine.setShow(levelShow);
         engine.setShow(player.show);

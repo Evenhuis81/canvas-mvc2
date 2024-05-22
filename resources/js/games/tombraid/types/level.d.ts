@@ -7,10 +7,13 @@ export type LevelMap = MapElement[][];
 
 export type Levels = {[key: number]: LevelMap};
 
+type CoinMap = number[][];
+
 export interface LevelResource {
     map: LevelMap;
+    coins: CoinMap;
     width: number;
     height: number;
     playerStart: Vector;
-    createShow: (levelMap: LevelMap, tv: TransformedView) => () => void;
+    createShow: (levelMap: LevelMap, coins: CoinMap, tv: TransformedView) => () => void;
 }
