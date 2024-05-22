@@ -2,10 +2,8 @@ import {getTVMethods} from './paint';
 import {setStatistic} from '../statistics';
 import {setTVEvents} from './input';
 import {vector, vector2} from '../canvas';
-import type {TVOptions, Zoom} from '../types/tv';
 import type {Vector, Vector2} from 'games/tombraid/types/game';
-
-// let ctx: CanvasRenderingContext2D;
+import type {Zoom} from '../types/tv';
 
 const screen2World = (x: number, y: number) => {
     tv.world.x = x / tv.scale.x + tv.offset.x;
@@ -22,17 +20,6 @@ const world2Screen2 = (x: number, y: number, x2: number, y2: number) => {
     tv.screen.y = (y - tv.offset.y) * tv.scale.y;
     tv.screen.x2 = (x2 - tv.offset.x) * tv.scale.x;
     tv.screen.y2 = (y2 - tv.offset.y) * tv.scale.y;
-};
-
-const setOptional = (offset?: Vector, scale?: Vector, worldBounds?: Vector2) => {
-    if (offset) tv.offset.set(offset);
-
-    if (scale) tv.scale.set(scale);
-
-    if (worldBounds) {
-        tv.worldTL.setXY(worldBounds.x, worldBounds.y);
-        tv.worldBR.setXY(worldBounds.x2, worldBounds.y2);
-    }
 };
 
 const getMiddleScreen = () => vector(tv.screenSize.x / 2, tv.screenSize.y / 2);
@@ -74,11 +61,7 @@ const methods = {
     zoom,
 };
 
-export const getTV = (options: TVOptions, ctx: CanvasRenderingContext2D) => {
-    tv.screenSize.set(options.screenSize);
-
-    setOptional(options.offset, options.scale, options.worldBorders);
-
+export const getTV = (ctx: CanvasRenderingContext2D) => {
     setTVEvents(tv);
 
     const paintMethods = getTVMethods(tv, ctx);
@@ -96,8 +79,29 @@ export const getTV = (options: TVOptions, ctx: CanvasRenderingContext2D) => {
         createTVUpdateSetWorldClamp,
         ...paintMethods,
         zoom,
+        setScale,
         setScaleFactor,
+        setScreenSize,
+        setWorldBorders,
+        setOffset,
     };
+};
+
+const setScale = (scale: Vector) => {
+    tv.scale.set(scale);
+};
+
+const setOffset = (offset: Vector) => {
+    tv.offset.set(offset);
+};
+
+const setWorldBorders = (borders: Vector2) => {
+    tv.worldTL.setXY(borders.x, borders.y);
+    tv.worldBR.setXY(borders.x2, borders.y2);
+};
+
+const setScreenSize = (size: Vector) => {
+    tv.screenSize.set(size);
 };
 
 const setScaleFactor = (factor: number) => {

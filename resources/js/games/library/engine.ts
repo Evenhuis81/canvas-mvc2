@@ -14,12 +14,12 @@ export const getEngine = () => {
         shows.push(show);
     };
 
-    const run = () => loop();
+    const run = () => loop(0);
 
     const runOnce = () => {
         stop = true;
 
-        loop();
+        loop(0);
     };
 
     const halt = () => {
@@ -29,7 +29,15 @@ export const getEngine = () => {
     return {setUpdate, setShow, run, runOnce, halt};
 };
 
-const loop = () => {
+let timePassed = 0;
+let lastTime = 0;
+
+const loop = (timestamp: DOMHighResTimeStamp) => {
+    timePassed += timestamp - lastTime;
+    lastTime = timestamp;
+
+    // console.log(timePassed);
+
     for (const update of updates) update();
 
     for (const show of shows) show();

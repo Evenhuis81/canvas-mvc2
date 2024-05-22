@@ -29,32 +29,26 @@ const getEmptyX = (levelMap: LevelMap) => {
     return empties;
 };
 
-// const cannon = {
-//     line1: {
-//         x: 0,
-//         y: 0,
-//         x2: 0,
-//         y2: 0,
-//         stroke: '#00f',
-//         lw: 5,
-//     },
+// type Bullet = {
+//     x: number;
+//     y: number;
+//     vX: number;
+//     vY: number;
 // };
 
-const getCannonPositions = (levelMap: LevelMap) => {
-    const cannons: number[][] = [];
-    for (let y = 0; y < levelMap.length; y++) {
-        cannons.push([]);
-        for (let x = 0; x < levelMap.length; x++) if (levelMap[y][x] === 'C') cannons[y].push(x);
-    }
-};
+// type Cannon = {
+//     x: number;
+//     y: number;
+//     direction: 'up' | 'down' | 'left' | 'right';
+// };
 
-const createCannonUpdates = (cannonPositions: number[][]) => {
-    //
-};
+// const getCannons = (map: LevelMap) => {
+//     const cannons: Cannon[] = [];
+//     for (let y = 0; y < map.length; y++)
+//         for (let x = 0; x < map.length; x++) if map[y][x] === 'C') cannons.push({x, y, direction: 'right'});
 
-const createCannonShows = (cannonPositions: number[][]) => {
-    //
-};
+//     return cannons;
+// };
 
 const createMapShow = (levelMap: LevelMap, coinMap: CoinMap, tv: TransformedView) => {
     // TODO::Make this optional or make it an option (goes for all statistic elements)
@@ -63,10 +57,6 @@ const createMapShow = (levelMap: LevelMap, coinMap: CoinMap, tv: TransformedView
 
     const noEmptyX = getEmptyX(levelMap);
 
-    const cannonPositions = getCannonPositions(levelMap);
-    const cannonUpdates = createCannonUpdates(cannonPositions);
-    const cannonShows = createCannonShows(cannonPositions);
-
     // eslint-disable-next-line complexity
     return () => {
         elementsDrawn.nr = 0;
@@ -74,8 +64,6 @@ const createMapShow = (levelMap: LevelMap, coinMap: CoinMap, tv: TransformedView
         for (let y = 0; y < levelMap.length; y++) {
             if (y > tv.worldClamp.y - 1 && y <= tv.worldClamp.y2) {
                 for (let x = 0; x < noEmptyX[y].length; x++) {
-                    // const blockType = blockMap[y][noEmptyX[y][x]].type;
-                    // if (blockType === 'strokeRect') tv.strokeRect(blockMap[y][noEmptyX[y][x]]);
                     // replace switch with an object
                     switch (levelMap[y][noEmptyX[y][x]]) {
                         case 'X':
@@ -83,8 +71,8 @@ const createMapShow = (levelMap: LevelMap, coinMap: CoinMap, tv: TransformedView
 
                             elementsDrawn.nr++;
                             break;
-                        case 'C':
-                            // tv.strokeRect({x: noEmptyX[y][x], y, w: 1, h: 1, stroke: 'blue', lw: 1});
+                        case 'C': // for now C stand for cannon to the right
+                            // put this in a wireframemodel (for rotation)
                             tv.line({
                                 x: noEmptyX[y][x],
                                 y: y + 0.5,
@@ -126,12 +114,25 @@ const createMapShow = (levelMap: LevelMap, coinMap: CoinMap, tv: TransformedView
     };
 };
 
+// const createBulletUpdate = (cannon: Cannon) => {
+//     const bullet = {x}
+//     return () => {
+//         //
+//     };
+// }
+
 export const getLevel = (id: number) => {
     const levelMap = getLevelMap(id);
+    // coin could also be a character on the map and this can be switched out (ie. lamba functions from javid9x)
     const coinMap = getCoinMap(id);
-    // const blockMap = getBlockMap(levelMap);
 
-    // console.log(blockMap);
+    // Is multidimensional array really the best way to store the positions of these cannons?
+    // const cannons = getCannons(levelMap);
+
+    // console.log(cannons);
+
+    // const BulletUpdates = createBulletUpdates(bulletPositions);
+    // const bulletShows = createBulletShows(bulletPositions);
 
     return {
         map: levelMap,
@@ -139,7 +140,7 @@ export const getLevel = (id: number) => {
         width: levelMap[0].length,
         height: levelMap.length,
         playerStart: getPlayerStart(levelMap),
-        createShow: createMapShow, // Map + Coins (seperate?)
+        createShow: createMapShow, // Map + Coins (separate?)
         coins: coinMap,
     };
 };
@@ -153,53 +154,6 @@ export const getPlayerStart = (levelMap: LevelMap) => {
 
     throw new Error('start position "S" for player not found in level map');
 };
-
-// // type Block = StrokeRect & {
-// //     type: keyof PaintMethods;
-// // };
-
-// // type BlockMap = Block[][];
-
-// export const blocks = {
-//     '.': () => ({
-//         type: 'strokeRect',
-//         x: 0,
-//         y: 0,
-//         w: 0,
-//         h: 0,
-//         lw: 0,
-//         stroke: 'purple',
-//     }),
-//     S: () => ({
-//         type: 'strokeRect',
-//         x: 0,
-//         y: 0,
-//         w: 0,
-//         h: 0,
-//         stroke: 'orange',
-//         lw: 0,
-//     }),
-//     X: (x: number, y: number) => ({
-//         type: 'strokeRect',
-//         x,
-//         y,
-//         w: 1,
-//         h: 1,
-//         lw: 1,
-//         stroke: 'blue',
-//     }),
-//     C: (x: number, y: number) => ({
-//         // type: 'fillRect',
-//         type: 'strokeRect',
-//         x,
-//         y,
-//         w: 1,
-//         h: 1,
-//         // fill: 'green',
-//         stroke: 'green',
-//         lw: 1,
-//     }),
-// };
 
 // const getBlockMap = (levelMap: LevelMap) => {
 //     const blockMap: BlockMap = [];

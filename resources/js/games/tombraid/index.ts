@@ -5,9 +5,9 @@ import {getCanvas, getContext2D, vector, vector2} from 'library/canvas';
 import {getEngine} from 'library/engine';
 import {getLevel} from './levels';
 import {getPlayer} from './player';
+import {getStartButton} from './button';
 import {getTV} from 'games/library/transformedView';
 import {setMouseInput} from './input';
-import type {LevelResource} from './types/level';
 
 const canvasOptions = {
     width: 500,
@@ -15,55 +15,29 @@ const canvasOptions = {
     backgroundColor: '#000',
 };
 
-const getTVOptions = (context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, level: LevelResource) => ({
-    context,
-    screenSize: vector(context.canvas.width, context.canvas.height),
-    worldBorders: vector2(0, 0, level.width, level.height),
-    scale: vector(context.canvas.width / 13, canvas.height / 13),
-    offset: vector(-6 + level.playerStart.x, -6 + level.playerStart.y),
-});
-
 export default {
     setup: () => {
         const canvas = getCanvas(canvasOptions);
         const context = getContext2D(canvas);
         const engine = getEngine();
-        const level = getLevel(2);
-
-        levelStore.set(level);
-
-        setMouseInput(canvas);
-
-        const tVOptions = getTVOptions(context, canvas, level);
-        const tv = getTV(tVOptions, context);
-
-        const tvUpdate = tv.createTVUpdateSetWorldClamp(context);
-
-        engine.setUpdate(tvUpdate);
+        const tv = getTV(context);
 
         gameStore.set({canvas, context, engine, tv});
+        setMouseInput(canvas);
 
-        // tv.setScaleFactor(0.99); // put this somewhere else (abstract)
-
-        const player = getPlayer(level.playerStart);
-        playerStore.set(player);
-
-        // 1. refresh to blank screen in engine loop (has to be first in)
-        // 2. bunch up all updates and shows and set them in order somewhere else (expand setUpdate/Show)
+        // Hmm
         engine.setUpdate(() => context.clearRect(0, 0, canvas.width, canvas.height));
+
+        const tvUpdate = tv.createTVUpdateSetWorldClamp(context);
         engine.setUpdate(tvUpdate);
-        engine.setUpdate(player.update);
 
-        // when a component use the gamestore, make create functions so they can be used at a later point
-        const levelShow = level.createShow(level.map, level.coins, tv);
+        // Abstract this
+        const startButton = getStartButton(context);
+        engine.setShow(startButton.show);
 
-        engine.setShow(levelShow);
-        engine.setShow(player.show);
-
-        // temporary button
-        // const button = getMenuButton(context);
-        // engine.setUpdate(button.update);
-        // engine.setShow(button.show);
+        addEventListener('mouseup', () => {
+            if (startButton.inside()) startLevel(2);
+        });
 
         // dot in middle of screen
         const s = () => {
@@ -76,6 +50,29 @@ export default {
 
         // Make this a hidden option inside the canvas
         enableStatistics();
+
+        const startLevel = (levelNr: number) => {
+            const level = getLevel(levelNr);
+            levelStore.set(level);
+
+            tv.setScale(vector(context.canvas.width / 13, canvas.height / 13));
+            tv.setScaleFactor(0.99);
+            tv.setScreenSize(vector(context.canvas.width, context.canvas.height));
+            tv.setWorldBorders(vector2(0, 0, level.width, level.height));
+            tv.setOffset(vector(-6 + level.playerStart.x, -6 + level.playerStart.y));
+
+            const player = getPlayer(level.playerStart);
+            playerStore.set(player);
+
+            // bunch up all updates and shows and set them in order somewhere else (expand setUpdate/Show)
+            engine.setUpdate(player.update);
+
+            // when a component use the gamestore, make create functions so they can be used at a later point
+            const levelShow = level.createShow(level.map, level.coins, tv);
+
+            engine.setShow(levelShow);
+            engine.setShow(player.show);
+        };
     },
     run: () => gameStore.state.engine.run(),
     runOnce: () => gameStore.state.engine.runOnce(),
