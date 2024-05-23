@@ -23,6 +23,20 @@ const goToMenu = (
     tv: TransformedView,
     canvas: HTMLCanvasElement,
 ) => {
+    // buttons:
+    // 1. start
+    // 2. settings
+    // 3. exit
+    // 4. admin options
+    // 5. show statistics
+    // 6. level editor
+    // 7. login
+    // 8. create account
+    // 9. load game
+    // 10. save game
+
+    // const button = getButton(buttonObj);
+
     const startButton = getStartButton(context);
     engine.setShow(startButton.show);
 
@@ -38,9 +52,11 @@ export default {
         const engine = getEngine();
         const tv = getTV(context);
 
+        // Make globally available
         gameStore.set({canvas, context, engine, tv});
         setMouseInput(canvas);
 
+        // Engine Updates
         const clearScreen = {
             id: 0,
             name: 'clear screen',
@@ -66,6 +82,8 @@ export default {
                 context.fill();
             },
         };
+
+        // Engine Shows
         engine.setShow(s);
 
         // Make this a hidden option inside the canvas

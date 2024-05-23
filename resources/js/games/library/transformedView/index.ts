@@ -1,4 +1,4 @@
-import {getTVMethods} from './paint';
+import {getPaintMethodsTV} from './paintTV';
 import {setStatistic} from '../statistics';
 import {setTVEvents} from './input';
 import {vector, vector2} from '../canvas';
@@ -51,7 +51,7 @@ const zoom = (scalePos: Vector, type: Zoom) => {
     tv.offset.y += tv.worldBeforeZoom.y - tv.worldAfterZoom.y;
 };
 
-const methods = {
+const methodsTV = {
     screen2World,
     world2Screen,
     world2Screen2,
@@ -61,10 +61,16 @@ const methods = {
     zoom,
 };
 
+const getMethods = () => {
+    //
+};
+
 export const getTV = (ctx: CanvasRenderingContext2D) => {
     setTVEvents(tv);
 
-    const paintMethods = getTVMethods(tv, ctx);
+    const paintMethodsTV = getPaintMethodsTV(tv, ctx);
+
+    const paintMethods = getPaintMethods(ctx);
 
     const createTVUpdateSetWorldClamp = ({width, height}: HTMLCanvasElement) => ({
         id: 1,
@@ -80,7 +86,7 @@ export const getTV = (ctx: CanvasRenderingContext2D) => {
         offset: tv.offset,
         scale: tv.scale,
         createTVUpdateSetWorldClamp,
-        ...paintMethods,
+        ...paintMethodsTV,
         zoom,
         setScale,
         setScaleFactor,
@@ -124,5 +130,5 @@ const tv = {
     worldAfterZoom: vector(),
     scaleFactor: 0.95,
     worldClamp: vector2(),
-    ...methods,
+    ...methodsTV,
 };

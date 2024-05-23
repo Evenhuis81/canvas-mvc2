@@ -11,11 +11,7 @@ type FillCircle = {x: number; y: number; r: number; fill: string};
 
 type Zoom = 'in' | 'out';
 
-// tv.setScreenSize(vector(context.canvas.width, context.canvas.height));
-// tv.setWorldBorders(vector2(0, 0, level.width, level.height));
-// tv.setOffset(vector(-6 + level.playerStart.x, -6 + level.playerStart.y));
-
-export interface TransformedView extends Paint {
+export interface TransformedView extends PaintTV {
     worldClamp: Vector2;
     offset: Vector;
     scale: Vector;
@@ -28,7 +24,7 @@ export interface TransformedView extends Paint {
     setOffset: (offset: Vector) => void;
 }
 
-export interface Paint {
+export interface PaintTV {
     fillRect: (obj: FillRect) => void;
     strokeRect: (obj: StrokeRect) => void;
     line: (obj: Line) => void;
@@ -38,17 +34,11 @@ export interface Paint {
     fillCircle: (obj: FillCircle) => void;
 }
 
-export type TVOptions = {
-    context: CanvasRenderingContext2D;
-    screenSize: Vector;
-    worldBorders?: Vector2;
-    offset?: Vector;
-    scale?: Vector;
-    showWorldBorders?: boolean;
-    showGrid?: number;
-};
+export interface NonTV {
+    fillCircle: (obj: FillCircle) => void;
+}
 
-type Methods = {
+type TVMethods = {
     screen2World: (x: number, y: number) => void;
     world2Screen: (x: number, y: number) => void;
     world2Screen2: (x: number, y: number, x2: number, y2: number) => void;
@@ -76,4 +66,4 @@ type Properties = {
     worldClamp: Vector2;
 };
 
-export type TVProperties = Properties & Methods;
+export type TVProperties = Properties & TVMethods;
