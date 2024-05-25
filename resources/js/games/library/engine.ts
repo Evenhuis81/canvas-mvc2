@@ -1,4 +1,4 @@
-import {Show, Update} from 'games/tombraid/types/game';
+import {Show, Update} from './types';
 
 const updates: Update[] = [];
 const shows: Show[] = [];

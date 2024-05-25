@@ -1,7 +1,6 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable complexity */
 import {gameStore, levelStore} from './store';
-import {setStatistic} from 'library/statistics';
 import {vector} from 'library/canvas';
 import type {Vector} from 'games/tombraid/types/game';
 
@@ -166,10 +165,6 @@ export const getPlayer = (start: Vector) => {
     };
 
     switchMovement.initiate();
-
-    // bunch these all up outside of a specific module (statistic handler module?)
-    setStatistic(() => `playerX: ${player.pos.x.toFixed(2)}, playerY: ${player.pos.y.toFixed(2)}`);
-    setStatistic(() => `velX: ${player.vel.x.toFixed(2)}, velY: ${player.vel.y.toFixed(2)}`);
 
     return {update, show};
 };
