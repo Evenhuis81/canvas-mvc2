@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
 /* eslint-disable prefer-destructuring */
 import {getPaintMethods} from './paint';
@@ -30,7 +31,7 @@ const properties = {
     worldBeforeZoom: vector(),
     worldAfterZoom: vector(),
     scaleFactor: 0.95,
-    worldClamp: vector2(),
+    worldView: vector2(),
 };
 
 const screen2World = (x: number, y: number) => {
@@ -52,11 +53,11 @@ const world2Screen2 = (x: number, y: number, x2: number, y2: number) => {
 
 const getMiddleScreen = () => vector(properties.screenSize.x / 2, properties.screenSize.y / 2);
 
-const setWorldClamp = (x: number, y: number, x2: number, y2: number) => {
-    properties.worldClamp.x = x / properties.scale.x + properties.offset.x;
-    properties.worldClamp.y = y / properties.scale.y + properties.offset.y;
-    properties.worldClamp.x2 = x2 / properties.scale.x + properties.offset.x;
-    properties.worldClamp.y2 = y2 / properties.scale.y + properties.offset.y;
+const setWorldView = (x: number, y: number, x2: number, y2: number) => {
+    properties.worldView.x = x / properties.scale.x + properties.offset.x;
+    properties.worldView.y = y / properties.scale.y + properties.offset.y;
+    properties.worldView.x2 = x2 / properties.scale.x + properties.offset.x;
+    properties.worldView.y2 = y2 / properties.scale.y + properties.offset.y;
 };
 
 const zoomMechanic = {
@@ -86,12 +87,6 @@ const zoom = (scalePos: Vector, type: Zoom) => {
     properties.offset.x += properties.worldBeforeZoom.x - properties.worldAfterZoom.x;
     properties.offset.y += properties.worldBeforeZoom.y - properties.worldAfterZoom.y;
 };
-
-const createTVUpdateSetWorldClamp = ({width, height}: HTMLCanvasElement) => ({
-    id: 1,
-    name: 'update world clamp',
-    fn: () => setWorldClamp(0, 0, width, height),
-});
 
 const setScale = (scale: Vector) => {
     properties.scale.x = scale.x;
@@ -156,12 +151,14 @@ const setDefaults = (context: CanvasRenderingContext2D) => {
 };
 
 const getGrid = (ctx: CanvasRenderingContext2D) => {
-    const {worldTL, worldBR, offset, scale, screen} = properties;
+    const {worldTL, worldBR, worldView, offset, scale, screen} = properties;
 
     const show = {
         id: 89,
         name: 'tv grid',
         fn: () => {
+            setWorldView(0, 0, ctx.canvas.width, ctx.canvas.height);
+
             let xLinesDrawn = 0;
             let yLinesDrawn = 0;
 
@@ -169,24 +166,28 @@ const getGrid = (ctx: CanvasRenderingContext2D) => {
             ctx.lineWidth = 1;
             ctx.beginPath();
 
+            // Columns
             for (let x = worldTL.x; x <= worldBR.x; x++) {
-                // Columns
-                world2Screen(x, worldTL.y);
+                if (x >= worldView.x && x <= worldView.x2) {
+                    world2Screen(x, worldTL.y);
 
-                ctx.moveTo(screen.x, screen.y);
-                ctx.lineTo(screen.x, (worldBR.y - offset.y) * scale.y);
+                    ctx.moveTo(screen.x, screen.y);
+                    ctx.lineTo(screen.x, (worldBR.y - offset.y) * scale.y);
 
-                yLinesDrawn++;
+                    yLinesDrawn++;
+                }
             }
 
+            // Rows
             for (let y = worldTL.y; y <= worldBR.y; y++) {
-                // Rows
-                world2Screen(worldTL.x, y);
+                if (y >= worldView.y && y <= worldView.y2) {
+                    world2Screen(worldTL.x, y);
 
-                ctx.moveTo(screen.x, screen.y);
-                ctx.lineTo((worldBR.x - offset.x) * scale.x, screen.y);
+                    ctx.moveTo(screen.x, screen.y);
+                    ctx.lineTo((worldBR.x - offset.x) * scale.x, screen.y);
 
-                xLinesDrawn++;
+                    xLinesDrawn++;
+                }
             }
 
             ctx.stroke();
@@ -201,16 +202,6 @@ const getGrid = (ctx: CanvasRenderingContext2D) => {
         },
     };
 
-    // properties.screen.x = (x - properties.offset.x) * properties.scale.x;
-    // properties.screen.y = (y - properties.offset.y) * properties.scale.y;
-
-    // const update = {
-    //     id: 89,
-    //     name: 'tv grid',
-    //     fn: () => {
-    //         //
-    //     },
-    // }
     return {show};
 };
 
@@ -221,8 +212,7 @@ const methods = {
     zoomMechanic,
     zoom,
     getMiddleScreen,
-    setWorldClamp,
-    createTVUpdateSetWorldClamp,
+    setWorldView,
     setScale,
     setScaleFactor,
     setScreenSize,

@@ -1,4 +1,4 @@
-import {Update, Vector, Vector2} from '.';
+import {Vector, Vector2} from '.';
 
 type Rect = {x: number; y: number; w: number; h: number};
 type FillRect = Rect & {fill: string};
@@ -32,8 +32,7 @@ export interface MethodsTV {
     };
     zoom: (scalePos: Vector, type: Zoom) => void;
     getMiddleScreen: () => Vector;
-    setWorldClamp: (x: number, y: number, x2: number, y2: number) => void;
-    createTVUpdateSetWorldClamp: (canvas: HTMLCanvasElement) => Update;
+    setWorldView: (x: number, y: number, x2: number, y2: number) => void;
     setScale: (scale: Vector) => void;
     setScaleFactor: (factor: number) => void;
     setScreenSize: (size: Vector) => void;
@@ -53,5 +52,5 @@ export type PropertiesTV = {
     worldBeforeZoom: Vector;
     worldAfterZoom: Vector;
     scaleFactor: number;
-    worldClamp: Vector2;
+    worldView: Vector2;
 };

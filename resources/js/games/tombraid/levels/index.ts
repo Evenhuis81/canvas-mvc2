@@ -63,7 +63,7 @@ const createMapShow = (levelMap: LevelMap, coinMap: CoinMap, tv: TransformedView
             elementsDrawn.nr = 0;
 
             for (let y = 0; y < levelMap.length; y++) {
-                if (y > tv.worldClamp.y - 1 && y <= tv.worldClamp.y2) {
+                if (y > tv.worldView.y - 1 && y <= tv.worldView.y2) {
                     for (let x = 0; x < noEmptyX[y].length; x++) {
                         // replace switch with an object
                         switch (levelMap[y][noEmptyX[y][x]]) {
