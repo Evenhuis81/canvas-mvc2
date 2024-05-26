@@ -159,9 +159,6 @@ const getGrid = (ctx: CanvasRenderingContext2D) => {
         fn: () => {
             setWorldView(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-            let xLinesDrawn = 0;
-            let yLinesDrawn = 0;
-
             ctx.strokeStyle = '#bbbb';
             ctx.lineWidth = 1;
             ctx.beginPath();
@@ -173,8 +170,6 @@ const getGrid = (ctx: CanvasRenderingContext2D) => {
 
                     ctx.moveTo(screen.x, screen.y);
                     ctx.lineTo(screen.x, (worldBR.y - offset.y) * scale.y);
-
-                    yLinesDrawn++;
                 }
             }
 
@@ -185,20 +180,10 @@ const getGrid = (ctx: CanvasRenderingContext2D) => {
 
                     ctx.moveTo(screen.x, screen.y);
                     ctx.lineTo((worldBR.x - offset.x) * scale.x, screen.y);
-
-                    xLinesDrawn++;
                 }
             }
 
             ctx.stroke();
-
-            ctx.font = '24px serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillStyle = 'white';
-
-            ctx.fillText(`yLines: ${yLinesDrawn.toString()}`, 80, 30);
-            ctx.fillText(`xLines: :${xLinesDrawn.toString()}`, 80, 60);
         },
     };
 
