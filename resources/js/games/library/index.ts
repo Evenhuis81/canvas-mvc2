@@ -37,11 +37,3 @@ const clear = (context: CanvasRenderingContext2D) => ({
     name: 'clear screen',
     fn: () => context.clearRect(0, 0, context.canvas.width, context.canvas.height),
 });
-
-// abstract and seperate
-// enableStatistics();
-// setStatistic(() => `elements drawn: ${elementsDrawn.nr}`);
-// setStatistic(() => `offsetX: ${properties.offset.x.toFixed(2)}, Y: ${properties.offset.y.toFixed(2)}`);
-// setStatistic(() => `scale: ${properties.scale.x.toFixed(2)}`);
-// setStatistic(() => `playerX: ${player.pos.x.toFixed(2)}, playerY: ${player.pos.y.toFixed(2)}`);
-// setStatistic(() => `velX: ${player.vel.x.toFixed(2)}, velY: ${player.vel.y.toFixed(2)}`);

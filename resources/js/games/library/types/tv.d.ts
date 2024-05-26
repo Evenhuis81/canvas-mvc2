@@ -1,13 +1,15 @@
 import {Vector, Vector2} from '.';
 
 type Rect = {x: number; y: number; w: number; h: number};
+type Circle = {x: number; y: number; r: number};
 type FillRect = Rect & {fill: string};
 type StrokeRect = Rect & {stroke: string; lw: number};
 type FillStrokeRect = FillRect & {stroke: string; lw: number};
 type RoundFillStrokeRect = FillStrokeRect & {r: number};
 type Line = Omit<Vector2, 'add' | 'set' | 'setManual'> & {stroke: string; lw: number};
 type Text = {x: number; y: number; txt: string; font: string; fill: string}; // auto-centered for now
-type FillCircle = {x: number; y: number; r: number; fill: string};
+type StrokeCircle = Circle & {stroke: string; lw: number};
+type FillCircle = Circle & {fill: string};
 type Zoom = 'in' | 'out';
 
 export interface TransformedView extends PropertiesTV, PaintTV, MethodsTV {}
@@ -20,6 +22,7 @@ export interface PaintTV {
     fillStrokeRect: (obj: FillStrokeRect) => void;
     roundFillStrokeRect: (obj: RoundFillStrokeRect) => void;
     fillCircle: (obj: FillCircle) => void;
+    strokeCircle: (obj: StrokeCircle) => void;
 }
 
 export interface MethodsTV {

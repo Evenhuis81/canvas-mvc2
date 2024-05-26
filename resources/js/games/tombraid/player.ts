@@ -1,8 +1,8 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable complexity */
+import {Vector} from 'games/library/types';
 import {gameStore, levelStore} from './store';
-import {vector} from 'library/canvas';
-import type {Vector} from 'games/tombraid/types/game';
+import {vector} from 'games/library/vector';
 
 // TODO::Tasks for player module
 // 1. make separate modules getplayer methods / inputs / movement / collisions (whatever methods is getting too large);
@@ -53,8 +53,10 @@ const player: PlayerProperties = {
 
 const reset = () => {
     player.direction = 'none';
-    player.vel.setXY(0, 0);
-    player.acc.setXY(0, 0);
+    player.vel.x = 0;
+    player.vel.y = 0;
+    player.acc.x = 0;
+    player.acc.y = 0;
 };
 
 const collide = {
@@ -102,7 +104,8 @@ const collisionAndResolve = () => {
 };
 
 export const friction = () => {
-    player.vel.mult(player.friction);
+    player.vel.x *= player.friction;
+    player.vel.y *= player.friction;
 
     if (player.vel.x < 0.01 && player.vel.x > -0.01) player.vel.x = 0;
     if (player.vel.y < 0.01 && player.vel.y > -0.01) player.vel.y = 0;
@@ -110,8 +113,10 @@ export const friction = () => {
 
 export const getPlayer = (start: Vector) => {
     const {tv} = gameStore.state;
-    player.pos.setXY(start.x, start.y);
-    player.lastPos.setXY(start.x, start.y);
+    player.pos.x = start.x;
+    player.pos.y = start.y;
+    player.lastPos.x = start.x;
+    player.lastPos.y = start.y;
 
     const update = {
         id: 3,
