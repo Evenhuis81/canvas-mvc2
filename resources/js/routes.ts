@@ -1,7 +1,5 @@
-import type {RouteRecordRaw} from 'vue-router';
-
 import Home from 'pages/Home.vue';
-import TR from 'games/TR.vue';
+import type {RouteRecordRaw} from 'vue-router';
 
 export const routes: RouteRecordRaw[] = [
     {
@@ -14,8 +12,16 @@ export const routes: RouteRecordRaw[] = [
     },
     {
         path: '/tr',
-        component: TR,
+        component: () => import('./games/TR.vue'),
         name: 'TombRaid',
+        meta: {
+            shouldBeLoggedIn: false,
+        },
+    },
+    {
+        path: '/loon',
+        component: () => import('./games/Loon.vue'),
+        name: 'Loon',
         meta: {
             shouldBeLoggedIn: false,
         },

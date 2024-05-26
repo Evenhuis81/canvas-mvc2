@@ -2,8 +2,7 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable no-param-reassign */
 import {getCoinMap, getLevelMap} from './levels';
-import {setStatistic} from 'library/statistics';
-import {vector} from 'library/canvas';
+import {vector} from 'games/library/vector';
 import type {CoinMap, LevelMap, MapElement} from 'games/tombraid/types/level';
 import type {TransformedView} from 'games/library/types/tv';
 
@@ -52,9 +51,7 @@ const getEmptyX = (levelMap: LevelMap) => {
 // };
 
 const createMapShow = (levelMap: LevelMap, coinMap: CoinMap, tv: TransformedView) => {
-    // TODO::Make this optional or make it an option (goes for all statistic elements)
     const elementsDrawn = {nr: 0};
-    setStatistic(() => `elements drawn: ${elementsDrawn.nr}`);
 
     const noEmptyX = getEmptyX(levelMap);
 
@@ -66,7 +63,7 @@ const createMapShow = (levelMap: LevelMap, coinMap: CoinMap, tv: TransformedView
             elementsDrawn.nr = 0;
 
             for (let y = 0; y < levelMap.length; y++) {
-                if (y > tv.worldClamp.y - 1 && y <= tv.worldClamp.y2) {
+                if (y > tv.worldView.y - 1 && y <= tv.worldView.y2) {
                     for (let x = 0; x < noEmptyX[y].length; x++) {
                         // replace switch with an object
                         switch (levelMap[y][noEmptyX[y][x]]) {

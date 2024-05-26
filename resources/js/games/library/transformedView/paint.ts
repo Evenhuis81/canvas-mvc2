@@ -3,111 +3,108 @@ import type {
     FillRect,
     FillStrokeRect,
     Line,
+    MethodsTV,
+    PropertiesTV,
     RoundFillStrokeRect,
     StrokeRect,
-    TVProperties,
     Text,
 } from '../types/tv';
 
-export const getTVMethods = (tv: TVProperties, ctx: CanvasRenderingContext2D) => ({
-    fillRect: createFillRect(tv, ctx),
-    strokeRect: createStrokeRect(tv, ctx),
-    line: createLine(tv, ctx),
-    text: createText(tv, ctx),
-    fillStrokeRect: createFillStrokeRect(tv, ctx),
-    roundFillStrokeRect: createRoundFillStrokeRect(tv, ctx),
-    fillCircle: createFillCircle(tv, ctx),
+export const getPaintMethods = (props: PropertiesTV, methods: MethodsTV, ctx: CanvasRenderingContext2D) => ({
+    fillRect: createFillRect(props, methods, ctx),
+    strokeRect: createStrokeRect(props, methods, ctx),
+    line: createLine(props, methods, ctx),
+    text: createText(props, methods, ctx),
+    fillStrokeRect: createFillStrokeRect(props, methods, ctx),
+    roundFillStrokeRect: createRoundFillStrokeRect(props, methods, ctx),
+    fillCircle: createFillCircle(props, methods, ctx),
 });
 
-const createFillCircle = (tv: TVProperties, ctx: CanvasRenderingContext2D) => (obj: FillCircle) => {
-    tv.world2Screen(obj.x, obj.y);
-
-    ctx.fillStyle = obj.fill;
-
-    ctx.beginPath();
-
-    ctx.arc(tv.screen.x, tv.screen.y, obj.r * tv.scale.x, 0, Math.PI * 2);
-
-    ctx.fill();
-};
-
-const createFillRect =
-    (tv: TVProperties, ctx: CanvasRenderingContext2D) =>
-    <T extends FillRect>(obj: T) => {
-        tv.world2Screen(obj.x, obj.y);
+const createFillCircle =
+    ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
+    (obj: FillCircle) => {
+        world2Screen(obj.x, obj.y);
 
         ctx.fillStyle = obj.fill;
 
-        ctx.fillRect(tv.screen.x, tv.screen.y, obj.w * tv.scale.x, obj.h * tv.scale.y);
+        ctx.beginPath();
+
+        ctx.arc(screen.x, screen.y, obj.r * scale.x, 0, Math.PI * 2);
+
+        ctx.fill();
     };
 
-const createStrokeRect = (tv: TVProperties, ctx: CanvasRenderingContext2D) => (obj: StrokeRect) => {
-    tv.world2Screen(obj.x, obj.y);
+const createFillRect =
+    ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
+    (obj: FillRect) => {
+        world2Screen(obj.x, obj.y);
 
-    ctx.strokeStyle = obj.stroke;
+        ctx.fillStyle = obj.fill;
 
-    ctx.strokeRect(tv.screen.x, tv.screen.y, obj.w * tv.scale.x, obj.h * tv.scale.y);
-};
+        ctx.fillRect(screen.x, screen.y, obj.w * scale.x, obj.h * scale.y);
+    };
 
-const createLine = (tv: TVProperties, ctx: CanvasRenderingContext2D) => (obj: Line) => {
-    tv.world2Screen2(obj.x, obj.y, obj.x2, obj.y2);
+const createStrokeRect =
+    ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
+    (obj: StrokeRect) => {
+        world2Screen(obj.x, obj.y);
 
-    ctx.lineWidth = tv.scale.x * 0.1; // make non-hardcorded
-    ctx.strokeStyle = obj.stroke;
+        ctx.strokeStyle = obj.stroke;
 
-    ctx.beginPath();
-    ctx.moveTo(tv.screen.x, tv.screen.y);
-    ctx.lineTo(tv.screen.x2, tv.screen.y2);
-    ctx.stroke();
-};
+        ctx.strokeRect(screen.x, screen.y, obj.w * scale.x, obj.h * scale.y);
+    };
 
-const createText = (tv: TVProperties, ctx: CanvasRenderingContext2D) => (obj: Text) => {
-    tv.world2Screen(obj.x, obj.y);
+const createLine =
+    ({screen, scale}: PropertiesTV, {world2Screen2}: MethodsTV, ctx: CanvasRenderingContext2D) =>
+    (obj: Line) => {
+        world2Screen2(obj.x, obj.y, obj.x2, obj.y2);
 
-    ctx.font = `${tv.scale.x}px serif`; // make non-hardcoded
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillStyle = obj.fill;
+        ctx.lineWidth = scale.x * 0.1; // make non-hardcorded
+        ctx.strokeStyle = obj.stroke;
 
-    ctx.fillText(obj.txt, tv.screen.x, tv.screen.y);
-};
+        ctx.beginPath();
+        ctx.moveTo(screen.x, screen.y);
+        ctx.lineTo(screen.x2, screen.y2);
+        ctx.stroke();
+    };
 
-const createFillStrokeRect = (tv: TVProperties, ctx: CanvasRenderingContext2D) => (obj: FillStrokeRect) => {
-    tv.world2Screen(obj.x, obj.y);
+const createText =
+    ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
+    (obj: Text) => {
+        world2Screen(obj.x, obj.y);
 
-    ctx.strokeStyle = obj.stroke;
-    ctx.fillStyle = obj.fill;
+        ctx.font = `${scale.x}px serif`; // make non-hardcoded
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = obj.fill;
 
-    ctx.beginPath();
-    ctx.rect(tv.screen.x, tv.screen.y, obj.w * tv.scale.x, obj.h * tv.scale.y);
-    ctx.fill();
-    ctx.stroke();
-};
+        ctx.fillText(obj.txt, screen.x, screen.y);
+    };
 
-const createRoundFillStrokeRect = (tv: TVProperties, ctx: CanvasRenderingContext2D) => (obj: RoundFillStrokeRect) => {
-    tv.world2Screen(obj.x, obj.y);
+const createFillStrokeRect =
+    ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
+    (obj: FillStrokeRect) => {
+        world2Screen(obj.x, obj.y);
 
-    ctx.strokeStyle = obj.stroke;
-    ctx.fillStyle = obj.fill;
+        ctx.strokeStyle = obj.stroke;
+        ctx.fillStyle = obj.fill;
 
-    ctx.beginPath();
-    ctx.roundRect(tv.screen.x, tv.screen.y, obj.w * tv.scale.x, obj.h * tv.scale.y, obj.r * tv.scale.x);
-    ctx.fill();
-    ctx.stroke();
-};
+        ctx.beginPath();
+        ctx.rect(screen.x, screen.y, obj.w * scale.x, obj.h * scale.y);
+        ctx.fill();
+        ctx.stroke();
+    };
 
-// const gridPos = vector2();
+const createRoundFillStrokeRect =
+    ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
+    (obj: RoundFillStrokeRect) => {
+        world2Screen(obj.x, obj.y);
 
-// const gridShow = () => {
-//     for (let y = 0; y < gridSize + 1; y++) {
-//         for (let x = 0; x < gridSize + 1; x++) {
-//             // columns (vertical)
-//             gridPos.setManual(x, 0, x, gridSize);
-//             gameStore.state.tv.line(gridPos);
+        ctx.strokeStyle = obj.stroke;
+        ctx.fillStyle = obj.fill;
 
-//             // rows (horizontal)
-//             gridPos.setManual(0, y, gridSize, y);
-//             gameStore.state.tv.line(gridPos);
-//         }
-//     }
-// };
+        ctx.beginPath();
+        ctx.roundRect(screen.x, screen.y, obj.w * scale.x, obj.h * scale.y, obj.r * scale.x);
+        ctx.fill();
+        ctx.stroke();
+    };

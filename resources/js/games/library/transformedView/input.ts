@@ -1,47 +1,57 @@
-import {TVProperties} from '../types/tv';
-import {keyHeld, mouse} from 'games/tombraid/input';
+import {keyHeld, mouse} from '../input';
+import type {MethodsTV, PropertiesTV} from '../types/tv';
 
-const mousedownHandler = (tv: TVProperties) => (evt: MouseEvent) => {
-    keyHeld[evt.button] = true;
-    if (evt.button === 0) {
-        tv.startPan.setXY(evt.offsetX, evt.offsetY);
+const mousedownHandler =
+    ({startPan}: PropertiesTV, methods: MethodsTV) =>
+    (evt: MouseEvent) => {
+        keyHeld[evt.button] = true;
+        if (evt.button === 0) {
+            startPan.x = evt.offsetX;
+            startPan.y = evt.offsetY;
 
-        tv.screen2World(evt.offsetX, evt.offsetY); // = set to world vector
-    }
-};
-const mousemoveHandler = (tv: TVProperties) => (evt: MouseEvent) => {
+            methods.screen2World(evt.offsetX, evt.offsetY); // = set to world vector
+        }
+    };
+
+const mousemoveHandler = (props: PropertiesTV) => (evt: MouseEvent) => {
     if (keyHeld[0]) {
-        tv.offset.x -= (evt.offsetX - tv.startPan.x) / tv.scale.x;
-        tv.offset.y -= (evt.offsetY - tv.startPan.y) / tv.scale.y;
+        props.offset.x -= (evt.offsetX - props.startPan.x) / props.scale.x;
+        props.offset.y -= (evt.offsetY - props.startPan.y) / props.scale.y;
 
-        tv.startPan.setXY(evt.offsetX, evt.offsetY);
+        props.startPan.x = evt.offsetX;
+        props.startPan.y = evt.offsetY;
     }
 };
+
 const mouseupHandler =
     () =>
     ({button}: MouseEvent) => {
         delete keyHeld[button];
     };
+
 const keydownHandler =
-    (tv: TVProperties) =>
+    ({zoom, getMiddleScreen}: MethodsTV) =>
     ({code}: KeyboardEvent) => {
-        if (code === 'KeyQ') tv.zoom(tv.getMiddleScreen(), 'out');
-        else if (code === 'KeyE') tv.zoom(tv.getMiddleScreen(), 'in');
+        if (code === 'KeyQ') zoom(getMiddleScreen(), 'out');
+        else if (code === 'KeyE') zoom(getMiddleScreen(), 'in');
     };
-const wheelHandler = (tv: TVProperties) => (evt: WheelEvent) => {
-    if (evt.deltaY < 0) {
-        tv.zoom(mouse, 'in');
 
-        return;
-    }
+const wheelHandler =
+    ({zoom}: MethodsTV) =>
+    (evt: WheelEvent) => {
+        if (evt.deltaY < 0) {
+            zoom(mouse, 'in');
 
-    tv.zoom(mouse, 'out');
-};
+            return;
+        }
 
-export const setTVEvents = (tv: TVProperties) => {
-    addEventListener('mousedown', mousedownHandler(tv));
-    addEventListener('mousemove', mousemoveHandler(tv));
+        zoom(mouse, 'out');
+    };
+
+export const setTVEvents = (props: PropertiesTV, methods: MethodsTV) => {
+    addEventListener('mousedown', mousedownHandler(props, methods));
+    addEventListener('mousemove', mousemoveHandler(props));
     addEventListener('mouseup', mouseupHandler());
-    addEventListener('keydown', keydownHandler(tv));
-    addEventListener('wheel', wheelHandler(tv));
+    addEventListener('keydown', keydownHandler(methods));
+    addEventListener('wheel', wheelHandler(methods));
 };

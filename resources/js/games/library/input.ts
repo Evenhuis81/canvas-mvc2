@@ -1,9 +1,4 @@
-import {vector} from '../library/canvas';
-
-// export const setEvent = <EventType extends keyof Partial<WindowEventMap>>(
-//     type: EventType,
-//     listener: (evt: WindowEventMap[EventType]) => void,
-// ) => addEventListener<EventType>(type, listener);
+import {vector} from './vector';
 
 export const mouse = vector();
 
@@ -18,3 +13,8 @@ export const setMouseInput = (canvas: HTMLCanvasElement) => {
         mouse.y = +(evt.clientY - rect.top).toFixed(0);
     });
 };
+
+// export const setEvent = <EventType extends keyof Partial<WindowEventMap>>(
+//     type: EventType,
+//     listener: (evt: WindowEventMap[EventType]) => void,
+// ) => addEventListener<EventType>(type, listener);

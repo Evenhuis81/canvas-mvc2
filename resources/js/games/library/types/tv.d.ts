@@ -1,34 +1,18 @@
-import {Update, Vector, Vector2} from 'games/tombraid/types/game';
+import {Vector, Vector2} from '.';
 
 type Rect = {x: number; y: number; w: number; h: number};
-export type FillRect = Rect & {fill: string};
-export type StrokeRect = Rect & {stroke: string; lw: number};
+type FillRect = Rect & {fill: string};
+type StrokeRect = Rect & {stroke: string; lw: number};
 type FillStrokeRect = FillRect & {stroke: string; lw: number};
 type RoundFillStrokeRect = FillStrokeRect & {r: number};
 type Line = Omit<Vector2, 'add' | 'set' | 'setManual'> & {stroke: string; lw: number};
 type Text = {x: number; y: number; txt: string; font: string; fill: string}; // auto-centered for now
 type FillCircle = {x: number; y: number; r: number; fill: string};
-
 type Zoom = 'in' | 'out';
 
-// tv.setScreenSize(vector(context.canvas.width, context.canvas.height));
-// tv.setWorldBorders(vector2(0, 0, level.width, level.height));
-// tv.setOffset(vector(-6 + level.playerStart.x, -6 + level.playerStart.y));
+export interface TransformedView extends PropertiesTV, PaintTV, MethodsTV {}
 
-export interface TransformedView extends Paint {
-    worldClamp: Vector2;
-    offset: Vector;
-    scale: Vector;
-    createTVUpdateSetWorldClamp: (canvas: HTMLCanvasElement) => Update;
-    zoom: (scalePos: Vector, type: Zoom) => void;
-    setScale: (scale: Vector) => void;
-    setScaleFactor: (factor: number) => void;
-    setScreenSize: (size: Vector) => void;
-    setWorldBorders: (borders: Vector2) => void;
-    setOffset: (offset: Vector) => void;
-}
-
-export interface Paint {
+export interface PaintTV {
     fillRect: (obj: FillRect) => void;
     strokeRect: (obj: StrokeRect) => void;
     line: (obj: Line) => void;
@@ -38,30 +22,25 @@ export interface Paint {
     fillCircle: (obj: FillCircle) => void;
 }
 
-export type TVOptions = {
-    context: CanvasRenderingContext2D;
-    screenSize: Vector;
-    worldBorders?: Vector2;
-    offset?: Vector;
-    scale?: Vector;
-    showWorldBorders?: boolean;
-    showGrid?: number;
-};
-
-type Methods = {
+export interface MethodsTV {
     screen2World: (x: number, y: number) => void;
     world2Screen: (x: number, y: number) => void;
     world2Screen2: (x: number, y: number, x2: number, y2: number) => void;
-    getMiddleScreen: () => Vector;
-    setWorldClamp: (x: number, y: number, x2: number, y2: number) => void;
     zoomMechanic: {
         in: () => void;
         out: () => void;
     };
     zoom: (scalePos: Vector, type: Zoom) => void;
-};
+    getMiddleScreen: () => Vector;
+    setWorldView: (x: number, y: number, x2: number, y2: number) => void;
+    setScale: (scale: Vector) => void;
+    setScaleFactor: (factor: number) => void;
+    setScreenSize: (size: Vector) => void;
+    setWorldBorders: (borders: Vector2) => void;
+    setOffset: (offset: Vector) => void;
+}
 
-type Properties = {
+export type PropertiesTV = {
     offset: Vector;
     scale: Vector;
     screen: Vector2;
@@ -73,7 +52,5 @@ type Properties = {
     worldBeforeZoom: Vector;
     worldAfterZoom: Vector;
     scaleFactor: number;
-    worldClamp: Vector2;
+    worldView: Vector2;
 };
-
-export type TVProperties = Properties & Methods;
