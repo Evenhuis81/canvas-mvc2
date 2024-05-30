@@ -43,7 +43,9 @@ const phases: Record<number, () => void> = {
             player.phase++;
         }
 
-        console.log(player.alphaVel);
+        // put this in the statistics menu and create a new canvas/view for all kind of statistics show
+        // (with a (retro?) menu)
+        // console.log(player.alphaVel);
     },
     2: () => {
         // oscillaterate alpha between 0.5 and 1
@@ -57,7 +59,8 @@ const phases: Record<number, () => void> = {
 
         player.stroke = `rgba(255, 255, 255, ${(Math.sin(player.alpha) + 2) / 4 + 0.25})`;
 
-        console.log(player.alphaVel);
+        // check comment on console log ability above
+        // console.log(player.alphaVel);
     },
 };
 
