@@ -17,8 +17,9 @@ const player = {
     left: false,
     right: false,
     alpha: 0,
-    // alphaChange: 0.005,
-    alphaChange: 0.01,
+    alphaVel: 0,
+    alphaVelLimit: 1,
+    alphaAcc: 0.0001,
     phase: 1,
 };
 
@@ -31,20 +32,32 @@ const limit = () => {
 const phases: Record<number, () => void> = {
     1: () => {
         // fade in
-        player.alpha += player.alphaChange;
+        player.alphaVel += player.alphaAcc;
+
+        player.alpha += player.alphaVel;
+
         player.stroke = `rgba(255, 255, 255, ${player.alpha})`;
 
         if (player.alpha >= 1) {
             player.alpha = Math.PI / 2;
             player.phase++;
         }
+
+        console.log(player.alphaVel);
     },
     2: () => {
-        player.alpha += player.alphaChange;
+        // oscillaterate alpha between 0.5 and 1
 
-        // player.alpha = ;
+        // make phases change from engine, implement phaseShifter and put it in the store.
+
+        // Make sure it is a seperate task and run this through github and make a pull request.
+        player.alphaVel += player.alphaAcc;
+
+        player.alpha += player.alphaVel;
 
         player.stroke = `rgba(255, 255, 255, ${(Math.sin(player.alpha) + 2) / 4 + 0.25})`;
+
+        console.log(player.alphaVel);
     },
 };
 
