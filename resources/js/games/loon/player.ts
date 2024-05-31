@@ -16,11 +16,6 @@ const player = {
     down: false,
     left: false,
     right: false,
-    alpha: 0,
-    alphaVel: 0,
-    alphaVelLimit: 1,
-    alphaAcc: 0.0001,
-    phase: 1,
 };
 
 const limit = () => {
@@ -29,40 +24,51 @@ const limit = () => {
     vel.y = Math.min(max, Math.max(-max, vel.y));
 };
 
-const phases: Record<number, () => void> = {
-    1: () => {
-        // fade in
-        player.alphaVel += player.alphaAcc;
-
-        player.alpha += player.alphaVel;
-
-        player.stroke = `rgba(255, 255, 255, ${player.alpha})`;
-
-        if (player.alpha >= 1) {
-            player.alpha = Math.PI / 2;
-            player.phase++;
-        }
-
-        // put this in the statistics menu and create a new canvas/view for all kind of statistics show
-        // (with a (retro?) menu)
-        // console.log(player.alphaVel);
-    },
-    2: () => {
-        // oscillaterate alpha between 0.5 and 1
-
-        // make phases change from engine, implement phaseShifter and put it in the store.
-
-        // Make sure it is a seperate task and run this through github and make a pull request.
-        player.alphaVel += player.alphaAcc;
-
-        player.alpha += player.alphaVel;
-
-        player.stroke = `rgba(255, 255, 255, ${(Math.sin(player.alpha) + 2) / 4 + 0.25})`;
-
-        // check comment on console log ability above
-        // console.log(player.alphaVel);
-    },
+const fade = {
+    alpha: 0,
+    alphaVel: 0,
+    alphaVelLimit: 1,
+    alphaAcc: 0.0001,
 };
+
+export const fadeIn = () => {
+    fade.alphaVel += fade.alphaAcc;
+
+    fade.alpha += fade.alphaVel;
+
+    if (fade.alpha > 1) fade.alpha = 1;
+
+    player.stroke = `rgba(255, 255, 255, ${fade.alpha})`;
+
+    // put this in the statistics menu and create a new canvas/view for all kind of statistics show
+    // (with a (retro?) menu)
+    // console.log(player.alphaVel);
+};
+
+export const fadeOscillate = () => {
+    // oscillaterate alpha between 0.5 and 1
+
+    // make phases change from engine, implement phaseShifter and put it in the store.
+
+    // Make sure it is a seperate task and run this through github and make a pull request.
+    fade.alphaVel += fade.alphaAcc;
+
+    fade.alpha += fade.alphaVel;
+
+    player.stroke = `rgba(255, 255, 255, ${(Math.sin(fade.alpha) + 2) / 4 + 0.25})`;
+
+    // check comment on console log ability above
+    // console.log(player.alphaVel);
+};
+
+// const phases: Record<number, () => void> = {
+//     1: () => {
+//         //
+//     },
+//     2: () => {
+//         //
+//     },
+// };
 
 export const getPlayer = (tv: TransformedView) => {
     const {pos, vel, acc} = player;
@@ -87,8 +93,6 @@ export const getPlayer = (tv: TransformedView) => {
 
             acc.x = 0;
             acc.y = 0;
-
-            phases[player.phase]();
         },
     };
 

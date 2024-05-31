@@ -8,4 +8,6 @@ export interface Engine {
     halt: () => void;
     showsOverview: () => void;
     updatesOverview: () => void;
+    removeUpdate: (id: number) => void;
+    removeShow: (id: number) => void;
 }
