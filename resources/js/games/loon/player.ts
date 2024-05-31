@@ -61,15 +61,6 @@ export const fadeOscillate = () => {
     // console.log(player.alphaVel);
 };
 
-// const phases: Record<number, () => void> = {
-//     1: () => {
-//         //
-//     },
-//     2: () => {
-//         //
-//     },
-// };
-
 export const getPlayer = (tv: TransformedView) => {
     const {pos, vel, acc} = player;
     const update = {

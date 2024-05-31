@@ -28,10 +28,6 @@ export const getEngine = () => {
         updatesOverview,
         removeUpdate,
         removeShow,
-        clearOn,
-        clearOff,
-        dotOn,
-        dotOff,
     };
 };
 
@@ -75,42 +71,11 @@ const removeShow = (id: number) => {
 };
 
 const showsOverview = () => {
+    // eslint-disable-next-line no-console
     console.log(shows);
 };
 
 const updatesOverview = () => {
+    // eslint-disable-next-line no-console
     console.log(updates);
-};
-
-const dotMiddle = (context: CanvasRenderingContext2D) => ({
-    id: 99,
-    name: 'dot in middle',
-    fn: () => {
-        context.beginPath();
-        context.fillStyle = 'white';
-        context.arc(context.canvas.width / 2, context.canvas.height / 2, 2, 0, Math.PI * 2);
-        context.fill();
-    },
-});
-
-const clear = (context: CanvasRenderingContext2D) => ({
-    id: 0,
-    name: 'clear screen',
-    fn: () => context.clearRect(0, 0, context.canvas.width, context.canvas.height),
-});
-
-const clearOn = (context: CanvasRenderingContext2D) => {
-    updates.push(clear(context));
-};
-
-const clearOff = () => {
-    removeShow(0); // clear show id = 89
-};
-
-const dotOn = (context: CanvasRenderingContext2D) => {
-    shows.push(dotMiddle(context));
-};
-
-const dotOff = () => {
-    removeShow(99); // dot show id = 99
 };

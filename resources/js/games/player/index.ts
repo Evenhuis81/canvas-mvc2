@@ -6,14 +6,14 @@ import type {Resources} from 'games/library/types';
 
 export default {
     setup: () => {
-        const {canvas, context, engine, tv} = getDefaultResource();
-
-        engine.clearOn(context);
-        tv.gridOn(engine, context);
-        engine.dotOn(context);
-
+        const {canvas, context, engine, tv, options} = getDefaultResource();
         resources.set({canvas, context, engine, tv});
         setMouseInput(canvas);
+
+        const {setClear, setDot, setGrid} = options;
+        setClear();
+        setDot();
+        setGrid();
 
         const player = getPlayer();
 

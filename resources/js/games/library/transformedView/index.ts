@@ -1,7 +1,6 @@
 /* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
 /* eslint-disable prefer-destructuring */
-import {Engine} from '../types/engine';
 import {getPaintMethods} from './paint';
 import {setTVEvents} from './input';
 import {vector, vector2} from '../vector';
@@ -151,22 +150,6 @@ const setDefaults = (context: CanvasRenderingContext2D) => {
     // tv.setOffset(vector(-6 + level.playerStart.x, -6 + level.playerStart.y));
 };
 
-// const grid = tv.getGrid(context);
-// const dotInMiddle = dotMiddle(context);
-// const clearScreen = clear(context);
-
-// engine.setUpdate(clearScreen);
-// engine.setShow(grid.show);
-// engine.setShow(dotInMiddle);
-
-const gridOn = (engine: Engine, context: CanvasRenderingContext2D) => {
-    engine.setShow(getGrid(context).show);
-};
-
-const gridOff = (engine: Engine) => {
-    engine.removeShow(89); // grid show id = 89
-};
-
 const getGrid = (ctx: CanvasRenderingContext2D) => {
     const {worldTL, worldBR, worldView, offset, scale, screen} = properties;
 
@@ -222,6 +205,4 @@ const methods = {
     setOffset,
     setDefaults,
     getGrid,
-    gridOn,
-    gridOff,
 };
