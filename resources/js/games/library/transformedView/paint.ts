@@ -28,11 +28,13 @@ const createStrokeCircle =
         world2Screen(obj.x, obj.y);
 
         ctx.strokeStyle = obj.stroke;
-        ctx.lineWidth = obj.lw;
+
+        // set scale for every weight of line and others
+        ctx.lineWidth = obj.lw / scale.x;
 
         ctx.beginPath();
 
-        ctx.arc(screen.x, screen.y, obj.r * scale.x, 0, Math.PI * 2);
+        ctx.arc(screen.x, screen.y, obj.r * scale.x, obj.rS, obj.rE);
 
         ctx.stroke();
     };

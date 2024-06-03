@@ -9,7 +9,6 @@ import '../css/app.css';
 const app = createApp(App);
 
 addRoutes(routes);
-mountRouter(app);
 
 try {
     await csrfCookie();
@@ -18,5 +17,6 @@ try {
 } catch (_) {
     //
 } finally {
+    mountRouter(app);
     app.mount('#app');
 }

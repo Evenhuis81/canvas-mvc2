@@ -91,14 +91,14 @@ export const getPlayer = (tv: TransformedView) => {
         id: 2,
         name: 'player',
         fn: () => {
-            tv.strokeCircle({x: pos.x, y: pos.y, r: player.r, lw: player.lw, stroke: player.stroke});
+            // tv.strokeCircle({x: pos.x, y: pos.y, r: player.r, lw: player.lw, stroke: player.stroke});
         },
     };
 
     return {
         update,
         show,
-        ...player,
+        ...player, // avoid, keep encapsulated
     };
 };
 

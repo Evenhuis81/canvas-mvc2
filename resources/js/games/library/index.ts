@@ -1,35 +1,26 @@
 import {Engine} from './types/engine';
 import {getCanvas, getContext2D} from './canvas';
 import {getEngine} from './engine';
-import {getTV} from './transformedView';
 
-export const getDefaultResource = () => {
+export const getResources = () => {
     const canvas = getCanvas();
     const context = getContext2D(canvas);
     const engine = getEngine();
-    const tv = getTV(context);
-
-    tv.setDefaults(context);
 
     const setClear = () => clearOn(engine, context);
     const setDot = () => dotOn(engine, context);
     const removeClear = () => clearOff(engine);
     const removeDot = () => dotOff(engine);
-    const setGrid = () => {};
-    const removeGrid = () => {};
 
     return {
         canvas,
         context,
         engine,
-        tv,
         options: {
             setClear,
             setDot,
             removeClear,
             removeDot,
-            setGrid,
-            removeGrid,
         },
     };
 };

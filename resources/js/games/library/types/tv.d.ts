@@ -8,7 +8,7 @@ type FillStrokeRect = FillRect & {stroke: string; lw: number};
 type RoundFillStrokeRect = FillStrokeRect & {r: number};
 type Line = Omit<Vector2, 'add' | 'set' | 'setManual'> & {stroke: string; lw: number};
 type Text = {x: number; y: number; txt: string; font: string; fill: string}; // auto-centered for now
-type StrokeCircle = Circle & {stroke: string; lw: number};
+type StrokeCircle = Circle & {stroke: string; lw: number; rS: number; rE: number}; // rS: arc start, rE: arc end
 type FillCircle = Circle & {fill: string};
 type Zoom = 'in' | 'out';
 
