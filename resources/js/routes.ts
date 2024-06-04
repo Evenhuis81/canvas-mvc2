@@ -26,4 +26,20 @@ export const routes: RouteRecordRaw[] = [
             shouldBeLoggedIn: false,
         },
     },
+    {
+        path: '/player',
+        component: () => import('./games/Player.vue'),
+        name: 'player',
+        meta: {
+            shouldBeLoggedIn: false,
+        },
+    },
+    {
+        path: '/dev',
+        component: () => import('./Dev.vue'),
+        name: 'dev',
+        meta: {
+            shouldBeLoggedIn: false,
+        },
+    },
 ];

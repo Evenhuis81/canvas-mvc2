@@ -6,6 +6,7 @@ import type {
     MethodsTV,
     PropertiesTV,
     RoundFillStrokeRect,
+    StrokeCircle,
     StrokeRect,
     Text,
 } from '../types/tv';
@@ -18,7 +19,25 @@ export const getPaintMethods = (props: PropertiesTV, methods: MethodsTV, ctx: Ca
     fillStrokeRect: createFillStrokeRect(props, methods, ctx),
     roundFillStrokeRect: createRoundFillStrokeRect(props, methods, ctx),
     fillCircle: createFillCircle(props, methods, ctx),
+    strokeCircle: createStrokeCircle(props, methods, ctx),
 });
+
+const createStrokeCircle =
+    ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
+    (obj: StrokeCircle) => {
+        world2Screen(obj.x, obj.y);
+
+        ctx.strokeStyle = obj.stroke;
+
+        // set scale for every weight of line and others
+        ctx.lineWidth = obj.lw / scale.x;
+
+        ctx.beginPath();
+
+        ctx.arc(screen.x, screen.y, obj.r * scale.x, obj.rS, obj.rE);
+
+        ctx.stroke();
+    };
 
 const createFillCircle =
     ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>

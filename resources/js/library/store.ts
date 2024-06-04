@@ -1,3 +1,5 @@
+import {Resources} from './types';
+
 export const createStore = <T extends object>() => {
     const state = <T>{};
 
@@ -5,3 +7,5 @@ export const createStore = <T extends object>() => {
 
     return {set, state};
 };
+
+export const resources = createStore<Resources>();

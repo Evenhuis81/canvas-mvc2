@@ -32,6 +32,7 @@ const properties = {
     worldAfterZoom: vector(),
     scaleFactor: 0.95,
     worldView: vector2(),
+    orientation: '',
 };
 
 const screen2World = (x: number, y: number) => {
@@ -118,7 +119,6 @@ const setDefaults = (context: CanvasRenderingContext2D) => {
     const {width, height} = context.canvas;
 
     let scale: number;
-    // let orientation: 'landscape' | 'portrait';
     const worldBorders = vector2();
 
     if (width > height) {
@@ -131,10 +131,11 @@ const setDefaults = (context: CanvasRenderingContext2D) => {
         worldBorders.x2 = 30;
         worldBorders.y2 = 15;
     } else {
+        // console.log('orientation = portrait');
         // h = 24 (9:16 not exactly?, worldBorders.y = 36 (-6, +6))
         // w = 12 (worldBorders.x = 18 (-3, +3)
         scale = width / 12;
-        // orientation = 'portrait';
+        properties.orientation = 'portrait';
         worldBorders.x = -3;
         worldBorders.y = -6;
         worldBorders.x2 = 15;
@@ -150,7 +151,7 @@ const setDefaults = (context: CanvasRenderingContext2D) => {
     // tv.setOffset(vector(-6 + level.playerStart.x, -6 + level.playerStart.y));
 };
 
-const getGrid = (ctx: CanvasRenderingContext2D) => {
+const getTVGrid = (ctx: CanvasRenderingContext2D) => {
     const {worldTL, worldBR, worldView, offset, scale, screen} = properties;
 
     const show = {
@@ -204,5 +205,5 @@ const methods = {
     setWorldBorders,
     setOffset,
     setDefaults,
-    getGrid,
+    getTVGrid,
 };

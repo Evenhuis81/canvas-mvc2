@@ -1,5 +1,5 @@
 /* eslint-disable max-lines-per-function */
-import {Vector, Vector2} from './types';
+import {Vector, Vector2} from './types/vector';
 
 export const vector: (x?: number, y?: number) => Vector = (x: number = 0, y: number = 0) => {
     let xValue = x;
