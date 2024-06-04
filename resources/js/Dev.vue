@@ -7,8 +7,10 @@ import {onMounted} from 'vue';
 import library from 'library/index';
 
 onMounted(() => {
-    library.initialize('container');
+    const {initialize, runDemo} = library;
 
-    library.demo();
+    initialize('container');
+
+    runDemo();
 });
 </script>

@@ -18,7 +18,7 @@ export default {
             setDefaults(canvas, container);
         }
     },
-    demo: () => {
+    runDemo: () => {
         const {engine, context} = resources.state;
 
         clearOn(engine, context);
