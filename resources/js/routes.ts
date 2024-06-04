@@ -34,4 +34,12 @@ export const routes: RouteRecordRaw[] = [
             shouldBeLoggedIn: false,
         },
     },
+    {
+        path: '/dev',
+        component: () => import('./Dev.vue'),
+        name: 'dev',
+        meta: {
+            shouldBeLoggedIn: false,
+        },
+    },
 ];
