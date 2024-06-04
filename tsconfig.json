@@ -25,7 +25,7 @@
         "baseUrl": ".",
         "paths": {
             "games/*": ["./resources/js/games/*"],
-            "library/*": ["./resources/js/games/library/*"],
+            "library/*": ["./resources/js/library/*"],
             "tombraid/*": ["./resources/js/games/tombraid/*"],
             "store/*": ["./resources/js/store/modules/*"],
             "pages/*": ["./resources/js/pages/*"],

@@ -30,14 +30,4 @@ export const setDefaults = (canvas: HTMLCanvasElement, container: HTMLDivElement
     container.style.alignItems = 'center';
 
     container.appendChild(canvas);
-
-    document.body.appendChild(container);
-};
-
-export const getContainer = (id: string) => {
-    const container = document.getElementById(id);
-
-    if (!(container instanceof HTMLDivElement)) throw new Error(`can't find div with id '${id}'`);
-
-    return container;
 };

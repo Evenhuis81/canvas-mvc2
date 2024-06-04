@@ -1,81 +1,82 @@
-import {Show, Update} from './types';
+import {EngineProperties, Show, Update} from './types/engine';
 
-const updates: Update[] = [];
-const shows: Show[] = [];
-let requestID: number = 0;
-let stop = false;
+const createProperties: () => EngineProperties = () => ({
+    updates: [],
+    shows: [],
+    requestID: 0,
+    stop: false,
+});
 
 export const getEngine = () => {
+    const properties = createProperties();
+
+    const loop = createLoop(properties);
+
     const run = () => loop();
 
     const runOnce = () => {
-        stop = true;
+        properties.stop = true;
 
         loop();
     };
 
     const halt = () => {
-        stop = true;
+        properties.stop = true;
     };
 
+    const showAndUpdateMethods = createSetAndRemoveUpdatesAndShows(properties);
+
     return {
-        setUpdate,
-        setShow,
         run,
         runOnce,
         halt,
-        showsOverview,
-        updatesOverview,
-        removeUpdate,
-        removeShow,
+        ...showAndUpdateMethods,
     };
 };
 
-const loop = () => {
-    for (const update of updates) update.fn();
+const createLoop = (properties: EngineProperties) => {
+    const loop = () => {
+        for (const update of properties.updates) update.fn();
 
-    for (const show of shows) show.fn();
+        for (const show of properties.shows) show.fn();
 
-    requestID = requestAnimationFrame(loop);
+        properties.requestID = requestAnimationFrame(loop);
 
-    if (stop) {
-        cancelAnimationFrame(requestID);
+        if (properties.stop) {
+            cancelAnimationFrame(properties.requestID);
 
-        stop = false;
-    }
+            properties.stop = false;
+        }
+    };
+
+    return loop;
 };
 
-// Create a set/remove update/show that orders according to id number (lower = first, higher = last)
-const setUpdate = (update: Update) => {
-    updates.push(update);
-};
+// TODO::Create a set/remove update/show that orders according to id number (lower = first, higher = last)
+const createSetAndRemoveUpdatesAndShows = (properties: EngineProperties) => {
+    const setUpdate = (update: Update) => {
+        properties.updates.push(update);
+    };
 
-const setShow = (show: Show) => {
-    shows.push(show);
-};
+    const setShow = (show: Show) => {
+        properties.shows.push(show);
+    };
 
-const removeUpdate = (id: number) => {
-    const index = updates.findIndex(update => update.id === id);
+    const removeUpdate = (id: number) => {
+        const index = properties.updates.findIndex(update => update.id === id);
 
-    if (index === -1) throw Error(`update with id '${id}' not found, nothing to remove`);
+        if (index === -1) throw Error(`update with id '${id}' not found, nothing to remove`);
 
-    updates.splice(index, 1);
-};
+        properties.updates.splice(index, 1);
+    };
 
-const removeShow = (id: number) => {
-    const index = shows.findIndex(show => show.id === id);
+    const removeShow = (id: number) => {
+        const index = properties.shows.findIndex(show => show.id === id);
 
-    if (index === -1) throw Error(`show with id '${id}' not found, nothing to remove`);
+        if (index === -1) throw Error(`show with id '${id}' not found, nothing to remove`);
 
-    shows.splice(index, 1);
-};
+        properties.shows.splice(index, 1);
+    };
 
-const showsOverview = () => {
-    // eslint-disable-next-line no-console
-    console.log(shows);
-};
-
-const updatesOverview = () => {
-    // eslint-disable-next-line no-console
-    console.log(updates);
+    return {setUpdate, setShow, removeUpdate, removeShow};
 };

@@ -1,6 +1,37 @@
 import {Engine} from './types/engine';
-import {getCanvas, getContext2D} from './canvas';
+import {getCanvas, getContext2D, setDefaults} from './canvas';
 import {getEngine} from './engine';
+import {resources} from './store';
+import demo from './demo';
+
+export default {
+    initialize: (containerID?: string) => {
+        const canvas = getCanvas();
+        const context = getContext2D(canvas);
+        const engine = getEngine();
+
+        resources.set({canvas, context, engine});
+
+        if (containerID) {
+            const container = getContainer(containerID);
+
+            setDefaults(canvas, container);
+        }
+    },
+    demo: () => {
+        const {engine, context} = resources.state;
+
+        clearOn(engine, context);
+
+        engine.run();
+
+        const update = demo.createDemoUpdate();
+        const show = demo.createDemoShow();
+
+        engine.setUpdate(update);
+        engine.setShow(show);
+    },
+};
 
 export const getResources = () => {
     const canvas = getCanvas();
@@ -23,6 +54,14 @@ export const getResources = () => {
             removeDot,
         },
     };
+};
+
+export const getContainer = (id: string) => {
+    const container = document.getElementById(id);
+
+    if (!(container instanceof HTMLDivElement)) throw new Error(`can't find div with id '${id}'`);
+
+    return container;
 };
 
 const clearOn = (engine: Engine, context: CanvasRenderingContext2D) => {

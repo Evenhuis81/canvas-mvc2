@@ -1,13 +1,24 @@
-import {Show, Update} from '.';
+export type Update = {
+    id: number;
+    name: string;
+    fn: () => void;
+};
+
+export type Show = Update;
 
 export interface Engine {
-    setUpdate: (update: Update) => void;
-    setShow: (show: Show) => void;
     run: () => void;
     runOnce: () => void;
     halt: () => void;
-    showsOverview: () => void;
-    updatesOverview: () => void;
+    setUpdate: (update: Update) => void;
+    setShow: (show: Show) => void;
     removeUpdate: (id: number) => void;
     removeShow: (id: number) => void;
 }
+
+type EngineProperties = {
+    updates: Update[];
+    shows: Show[];
+    requestID: number;
+    stop: boolean;
+};
