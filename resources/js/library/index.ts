@@ -30,6 +30,13 @@ export default {
 
         engine.setUpdate(update);
         engine.setShow(show);
+
+        // New option
+        addEventListener('keydown', ({code}) => {
+            if (code === 'KeyQ') engine.halt();
+            if (code === 'KeyE') engine.run();
+            if (code === 'KeyR') engine.runOnce();
+        });
     },
 };
 
