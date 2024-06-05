@@ -3,38 +3,37 @@
 import {resources} from './store';
 
 type Side = 'top' | 'down' | 'left' | 'right';
+type SQ = {s: number; height: number; width: number};
 
-const sideSwitch: Record<Side, () => {x: number; y: number; vX: number; vY: number}> = {
-    top: () => ({
-        x: 0,
-        y: 0,
-        vX: 0,
-        vY: 0,
+const sideSwitch: Record<Side, (sq: SQ) => {x: number; y: number; vX: number; vY: number}> = {
+    top: (sq: SQ) => ({
+        x: Math.random() * sq.width,
+        y: sq.s / 2,
+        vX: Math.random() * 0.3 + 1 * (Math.random() < 0.5 ? 1 : -1),
+        vY: Math.random() * 0.3 + 1,
     }),
-    down: () => ({
-        x: 0,
-        y: 0,
-        vX: 0,
-        vY: 0,
+    down: (sq: SQ) => ({
+        x: Math.random() * sq.width,
+        y: -sq.s / 2,
+        vX: Math.random() * 0.3 + 1 * (Math.random() < 0.5 ? 1 : -1),
+        vY: -(Math.random() * 0.3 + 1),
     }),
-    left: () => ({
-        x: 0,
-        y: 0,
-        vX: 0,
-        vY: 0,
+    left: (sq: SQ) => ({
+        x: -sq.s / 2,
+        y: Math.random() * sq.height,
+        vX: Math.random() * 0.3 + 1,
+        vY: Math.random() * 0.3 + 1 * (Math.random() < 0.5 ? 1 : -1),
     }),
-    right: () => ({
-        x: 0,
-        y: 0,
-        vX: 0,
-        vY: 0,
+    right: (sq: SQ) => ({
+        x: sq.width + sq.s / 2,
+        y: Math.random() * sq.height,
+        vX: -(Math.random() * 0.3 + 1),
+        vY: Math.random() * 0.3 + 1 * (Math.random() < 0.5 ? 1 : -1),
     }),
 };
 
 const createRandomSquare = (width: number, height: number) => {
-    // firstly decide which side the square is coming from
     // this is optional, they may also appear on the screen itself, tho alpha needs to be set to 0 in that case
-
     let side: Side;
     const dice = Math.random();
 
@@ -44,29 +43,9 @@ const createRandomSquare = (width: number, height: number) => {
     else side = 'right';
 
     const s = Math.random() * 15 + 15; // between 15 and 30
+    const sq = {s, width, height};
 
-    let x: number;
-    let y: number;
-    let vX: number;
-    let vY: number;
-
-    if (left) {
-        x = -s / 2;
-        y = Math.random() * height;
-        vX = Math.random() * 0.3 + 1;
-        vY = Math.random() * 0.3 + 1 * (Math.random() < 0.5 ? 1 : -1);
-    } else {
-        x = width + s / 2;
-        y = Math.random() * height;
-        vX = -(Math.random() * 0.3 + 1);
-        vY = Math.random() * 0.3 + 1 * (Math.random() < 0.5 ? 1 : -1);
-    }
-
-    if (top) {
-        //
-    } else {
-        //
-    }
+    const {x, y, vX, vY} = sideSwitch[side](sq);
 
     return {
         x,
