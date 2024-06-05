@@ -2,22 +2,28 @@
 /* eslint-disable max-lines-per-function */
 import {resources} from './store';
 
-type Side = 'top' | 'down' | 'left' | 'right';
-type SQ = {s: number; height: number; width: number};
+type Side = 'top' | 'bottom' | 'left' | 'right';
+type SQ = {
+    s: number;
+    height: number;
+    width: number;
+    maxWidth: number;
+    minWidth: number;
+    maxHeight: number;
+    minHeight: number;
+};
 
-// const clamp = (obj: {x: number, y: number}) => {
-//     obj.x = Math.min(max, Math.max(-max, xValue));
-//     obj.y = Math.min(max, Math.max(-max, yValue));
-// }
+export const clamp = (obj: {pos: number; min: number; max: number}) => Math.min(obj.max, Math.max(obj.min, obj.pos));
 
+// put a clamp on x if top or bottom and y if left or right
 const sideSwitch: Record<Side, (sq: SQ) => {x: number; y: number; vX: number; vY: number}> = {
     top: (sq: SQ) => ({
-        x: Math.random() * sq.width,
+        x: clamp({pos: Math.random() * sq.width}),
         y: -sq.s / 2,
         vX: Math.random() * 0.3 + 1 * (Math.random() < 0.5 ? 1 : -1),
         vY: Math.random() * 0.3 + 1,
     }),
-    down: (sq: SQ) => ({
+    bottom: (sq: SQ) => ({
         x: Math.random() * sq.width,
         y: sq.height + sq.s / 2,
         vX: Math.random() * 0.3 + 1 * (Math.random() < 0.5 ? 1 : -1),
@@ -43,17 +49,21 @@ const createRandomSquare = (width: number, height: number) => {
     const dice = Math.random();
 
     if (dice < 0.25) side = 'top';
-    else if (dice < 0.5) side = 'down';
+    else if (dice < 0.5) side = 'bottom';
     else if (dice < 0.75) side = 'left';
     else side = 'right';
 
     const s = Math.random() * 15 + 15; // between 15 and 30
-    const sq = {s, width, height};
+    const minWidth = width * 0.1;
+    const maxWidth = width * 0.9;
+    const minHeight = height * 0.1;
+    const maxHeight = height * 0.9;
+    const sq = {s, width, height, minWidth, maxWidth, minHeight, maxHeight};
 
     const {x, y, vX, vY} = sideSwitch[side](sq);
 
-    console.log(x, y, vX, vY, s);
-    console.log(innerWidth, innerHeight);
+    // console.log(x, y, vX, vY, s);
+    // console.log(innerWidth, innerHeight);
 
     return {
         x,
@@ -187,6 +197,30 @@ export default {
                 ctx.stroke();
 
                 ctx.restore();
+
+                // TL
+                ctx.beginPath();
+                ctx.fillStyle = 'red';
+                ctx.arc(sq.x, sq.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                // TR
+                ctx.beginPath();
+                ctx.fillStyle = 'green';
+                ctx.arc(sq.x + sq.s, sq.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                // BL
+                ctx.beginPath();
+                ctx.fillStyle = 'yellow';
+                ctx.arc(sq.x, sq.y + sq.s, 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                // BR
+                ctx.beginPath();
+                ctx.fillStyle = 'blue';
+                ctx.arc(sq.x + sq.s, sq.y + sq.s, 4, 0, Math.PI * 2);
+                ctx.fill();
             }
 
             for (const sq of permaSquares) {
