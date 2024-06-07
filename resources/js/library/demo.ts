@@ -5,49 +5,43 @@ import {resources} from './store';
 type Side = 'top' | 'bottom' | 'left' | 'right';
 type SQ = {s: number; height: number; width: number};
 
-// const clamp = (obj: {x: number, y: number}) => {
-//     obj.x = Math.min(max, Math.max(-max, xValue));
-//     obj.y = Math.min(max, Math.max(-max, yValue));
-// }
-
-const clamp = (obj: {value: number; min: number; max: number}) => Math.min(obj.max, Math.max(obj.min, obj.value));
+export const clamp = (obj: {value: number; min: number; max: number}) =>
+    Math.min(obj.max, Math.max(obj.min, obj.value));
 
 const sideSwitch: Record<Side, (sq: SQ) => {x: number; y: number; vX: number; vY: number}> = {
     top: (sq: SQ) => ({
-        x: Math.random() * sq.width,
+        x: Math.random() * (sq.width * 0.6) + sq.width * 0.2,
         y: -sq.s / 2,
         vX: Math.random() * 0.3 + 1 * (Math.random() < 0.5 ? 1 : -1),
         vY: Math.random() * 0.3 + 1,
     }),
-    // top: (sq: SQ) => ({
-    //     x: Math.random() * sq.width,
-    //     y: -sq.s / 2,
-    //     vX: Math.random() * 0.3 + 1 * (Math.random() < 0.5 ? 1 : -1),
-    //     vY: Math.random() * 0.3 + 1,
-    // }),
     bottom: (sq: SQ) => ({
-        x: Math.random() * sq.width,
+        x: Math.random() * (sq.width * 0.6) + sq.width * 0.2,
         y: sq.height + sq.s / 2,
         vX: Math.random() * 0.3 + 1 * (Math.random() < 0.5 ? 1 : -1),
         vY: -(Math.random() * 0.3 + 1),
     }),
     left: (sq: SQ) => ({
         x: -sq.s / 2,
-        y: Math.random() * sq.height,
+        y: Math.random() * (sq.height * 0.6) + sq.height * 0.2,
         vX: Math.random() * 0.3 + 1,
         vY: Math.random() * 0.3 + 1 * (Math.random() < 0.5 ? 1 : -1),
     }),
     right: (sq: SQ) => ({
         x: sq.width + sq.s / 2,
-        y: Math.random() * sq.height,
+        y: Math.random() * (sq.height * 0.6) + sq.height * 0.2,
         vX: -(Math.random() * 0.3 + 1),
         vY: Math.random() * 0.3 + 1 * (Math.random() < 0.5 ? 1 : -1),
     }),
 };
 
-const createRandomSquare = (width: number, height: number) => {
-    // this is optional, they may also appear on the screen itself, tho alpha needs to be set to 0 in that case
-    const side: Side = 'top';
+const createRandomSquare = (width: number, height: number, side: Side) => {
+    const min = {x: width * 0.2, y: height * 0.2};
+    const max = {x: width * 0.8, y: height * 0.8};
+
+    // TODO::Appear randomly on screen aswell within certain bound
+    // const side: Side = 'bottom';
+
     // const dice = Math.random();
 
     // if (dice < 0.25) side = 'top';
@@ -56,18 +50,14 @@ const createRandomSquare = (width: number, height: number) => {
     // else side = 'right';
 
     const s = Math.random() * 15 + 15; // between 15 and 30
-    const sq = {s, width, height};
+    const sq = {s, width, height, min, max};
 
     const {x, y, vX, vY} = sideSwitch[side](sq);
 
-    // console.log()
-
-    console.log(x, y, vX, vY, s);
-    // console.log(innerWidth, innerHeight);
+    console.log(`x: ${x}`, `y: ${y}`); // make this a statistic in 2nd canvas
 
     return {
-        x: clamp({value: x, min: 200, max: 400}),
-        // x,
+        x,
         y,
         vX,
         vY,
@@ -112,24 +102,25 @@ export default {
     createDemoUpdate: () => {
         const {context: ctx} = resources.state;
 
-        squares.push(createRandomSquare(ctx.canvas.width, ctx.canvas.height));
+        // initial square
+        // squares.push(createRandomSquare(ctx.canvas.width, ctx.canvas.height));
 
         const sqToRemoveIndexes: number[] = [];
+
         // let count = 0;
         // const countIncrease = 60;
         // let threshold = 60;
-        addEventListener('keydown', ({code}) => {
-            if (code === 'KeyN') {
-                const square = createRandomSquare(ctx.canvas.width, ctx.canvas.height);
 
-                squares.push(square);
-            }
+        addEventListener('keydown', ({code}) => {
+            if (code === 'KeyW') squares.push(createRandomSquare(ctx.canvas.width, ctx.canvas.height, 'top'));
+            if (code === 'KeyS') squares.push(createRandomSquare(ctx.canvas.width, ctx.canvas.height, 'bottom'));
+            if (code === 'KeyA') squares.push(createRandomSquare(ctx.canvas.width, ctx.canvas.height, 'left'));
+            if (code === 'KeyD') squares.push(createRandomSquare(ctx.canvas.width, ctx.canvas.height, 'right'));
         });
 
         const id = 10;
         const name = 'demo update';
         const fn = () => {
-            // for (const sq of squares) {
             for (let i = 0; i < squares.length; i++) {
                 const sq = squares[i];
                 sq.x += sq.vX;
