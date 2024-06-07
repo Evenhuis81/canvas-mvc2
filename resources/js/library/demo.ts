@@ -8,6 +8,7 @@ type SQ = {s: number; height: number; width: number};
 export const clamp = (obj: {value: number; min: number; max: number}) =>
     Math.min(obj.max, Math.max(obj.min, obj.value));
 
+// put a clamp on x if top or bottom and y if left or right
 const sideSwitch: Record<Side, (sq: SQ) => {x: number; y: number; vX: number; vY: number}> = {
     top: (sq: SQ) => ({
         x: Math.random() * (sq.width * 0.6) + sq.width * 0.2,
@@ -194,6 +195,30 @@ export default {
                 ctx.stroke();
 
                 ctx.restore();
+
+                // TL
+                ctx.beginPath();
+                ctx.fillStyle = 'red';
+                ctx.arc(sq.x, sq.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                // TR
+                ctx.beginPath();
+                ctx.fillStyle = 'green';
+                ctx.arc(sq.x + sq.s, sq.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                // BL
+                ctx.beginPath();
+                ctx.fillStyle = 'yellow';
+                ctx.arc(sq.x, sq.y + sq.s, 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                // BR
+                ctx.beginPath();
+                ctx.fillStyle = 'blue';
+                ctx.arc(sq.x + sq.s, sq.y + sq.s, 4, 0, Math.PI * 2);
+                ctx.fill();
             }
 
             for (const sq of permaSquares) {
