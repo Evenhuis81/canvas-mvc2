@@ -2,13 +2,15 @@
 /* eslint-disable max-lines-per-function */
 import {resources} from './store';
 
-type Side = 'top' | 'down' | 'left' | 'right';
+type Side = 'top' | 'bottom' | 'left' | 'right';
 type SQ = {s: number; height: number; width: number};
 
 // const clamp = (obj: {x: number, y: number}) => {
 //     obj.x = Math.min(max, Math.max(-max, xValue));
 //     obj.y = Math.min(max, Math.max(-max, yValue));
 // }
+
+const clamp = (obj: {value: number; min: number; max: number}) => Math.min(obj.max, Math.max(obj.min, obj.value));
 
 const sideSwitch: Record<Side, (sq: SQ) => {x: number; y: number; vX: number; vY: number}> = {
     top: (sq: SQ) => ({
@@ -17,7 +19,13 @@ const sideSwitch: Record<Side, (sq: SQ) => {x: number; y: number; vX: number; vY
         vX: Math.random() * 0.3 + 1 * (Math.random() < 0.5 ? 1 : -1),
         vY: Math.random() * 0.3 + 1,
     }),
-    down: (sq: SQ) => ({
+    // top: (sq: SQ) => ({
+    //     x: Math.random() * sq.width,
+    //     y: -sq.s / 2,
+    //     vX: Math.random() * 0.3 + 1 * (Math.random() < 0.5 ? 1 : -1),
+    //     vY: Math.random() * 0.3 + 1,
+    // }),
+    bottom: (sq: SQ) => ({
         x: Math.random() * sq.width,
         y: sq.height + sq.s / 2,
         vX: Math.random() * 0.3 + 1 * (Math.random() < 0.5 ? 1 : -1),
@@ -39,24 +47,27 @@ const sideSwitch: Record<Side, (sq: SQ) => {x: number; y: number; vX: number; vY
 
 const createRandomSquare = (width: number, height: number) => {
     // this is optional, they may also appear on the screen itself, tho alpha needs to be set to 0 in that case
-    let side: Side;
-    const dice = Math.random();
+    const side: Side = 'top';
+    // const dice = Math.random();
 
-    if (dice < 0.25) side = 'top';
-    else if (dice < 0.5) side = 'down';
-    else if (dice < 0.75) side = 'left';
-    else side = 'right';
+    // if (dice < 0.25) side = 'top';
+    // else if (dice < 0.5) side = 'bottom';
+    // else if (dice < 0.75) side = 'left';
+    // else side = 'right';
 
     const s = Math.random() * 15 + 15; // between 15 and 30
     const sq = {s, width, height};
 
     const {x, y, vX, vY} = sideSwitch[side](sq);
 
+    // console.log()
+
     console.log(x, y, vX, vY, s);
-    console.log(innerWidth, innerHeight);
+    // console.log(innerWidth, innerHeight);
 
     return {
-        x,
+        x: clamp({value: x, min: 200, max: 400}),
+        // x,
         y,
         vX,
         vY,
@@ -108,7 +119,11 @@ export default {
         // const countIncrease = 60;
         // let threshold = 60;
         addEventListener('keydown', ({code}) => {
-            if (code === 'KeyN') squares.push(createRandomSquare(ctx.canvas.width, ctx.canvas.height));
+            if (code === 'KeyN') {
+                const square = createRandomSquare(ctx.canvas.width, ctx.canvas.height);
+
+                squares.push(square);
+            }
         });
 
         const id = 10;
@@ -135,13 +150,14 @@ export default {
                         addPermaSquare(sq);
                         sq.blinked = 3;
 
-                        console.log(`squares length: ${squares.length}`);
-                        console.log(`permaSquares length: ${permaSquares.length}`);
+                        // console.log(`squares length: ${squares.length}`);
+                        // console.log(`permaSquares length: ${permaSquares.length}`);
                     }
                 }
 
                 // collision (when outside of screen)
-                // if (sq.x < -sq.s || sq.x + sq.s > ctx.canvas.width || sq.y < -sq.s || sq.y + sq.s > ctx.canvas.height) {
+                // if (sq.x < -sq.s || sq.x + sq.s > ctx.canvas.width
+                // || sq.y < -sq.s || sq.y + sq.s > ctx.canvas.height) {
                 //     sqToRemoveIndexes.push(i);
                 //     console.log('removed square', sq.x, sq.y);
                 //     console.log(innerWidth, innerHeight);
