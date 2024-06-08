@@ -48,12 +48,12 @@ const randomSide = () => {
     return 'right';
 };
 
-let id = 0;
+let sqId = 0;
 
 const createSquare = (width: number, height: number, side?: Side) => {
     // TODO::Appear randomly on screen aswell within certain bound
-    const squareID = id;
-    id++;
+    const squareID = sqId;
+    sqId++;
 
     const s = Math.random() * 15 + 15; // between 15 and 30
     const sq = {s, width, height};
@@ -78,12 +78,12 @@ const createSquare = (width: number, height: number, side?: Side) => {
         minAlpha: Math.random() * 0.5,
         maxAlpha: Math.random() * 0.5 + 0.5,
         blinked: 0,
+        paused: false,
     };
 };
 
 const squares: Square[] = [];
 const permaSquares: Square[] = [];
-let paused = false;
 
 type Square = {
     id: number;
@@ -103,11 +103,12 @@ type Square = {
     vX: number;
     vY: number;
     blinked: number;
+    paused: boolean;
 };
 
 export default {
-    createDemoUpdate: () => {
-        const {context: ctx} = resources.state;
+    createDemoUpdate: (storeID: string) => {
+        const {context: ctx} = resources.state[storeID];
         const {width, height} = ctx.canvas;
         const target = vector(width / 2, height / 2);
 
@@ -116,8 +117,6 @@ export default {
         let count = 0;
         const countIncrease = 10;
         let threshold = 0;
-        let permaAtX = 0;
-        let permaAtY = 0;
 
         addEventListener('keydown', ({code}) => {
             if (code === 'KeyW') squares.push(createSquare(width, height, 'top'));
@@ -156,59 +155,45 @@ export default {
                         addPermaSquare(sq);
                         sq.blinked = 0;
 
-                        console.log(`squares length: ${squares.length}`);
-                        console.log(`permaSquares length: ${permaSquares.length}`);
-
-                        // run a function
                         if (permaSquares.length === 20) permaSquareAnimateX(permaSquares, target);
                     }
                 }
             }
 
-            for (let i = 0; i < permaSquares.length; i++) {
-                const psq = permaSquares[i];
-
+            for (const psq of permaSquares) {
                 psq.x += psq.vX;
                 psq.y += psq.vY;
 
-                if (permaAnimatingX) {
+                if (animate.perma.x && !psq.paused) {
                     const distanceLeftToTarget = Math.abs(target.x - psq.x);
 
                     if (distanceLeftToTarget < 5) {
                         psq.x = target.x;
                         psq.vX = 0;
+                        psq.paused = true;
 
-                        permaAtX++;
+                        animate.perma.atX++;
+
+                        if (animate.perma.atX === 20) permaSquareAnimateY(permaSquares, target);
                     }
-                } else if (permaAnimatingY) {
+                } else if (animate.perma.y && !psq.paused) {
                     const distanceLeftToTarget = Math.abs(target.y - psq.y);
 
                     if (distanceLeftToTarget < 5) {
                         psq.y = target.y;
                         psq.vY = 0;
+                        psq.paused = true;
 
-                        permaAtY++;
+                        animate.perma.atY++;
 
-                        if (permaAtY === 20) {
-                            permaAtY = 0;
-                            permaAnimatingY = false;
-                            permaSquareAnimateNextPhase(permaSquares, target);
-                        }
+                        if (animate.perma.atY === 20) permaSquareAnimateNextPhase(permaSquares, target);
                     }
-                }
-
-                if (permaAtX === 20) {
-                    console.log(permaSquares);
-
-                    permaAtX = 0;
-                    permaAnimatingX = false;
-                    permaSquareAnimateY(permaSquares, target);
                 }
             }
 
             count++;
 
-            if (count > threshold && !paused) {
+            if (count > threshold && animate.paused) {
                 threshold += countIncrease;
                 squares.push(createSquare(width, height));
             }
@@ -223,10 +208,10 @@ export default {
             sqToRemoveByID.length = 0;
         };
 
-        return {id, name, fn};
+        return {id: 88, name, fn};
     },
-    createDemoShow: () => {
-        const {context: ctx} = resources.state;
+    createDemoShow: (storeID: string) => {
+        const {context: ctx} = resources.state[storeID];
 
         const name = 'demo show';
         const fn = () => {
@@ -279,7 +264,7 @@ export default {
             }
         };
 
-        return {id, name, fn};
+        return {id: 88, name, fn};
     },
 };
 
@@ -310,31 +295,45 @@ export const showCollisionCorners = (ctx: CanvasRenderingContext2D, sq: Square) 
 };
 
 const permaSquareAnimateNextPhase = (permaSq: Square[], target: Vector) => {
-    console.log('permaSquareLastPhase initiating');
+    animate.perma.atY = 0;
+    animate.perma.y = false;
+    animate.paused = true;
+
+    console.log(`permaSquareLastPhase initiating: ${permaSq[0].vX} ${permaSq[0].vY}`, target.x);
 };
 
-let permaAnimatingX = false;
-let permaAnimatingY = false;
+const animate = {
+    paused: true,
+    perma: {
+        x: false,
+        y: false,
+        atX: 0,
+        atY: 0,
+    },
+};
 
 const permaSquareAnimateX = (permaSq: Square[], target: Vector) => {
-    permaAnimatingX = true;
-    paused = true;
+    animate.perma.x = true;
+    animate.paused = false;
     // move all x positions to middle of screen with a certain speed
-    for (let i = 0; i < permaSq.length; i++) {
-        const psq = permaSq[i];
-        const distanceX = target.x - psq.x;
-        psq.vX = distanceX / 180; // 60 ms = 1 second till middle is reached
+    for (const ps of permaSq) {
+        console.log(ps.angle);
+        const distanceX = target.x - ps.x;
+        ps.vX = distanceX / 90; // = 1.5 second till middle x is reached
     }
 };
 
 const permaSquareAnimateY = (permaSq: Square[], target: Vector) => {
-    permaAnimatingY = true;
     // move all y positions to middle of screen with a certain speed
-    for (let i = 0; i < permaSq.length; i++) {
-        const psq = permaSq[i];
-        const distanceY = target.y - psq.y;
-        psq.vY = distanceY / 180; // 60 ms = 1 second till middle is reached
+    for (const sq of permaSq) {
+        sq.paused = false;
+        const distanceY = target.y - sq.y;
+        sq.vY = distanceY / 90; // = 1.5 second till middle y is reached
     }
+
+    animate.perma.atX = 0;
+    animate.perma.x = false;
+    animate.perma.y = true;
 };
 
 const addPermaSquare = (sq: Square) => {
