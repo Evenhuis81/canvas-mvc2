@@ -2,7 +2,7 @@
 /* eslint-disable max-lines-per-function */
 import {Vector} from './types/vector';
 import {resources} from './store';
-import {vector} from './vector';
+import {vec, vector} from './vector';
 
 type Side = 'top' | 'bottom' | 'left' | 'right';
 type SQ = {s: number; height: number; width: number};
@@ -106,6 +106,12 @@ type Square = {
     paused: boolean;
 };
 
+const demoProperties = {
+    count: 0,
+    countIncrease: 5,
+    threshold: 0,
+};
+
 export default {
     createDemoUpdate: (storeID: string) => {
         const {context: ctx} = resources.state[storeID];
@@ -113,10 +119,6 @@ export default {
         const target = vector(width / 2, height / 2);
 
         const sqToRemoveByID: number[] = [];
-
-        let count = 0;
-        const countIncrease = 10;
-        let threshold = 0;
 
         addEventListener('keydown', ({code}) => {
             if (code === 'KeyW') squares.push(createSquare(width, height, 'top'));
@@ -151,11 +153,12 @@ export default {
                     sq.alphaVel *= -1;
                     sq.blinked++;
 
-                    if (sq.blinked === 2 && permaSquares.length < 20) {
+                    if (sq.blinked === animate.perma.maxBlink && permaSquares.length < 20) {
                         addPermaSquare(sq);
                         sq.blinked = 0;
 
-                        if (permaSquares.length === 20) permaSquareAnimateX(permaSquares, target);
+                        if (permaSquares.length === 20) permaSqFast(permaSquares);
+                        // permaSquareAnimateX(permaSquares, target);
                     }
                 }
             }
@@ -186,15 +189,15 @@ export default {
 
                         animate.perma.atY++;
 
-                        if (animate.perma.atY === 20) permaSquareAnimateNextPhase(permaSquares, target);
+                        if (animate.perma.atY === animate.perma.maxSq) permaSquareAnimateNextPhase(permaSquares);
                     }
                 }
             }
 
-            count++;
+            demoProperties.count++;
 
-            if (count > threshold && animate.paused) {
-                threshold += countIncrease;
+            if (demoProperties.count > demoProperties.threshold && animate.paused) {
+                demoProperties.threshold += demoProperties.countIncrease;
                 squares.push(createSquare(width, height));
             }
 
@@ -294,12 +297,20 @@ export const showCollisionCorners = (ctx: CanvasRenderingContext2D, sq: Square) 
     ctx.fill();
 };
 
-const permaSquareAnimateNextPhase = (permaSq: Square[], target: Vector) => {
+const permaSquareAnimateNextPhase = (permaSq: Square[]) => {
+    // optional at perma animate x / y => make them rotate to a certain degree (neg and pos)
+
+    // console.log();
     animate.perma.atY = 0;
     animate.perma.y = false;
     animate.paused = true;
 
-    console.log(`permaSquareLastPhase initiating: ${permaSq[0].vX} ${permaSq[0].vY}`, target.x);
+    for (const sq of permaSq) {
+        const rand2D = vec.random2D();
+
+        sq.vX = rand2D.x * animate.perma.rand2DMult;
+        sq.vY = rand2D.y * animate.perma.rand2DMult;
+    }
 };
 
 const animate = {
@@ -309,15 +320,26 @@ const animate = {
         y: false,
         atX: 0,
         atY: 0,
+        rand2DMult: 2,
+        maxSq: 50,
+        maxBlink: 1,
     },
 };
 
-const permaSquareAnimateX = (permaSq: Square[], target: Vector) => {
+const permaSqFast = (permaSq: Square[]) => {
+    for (const ps of permaSq) {
+        ps.x = innerWidth / 2;
+        ps.y = innerHeight / 2;
+
+        permaSquareAnimateNextPhase(permaSq);
+    }
+};
+
+export const permaSquareAnimateX = (permaSq: Square[], target: Vector) => {
     animate.perma.x = true;
     animate.paused = false;
     // move all x positions to middle of screen with a certain speed
     for (const ps of permaSq) {
-        console.log(ps.angle);
         const distanceX = target.x - ps.x;
         ps.vX = distanceX / 90; // = 1.5 second till middle x is reached
     }

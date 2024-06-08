@@ -60,7 +60,10 @@ export const vector2: (x?: number, y?: number, x2?: number, y2?: number) => Vect
     };
 };
 
-export const vec = {};
+export const vec = {
+    random2D: () => vec.fromAngle(Math.random() * (Math.PI * 2)),
+    fromAngle: (angle: number) => vector(Math.cos(angle), Math.sin(angle)),
+};
 
 // const add = (vecInc: Vector) => {
 //     xValue += vecInc.x;
