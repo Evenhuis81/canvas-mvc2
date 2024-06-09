@@ -60,33 +60,37 @@ export const vector2: (x?: number, y?: number, x2?: number, y2?: number) => Vect
     };
 };
 
-export const vec = {};
-
-// const add = (vecInc: Vector) => {
-//     xValue += vecInc.x;
-//     yValue += vecInc.y;
-// };
-
-// const set = (vec: Vector) => {
-//     xValue = vec.x;
-//     yValue = vec.y;
-// };
-
-// const setXY = (xInc: number, yInc: number) => {
-//     xValue = xInc;
-//     yValue = yInc;
-// };
-
-// const limit = (max: number) => {
-//     xValue = Math.min(max, Math.max(-max, xValue));
-//     yValue = Math.min(max, Math.max(-max, yValue));
-// };
-
-// const mult = (num: number) => {
-//     xValue *= num;
-//     yValue *= num;
-// };
-// const div = (num: number) => {
-//     xValue /= num;
-//     yValue /= num;
-// };
+/**
+ * Static methods for Vectors
+ */
+export const vec = {
+    /** Create a unit Vector with a random direction */
+    random: () => vec.fromAngle(Math.random() * (Math.PI * 2)),
+    /** Make a new Vector from a given angle */
+    fromAngle: (angle: number) => vector(Math.cos(angle), Math.sin(angle)),
+    /** Add 2nd Vector to the 1st */
+    add: (v1: Vector, v2: Vector) => {
+        v1.x += v2.x;
+        v1.y += v2.y;
+    },
+    /** Subtract 2nd Vector from the 1st */
+    sub: (v1: Vector, v2: Vector) => {
+        v1.x -= v2.x;
+        v1.y -= v2.y;
+    },
+    /** Multiply 1st Vector by the 2nd */
+    mult: (v1: Vector, v2: Vector) => {
+        v1.x *= v2.x;
+        v1.y *= v2.y;
+    },
+    /** Divide 1st Vector by the 2nd */
+    div: (v1: Vector, v2: Vector) => {
+        v1.x /= v2.x;
+        v1.y /= v2.y;
+    },
+    /** Set a maximum and minimum value for a Vector */
+    limit: (v: Vector, min: number, max: number) => {
+        v.x = Math.min(max, Math.max(min, v.x));
+        v.y = Math.min(max, Math.max(min, v.y));
+    },
+};

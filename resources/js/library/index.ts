@@ -5,12 +5,12 @@ import {resources} from './store';
 import demo from './demo';
 
 export default {
-    initialize: (containerID?: string) => {
+    initialize: <ID extends string>(id: ID, containerID?: string) => {
         const canvas = getCanvas();
         const context = getContext2D(canvas);
         const engine = getEngine();
 
-        resources.set({canvas, context, engine});
+        resources.set(id, {canvas, context, engine});
 
         if (containerID) {
             const container = getContainer(containerID);
@@ -18,15 +18,15 @@ export default {
             setDefaults(canvas, container);
         }
     },
-    runDemo: () => {
-        const {engine, context} = resources.state;
+    runDemo: <ID extends string>(id: ID) => {
+        const {engine, context} = resources.state[id];
 
         clearOn(engine, context);
 
         engine.run();
 
-        const update = demo.createDemoUpdate();
-        const show = demo.createDemoShow();
+        const update = demo.createDemoUpdate(id);
+        const show = demo.createDemoShow(id);
 
         engine.setUpdate(update);
         engine.setShow(show);
