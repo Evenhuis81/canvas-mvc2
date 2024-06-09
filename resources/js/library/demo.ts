@@ -1,112 +1,27 @@
 /* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
-import {Vector} from './types/vector';
+import {createSquare} from './shapes';
 import {resources} from './store';
 import {vec, vector} from './vector';
-
-type Side = 'top' | 'bottom' | 'left' | 'right';
-type SQ = {s: number; height: number; width: number};
-
-// unused for now, move to toolbox (= limit on vector)
-export const clamp = (obj: {value: number; min: number; max: number}) =>
-    Math.min(obj.max, Math.max(obj.min, obj.value));
-
-const sideSwitch: Record<Side, (sq: SQ) => {x: number; y: number; vX: number; vY: number}> = {
-    top: (sq: SQ) => ({
-        x: Math.random() * (sq.width * 0.6) + sq.width * 0.2,
-        y: -sq.s,
-        vX: Math.random() * 0.3 + 1 * (Math.random() < 0.5 ? 1 : -1),
-        vY: Math.random() * 0.3 + 1,
-    }),
-    bottom: (sq: SQ) => ({
-        x: Math.random() * (sq.width * 0.6) + sq.width * 0.2,
-        y: sq.height,
-        vX: Math.random() * 0.3 + 1 * (Math.random() < 0.5 ? 1 : -1),
-        vY: -(Math.random() * 0.3 + 1),
-    }),
-    left: (sq: SQ) => ({
-        x: -sq.s,
-        y: Math.random() * (sq.height * 0.6) + sq.height * 0.2,
-        vX: Math.random() * 0.3 + 1,
-        vY: Math.random() * 0.3 + 1 * (Math.random() < 0.5 ? 1 : -1),
-    }),
-    right: (sq: SQ) => ({
-        x: sq.width,
-        y: Math.random() * (sq.height * 0.6) + sq.height * 0.2,
-        vX: -(Math.random() * 0.3 + 1),
-        vY: Math.random() * 0.3 + 1 * (Math.random() < 0.5 ? 1 : -1),
-    }),
-};
-
-const randomSide = () => {
-    const dice = Math.random();
-
-    if (dice < 0.25) return 'top';
-    if (dice < 0.5) return 'bottom';
-    if (dice < 0.75) return 'left';
-
-    return 'right';
-};
-
-let sqId = 0;
-
-const createSquare = (width: number, height: number, side?: Side) => {
-    // TODO::Appear randomly on screen aswell within certain bound
-    const squareID = sqId;
-    sqId++;
-
-    const s = Math.random() * 15 + 15; // between 15 and 30
-    const sq = {s, width, height};
-
-    const {x, y, vX, vY} = sideSwitch[side ?? randomSide()](sq);
-
-    return {
-        id: squareID,
-        x,
-        y,
-        vX,
-        vY,
-        s,
-        r: 5,
-        alpha: 0,
-        alphaVel: Math.random() * 0.01, // 0.001 - 0.01 ?
-        angle: 0,
-        angleVel: Math.random() * 0.1 * (Math.random() < 0.5 ? 1 : -1), // 0.01 - 0.1 ? (or negative)
-        red: Math.random() * 256,
-        green: Math.random() * 256,
-        blue: Math.random() * 256,
-        minAlpha: Math.random() * 0.5,
-        maxAlpha: Math.random() * 0.5 + 0.5,
-        blinked: 0,
-        paused: false,
-    };
-};
+import type {Square} from './shapes/types';
+import type {Vector} from './types/vector';
 
 const squares: Square[] = [];
 const permaSquares: Square[] = [];
 
-type Square = {
-    id: number;
-    x: number;
-    y: number;
-    s: number;
-    r: number;
-    alpha: number;
-    alphaVel: number;
-    angle: number;
-    angleVel: number;
-    red: number;
-    green: number;
-    blue: number;
-    minAlpha: number;
-    maxAlpha: number;
-    vX: number;
-    vY: number;
-    blinked: number;
-    paused: boolean;
+export type DemoProperties = {
+    target: Vector;
+    sqToRemoveByID: number[];
+    sqID: number;
+    count: number;
+    countIncrease: number;
+    threshold: number;
 };
 
-const demoProperties = {
+const demoProperties: DemoProperties = {
+    target: vector(),
+    sqToRemoveByID: [],
+    sqID: 0,
     count: 0,
     countIncrease: 5,
     threshold: 0,
@@ -116,9 +31,8 @@ export default {
     createDemoUpdate: (storeID: string) => {
         const {context: ctx} = resources.state[storeID];
         const {width, height} = ctx.canvas;
-        const target = vector(width / 2, height / 2);
-
-        const sqToRemoveByID: number[] = [];
+        demoProperties.target.x = width / 2;
+        demoProperties.target.y = height / 2;
 
         addEventListener('keydown', ({code}) => {
             if (code === 'KeyW') squares.push(createSquare(width, height, 'top'));
@@ -137,7 +51,7 @@ export default {
 
                 // collision (outside of screen)
                 if (sq.x < -sq.s || sq.x > width || sq.y < -sq.s || sq.y > height) {
-                    sqToRemoveByID.push(sq.id);
+                    demoProperties.sqToRemoveByID.push(sq.id);
 
                     continue;
                 }
@@ -164,6 +78,8 @@ export default {
             }
 
             for (const psq of permaSquares) {
+                const {target} = demoProperties;
+
                 psq.x += psq.vX;
                 psq.y += psq.vY;
 
@@ -202,13 +118,13 @@ export default {
             }
 
             // remove squares out of bound of view
-            for (let i = 0; i < sqToRemoveByID.length; i++) {
-                const indexToRemove = squares.findIndex(square => square.id === sqToRemoveByID[i]);
+            for (let i = 0; i < demoProperties.sqToRemoveByID.length; i++) {
+                const indexToRemove = squares.findIndex(square => square.id === demoProperties.sqToRemoveByID[i]);
 
                 squares.splice(indexToRemove, 1);
             }
 
-            sqToRemoveByID.length = 0;
+            demoProperties.sqToRemoveByID.length = 0;
         };
 
         return {id: 88, name, fn};
@@ -240,7 +156,7 @@ export default {
 
                 ctx.restore();
 
-                // showCollisionCorners(ctx, sq);
+                showCollisionCorners(ctx, sq);
             }
 
             for (let i = 0; i < permaSquares.length; i++) {
@@ -306,7 +222,7 @@ const permaSquareAnimateNextPhase = (permaSq: Square[]) => {
     animate.paused = true;
 
     for (const sq of permaSq) {
-        const rand2D = vec.random2D();
+        const rand2D = vec.random();
 
         sq.vX = rand2D.x * animate.perma.rand2DMult;
         sq.vY = rand2D.y * animate.perma.rand2DMult;

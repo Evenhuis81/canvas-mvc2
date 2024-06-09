@@ -9,8 +9,8 @@ import library from 'library/index';
 onMounted(() => {
     const {initialize, runDemo} = library;
 
-    initialize('demo', 'container');
+    initialize('container');
 
-    runDemo('demo');
+    runDemo();
 });
 </script>
