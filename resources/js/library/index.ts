@@ -1,32 +1,49 @@
-import {Engine} from './types/engine';
 import {getCanvas, getContext2D, setDefaults} from './canvas';
 import {getEngine} from './engine';
-import {resources} from './store';
 import demo from './demo';
+import type {Engine} from './types/engine';
+import type {Resources} from './types';
+
+export type LibraryProperties = {
+    resourceID: number;
+    resources: Record<number | string, Resources>;
+};
+
+const libraryProperties: LibraryProperties = {
+    resourceID: 0,
+    resources: {},
+};
 
 export default {
-    initialize: <ID extends string>(id: ID, containerID?: string) => {
+    initialize: (containerID?: string, resourceName?: string) => {
         const canvas = getCanvas();
         const context = getContext2D(canvas);
         const engine = getEngine();
-
-        resources.set(id, {canvas, context, engine});
 
         if (containerID) {
             const container = getContainer(containerID);
 
             setDefaults(canvas, container);
         }
+
+        if (resourceName) {
+            libraryProperties.resources[resourceName] = {canvas, context, engine};
+
+            return;
+        }
+
+        // TODO::Convert to resoure model where only string is used, preferably a Union Type predefined?
+        libraryProperties.resources[libraryProperties.resourceID++] = {canvas, context, engine};
     },
-    runDemo: <ID extends string>(id: ID) => {
-        const {engine, context} = resources.state[id];
+    runDemo: () => {
+        const {engine, context} = libraryProperties.resources[libraryProperties.resourceID - 1];
 
         clearOn(engine, context);
 
         engine.run();
 
-        const update = demo.createDemoUpdate(id);
-        const show = demo.createDemoShow(id);
+        const update = demo.createDemoUpdate(context);
+        const show = demo.createDemoShow(context);
 
         engine.setUpdate(update);
         engine.setShow(show);
