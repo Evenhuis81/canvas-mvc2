@@ -1,6 +1,6 @@
-import {Resources} from './types';
+// import {Resources} from './types';
 
-export const createStore = <T extends string, U extends object>() => {
+export const createStore = <T extends string | number, U extends object>() => {
     const state = <Record<T, U>>{};
 
     const set = (id: T, items: U) => {
@@ -11,5 +11,5 @@ export const createStore = <T extends string, U extends object>() => {
     return {set, state};
 };
 
-export const resources = createStore<string, Resources>();
+// export const resources = createStore<string, Resources>();
 // export const resources = <ID extends string>() => createStore<ID, Resources>();

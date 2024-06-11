@@ -3,12 +3,10 @@
 </template>
 
 <script setup lang="ts">
+import {initialize, runDemo} from 'library/index';
 import {onMounted} from 'vue';
-import library from 'library/index';
 
 onMounted(() => {
-    const {initialize, runDemo} = library;
-
     initialize('container');
 
     runDemo();

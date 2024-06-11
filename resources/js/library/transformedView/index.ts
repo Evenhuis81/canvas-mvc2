@@ -4,12 +4,13 @@
 import {getPaintMethods} from './paint';
 import {setTVEvents} from './input';
 import {vector, vector2} from '../vector';
-import type {Vector, Vector2} from '../types';
-import type {Zoom} from '../types/tv';
+import type {Vector, Vector2} from 'library/types/vector';
+import type {Zoom} from 'library/types/tv';
 
 export const getTV = (context: CanvasRenderingContext2D) => {
     const paintMethods = getPaintMethods(properties, methods, context);
 
+    // Create an option out of this
     setTVEvents(properties, methods);
 
     return {
@@ -125,13 +126,12 @@ const setDefaults = (context: CanvasRenderingContext2D) => {
         // h = 12 (worldBorders.y = 18 (-3, +3))
         // w = 24 (16:9 not exactly?, worldBorders.x = 36 (-6, +6)
         scale = height / 12;
-        // orientation = 'landscape';
+        properties.orientation = 'landscape';
         worldBorders.x = -6;
         worldBorders.y = -3;
         worldBorders.x2 = 30;
         worldBorders.y2 = 15;
     } else {
-        // console.log('orientation = portrait');
         // h = 24 (9:16 not exactly?, worldBorders.y = 36 (-6, +6))
         // w = 12 (worldBorders.x = 18 (-3, +3)
         scale = width / 12;
@@ -158,6 +158,7 @@ const getTVGrid = (ctx: CanvasRenderingContext2D) => {
         id: 89,
         name: 'tv grid',
         fn: () => {
+            // This is technically an update
             setWorldView(0, 0, ctx.canvas.width, ctx.canvas.height);
 
             ctx.strokeStyle = '#bbbb';
