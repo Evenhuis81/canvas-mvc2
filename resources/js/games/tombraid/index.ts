@@ -1,55 +1,15 @@
-/* eslint-disable max-lines-per-function */
-// import {enableStatistics} from 'library/statistics';
-import {gameStore} from './store';
-import {getCanvas, getContext2D} from 'library/canvas';
-import {getEngine} from 'library/engine';
-import {getTV} from 'games/library/transformedView';
-import {setMouseInput} from 'games/library/input';
-
-// const canvasOptions = {
-//     width: 500,
-//     height: 500,
-//     backgroundColor: '#000',
-// };
-
-// const goToMenu = (
-// context: CanvasRenderingContext2D,
-// engine: Engine,
-// tv: TransformedView,
-// canvas: HTMLCanvasElement,
-// ) => {
-// buttons:
-// 1. start
-// 2. settings
-// 3. exit
-// 4. admin options
-// 5. show statistics
-// 6. level editor
-// 7. login
-// 8. create account
-// 9. load game
-// 10. save game
-
-// const button = getButton(buttonObj);
-
-// const startButton = getStartButton(context);
-// engine.setShow(startButton.show);
-
-// addEventListener('mouseup', () => {
-//     if (startButton.inside()) startLevel(2, tv, context, canvas, engine);
-// });
-// };
-
 export default {
     setup: () => {
-        const canvas = getCanvas();
-        const context = getContext2D(canvas);
-        const engine = getEngine();
-        const tv = getTV(context);
+        // initialize import from library
+
+        // const canvas = getCanvas();
+        // const context = getContext2D(canvas);
+        // const engine = getEngine();
+        // const tv = getTV(context);
 
         // Make globally available
-        gameStore.set({canvas, context, engine, tv});
-        setMouseInput(canvas);
+        // gameStore.set({canvas, context, engine, tv});
+        // setMouseInput(canvas);
 
         // Engine Updates
         const clearScreen = {

@@ -1,7 +1,6 @@
 /* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
 import {createSquare} from './shapes';
-import {resources} from './store';
 import {vec, vector} from './vector';
 import type {Square} from './shapes/types';
 import type {Vector} from './types/vector';
@@ -10,6 +9,8 @@ const squares: Square[] = [];
 const permaSquares: Square[] = [];
 
 export type DemoProperties = {
+    squares: Square[];
+    permaSq: Square[];
     target: Vector;
     sqToRemoveByID: number[];
     sqID: number;
@@ -19,17 +20,18 @@ export type DemoProperties = {
 };
 
 const demoProperties: DemoProperties = {
+    squares: [],
+    permaSq: [],
     target: vector(),
     sqToRemoveByID: [],
     sqID: 0,
     count: 0,
-    countIncrease: 5,
+    countIncrease: 30,
     threshold: 0,
 };
 
 export default {
-    createDemoUpdate: (storeID: string) => {
-        const {context: ctx} = resources.state[storeID];
+    createDemoUpdate: (ctx: CanvasRenderingContext2D) => {
         const {width, height} = ctx.canvas;
         demoProperties.target.x = width / 2;
         demoProperties.target.y = height / 2;
@@ -71,8 +73,8 @@ export default {
                         addPermaSquare(sq);
                         sq.blinked = 0;
 
-                        if (permaSquares.length === 20) permaSqFast(permaSquares);
-                        // permaSquareAnimateX(permaSquares, target);
+                        if (permaSquares.length === 20) permaSquareAnimateX(permaSquares);
+                        // permaSqFast(permaSquares);
                     }
                 }
             }
@@ -129,9 +131,7 @@ export default {
 
         return {id: 88, name, fn};
     },
-    createDemoShow: (storeID: string) => {
-        const {context: ctx} = resources.state[storeID];
-
+    createDemoShow: (ctx: CanvasRenderingContext2D) => {
         const name = 'demo show';
         const fn = () => {
             for (let i = 0; i < squares.length; i++) {
@@ -156,7 +156,7 @@ export default {
 
                 ctx.restore();
 
-                showCollisionCorners(ctx, sq);
+                // showCollisionCorners(ctx, sq);
             }
 
             for (let i = 0; i < permaSquares.length; i++) {
@@ -224,6 +224,8 @@ const permaSquareAnimateNextPhase = (permaSq: Square[]) => {
     for (const sq of permaSq) {
         const rand2D = vec.random();
 
+        // console.log(rand2D);
+
         sq.vX = rand2D.x * animate.perma.rand2DMult;
         sq.vY = rand2D.y * animate.perma.rand2DMult;
     }
@@ -238,11 +240,11 @@ const animate = {
         atY: 0,
         rand2DMult: 2,
         maxSq: 50,
-        maxBlink: 1,
+        maxBlink: 2,
     },
 };
 
-const permaSqFast = (permaSq: Square[]) => {
+export const permaSqFast = (permaSq: Square[]) => {
     for (const ps of permaSq) {
         ps.x = innerWidth / 2;
         ps.y = innerHeight / 2;
@@ -251,12 +253,12 @@ const permaSqFast = (permaSq: Square[]) => {
     }
 };
 
-export const permaSquareAnimateX = (permaSq: Square[], target: Vector) => {
+export const permaSquareAnimateX = (permaSq: Square[]) => {
     animate.perma.x = true;
     animate.paused = false;
     // move all x positions to middle of screen with a certain speed
     for (const ps of permaSq) {
-        const distanceX = target.x - ps.x;
+        const distanceX = demoProperties.target.x - ps.x;
         ps.vX = distanceX / 90; // = 1.5 second till middle x is reached
     }
 };
