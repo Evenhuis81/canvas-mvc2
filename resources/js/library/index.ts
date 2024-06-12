@@ -1,89 +1,104 @@
+import {createStore} from './store';
 import {getCanvas, getContext2D, setDefaults} from './canvas';
 import {getEngine} from './engine';
-import demo from './demo';
+import {getTV} from './transformedView';
 import type {Engine} from './types/engine';
 import type {Resources} from './types';
+import type {TransformedView} from './types/tv';
 
-export type LibraryProperties = {
-    resourceID: number;
-    resources: Record<number | string, Resources>;
-};
+let id = 0;
 
-const libraryProperties: LibraryProperties = {
-    resourceID: 0,
-    resources: {},
-};
+type ResourcesAndTV = Resources & {tv: TransformedView};
 
-export default {
-    initialize: (containerID?: string, resourceName?: string) => {
-        const canvas = getCanvas();
-        const context = getContext2D(canvas);
-        const engine = getEngine();
+// const resources =
+// type LibraryResources = Record<number | string, Resources | (Resources & {tv: TransformedView})>;
 
-        if (containerID) {
-            const container = getContainer(containerID);
+// export const resources: LibraryResources = {};
 
-            setDefaults(canvas, container);
-        }
-
-        if (resourceName) {
-            libraryProperties.resources[resourceName] = {canvas, context, engine};
-
-            return;
-        }
-
-        // TODO::Convert to resoure model where only string is used, preferably a Union Type predefined?
-        libraryProperties.resources[libraryProperties.resourceID++] = {canvas, context, engine};
-    },
-    runDemo: () => {
-        const {engine, context} = libraryProperties.resources[libraryProperties.resourceID - 1];
-
-        clearOn(engine, context);
-
-        engine.run();
-
-        const update = demo.createDemoUpdate(context);
-        const show = demo.createDemoShow(context);
-
-        engine.setUpdate(update);
-        engine.setShow(show);
-
-        // New option
-        addEventListener('keydown', ({code}) => {
-            if (code === 'KeyQ') engine.halt();
-            if (code === 'KeyE') engine.run();
-            if (code === 'KeyR') engine.runOnce();
-        });
-    },
-};
-
-export const getResources = () => {
+export const initialize = <T extends string>(containerID?: string, resourceName?: T, tvOn?: boolean) => {
     const canvas = getCanvas();
     const context = getContext2D(canvas);
     const engine = getEngine();
 
+    if (containerID) {
+        const container = getContainer(containerID);
+
+        setDefaults(canvas, container);
+    }
+
+    const returnObj = setResources<T>({canvas, context, engine}, resourceName, tvOn);
+
+    return returnObj;
+};
+
+const setResources = <T extends string>(resources: Resources, resourceName?: T, tvOn?: boolean) => {
+    const {canvas, context, engine} = resources;
+
+    if (resourceName) {
+        if (tvOn) {
+            const tv = getTV(resources.context);
+
+            const resource = createStore<T, ResourcesAndTV>();
+
+            resource.set(resourceName, {canvas, context, engine, tv});
+
+            return resource;
+        }
+
+        const resource = createStore<T, Resources>();
+
+        resource.set(resourceName, {canvas, context, engine});
+
+        return resource;
+    }
+
+    const resource = createStore<number, Resources>();
+
+    resource.set(id++, {canvas, context, engine});
+
+    return resource;
+};
+
+// export const runDemo = () => {
+//     const {engine, context} = resources[id - 1];
+
+//     clearOn(engine, context);
+
+//     engine.run();
+
+//     const update = demo.createDemoUpdate(context);
+//     const show = demo.createDemoShow(context);
+
+//     engine.setUpdate(update);
+//     engine.setShow(show);
+
+//     // New option
+//     addEventListener('keydown', ({code}) => {
+//         if (code === 'KeyQ') engine.halt();
+//         if (code === 'KeyE') engine.run();
+//         if (code === 'KeyR') engine.runOnce();
+//     });
+// };
+
+export const getLibraryOptions = (resourceID: string) => {
+    const {context, engine} = resources[resourceID];
     const setClear = () => clearOn(engine, context);
     const setDot = () => dotOn(engine, context);
     const removeClear = () => clearOff(engine);
     const removeDot = () => dotOff(engine);
 
     return {
-        canvas,
-        context,
-        engine,
-        options: {
-            setClear,
-            setDot,
-            removeClear,
-            removeDot,
-        },
+        setClear,
+        setDot,
+        removeClear,
+        removeDot,
     };
 };
 
-export const getContainer = (id: string) => {
-    const container = document.getElementById(id);
+const getContainer = (containerID: string) => {
+    const container = document.getElementById(containerID);
 
-    if (!(container instanceof HTMLDivElement)) throw new Error(`can't find div with id '${id}'`);
+    if (!(container instanceof HTMLDivElement)) throw new Error(`can't find div with id '${containerID}'`);
 
     return container;
 };
@@ -117,6 +132,6 @@ const dotMiddle = (context: CanvasRenderingContext2D) => ({
 
 const clear = (context: CanvasRenderingContext2D) => ({
     id: 0,
-    name: 'clear screen',
+    name: 'clearRect',
     fn: () => context.clearRect(0, 0, context.canvas.width, context.canvas.height),
 });

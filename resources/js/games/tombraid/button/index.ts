@@ -1,6 +1,4 @@
-// /* eslint-disable max-lines-per-function */
-// import {gameStore} from '../store';
-// import {mouse} from '../input';
+import {mouse} from 'library/input';
 
 // type Button = {
 //     x: number;
@@ -22,11 +20,11 @@
 //         //
 //     }
 
-//     // return {
-//     //     show: () => {
-//     //         //
-//     //     }
-//     // }
+// return {
+//     show: () => {
+//         //
+//     }
+// }
 // }
 
 // // const defaultTVButton = {
@@ -80,53 +78,53 @@
 //     return show;
 // };
 
-// const startButton = {
-//     txt: 'Start',
-//     x: 50,
-//     y: 450,
-//     w: 50,
-//     h: 20,
-//     r: 5,
-//     lw: 2,
-//     stroke: '#fff',
-//     fill: '#000',
-//     textColor: '#00f',
-//     font: '20px normal sans-serif',
-// };
+const startButton = {
+    txt: 'Start',
+    x: 50,
+    y: 450,
+    w: 50,
+    h: 20,
+    r: 5,
+    lw: 2,
+    stroke: '#fff',
+    fill: '#000',
+    textColor: '#00f',
+    font: '20px normal sans-serif',
+};
 
-// export const getStartButton = (ctx: CanvasRenderingContext2D) => {
-//     const {txt, x, y, w, h, r, lw, stroke, fill, textColor, font} = startButton;
+export const getStartButton = (ctx: CanvasRenderingContext2D) => {
+    const {txt, x, y, w, h, r, lw, stroke, fill, textColor, font} = startButton;
 
-//     const show = {
-//         id: 2,
-//         name: 'start button',
-//         fn: () => {
-//             // make 2 seperate non-tv functions for rendering rects (round/fill/stroke) and text (text-project)
+    const show = {
+        id: 2,
+        name: 'start button',
+        fn: () => {
+            // make 2 seperate non-tv functions for rendering rects (round/fill/stroke) and text (text-project)
 
-//             // button
-//             ctx.fillStyle = fill;
-//             ctx.strokeStyle = stroke;
-//             ctx.lineWidth = lw;
+            // button
+            ctx.fillStyle = fill;
+            ctx.strokeStyle = stroke;
+            ctx.lineWidth = lw;
 
-//             ctx.beginPath();
-//             ctx.roundRect(x - w / 2, y - h / 2, w, h, r);
-//             ctx.fill();
-//             ctx.stroke();
+            ctx.beginPath();
+            ctx.roundRect(x - w / 2, y - h / 2, w, h, r);
+            ctx.fill();
+            ctx.stroke();
 
-//             // text
-//             ctx.fillStyle = textColor;
-//             ctx.font = font;
-//             ctx.textAlign = 'center';
-//             ctx.textBaseline = 'middle';
+            // text
+            ctx.fillStyle = textColor;
+            ctx.font = font;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
 
-//             ctx.fillText(txt, x, y);
-//         },
-//     };
+            ctx.fillText(txt, x, y);
+        },
+    };
 
-//     const inside = () => mouse.x >= x - w / 2 && mouse.x < x + w / 2 && mouse.y >= y - h / 2 && mouse.y < y + h / 2;
+    const inside = () => mouse.x >= x - w / 2 && mouse.x < x + w / 2 && mouse.y >= y - h / 2 && mouse.y < y + h / 2;
 
-//     return {show, inside};
-// };
+    return {show, inside};
+};
 
 // export const getMenuButton = (ctx: CanvasRenderingContext2D) => {
 //     const {w, h, r, lw, stroke} = menuButton;

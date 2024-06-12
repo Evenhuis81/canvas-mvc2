@@ -1,10 +1,10 @@
 /* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
 /* eslint-disable no-param-reassign */
+import {TransformedView} from 'library/types/tv';
 import {getCoinMap, getLevelMap} from './levels';
-import {vector} from 'games/library/vector';
+import {vector} from 'library/vector';
 import type {CoinMap, LevelMap, MapElement} from 'games/tombraid/types/level';
-import type {TransformedView} from 'games/library/types/tv';
 
 const getEmptyXFromRow = (levelMapRow: MapElement[], emptiesRow: number[], count = 0) => {
     // This works only if right side ends with no '.' or 'S'
