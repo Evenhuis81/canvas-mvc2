@@ -1,4 +1,3 @@
-import {resources} from '.';
 import {vector} from './vector';
 
 // Put this in resources (with ts generics) as individual per resource/canvas
@@ -7,8 +6,8 @@ export const mouse = vector();
 // Not canvas dependant
 export const keyHeld: boolean[] = [];
 
-export const setMouseInput = (resourceID: string) => {
-    const rect = resources[resourceID].canvas.getBoundingClientRect();
+export const setMouseInput = (canvas: HTMLCanvasElement) => {
+    const rect = canvas.getBoundingClientRect();
 
     addEventListener('mousemove', evt => {
         // mouse.setXY(+evt.offsetX.toFixed(0), +evt.offsetY.toFixed(0));
