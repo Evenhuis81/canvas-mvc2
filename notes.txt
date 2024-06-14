@@ -2,4 +2,5 @@
 2. https://stackoverflow.com/questions/9882284/looping-through-array-and-removing-items-without-breaking-for-loop
 3. clamp side for squares (takes off 10% of the sides, else chance reasonable the square will never be visible)
 4. github settings, apply permissions on main branch (no direct commits) and other authentication options for teammembers
-5.
+5. namechange transformedview => tv (folder)
+6.

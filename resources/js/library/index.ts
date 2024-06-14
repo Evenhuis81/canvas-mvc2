@@ -4,16 +4,21 @@ import {getEngine} from './engine';
 import {getTV} from './transformedView';
 import type {Engine} from './types/engine';
 import type {Resources} from './types';
-import type {TransformedView} from './types/tv';
 
+export const resources: Resources = {};
 let id = 0;
 
-type ResourcesAndTV = Resources & {tv: TransformedView};
+const getResources: <T extends {withTV: boolean}>(items: LibraryResources, opt?: T) => Resources<T> = (items, opt) => {
+    if (!opt) return items;
 
-// const resources =
-// type LibraryResources = Record<number | string, Resources | (Resources & {tv: TransformedView})>;
+    const tv = getTV(items.context);
 
-// export const resources: LibraryResources = {};
+    return {...items, tv};
+};
+
+const properties = {
+    idCount: 0,
+};
 
 export const initialize = <T extends string>(containerID?: string, resourceName?: T, tvOn?: boolean) => {
     const canvas = getCanvas();
@@ -26,13 +31,17 @@ export const initialize = <T extends string>(containerID?: string, resourceName?
         setDefaults(canvas, container);
     }
 
-    const returnObj = setResources<T>({canvas, context, engine}, resourceName, tvOn);
+    // setResources({canvas, context, engine}, );
+    // const returnObj = setResources<T>({canvas, context, engine}, resourceName, tvOn);
+    // if (resourceName) {
+    //     const resource = store.new(resourceName, {canvas, context, engine});
+    // }
 
-    return returnObj;
+    const res = getResources();
 };
 
-const setResources = <T extends string>(resources: Resources, resourceName?: T, tvOn?: boolean) => {
-    const {canvas, context, engine} = resources;
+const setResources = <T extends string>(resource: Resource, resourceName?: T, tvOn?: boolean) => {
+    const {canvas, context, engine} = resource;
 
     if (resourceName) {
         if (tvOn) {

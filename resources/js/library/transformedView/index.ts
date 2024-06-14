@@ -151,7 +151,7 @@ const setDefaults = (context: CanvasRenderingContext2D) => {
     // tv.setOffset(vector(-6 + level.playerStart.x, -6 + level.playerStart.y));
 };
 
-const getTVGrid = (ctx: CanvasRenderingContext2D) => {
+const getGrid = (ctx: CanvasRenderingContext2D) => {
     const {worldTL, worldBR, worldView, offset, scale, screen} = properties;
 
     const show = {
@@ -206,5 +206,5 @@ const methods = {
     setWorldBorders,
     setOffset,
     setDefaults,
-    getTVGrid,
+    getGrid,
 };

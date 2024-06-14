@@ -1,4 +1,5 @@
-import {Vector, Vector2} from '.';
+import {Show} from './engine';
+import {Vector, Vector2} from './vector';
 
 type Rect = {x: number; y: number; w: number; h: number};
 type Circle = {x: number; y: number; r: number};
@@ -41,6 +42,8 @@ export interface MethodsTV {
     setScreenSize: (size: Vector) => void;
     setWorldBorders: (borders: Vector2) => void;
     setOffset: (offset: Vector) => void;
+    setDefaults: (context: CanvasRenderingContext2D) => void;
+    getGrid: (context: CanvasRenderingContext2D) => {show: Show};
 }
 
 export type PropertiesTV = {

@@ -1,19 +1,16 @@
 import {getLevel} from './levels';
-import {getLibraryOptions, initialize} from 'library/index';
+import {getLibraryOptions, initialize, resources} from 'library/index';
 import {getStartButton} from './button';
-// import {getTV} from 'library/transformedView';
 import {setMouseInput} from 'library/input';
 
 export default {
     setup: () => {
         // add 3rd argument to active tv and add to resources (generic resource)
-        const resources = initialize('container', 'tr', true);
+        initialize('container', 'tr', true);
 
-        const {context} = resources.state.tr;
+        const {context, tv, engine} = resources.state;
 
-        // const tv = getTV(context);
-
-        resources.tr.tv.setDefaults(context);
+        tv.setDefaults(context);
 
         // Make globally available
         setMouseInput('tr');
@@ -23,16 +20,15 @@ export default {
         options.setClear();
         options.setDot();
 
-        // Engine Updates
-        // const grid = tv.getTVGrid(context);
+        const grid = tv.getGrid(context);
 
-        // resources.tr.engine.setShow(grid.show);
+        // Engine Updates
 
         // Menu Screen
-        goToMenu();
+        // goToMenu();
 
         // Engine Shows
-        // engine.setShow(s);
+        resources.tr.engine.setShow(grid.show);
 
         // Make this a hidden option inside the canvas
         // enableStatistics();
@@ -42,8 +38,8 @@ export default {
         // engine.showsOverview();
         // engine.updatesOverview();
     },
-    run: () => resources.tr.engine.run(),
-    runOnce: () => resources.tr.engine.runOnce(),
+    run: () => resources.engine.run(),
+    runOnce: () => resources.engine.runOnce(),
 };
 
 const goToMenu = () => {
