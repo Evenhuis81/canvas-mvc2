@@ -50,7 +50,13 @@ const getEmptyX = (levelMap: LevelMap) => {
 //     return cannons;
 // };
 
-const createMapShow = (levelMap: LevelMap, coinMap: CoinMap, tv: TransformedView) => {
+const createMapShow = (
+    levelMap: LevelMap,
+    coinMap: CoinMap,
+    tv: TransformedView,
+    screenWidth: number,
+    screenHeight: number,
+) => {
     const elementsDrawn = {nr: 0};
 
     const noEmptyX = getEmptyX(levelMap);
@@ -60,6 +66,7 @@ const createMapShow = (levelMap: LevelMap, coinMap: CoinMap, tv: TransformedView
         id: 4,
         name: 'level',
         fn: () => {
+            tv.setWorldView(0, 0, screenWidth, screenHeight);
             elementsDrawn.nr = 0;
 
             for (let y = 0; y < levelMap.length; y++) {

@@ -1,38 +1,20 @@
-import {Resources, ResourcesAndTV} from './types';
 import {getCanvas, getContext2D, setDefaults} from './canvas';
 import {getEngine} from './engine';
 import {getTV} from './transformedView';
 import type {Engine} from './types/engine';
 
-type ResourceType<T> = T extends {withTV: true}
-    ? ResourcesAndTV
-    : T extends {withTV: false | undefined}
-    ? Resources
-    : Resources;
-
-export const initialize: <T extends {withTV: boolean}>(opts: T, containerID?: string) => ResourceType<T> = <
-    T extends {withTV: boolean},
->(
-    opts: T,
-    containerID?: string,
-) => {
+export const initialize = (containerID: string) => {
     const canvas = getCanvas();
     const context = getContext2D(canvas);
     const engine = getEngine();
 
-    if (containerID) {
-        const container = getContainer(containerID);
+    const container = getContainer(containerID);
 
-        setDefaults(canvas, container);
-    }
+    setDefaults(canvas, container);
 
-    if (opts.withTV) {
-        const tv = getTV(context);
+    const tv = getTV(context);
 
-        return {canvas, context, engine, tv} as ResourcesAndTV;
-    }
-
-    return {canvas, context, engine} as Resources;
+    return {canvas, context, engine, tv};
 };
 
 export const getLibraryOptions = (context: CanvasRenderingContext2D, engine: Engine) => {
