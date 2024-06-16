@@ -9,6 +9,6 @@ import tombraid from './tombraid';
 onMounted(() => {
     tombraid.setup();
 
-    tombraid.run();
+    tombraid.runOnce();
 });
 </script>

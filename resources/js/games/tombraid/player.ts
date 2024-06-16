@@ -1,8 +1,8 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable complexity */
-import {Vector} from 'games/library/types';
-import {gameStore, levelStore} from './store';
-import {vector} from 'games/library/vector';
+import {levelStore, resources} from '.';
+import {vec, vector} from 'library/vector';
+import type {Vector} from 'library/types/vector';
 
 // TODO::Tasks for player module
 // 1. make separate modules getplayer methods / inputs / movement / collisions (whatever methods is getting too large);
@@ -112,39 +112,48 @@ export const friction = () => {
 };
 
 export const getPlayer = (start: Vector) => {
-    const {tv} = gameStore.state;
-    player.pos.x = start.x;
-    player.pos.y = start.y;
-    player.lastPos.x = start.x;
-    player.lastPos.y = start.y;
+    const {tv} = resources.state;
+
+    player.pos = {...start};
+    player.lastPos = {...start};
+    // player.pos.x = start.x;
+    // player.pos.y = start.y;
+    // player.lastPos.x = start.x;
+    // player.lastPos.y = start.y;
+
+    console.log(player.pos, player.lastPos);
 
     const update = {
         id: 3,
         name: 'player',
         fn: () => {
             // make multiple updates for different situations
-            player.lastPos.setXY(player.pos.x, player.pos.y);
+            // player.lastPos.x = player.pos.x;
+            // player.lastPos.y = player.pos.y;
+            player.lastPos = {...player.pos}; // not sure this works
 
-            player.vel.add(player.acc);
+            vec.add(player.vel, player.acc);
 
             if (player.movement === 'free') friction(); // only in free mode
 
-            player.vel.limit(player.maxSpeed);
+            vec.limit(player.vel, -player.maxSpeed, player.maxSpeed);
 
             // Create seperate function for this, which you can call like 'maxSpeed zoom method' or something
             // Make setScale a 'hardcoded' option (not running in every loop)
-            if (
-                tv.scale.x > 20 &&
-                (Math.abs(player.vel.x) === player.maxSpeed || Math.abs(player.vel.y) === player.maxSpeed)
-            ) {
-                tv.setScaleFactor(0.99);
-                tv.zoom(vector(250, 250), 'out');
-            } else if (tv.scale.x < 38.48 && player.vel.x === 0 && player.vel.y === 0) {
-                tv.setScaleFactor(0.95);
-                tv.zoom(vector(250, 250), 'in');
-            }
+            // if (
+            //     tv.scale.x > 20 &&
+            //     (Math.abs(player.vel.x) === player.maxSpeed || Math.abs(player.vel.y) === player.maxSpeed)
+            // ) {
+            //     tv.setScaleFactor(0.99);
+            //     tv.zoom(vector(250, 250), 'out');
+            // } else if (tv.scale.x < 38.48 && player.vel.x === 0 && player.vel.y === 0) {
+            //     tv.setScaleFactor(0.95);
+            //     tv.zoom(vector(250, 250), 'in');
+            // }
 
-            player.pos.add(player.vel);
+            // player.pos.x = player.vel.x;
+            // player.pos.y = player.vel.y;
+            player.pos = {...player.vel};
 
             collisionAndResolve();
 
@@ -155,8 +164,8 @@ export const getPlayer = (start: Vector) => {
             player.posChangeHistory.shift();
             player.posChangeHistory.push(vector(-xChange, -yChange));
 
-            gameStore.state.tv.offset.x += player.posChangeHistory[0].x;
-            gameStore.state.tv.offset.y += player.posChangeHistory[0].y;
+            resources.state.tv.offset.x += player.posChangeHistory[0].x;
+            resources.state.tv.offset.y += player.posChangeHistory[0].y;
         },
     };
 
@@ -166,6 +175,7 @@ export const getPlayer = (start: Vector) => {
         name: 'player',
         fn: () => {
             tv.fillRect({x: player.pos.x, y: player.pos.y, w: player.w, h: player.h, fill: 'blue'});
+            console.log(player.pos);
         },
     };
 
