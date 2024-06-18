@@ -42,7 +42,7 @@ export interface MethodsTV {
     setScreenSize: (size: Vector) => void;
     setWorldBorders: (borders: Vector2) => void;
     setOffset: (offset: Vector) => void;
-    setDefaults: (context: CanvasRenderingContext2D) => void;
+    setDefaults: (canvas: HTMLCanvasElement) => void;
     getGrid: (context: CanvasRenderingContext2D) => {show: Show};
 }
 

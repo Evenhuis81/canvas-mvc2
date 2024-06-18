@@ -4,7 +4,7 @@ import {getLibraryOptions, initialize} from 'library/index';
 import {getPlayer} from './player';
 import {getStartButton} from './button';
 import {setMouseInput} from 'library/input';
-import {vector, vector2} from 'library/vector';
+import {vector} from 'library/vector';
 import type {LevelResource} from './types/level';
 import type {PlayerResource} from './types/game';
 import type {ResourcesAndTV} from 'library/types';
@@ -18,8 +18,6 @@ export default {
         const {canvas, context, engine, tv} = initialize('container');
 
         resources.set({canvas, context, engine, tv});
-
-        tv.setDefaults(context);
 
         // Make globally available
         setMouseInput(canvas);
@@ -66,10 +64,12 @@ const startLevel = (levelNr: number) => {
     // Level used externally ?
     levelStore.set(level);
 
+    // tv.setDefaults(context);
     tv.setScale(vector(scale, scale));
     tv.setScaleFactor(0.99);
     tv.setScreenSize(vector(canvas.width, canvas.height));
-    tv.setWorldBorders(vector2(0, 0, level.width, level.height)); // is this needed ?
+    // tv.setWorldBorders(vector2(0, 0, level.width, level.height)); // is this needed ?
+
     tv.setOffset(vector(-6 + level.playerStart.x, -6 + level.playerStart.y));
 
     const player = getPlayer(level.playerStart);

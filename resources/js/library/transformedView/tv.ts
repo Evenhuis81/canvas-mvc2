@@ -116,36 +116,36 @@ const setScaleFactor = (factor: number) => {
     properties.scaleFactor = factor;
 };
 
-const setDefaults = (context: CanvasRenderingContext2D) => {
-    const {width, height} = context.canvas;
+const setDefaults = (canvas: HTMLCanvasElement) => {
+    const {width, height} = canvas;
 
-    let scale: number;
-    const worldBorders = vector2();
+    let scaleXY: number;
+    // const worldBorders = vector2();
 
     if (width > height) {
         // h = 12 (worldBorders.y = 18 (-3, +3))
         // w = 24 (16:9 not exactly?, worldBorders.x = 36 (-6, +6)
-        scale = height / 12;
+        scaleXY = height / 12;
         properties.orientation = 'landscape';
-        worldBorders.x = -6;
-        worldBorders.y = -3;
-        worldBorders.x2 = 30;
-        worldBorders.y2 = 15;
+        // worldBorders.x = -6;
+        // worldBorders.y = -3;
+        // worldBorders.x2 = 30;
+        // worldBorders.y2 = 15;
     } else {
         // h = 24 (9:16 not exactly?, worldBorders.y = 36 (-6, +6))
         // w = 12 (worldBorders.x = 18 (-3, +3)
-        scale = width / 12;
+        scaleXY = width / 12;
         properties.orientation = 'portrait';
-        worldBorders.x = -3;
-        worldBorders.y = -6;
-        worldBorders.x2 = 15;
-        worldBorders.y2 = 30;
+        // worldBorders.x = -3;
+        // worldBorders.y = -6;
+        // worldBorders.x2 = 15;
+        // worldBorders.y2 = 30;
     }
 
-    setScale(vector(scale, scale));
+    setScale(vector(scaleXY, scaleXY));
     setScaleFactor(0.9);
     setScreenSize(vector(width, height));
-    setWorldBorders(worldBorders);
+    // setWorldBorders(worldBorders);
 
     // offset 0,0 with these borders?
     // tv.setOffset(vector(-6 + level.playerStart.x, -6 + level.playerStart.y));
