@@ -1,4 +1,4 @@
-import {getCanvas, getContext2D, setDefaults} from './canvas';
+import {getCanvas, getContext2D, setCanvasDefaults} from './canvas';
 import {getEngine} from './engine';
 import {getTV} from './transformedView/tv';
 import type {Engine} from './types/engine';
@@ -10,7 +10,7 @@ export const initialize = (containerID: string) => {
 
     const container = getContainer(containerID);
 
-    setDefaults(canvas, container);
+    setCanvasDefaults(canvas, container);
 
     const tv = getTV(context);
 

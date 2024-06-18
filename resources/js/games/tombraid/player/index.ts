@@ -111,11 +111,8 @@ export const friction = () => {
     if (player.vel.y < 0.01 && player.vel.y > -0.01) player.vel.y = 0;
 };
 
-export const getPlayer = (start: Vector) => {
+export const getPlayer = () => {
     const {tv} = resources.state;
-
-    player.pos = {...start};
-    player.lastPos = {...start};
 
     const update = {
         id: 3,
@@ -131,7 +128,8 @@ export const getPlayer = (start: Vector) => {
 
             vec.limit(player.vel, -player.maxSpeed, player.maxSpeed);
 
-            player.pos = {...player.vel};
+            player.pos.x += player.vel.x;
+            player.pos.y += player.vel.y;
 
             collisionAndResolve();
 
@@ -156,9 +154,15 @@ export const getPlayer = (start: Vector) => {
         },
     };
 
+    const setPosition = (pos: Vector) => {
+        player.pos.x = pos.x;
+        player.pos.y = pos.y;
+        player.lastPos.x = pos.x;
+        player.lastPos.y = pos.y;
+    };
     switchMovement.initiate();
 
-    return {update, show, pos: player.pos};
+    return {update, show, setPosition};
 };
 
 // Input
