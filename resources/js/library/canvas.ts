@@ -18,7 +18,7 @@ export const getContext2D = (canvas: HTMLCanvasElement) => {
     return context;
 };
 
-export const setDefaults = (canvas: HTMLCanvasElement, container: HTMLDivElement) => {
+export const setCanvasDefaults = (canvas: HTMLCanvasElement, container: HTMLDivElement) => {
     canvas.width = innerWidth;
     canvas.height = innerHeight;
     canvas.style.backgroundColor = '#000';

@@ -1,4 +1,4 @@
-import {Show} from './engine';
+import {Show, Update} from './engine';
 import {Vector, Vector2} from './vector';
 
 type Rect = {x: number; y: number; w: number; h: number};
@@ -44,12 +44,15 @@ export interface MethodsTV {
     setOffset: (offset: Vector) => void;
     setDefaults: (canvas: HTMLCanvasElement) => void;
     getGrid: (context: CanvasRenderingContext2D) => {show: Show};
+    setMiddle: (target: Vector) => void;
+    moveSlowlyToAsMiddle: (target: Vector) => {update: Update};
 }
 
 export type PropertiesTV = {
     offset: Vector;
     scale: Vector;
-    screen: Vector2;
+    screen: Vector;
+    screen2: Vector2;
     world: Vector;
     screenSize: Vector;
     worldTL: Vector;
@@ -59,4 +62,5 @@ export type PropertiesTV = {
     worldAfterZoom: Vector;
     scaleFactor: number;
     worldView: Vector2;
+    targetWorld: Vector;
 };

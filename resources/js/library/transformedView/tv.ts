@@ -7,6 +7,7 @@ import {vector, vector2} from '../vector';
 import type {Vector, Vector2} from 'library/types/vector';
 import type {Zoom} from 'library/types/tv';
 
+// Use only vectors if possible
 export const getTV = (context: CanvasRenderingContext2D) => {
     const paintMethods = getPaintMethods(properties, methods, context);
 
@@ -23,7 +24,8 @@ export const getTV = (context: CanvasRenderingContext2D) => {
 const properties = {
     offset: vector(),
     scale: vector(1, 1),
-    screen: vector2(),
+    screen: vector(),
+    screen2: vector2(),
     world: vector(10, 10),
     screenSize: vector(300, 150),
     worldTL: vector(),
@@ -34,6 +36,7 @@ const properties = {
     scaleFactor: 0.95,
     worldView: vector2(),
     orientation: '',
+    targetWorld: vector(),
 };
 
 const screen2World = (x: number, y: number) => {
@@ -47,10 +50,10 @@ const world2Screen = (x: number, y: number) => {
 };
 
 const world2Screen2 = (x: number, y: number, x2: number, y2: number) => {
-    properties.screen.x = (x - properties.offset.x) * properties.scale.x;
-    properties.screen.y = (y - properties.offset.y) * properties.scale.y;
-    properties.screen.x2 = (x2 - properties.offset.x) * properties.scale.x;
-    properties.screen.y2 = (y2 - properties.offset.y) * properties.scale.y;
+    properties.screen2.x = (x - properties.offset.x) * properties.scale.x;
+    properties.screen2.y = (y - properties.offset.y) * properties.scale.y;
+    properties.screen2.x2 = (x2 - properties.offset.x) * properties.scale.x;
+    properties.screen2.y2 = (y2 - properties.offset.y) * properties.scale.y;
 };
 
 const getMiddleScreen = () => vector(properties.screenSize.x / 2, properties.screenSize.y / 2);
@@ -192,6 +195,31 @@ const getGrid = (ctx: CanvasRenderingContext2D) => {
     return {show};
 };
 
+// Refactor, no + 0.5
+const setMiddle = (target: Vector) => {
+    const {x, y} = getMiddleScreen();
+    screen2World(x, y);
+    setOffset(vector(-properties.world.x + target.x, -properties.world.y + target.y));
+};
+
+const moveSlowlyToAsMiddle = (target: Vector) => {
+    const {x, y} = getMiddleScreen();
+    screen2World(x, y);
+
+    properties.targetWorld = {...properties.world};
+
+    const update = {
+        id: 11,
+        name: 'tv move slowly to as middle',
+        fn: () => {
+            //
+        },
+    };
+
+    // setOffset(vector(-properties.world.x + target.x + 0.5, -properties.world.y + target.y + 0.5));
+    return {update};
+};
+
 const methods = {
     screen2World,
     world2Screen,
@@ -207,4 +235,6 @@ const methods = {
     setOffset,
     setDefaults,
     getGrid,
+    setMiddle,
+    moveSlowlyToAsMiddle,
 };

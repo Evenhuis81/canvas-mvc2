@@ -19,6 +19,9 @@ export default {
 
         resources.set({canvas, context, engine, tv});
 
+        const player = getPlayer();
+        playerStore.set(player);
+
         // Make globally available
         setMouseInput(canvas);
 
@@ -27,7 +30,7 @@ export default {
         options.setClear();
         options.setDot();
 
-        goToMenu();
+        goToMenu(); // = start level directly for now
     },
     run: () => resources.state.engine.run(),
     runOnce: () => resources.state.engine.runOnce(),
@@ -46,36 +49,33 @@ const goToMenu = () => {
     // 9. load game
     // 10. save game
 
-    const startButton = getStartButton(resources.state.context);
-    resources.state.engine.setShow(startButton.show);
+    // const startButton = getStartButton(resources.state.context);
+    // resources.state.engine.setShow(startButton.show);
 
     // addEventListener('mouseup', () => {
     //     if (startButton.inside()) startLevel(2);
     // });
 
-    startLevel(2);
+    startLevel(3);
 };
 
 const startLevel = (levelNr: number) => {
     const level = getLevel(levelNr);
     const {tv, canvas, engine} = resources.state;
-    const scale = canvas.width / 12; // or 13+?
+    const player = playerStore.state;
+    const scale = canvas.width / 36; // or 13+?
 
     // Level used externally ?
     levelStore.set(level);
 
-    // tv.setDefaults(context);
     tv.setScale(vector(scale, scale));
     tv.setScaleFactor(0.99);
     tv.setScreenSize(vector(canvas.width, canvas.height));
-    // tv.setWorldBorders(vector2(0, 0, level.width, level.height)); // is this needed ?
 
-    tv.setOffset(vector(-6 + level.playerStart.x, -6 + level.playerStart.y));
+    player.setPosition(level.playerStart);
+    // tv.moveSlowlyToAsMiddle(vector(level.playerStart.x + 0.5, level.playerStart.y + 0.5));
+    tv.moveSlowlyToAsMiddle(vector(level.playerStart.x + 0.5, level.playerStart.y + 0.5));
 
-    const player = getPlayer(level.playerStart);
-    playerStore.set(player);
-
-    // bunch up all updates and shows and set them in order somewhere else (expand setUpdate/Show)
     engine.setUpdate(player.update);
 
     // when a component use the gamestore, make create functions so they can be used at a later point
