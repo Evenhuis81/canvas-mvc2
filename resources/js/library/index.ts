@@ -1,87 +1,23 @@
-import {createStore} from './store';
 import {getCanvas, getContext2D, setDefaults} from './canvas';
 import {getEngine} from './engine';
-import {getTV} from './transformedView';
+import {getTV} from './transformedView/tv';
 import type {Engine} from './types/engine';
-import type {Resources} from './types';
-import type {TransformedView} from './types/tv';
 
-let id = 0;
-
-type ResourcesAndTV = Resources & {tv: TransformedView};
-
-// const resources =
-// type LibraryResources = Record<number | string, Resources | (Resources & {tv: TransformedView})>;
-
-// export const resources: LibraryResources = {};
-
-export const initialize = <T extends string>(containerID?: string, resourceName?: T, tvOn?: boolean) => {
+export const initialize = (containerID: string) => {
     const canvas = getCanvas();
     const context = getContext2D(canvas);
     const engine = getEngine();
 
-    if (containerID) {
-        const container = getContainer(containerID);
+    const container = getContainer(containerID);
 
-        setDefaults(canvas, container);
-    }
+    setDefaults(canvas, container);
 
-    const returnObj = setResources<T>({canvas, context, engine}, resourceName, tvOn);
+    const tv = getTV(context);
 
-    return returnObj;
+    return {canvas, context, engine, tv};
 };
 
-const setResources = <T extends string>(resources: Resources, resourceName?: T, tvOn?: boolean) => {
-    const {canvas, context, engine} = resources;
-
-    if (resourceName) {
-        if (tvOn) {
-            const tv = getTV(resources.context);
-
-            const resource = createStore<T, ResourcesAndTV>();
-
-            resource.set(resourceName, {canvas, context, engine, tv});
-
-            return resource;
-        }
-
-        const resource = createStore<T, Resources>();
-
-        resource.set(resourceName, {canvas, context, engine});
-
-        return resource;
-    }
-
-    const resource = createStore<number, Resources>();
-
-    resource.set(id++, {canvas, context, engine});
-
-    return resource;
-};
-
-// export const runDemo = () => {
-//     const {engine, context} = resources[id - 1];
-
-//     clearOn(engine, context);
-
-//     engine.run();
-
-//     const update = demo.createDemoUpdate(context);
-//     const show = demo.createDemoShow(context);
-
-//     engine.setUpdate(update);
-//     engine.setShow(show);
-
-//     // New option
-//     addEventListener('keydown', ({code}) => {
-//         if (code === 'KeyQ') engine.halt();
-//         if (code === 'KeyE') engine.run();
-//         if (code === 'KeyR') engine.runOnce();
-//     });
-// };
-
-export const getLibraryOptions = (resourceID: string) => {
-    const {context, engine} = resources[resourceID];
+export const getLibraryOptions = (context: CanvasRenderingContext2D, engine: Engine) => {
     const setClear = () => clearOn(engine, context);
     const setDot = () => dotOn(engine, context);
     const removeClear = () => clearOff(engine);

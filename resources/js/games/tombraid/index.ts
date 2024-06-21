@@ -1,49 +1,36 @@
+import {createStore} from 'library/store';
 import {getLevel} from './levels';
 import {getLibraryOptions, initialize} from 'library/index';
+import {getPlayer} from './player';
 import {getStartButton} from './button';
-// import {getTV} from 'library/transformedView';
 import {setMouseInput} from 'library/input';
+import {vector} from 'library/vector';
+import type {LevelResource} from './types/level';
+import type {PlayerResource} from './types/game';
+import type {ResourcesAndTV} from 'library/types';
+
+export const resources = createStore<ResourcesAndTV>();
+export const levelStore = createStore<LevelResource>();
+export const playerStore = createStore<PlayerResource>();
 
 export default {
     setup: () => {
-        // add 3rd argument to active tv and add to resources (generic resource)
-        const resources = initialize('container', 'tr', true);
+        const {canvas, context, engine, tv} = initialize('container');
 
-        const {context} = resources.state.tr;
-
-        // const tv = getTV(context);
-
-        resources.tr.tv.setDefaults(context);
+        resources.set({canvas, context, engine, tv});
 
         // Make globally available
-        setMouseInput('tr');
+        setMouseInput(canvas);
 
-        const options = getLibraryOptions('tr');
+        const options = getLibraryOptions(context, engine);
 
         options.setClear();
         options.setDot();
 
-        // Engine Updates
-        // const grid = tv.getTVGrid(context);
-
-        // resources.tr.engine.setShow(grid.show);
-
-        // Menu Screen
         goToMenu();
-
-        // Engine Shows
-        // engine.setShow(s);
-
-        // Make this a hidden option inside the canvas
-        // enableStatistics();
-
-        // StartLevel
-
-        // engine.showsOverview();
-        // engine.updatesOverview();
     },
-    run: () => resources.tr.engine.run(),
-    runOnce: () => resources.tr.engine.runOnce(),
+    run: () => resources.state.engine.run(),
+    runOnce: () => resources.state.engine.runOnce(),
 };
 
 const goToMenu = () => {
@@ -59,34 +46,40 @@ const goToMenu = () => {
     // 9. load game
     // 10. save game
 
-    const startButton = getStartButton(resources.tr.context);
-    resources.tr.engine.setShow(startButton.show);
+    const startButton = getStartButton(resources.state.context);
+    resources.state.engine.setShow(startButton.show);
 
-    addEventListener('mouseup', () => {
-        if (startButton.inside()) startLevel(2);
-        // console.log('startLevel {level nummer}');
-    });
+    // addEventListener('mouseup', () => {
+    //     if (startButton.inside()) startLevel(2);
+    // });
+
+    startLevel(2);
 };
 
 const startLevel = (levelNr: number) => {
     const level = getLevel(levelNr);
+    const {tv, canvas, engine} = resources.state;
+    const scale = canvas.width / 12; // or 13+?
 
-    console.log(level);
-    //     levelStore.set(level);
-    tv.setScale(vector(context.canvas.width / 13, canvas.height / 13));
+    // Level used externally ?
+    levelStore.set(level);
+
+    // tv.setDefaults(context);
+    tv.setScale(vector(scale, scale));
     tv.setScaleFactor(0.99);
-    tv.setScreenSize(vector(context.canvas.width, context.canvas.height));
-    tv.setWorldBorders(vector2(0, 0, level.width, level.height));
-    tv.setOffset(vector(-6 + level.playerStart.x, -6 + level.playerStart.y));
-    //     const player = getPlayer(level.playerStart);
-    //     playerStore.set(player);
-    //     // bunch up all updates and shows and set them in order somewhere else (expand setUpdate/Show)
-    //     engine.setUpdate(player.update);
-    //     // when a component use the gamestore, make create functions so they can be used at a later point
-    //     const levelShow = level.createShow(level.map, level.coins, tv);
-    //     engine.setShow(levelShow);
-    //     engine.setShow(player.show);
+    tv.setScreenSize(vector(canvas.width, canvas.height));
+    // tv.setWorldBorders(vector2(0, 0, level.width, level.height)); // is this needed ?
 
-    //     engine.showsOverview();
-    //     engine.updatesOverview();
+    tv.setOffset(vector(-6 + level.playerStart.x, -6 + level.playerStart.y));
+
+    const player = getPlayer(level.playerStart);
+    playerStore.set(player);
+
+    // bunch up all updates and shows and set them in order somewhere else (expand setUpdate/Show)
+    engine.setUpdate(player.update);
+
+    // when a component use the gamestore, make create functions so they can be used at a later point
+    const levelShow = level.createShow(level.map, level.coins, tv, canvas.width, canvas.height);
+    engine.setShow(levelShow);
+    engine.setShow(player.show);
 };
