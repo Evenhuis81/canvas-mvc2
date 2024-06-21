@@ -3,7 +3,7 @@
 /* eslint-disable prefer-destructuring */
 import {getPaintMethods} from './paint';
 import {setTVEvents} from './input';
-import {vector, vector2} from '../vector';
+import {vec, vector, vector2} from '../vector';
 import type {Vector, Vector2} from 'library/types/vector';
 import type {Zoom} from 'library/types/tv';
 
@@ -21,6 +21,8 @@ export const getTV = (context: CanvasRenderingContext2D) => {
     };
 };
 
+const velocity = vector();
+
 const properties = {
     offset: vector(),
     scale: vector(1, 1),
@@ -36,7 +38,6 @@ const properties = {
     scaleFactor: 0.95,
     worldView: vector2(),
     orientation: '',
-    targetWorld: vector(),
 };
 
 const screen2World = (x: number, y: number) => {
@@ -123,102 +124,77 @@ const setDefaults = (canvas: HTMLCanvasElement) => {
     const {width, height} = canvas;
 
     let scaleXY: number;
-    // const worldBorders = vector2();
 
     if (width > height) {
-        // h = 12 (worldBorders.y = 18 (-3, +3))
-        // w = 24 (16:9 not exactly?, worldBorders.x = 36 (-6, +6)
         scaleXY = height / 12;
         properties.orientation = 'landscape';
-        // worldBorders.x = -6;
-        // worldBorders.y = -3;
-        // worldBorders.x2 = 30;
-        // worldBorders.y2 = 15;
     } else {
-        // h = 24 (9:16 not exactly?, worldBorders.y = 36 (-6, +6))
-        // w = 12 (worldBorders.x = 18 (-3, +3)
         scaleXY = width / 12;
         properties.orientation = 'portrait';
-        // worldBorders.x = -3;
-        // worldBorders.y = -6;
-        // worldBorders.x2 = 15;
-        // worldBorders.y2 = 30;
     }
 
     setScale(vector(scaleXY, scaleXY));
     setScaleFactor(0.9);
     setScreenSize(vector(width, height));
-    // setWorldBorders(worldBorders);
-
-    // offset 0,0 with these borders?
-    // tv.setOffset(vector(-6 + level.playerStart.x, -6 + level.playerStart.y));
 };
 
-const getGrid = (ctx: CanvasRenderingContext2D) => {
-    const {worldTL, worldBR, worldView, offset, scale, screen} = properties;
-
-    const show = {
-        id: 89,
-        name: 'tv grid',
-        fn: () => {
-            // This is technically an update
-            setWorldView(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-            ctx.strokeStyle = '#bbbb';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-
-            // Columns
-            for (let x = worldTL.x; x <= worldBR.x; x++) {
-                if (x >= worldView.x && x <= worldView.x2) {
-                    world2Screen(x, worldTL.y);
-
-                    ctx.moveTo(screen.x, screen.y);
-                    ctx.lineTo(screen.x, (worldBR.y - offset.y) * scale.y);
-                }
-            }
-
-            // Rows
-            for (let y = worldTL.y; y <= worldBR.y; y++) {
-                if (y >= worldView.y && y <= worldView.y2) {
-                    world2Screen(worldTL.x, y);
-
-                    ctx.moveTo(screen.x, screen.y);
-                    ctx.lineTo((worldBR.x - offset.x) * scale.x, screen.y);
-                }
-            }
-
-            ctx.stroke();
-        },
-    };
-
-    return {show};
-};
-
-// Refactor, no + 0.5
-const setMiddle = (target: Vector) => {
+const setMiddle = (source: Vector) => {
     const {x, y} = getMiddleScreen();
     screen2World(x, y);
-    setOffset(vector(-properties.world.x + target.x, -properties.world.y + target.y));
+    setOffset(vector(-properties.world.x + source.x, -properties.world.y + source.y));
 };
 
-const moveSlowlyToAsMiddle = (target: Vector) => {
-    const {x, y} = getMiddleScreen();
-    screen2World(x, y);
+const moveTo = (target: Vector) => {
+    const frictionChange = 0.4; // higher = faster halt?
+    let slowRadius = 2;
+    let count = 0;
 
-    properties.targetWorld = {...properties.world};
+    // As soon as target gets too fast and of the tracks, it doesn't go directly for the target anymore
+    // It's needed at certain point to reset the acceleration.
+    // When x- and y-axis gets from positive to negative and vice versa, reset both acc
 
-    const update = {
+    return {
         id: 11,
-        name: 'tv move slowly to as middle',
+        name: 'tv move to target',
         fn: () => {
-            //
+            if (++count < 20) return;
+
+            const strengthFactor = 1000;
+
+            const worldMiddle = s2W(getMiddleScreen());
+
+            const strength = vector(worldMiddle.x - target.x, worldMiddle.y - target.y);
+
+            const acc = vector(strength.x / strengthFactor, strength.y / strengthFactor);
+
+            vec.add(velocity, acc);
+
+            vec.limit(velocity, -0.75, 0.75);
+
+            const length = vec.mag(strength);
+
+            if (length < slowRadius) {
+                let friction = vec.mag(strength) / slowRadius;
+
+                friction = 1 - friction;
+
+                friction *= frictionChange;
+
+                friction = 1 - friction;
+
+                if (length < 0.1) vec.multScalar(velocity, 0);
+                else vec.multScalar(velocity, friction);
+            }
+
+            vec.sub(properties.offset, velocity);
+
+            count++;
         },
     };
-
-    // setOffset(vector(-properties.world.x + target.x + 0.5, -properties.world.y + target.y + 0.5));
-    return {update};
 };
+
+const s2W = (source: Vector) =>
+    vector(source.x / properties.scale.x + properties.offset.x, source.y / properties.scale.y + properties.offset.y);
 
 const methods = {
     screen2World,
@@ -234,7 +210,6 @@ const methods = {
     setWorldBorders,
     setOffset,
     setDefaults,
-    getGrid,
     setMiddle,
-    moveSlowlyToAsMiddle,
+    moveTo,
 };

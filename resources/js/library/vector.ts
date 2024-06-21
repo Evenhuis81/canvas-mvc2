@@ -93,4 +93,11 @@ export const vec = {
         v.x = Math.min(max, Math.max(min, v.x));
         v.y = Math.min(max, Math.max(min, v.y));
     },
+    /** Get the magnitude of a Vector */
+    mag: (v: Vector) => Math.sqrt(v.x * v.x + v.y * v.y),
+    /** Multiply Vector by a scalar value */
+    multScalar: (v: Vector, scalar: number) => {
+        v.x *= scalar;
+        v.y *= scalar;
+    },
 };
