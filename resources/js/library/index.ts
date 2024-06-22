@@ -1,16 +1,14 @@
-import {getCanvas, getContext2D, setCanvasDefaults} from './canvas';
+import {getCanvas, getContext2D, setCanvas, setCanvasDefaults} from './canvas';
 import {getEngine} from './engine';
 import {getTV} from './transformedView/tv';
 import type {Engine} from './types/engine';
 
-export const initialize = (containerID: string) => {
+export const initialize = (containerID?: string, defaults?: boolean) => {
     const canvas = getCanvas();
     const context = getContext2D(canvas);
     const engine = getEngine();
 
-    const container = getContainer(containerID);
-
-    setCanvasDefaults(canvas, container);
+    if (defaults) setCanvasDefaults(canvas, containerID);
 
     const tv = getTV(context);
 

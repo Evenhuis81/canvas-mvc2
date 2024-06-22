@@ -1,9 +1,9 @@
 /* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
-import {createSquare} from './shapes';
-import {vec, vector} from './vector';
-import type {Square} from './shapes/types';
-import type {Vector} from './types/vector';
+import {createSquare} from '../shapes';
+import {vec, vector} from '../vector';
+import type {Square} from '../shapes/types';
+import type {Vector} from '../types/vector';
 
 const squares: Square[] = [];
 const permaSquares: Square[] = [];
