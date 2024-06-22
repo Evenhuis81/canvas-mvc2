@@ -11,6 +11,7 @@ type Line = Omit<Vector2, 'add' | 'set' | 'setManual'> & {stroke: string; lw: nu
 type Text = {x: number; y: number; txt: string; font: string; fill: string}; // auto-centered for now
 type StrokeCircle = Circle & {stroke: string; lw: number; rS: number; rE: number}; // rS: arc start, rE: arc end
 type FillCircle = Circle & {fill: string};
+type FillStrokeCircle = StrokeCircle & {fill: string};
 type Zoom = 'in' | 'out';
 
 export interface TransformedView extends PropertiesTV, PaintTV, MethodsTV {}
@@ -24,6 +25,7 @@ export interface PaintTV {
     roundFillStrokeRect: (obj: RoundFillStrokeRect) => void;
     fillCircle: (obj: FillCircle) => void;
     strokeCircle: (obj: StrokeCircle) => void;
+    fillStrokeCircle: (obj: FillStrokeCircle) => void;
 }
 
 export interface MethodsTV {
@@ -43,9 +45,9 @@ export interface MethodsTV {
     setWorldBorders: (borders: Vector2) => void;
     setOffset: (offset: Vector) => void;
     setDefaults: (canvas: HTMLCanvasElement) => void;
-    getGrid: (context: CanvasRenderingContext2D) => {show: Show};
+    // getGrid: (context: CanvasRenderingContext2D) => Show;
     setMiddle: (target: Vector) => void;
-    moveSlowlyToAsMiddle: (target: Vector) => {update: Update};
+    moveTo: (target: Vector, slowR: number) => Update;
 }
 
 export type PropertiesTV = {
@@ -62,5 +64,4 @@ export type PropertiesTV = {
     worldAfterZoom: Vector;
     scaleFactor: number;
     worldView: Vector2;
-    targetWorld: Vector;
 };

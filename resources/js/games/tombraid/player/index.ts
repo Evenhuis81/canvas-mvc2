@@ -3,6 +3,7 @@
 import {levelStore, resources} from '..';
 import {vec, vector} from 'library/vector';
 import type {Vector} from 'library/types/vector';
+import {TransformedView} from 'library/types/tv';
 
 // TODO::Tasks for player module
 // 1. make separate modules getplayer methods / inputs / movement / collisions (whatever methods is getting too large);
@@ -10,6 +11,7 @@ import type {Vector} from 'library/types/vector';
 // 3. create a 'facing' property (which direction is the player actually facing);
 
 type PlayerProperties = {
+    posMiddle: Vector; // middle of rect
     pos: Vector;
     vel: Vector;
     acc: Vector;
@@ -31,6 +33,7 @@ type PlayerProperties = {
 };
 
 const player: PlayerProperties = {
+    posMiddle: vector(),
     pos: vector(),
     vel: vector(),
     acc: vector(),
@@ -118,8 +121,6 @@ export const getPlayer = () => {
         id: 3,
         name: 'player',
         fn: () => {
-            // make multiple updates for different situations?
-
             // test efficiency
             player.lastPos = {...player.pos};
             vec.add(player.vel, player.acc);
@@ -131,26 +132,20 @@ export const getPlayer = () => {
             player.pos.x += player.vel.x;
             player.pos.y += player.vel.y;
 
+            player.posMiddle.x = player.pos.x + 0.5;
+            player.posMiddle.y = player.pos.y + 0.5;
+
             collisionAndResolve();
 
             // integrated in transformed view
-            const xChange = player.lastPos.x - player.pos.x;
-            const yChange = player.lastPos.y - player.pos.y;
+            // const xChange = player.lastPos.x - player.pos.x;
+            // const yChange = player.lastPos.y - player.pos.y;
 
-            player.posChangeHistory.shift();
-            player.posChangeHistory.push(vector(-xChange, -yChange));
+            // player.posChangeHistory.shift();
+            // player.posChangeHistory.push(vector(-xChange, -yChange));
 
-            resources.state.tv.offset.x += player.posChangeHistory[0].x;
-            resources.state.tv.offset.y += player.posChangeHistory[0].y;
-        },
-    };
-
-    // make createShow
-    const show = {
-        id: 3,
-        name: 'player',
-        fn: () => {
-            tv.fillRect({x: player.pos.x, y: player.pos.y, w: player.w, h: player.h, fill: 'blue'});
+            // resources.state.tv.offset.x += player.posChangeHistory[0].x;
+            // resources.state.tv.offset.y += player.posChangeHistory[0].y;
         },
     };
 
@@ -162,8 +157,34 @@ export const getPlayer = () => {
     };
     switchMovement.initiate();
 
-    return {update, show, setPosition};
+    return {update, show: createShowCircle(tv), setPosition, middlePos: player.posMiddle};
 };
+
+export const createShowRect = (tv: TransformedView) => ({
+    id: 3,
+    name: 'player',
+    fn: () => {
+        tv.fillRect({x: player.pos.x, y: player.pos.y, w: player.w, h: player.h, fill: 'blue'});
+    },
+});
+
+// This is needed for tv follow method so that the position is actually in the middle and I dont'need +0.5
+const createShowCircle = (tv: TransformedView) => ({
+    id: 3,
+    name: 'player',
+    fn: () => {
+        tv.fillStrokeCircle({
+            x: player.pos.x,
+            y: player.pos.y,
+            r: 0.25,
+            rS: 0,
+            rE: Math.PI * 2,
+            fill: 'blue',
+            stroke: 'red',
+            lw: 3,
+        });
+    },
+});
 
 // Input
 const switchMovement = {

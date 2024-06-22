@@ -2,7 +2,7 @@ import {createStore} from 'library/store';
 import {getLevel} from './levels';
 import {getLibraryOptions, initialize} from 'library/index';
 import {getPlayer} from './player';
-import {getStartButton} from './button';
+// import {getStartButton} from './button';
 import {setMouseInput} from 'library/input';
 import {vector} from 'library/vector';
 import type {LevelResource} from './types/level';
@@ -61,25 +61,27 @@ const goToMenu = () => {
 
 const startLevel = (levelNr: number) => {
     const level = getLevel(levelNr);
+    levelStore.set(level);
+
     const {tv, canvas, engine} = resources.state;
     const player = playerStore.state;
-    const scale = canvas.width / 36; // or 13+?
+    const scale = canvas.width / 24;
 
     // Level used externally ?
-    levelStore.set(level);
 
     tv.setScale(vector(scale, scale));
     tv.setScaleFactor(0.99);
     tv.setScreenSize(vector(canvas.width, canvas.height));
 
     player.setPosition(level.playerStart);
-    // tv.moveSlowlyToAsMiddle(vector(level.playerStart.x + 0.5, level.playerStart.y + 0.5));
-    tv.moveSlowlyToAsMiddle(vector(level.playerStart.x + 0.5, level.playerStart.y + 0.5));
 
-    engine.setUpdate(player.update);
+    const tvUpdate = tv.moveTo(player.middlePos);
 
-    // when a component use the gamestore, make create functions so they can be used at a later point
     const levelShow = level.createShow(level.map, level.coins, tv, canvas.width, canvas.height);
+
     engine.setShow(levelShow);
     engine.setShow(player.show);
+
+    engine.setUpdate(player.update);
+    engine.setUpdate(tvUpdate);
 };
