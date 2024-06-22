@@ -168,10 +168,6 @@ export const createShowRect = (tv: TransformedView) => ({
     },
 });
 
-// const fillStrokeCircleObj = {
-//     r: 3,
-// }
-
 // This is needed for tv follow method so that the position is actually in the middle and I dont'need +0.5
 const createShowCircle = (tv: TransformedView) => ({
     id: 3,
@@ -180,7 +176,7 @@ const createShowCircle = (tv: TransformedView) => ({
         tv.fillStrokeCircle({
             x: player.pos.x,
             y: player.pos.y,
-            r: 0.5,
+            r: 0.25,
             rS: 0,
             rE: Math.PI * 2,
             fill: 'blue',
