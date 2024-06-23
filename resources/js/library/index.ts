@@ -1,20 +1,26 @@
-import {getCanvas, getContext2D, setCanvasDefaults} from './canvas';
+import {CanvasOptions, getCanvas, getContext2D, setCanvas} from './canvas';
 import {getEngine} from './engine';
 import {getTV} from './transformedView/tv';
 import type {Engine} from './types/engine';
 
-export const initialize = (containerID: string) => {
+export const initialize = (containerID?: string, options?: CanvasOptions) => {
     const canvas = getCanvas();
     const context = getContext2D(canvas);
     const engine = getEngine();
 
-    const container = getContainer(containerID);
-
-    setCanvasDefaults(canvas, container);
+    setCanvas(canvas, options, containerID ? getContainer(containerID) : undefined);
 
     const tv = getTV(context);
 
     return {canvas, context, engine, tv};
+};
+
+const getContainer = (containerID: string) => {
+    const container = document.getElementById(containerID);
+
+    if (!(container instanceof HTMLDivElement)) throw new Error(`can't find div with id '${containerID}'`);
+
+    return container;
 };
 
 export const getLibraryOptions = (context: CanvasRenderingContext2D, engine: Engine) => {
@@ -29,14 +35,6 @@ export const getLibraryOptions = (context: CanvasRenderingContext2D, engine: Eng
         removeClear,
         removeDot,
     };
-};
-
-const getContainer = (containerID: string) => {
-    const container = document.getElementById(containerID);
-
-    if (!(container instanceof HTMLDivElement)) throw new Error(`can't find div with id '${containerID}'`);
-
-    return container;
 };
 
 const clearOn = (engine: Engine, context: CanvasRenderingContext2D) => {

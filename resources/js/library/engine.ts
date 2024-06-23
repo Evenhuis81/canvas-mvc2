@@ -1,4 +1,4 @@
-import {EngineProperties, Show, Update} from './types/engine';
+import type {EngineProperties, Show, Update} from './types/engine';
 
 const createProperties: () => EngineProperties = () => ({
     updates: [],

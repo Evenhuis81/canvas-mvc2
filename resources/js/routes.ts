@@ -29,7 +29,7 @@ export const routes: RouteRecordRaw[] = [
     {
         path: '/player',
         component: () => import('./games/Player.vue'),
-        name: 'player',
+        name: 'Player',
         meta: {
             shouldBeLoggedIn: false,
         },
@@ -37,7 +37,15 @@ export const routes: RouteRecordRaw[] = [
     {
         path: '/dev',
         component: () => import('./Dev.vue'),
-        name: 'dev',
+        name: 'Dev',
+        meta: {
+            shouldBeLoggedIn: false,
+        },
+    },
+    {
+        path: '/demo',
+        component: () => import('./library/demo/Demo.vue'),
+        name: 'Demo',
         meta: {
             shouldBeLoggedIn: false,
         },

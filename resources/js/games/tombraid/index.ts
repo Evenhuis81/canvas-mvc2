@@ -75,7 +75,7 @@ const startLevel = (levelNr: number) => {
 
     player.setPosition(level.playerStart);
 
-    const tvUpdate = tv.moveTo(player.middlePos);
+    // const tvUpdate = tv.moveTo(player.middlePos);
 
     const levelShow = level.createShow(level.map, level.coins, tv, canvas.width, canvas.height);
 
