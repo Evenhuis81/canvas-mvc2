@@ -1,18 +1,5 @@
 import {mouse} from 'library/input';
 
-type Button = {
-    x: number;
-    y: number;
-    w: number;
-    h: number;
-    stroke: string;
-    fill: string;
-    text: string;
-    textColor: string;
-    lw: number;
-    r: number; // corner radius
-};
-
 const getButtonProperties = (options: ButtonOptions = {}) => ({
     x: options.x ?? innerWidth / 10,
     y: options.y ?? innerHeight / 10,
@@ -50,6 +37,8 @@ type ButtonOptions = {
     click?: (ev: MouseEvent) => void;
 };
 
+let idCount = 0;
+
 /** Get a default button */
 export const getButton = (ctx: CanvasRenderingContext2D, options: ButtonOptions = {}) => {
     const props = getButtonProperties(options);
@@ -57,7 +46,7 @@ export const getButton = (ctx: CanvasRenderingContext2D, options: ButtonOptions 
     console.log(props);
 
     const show = {
-        id: 2, // auto-create = auto-increase
+        id: idCount++, // auto-create = auto-increase
         name: 'default button', // placeholder
         fn: () => {
             // button

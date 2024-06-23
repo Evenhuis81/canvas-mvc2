@@ -2,12 +2,12 @@ import {createStore} from 'library/store';
 import {getLibraryOptions, initialize} from 'library/index';
 import {setMouseInput} from 'library/input';
 import type {ResourcesAndTV} from 'library/types';
-import {getButton} from 'library/button/button';
+import buttonModule from './buttonModule';
 
 export const resources = createStore<ResourcesAndTV>();
 
 export default {
-    setup: () => {
+    setup: async () => {
         const {canvas, context, engine, tv} = initialize('demo-container', {
             full: true,
             center: true, // used to remove scrollbar with scaled screen
@@ -20,27 +20,22 @@ export default {
 
         const options = getLibraryOptions(context, engine);
 
-        const demoUpdate = {
-            id: 666,
-            name: 'demo update',
-            fn: () => {
-                //
-            },
-        };
+        // const demoUpdate = {
+        //     id: 666,
+        //     name: 'demo update',
+        //     fn: () => {
+        //         //
+        //     },
+        // };
 
-        engine.setUpdate(demoUpdate);
+        // engine.setUpdate(demoUpdate);
 
         options.setClear();
         // options.setDot();
 
-        const buttonListener = (ev: MouseEvent) => {
-            console.log(ev);
-        };
+        const buttonModule = await import('./buttonModule');
 
-        // create seperate module for next part
-        const button = getButton(context, {click: buttonListener});
-
-        engine.setShow(button.show);
+        console.log(buttonModule);
     },
     run: () => resources.state.engine.run(),
     runOnce: () => resources.state.engine.runOnce(),
