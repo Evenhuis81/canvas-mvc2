@@ -7,13 +7,27 @@ export const resources = createStore<ResourcesAndTV>();
 
 export default {
     setup: () => {
-        const {canvas, context, engine, tv} = initialize('demo-container');
+        const {canvas, context, engine, tv} = initialize('demo-container', {
+            full: true,
+            center: true, // used to remove scrollbar with scaled screen
+            backgroundColor: '#000',
+        });
 
         resources.set({canvas, context, engine, tv});
 
         setMouseInput(canvas);
 
         const options = getLibraryOptions(context, engine);
+
+        const demoUpdate = {
+            id: 666,
+            name: 'demo update',
+            fn: () => {
+                //
+            },
+        };
+
+        engine.setUpdate(demoUpdate);
 
         options.setClear();
         options.setDot();

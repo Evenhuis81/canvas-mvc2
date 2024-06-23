@@ -8,5 +8,7 @@ import {onMounted} from 'vue';
 
 onMounted(() => {
     library.setup();
+
+    library.run();
 });
 </script>
