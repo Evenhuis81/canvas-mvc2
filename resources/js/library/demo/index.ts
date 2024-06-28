@@ -6,9 +6,17 @@ import {loadFont} from 'library/font';
 
 type FontsLoaded = FontFace[];
 
+type Buttons = Button[];
+
 export const resources = createStore<ResourcesAndTV>();
 
 export const fontsLoaded = createStore<FontsLoaded>();
+
+export const buttonResources = createStore<Buttons>();
+
+// Create seperate store module, items to add:
+// 1. All show/updates (so it's easy for other modules to add/remove those when needed)
+// 2. All items related to the current page/game/project
 
 export default {
     setup: async () => {
