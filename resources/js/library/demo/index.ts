@@ -2,9 +2,13 @@ import {createStore} from 'library/store';
 import {getLibraryOptions, initialize} from 'library/index';
 import {setMouseInput} from 'library/input';
 import type {ResourcesAndTV} from 'library/types';
-import buttonModule from './buttonModule';
+import {loadFont} from 'library/font';
+
+type FontsLoaded = FontFace[];
 
 export const resources = createStore<ResourcesAndTV>();
+
+export const fontsLoaded = createStore<FontsLoaded>();
 
 export default {
     setup: async () => {
@@ -20,29 +24,15 @@ export default {
 
         const options = getLibraryOptions(context, engine);
 
-        // const demoUpdate = {
-        //     id: 666,
-        //     name: 'demo update',
-        //     fn: () => {
-        //         //
-        //     },
-        // };
-
-        // engine.setUpdate(demoUpdate);
-
         options.setClear();
-        // options.setDot();
 
-        const buttonModule = await import('./buttonModule');
+        await loadFont('Open Sans', 'OpenSans-VariableFont_wdth,wght.ttf');
 
-        console.log(buttonModule);
+        const {default: button} = await import('./buttons');
+
+        button.demo();
     },
-    run: () => resources.state.engine.run(),
-    runOnce: () => resources.state.engine.runOnce(),
-};
-
-const startDemo = () => {
-    // tv.setScale(vector(scale, scale));
-    // tv.setScaleFactor(0.99);
-    // tv.setScreenSize(vector(canvas.width, canvas.height));
+    run: () => {
+        resources.state.engine.run();
+    },
 };

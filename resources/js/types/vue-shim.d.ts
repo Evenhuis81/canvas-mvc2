@@ -6,3 +6,7 @@ declare module '*.vue' {
 
     export default component;
 }
+
+interface Window {
+    log: (param1: any) => void;
+}

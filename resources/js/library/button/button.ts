@@ -1,28 +1,35 @@
+import {resources} from 'library/demo';
 import {mouse} from 'library/input';
 
-const getButtonProperties = (options: ButtonOptions = {}) => ({
-    x: options.x ?? innerWidth / 10,
-    y: options.y ?? innerHeight / 10,
-    w: options.w ?? innerWidth / 6,
-    h: options.h ?? innerHeight / 10,
-    stroke: options.stroke ?? '#f00',
-    fill: options.fill ?? '#ccc',
-    text: options.text ?? 'Default',
-    textColor: options.textColor ?? '#fff',
-    lw: options.lw ?? 2,
-    r: options.r ?? 5,
-    font: options.font ?? '20px normal sans-serif', // make non-hardcoded
-    click: options.click ?? null,
+type ButtonOptionsRequired = Required<Omit<ButtonOptions, 'mouseup'>> & {mouseup?: (ev: MouseEvent) => void};
+
+const getButtonProperties: (options?: ButtonOptions) => ButtonOptionsRequired = (options = {}) => ({
+    type: 'fill',
+    x: innerWidth / 10,
+    y: innerHeight / 10,
+    w: innerWidth / 6,
+    h: innerHeight / 10,
+    stroke: '#f00',
+    fill: '#ccc',
+    text: 'Default',
+    textColor: '#fff',
+    lw: 2,
+    r: 5,
+    font: '16px Arial', // make non-hardcoded
+    mouseup: undefined,
+    ...options,
 });
 
+// 1. make all button properties optional
+// 2. onhover:  -color (fill / stroke)
+//              -size (scale out/in)
+//              -dropShadow
+// 3. onClick:  -loadAnimation
+//              -dissapear / appear effects (slide / fade)
+// 4. make button object dynamic for property changes for button methods (point 2 and 3)
+
 type ButtonOptions = {
-    // 1. make all button properties optional
-    // 2. onhover:  -color (fill / stroke)
-    //              -size (scale out/in)
-    //              -dropShadow
-    // 3. onClick:  -loadAnimation
-    //              -dissapear / appear effects (slide / fade)
-    // 4. make button object dynamic for property changes for button methods (point 2 and 3)
+    type?: ButtonType;
     x?: number;
     y?: number;
     w?: number;
@@ -34,39 +41,82 @@ type ButtonOptions = {
     text?: string;
     textColor?: string;
     font?: string;
-    click?: (ev: MouseEvent) => void;
+    mouseup?: (ev: MouseEvent) => void;
 };
 
 let idCount = 0;
 
-/** Get a default button */
-export const getButton = (ctx: CanvasRenderingContext2D, options: ButtonOptions = {}) => {
-    const props = getButtonProperties(options);
+export default {
+    create: (options: ButtonOptions = {}) => createButton(options),
+};
 
-    console.log(props);
+export type ButtonType = 'fill' | 'stroke' | 'fillStroke';
+
+const createButtonShow: Record<
+    ButtonType,
+    (props: ButtonOptionsRequired, ctx: CanvasRenderingContext2D) => () => void
+> = {
+    fill: (props, ctx) => () => {
+        // button
+        ctx.fillStyle = props.fill;
+
+        ctx.beginPath();
+        ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
+        ctx.fill();
+
+        // text
+        ctx.fillStyle = props.textColor;
+        ctx.font = props.font;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        ctx.beginPath();
+        ctx.fillText(props.text, props.x, props.y);
+    },
+    stroke: (props, ctx) => () => {
+        ctx.strokeStyle = props.stroke;
+        ctx.lineWidth = props.lw;
+
+        ctx.beginPath();
+        ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
+        ctx.stroke();
+
+        ctx.fillStyle = props.textColor;
+        ctx.font = props.font;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        ctx.beginPath();
+        ctx.fillText(props.text, props.x, props.y);
+    },
+    fillStroke: (props, ctx) => () => {
+        ctx.fillStyle = props.fill;
+        ctx.strokeStyle = props.stroke;
+        ctx.lineWidth = props.lw;
+
+        ctx.beginPath();
+        ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = props.textColor;
+        ctx.font = props.font;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        ctx.beginPath();
+        ctx.fillText(props.text, props.x, props.y);
+    },
+};
+
+export const createButton = (options: ButtonOptions = {}) => {
+    const {context: ctx} = resources.state;
+    const props = getButtonProperties(options);
 
     const show = {
         id: idCount++, // auto-create = auto-increase
         name: 'default button', // placeholder
-        fn: () => {
-            // button
-            ctx.fillStyle = props.fill;
-            ctx.strokeStyle = props.stroke;
-            ctx.lineWidth = props.lw;
-
-            ctx.beginPath();
-            ctx.roundRect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h, props.r);
-            ctx.fill();
-            ctx.stroke();
-
-            // text
-            ctx.fillStyle = props.textColor;
-            ctx.font = props.font;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-
-            ctx.fillText(props.text, props.x, props.y);
-        },
+        fn: createButtonShow[props.type](props, ctx),
     };
 
     const inside = () =>
@@ -75,18 +125,23 @@ export const getButton = (ctx: CanvasRenderingContext2D, options: ButtonOptions 
         mouse.y >= props.y - props.h / 2 &&
         mouse.y < props.y + props.h / 2;
 
-    if (props.click != null) {
-        const {click} = props;
+    if (props.mouseup != null) {
+        const {mouseup} = props;
 
         addEventListener('mouseup', (ev: MouseEvent) => {
-            if (inside()) {
-                click(ev);
-                console.log('click inside');
-            }
+            if (inside()) mouseup(ev);
         });
     }
 
-    return {show};
+    const getTextProperties = () => {
+        ctx.font = props.font;
+
+        return {
+            width: ctx.measureText(props.text).width,
+        };
+    };
+
+    return {show, getTextProperties};
 };
 
 // const getButtonLines = (x: number, y: number, w: number, h: number) => {
