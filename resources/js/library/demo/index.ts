@@ -3,6 +3,7 @@ import {getLibraryOptions, initialize} from 'library/index';
 import {setMouseInput} from 'library/input';
 import type {ResourcesAndTV} from 'library/types';
 import {loadFont} from 'library/font';
+import {Button} from 'library/types/button';
 
 type FontsLoaded = FontFace[];
 

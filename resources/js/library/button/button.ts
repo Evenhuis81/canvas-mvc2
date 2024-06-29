@@ -1,7 +1,6 @@
 import {resources} from 'library/demo';
 import {mouse} from 'library/input';
-
-type ButtonOptionsRequired = Required<Omit<ButtonOptions, 'mouseup'>> & {mouseup?: (ev: MouseEvent) => void};
+import {ButtonOptions, ButtonOptionsRequired, ButtonType} from 'library/types/button';
 
 const getButtonProperties: (options?: ButtonOptions) => ButtonOptionsRequired = (options = {}) => ({
     type: 'fill',
@@ -16,7 +15,6 @@ const getButtonProperties: (options?: ButtonOptions) => ButtonOptionsRequired = 
     lw: 2,
     r: 5,
     font: '16px Arial', // make non-hardcoded
-    mouseup: undefined,
     ...options,
 });
 
@@ -28,29 +26,11 @@ const getButtonProperties: (options?: ButtonOptions) => ButtonOptionsRequired = 
 //              -dissapear / appear effects (slide / fade)
 // 4. make button object dynamic for property changes for button methods (point 2 and 3)
 
-type ButtonOptions = {
-    type?: ButtonType;
-    x?: number;
-    y?: number;
-    w?: number;
-    h?: number;
-    lw?: number;
-    r?: number;
-    stroke?: string;
-    fill?: string;
-    text?: string;
-    textColor?: string;
-    font?: string;
-    mouseup?: (ev: MouseEvent) => void;
-};
-
 let idCount = 0;
 
 export default {
     create: (options: ButtonOptions = {}) => createButton(options),
 };
-
-export type ButtonType = 'fill' | 'stroke' | 'fillStroke';
 
 const createButtonShow: Record<
     ButtonType,
