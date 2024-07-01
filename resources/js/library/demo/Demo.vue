@@ -11,6 +11,8 @@ window.log = (param1: any) => {
 };
 
 onMounted(() => {
+    // console.log(window.devicePixelRatio);
+
     demo.setup();
 
     demo.run();

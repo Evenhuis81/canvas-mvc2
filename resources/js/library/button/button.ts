@@ -40,6 +40,8 @@ const createButtonShow: Record<
         // button
         ctx.fillStyle = props.fill;
 
+        // console.log(props.x - props.w/2)
+
         ctx.beginPath();
         ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
         ctx.fill();
@@ -95,8 +97,18 @@ export const createButton = (options: ButtonOptions = {}) => {
 
     const show = {
         id: idCount++, // auto-create = auto-increase
-        name: 'default button', // placeholder
+        name: `button ${idCount} show`,
         fn: createButtonShow[props.type](props, ctx),
+    };
+
+    const update = {
+        id: idCount,
+        name: `button ${idCount} update`,
+        fn: () => {
+            if (inside()) return (props.fill = '#00f800');
+
+            props.fill = '#00a800';
+        },
     };
 
     const inside = () =>
@@ -121,7 +133,7 @@ export const createButton = (options: ButtonOptions = {}) => {
         };
     };
 
-    return {show, getTextProperties};
+    return {update, show, getTextProperties};
 };
 
 // const getButtonLines = (x: number, y: number, w: number, h: number) => {

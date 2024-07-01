@@ -1,7 +1,8 @@
-import type {Show} from './engine';
+import type {Show, Update} from './engine';
 
 type Button = {
     show: Show;
+    update: Update;
     getTextProperties: () => {width: number};
 };
 

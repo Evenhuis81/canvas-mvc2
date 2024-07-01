@@ -9,9 +9,13 @@ import {resources} from '.';
 // 4. Make this module dynamic and not only bound to demo buttons for future use. (preferably npm package)
 
 const buttonPropsGenerator = (amount: number) => {
-    const buttons: ReturnType<typeof buttonProps>[] = [];
+    const buttons: ReturnType<typeof getButtonProps>[] = [];
 
-    for (let i = 0; i < amount; i++) buttons.push(buttonProps(buttonText[i], buttonListener[i]));
+    for (let i = 0; i < amount; i++) {
+        const buttonProps = getButtonProps(menuButtonText[i], buttonListener[i]);
+
+        buttons.push(buttonProps);
+    }
 
     return buttons;
 };
@@ -31,21 +35,25 @@ const buttonListener = [
     },
 ];
 
+// Menu Buttons (root)
+const menuButtonText = ['Transformed View', 'Static View', 'Playfield'];
+
 // Set all different paint types here for demo buttons
-const buttonText = ['Transformed View', 'Static View', 'Playfield'];
+const tvPaintButtonText = [];
+const nonTvPaintButtonText = [];
 
 let count = 1;
 
-const buttonProps = (text: string, listener: (ev: MouseEvent) => void) => ({
+const getButtonProps = (text: string, listener: (ev: MouseEvent) => void) => ({
     mouseup: listener,
-    x: innerWidth / 10,
+    x: innerWidth / 2,
     y: innerHeight * (count++ * 0.1),
     type: <ButtonType>'fill',
     text,
     fill: '#00a800',
     r: 0,
     lw: 0,
-    w: 150,
+    w: innerWidth * 0.8,
     h: 35,
     font: '16px Open Sans',
 });
@@ -56,11 +64,9 @@ export default {
 
         buttonPropsGenerator(3).forEach((props: ButtonOptions) => buttons.push(button.create(props)));
 
-        buttons.forEach(button => resources.state.engine.setShow(button.show));
-
-        // engine.setShow(button1.show);
-        // engine.setShow(button2.show);
-        // engine.setShow(button3.show);
-        // window.log(button1.getTextProperties());
+        buttons.forEach(button => {
+            resources.state.engine.setUpdate(button.update);
+            resources.state.engine.setShow(button.show);
+        });
     },
 };
