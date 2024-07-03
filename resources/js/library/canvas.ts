@@ -58,11 +58,9 @@ const setCanvasOptions = (canvas: HTMLCanvasElement, options: CanvasOptions, con
  * @return {void}
  */
 export const setCanvas = (canvas: HTMLCanvasElement, options?: CanvasOptions, container?: HTMLDivElement) => {
-    // console.log(window.devicePixelRatio);
     if (options) return setCanvasOptions(canvas, options, container);
 
     // defaults
-    console.log('canvas defaults are set (= just lightgray background');
     canvas.style.backgroundColor = '#888';
 };
 

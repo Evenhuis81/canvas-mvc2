@@ -42,7 +42,6 @@ export const fadeIn = () => {
 
     // put this in the statistics menu and create a new canvas/view for all kind of statistics show
     // (with a (retro?) menu)
-    // console.log(player.alphaVel);
 };
 
 export const fadeOscillate = () => {
@@ -56,9 +55,6 @@ export const fadeOscillate = () => {
     fade.alpha += fade.alphaVel;
 
     player.stroke = `rgba(255, 255, 255, ${(Math.sin(fade.alpha) + 2) / 4 + 0.25})`;
-
-    // check comment on console log ability above
-    // console.log(player.alphaVel);
 };
 
 export const getPlayer = (tv: TransformedView) => {
