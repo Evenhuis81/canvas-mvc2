@@ -12,13 +12,15 @@ const buttonPropsGenerator = (amount: number) => {
     const buttons: ReturnType<typeof getButtonProps>[] = [];
 
     for (let i = 0; i < amount; i++) {
-        const buttonProps = getButtonProps(menuButtonText[i], buttonListener[i]);
+        const buttonProps = getButtonProps(menuButtonText[i], fonts[i], buttonListener[i]);
 
         buttons.push(buttonProps);
     }
 
     return buttons;
 };
+
+const fonts = ['16px OpenS', '16px OpenS', '16px OpenS'];
 
 const buttonListener = [
     (ev: MouseEvent) => {
@@ -37,14 +39,15 @@ const buttonListener = [
 
 // Menu Buttons (root)
 const menuButtonText = ['Transformed View', 'Static View', 'Playfield'];
+// const menuButtonText = ['Transformed View', 'Transformed View', 'Transformed View'];
 
 // Set all different paint types here for demo buttons
-const tvPaintButtonText = [];
-const nonTvPaintButtonText = [];
+// const tvPaintButtonText = [];
+// const nonTvPaintButtonText = [];
 
 let count = 1;
 
-const getButtonProps = (text: string, listener: (ev: MouseEvent) => void) => ({
+const getButtonProps = (text: string, font: string, listener: (ev: MouseEvent) => void) => ({
     mouseup: listener,
     x: innerWidth / 2,
     y: innerHeight * (count++ * 0.1),
@@ -55,7 +58,7 @@ const getButtonProps = (text: string, listener: (ev: MouseEvent) => void) => ({
     lw: 0,
     w: innerWidth * 0.8,
     h: 35,
-    font: '16px Open Sans',
+    font,
 });
 
 export default {

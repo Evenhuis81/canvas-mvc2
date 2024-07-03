@@ -1,9 +1,10 @@
 import {createStore} from 'library/store';
 import {getLibraryOptions, initialize} from 'library/index';
 import {setMouseInput} from 'library/input';
-import type {ResourcesAndTV} from 'library/types';
 import {loadFont} from 'library/font';
 import {Button} from 'library/types/button';
+import type {ResourcesAndTV} from 'library/types';
+import {getDetector} from 'library/font/font';
 
 type FontsLoaded = FontFace[];
 
@@ -35,7 +36,11 @@ export default {
 
         options.setClear();
 
-        await loadFont('Open Sans', 'OpenSans-VariableFont_wdth,wght.ttf');
+        await loadFont('OpenS', 'OpenSans-VariableFont_wdth,wght.ttf');
+
+        const detector = getDetector();
+
+        console.log(detector.detect('OpenS'));
 
         const {default: button} = await import('./buttons');
 

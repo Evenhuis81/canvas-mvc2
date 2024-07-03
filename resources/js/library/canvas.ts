@@ -1,3 +1,5 @@
+import {CanvasOptions} from './types';
+
 export const getCanvas = () => {
     const canvas = document.createElement('canvas');
 
@@ -46,15 +48,17 @@ const setCanvasOptions = (canvas: HTMLCanvasElement, options: CanvasOptions, con
     if (container) container.appendChild(canvas);
 };
 
-export type CanvasOptions = {
-    width?: number;
-    height?: number;
-    backgroundColor?: string;
-    center?: boolean;
-    full?: boolean; // full tab (innerWidth, innerHeight)
-};
-
+/**
+ * Set canvas with optional options and container parameters
+ *
+ * @param {HTMLCanvasElement} canvas
+ * @param {CanvasOptions} [options]
+ * @param {HTMLDivElement} [container]
+ *
+ * @return {void}
+ */
 export const setCanvas = (canvas: HTMLCanvasElement, options?: CanvasOptions, container?: HTMLDivElement) => {
+    // console.log(window.devicePixelRatio);
     if (options) return setCanvasOptions(canvas, options, container);
 
     // defaults

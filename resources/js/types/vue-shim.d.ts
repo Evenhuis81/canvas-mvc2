@@ -7,6 +7,7 @@ declare module '*.vue' {
     export default component;
 }
 
-interface Window {
-    log: (param1: any) => void;
-}
+// Make new window methods global without use of 'windows.method()'.
+// interface Window {
+//     log: (param1: any) => void;
+// }

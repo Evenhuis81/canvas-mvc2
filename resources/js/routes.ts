@@ -50,4 +50,12 @@ export const routes: RouteRecordRaw[] = [
             shouldBeLoggedIn: false,
         },
     },
+    {
+        path: '/font',
+        component: () => import('./library/font/Font.vue'),
+        name: 'Font',
+        meta: {
+            shouldBeLoggedIn: false,
+        },
+    },
 ];

@@ -14,7 +14,7 @@ const getButtonProperties: (options?: ButtonOptions) => ButtonOptionsRequired = 
     textColor: '#fff',
     lw: 2,
     r: 5,
-    font: '16px Arial', // make non-hardcoded
+    font: '16px monospace',
     ...options,
 });
 
@@ -39,8 +39,6 @@ const createButtonShow: Record<
     fill: (props, ctx) => () => {
         // button
         ctx.fillStyle = props.fill;
-
-        // console.log(props.x - props.w/2)
 
         ctx.beginPath();
         ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
@@ -95,6 +93,10 @@ export const createButton = (options: ButtonOptions = {}) => {
     const {context: ctx} = resources.state;
     const props = getButtonProperties(options);
 
+    const original = (({x, y, w, h}) => ({x, y, w, h}))(props);
+
+    let pushed = false;
+
     const show = {
         id: idCount++, // auto-create = auto-increase
         name: `button ${idCount} show`,
@@ -105,11 +107,21 @@ export const createButton = (options: ButtonOptions = {}) => {
         id: idCount,
         name: `button ${idCount} update`,
         fn: () => {
+            slideInLeft();
+
             if (inside()) return (props.fill = '#00f800');
 
             props.fill = '#00a800';
+
+            return;
         },
     };
+
+    const slideInLeft = () => {
+        props.x = -props.w / 2;
+    };
+
+    const slideInRight = () => {};
 
     const inside = () =>
         mouse.x >= props.x - props.w / 2 &&
@@ -125,6 +137,15 @@ export const createButton = (options: ButtonOptions = {}) => {
         });
     }
 
+    addEventListener('mousedown', (ev: MouseEvent) => {
+        if (inside()) {
+            pushed = true;
+            props.w *= 0.9;
+
+            return;
+        }
+    });
+
     const getTextProperties = () => {
         ctx.font = props.font;
 
@@ -133,7 +154,7 @@ export const createButton = (options: ButtonOptions = {}) => {
         };
     };
 
-    return {update, show, getTextProperties};
+    return {update, show, getTextProperties, slideInLeft, slideInRight};
 };
 
 // const getButtonLines = (x: number, y: number, w: number, h: number) => {
