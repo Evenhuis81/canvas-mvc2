@@ -13,9 +13,14 @@ export const resources = createStore<ResourcesAndTV>();
 export const levelStore = createStore<LevelResource>();
 export const playerStore = createStore<PlayerResource>();
 
+const options = {
+    full: true,
+    backgroundColor: '#000',
+};
+
 export default {
     setup: () => {
-        const {canvas, context, engine, tv} = initialize('container');
+        const {canvas, context, engine, tv} = initialize('container', options);
 
         resources.set({canvas, context, engine, tv});
 
@@ -25,10 +30,10 @@ export default {
         // Make globally available
         setMouseInput(canvas);
 
-        const options = getLibraryOptions(context, engine);
+        const libOptions = getLibraryOptions(context, engine);
 
-        options.setClear();
-        options.setDot();
+        libOptions.setClear();
+        libOptions.setDot();
 
         goToMenu(); // = start level directly for now
     },
@@ -65,9 +70,7 @@ const startLevel = (levelNr: number) => {
 
     const {tv, canvas, engine} = resources.state;
     const player = playerStore.state;
-    const scale = canvas.width / 24;
-
-    // Level used externally ?
+    const scale = canvas.width / 12;
 
     tv.setScale(vector(scale, scale));
     tv.setScaleFactor(0.99);
@@ -83,5 +86,5 @@ const startLevel = (levelNr: number) => {
     engine.setShow(player.show);
 
     engine.setUpdate(player.update);
-    engine.setUpdate(tvUpdate);
+    // engine.setUpdate(tvUpdate);
 };
