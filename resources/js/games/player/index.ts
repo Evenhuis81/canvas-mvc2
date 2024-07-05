@@ -3,7 +3,7 @@ import {createStore} from 'games/library/store';
 import {getPlayer} from './player';
 import {getResources} from 'games/library';
 import {getTV} from 'games/library/transformedView';
-import {initializeMenu} from 'games/menu';
+import {initializeMenu} from 'library/menu';
 import {setMouseInput} from 'games/library/input';
 import type {Resources} from 'games/library/types';
 

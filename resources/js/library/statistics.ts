@@ -1,55 +1,50 @@
-// import {gameStore} from '../tombraid/store';
-// import {vector} from './canvas';
+import {Vector} from './types/vector';
+import {vector} from './vector';
 
-// const statistics: (() => string)[] = [];
+const statistics: (() => string)[] = [];
 
-// export const setStatistic = (statistic: () => string) => {
-//     statistics.push(statistic);
-// };
+export const getStatistics = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
+    const txtPosDefault = vector(10, 10);
+    let txtPos = vector(10, 10);
+    const txtMargin = 5;
 
-// const txtPosDefault = vector(10, 10);
-// const txtPos = vector(10, 10);
-// const txtMargin = 5;
+    const show = {
+        id: 8,
+        name: 'enable statistics',
+        fn: () => {
+            console.log(statistics.length);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-// export const enableStatistics = () => {
-//     const {context: ctx} = gameStore.state;
+            ctx.font = '16px serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#fff';
 
-//     const show = {
-//         id: 8,
-//         name: 'enable statistics',
-//         fn: () => {
-//             ctx.font = '16px serif';
-//             ctx.textAlign = 'center';
-//             ctx.textBaseline = 'middle';
-//             ctx.fillStyle = '#fff';
+            for (let i = 0; i < statistics.length; i++) {
+                const txt = statistics[i]();
 
-//             for (let i = 0; i < statistics.length; i++) {
-//                 const txt = statistics[i]();
+                const metrics = ctx.measureText(txt);
 
-//                 const metrics = ctx.measureText(txt);
+                const fontHeight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent; // static
+                // const actualHeight = metrics.actualBoundingBoxAscent +
+                // metrics.actualBoundingBoxDescent; // depend on txt
 
-//                 const fontHeight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent; // static
-//                 // const actualHeight = metrics.actualBoundingBoxAscent +
-//                 // metrics.actualBoundingBoxDescent; // depend on txt
+                ctx.beginPath();
+                ctx.fillText(txt, txtPos.x + metrics.width / 2, txtPos.y + fontHeight / 2);
 
-//                 // ctx.beginPath();
-//                 ctx.fillText(txt, txtPos.x + metrics.width / 2, txtPos.y + fontHeight / 2);
+                // ctx.lineWidth = 1;
+                // ctx.strokeStyle = '#f00';
+                // ctx.beginPath();
+                // ctx.strokeRect(txtPos.x, txtPos.y, ctx.measureText(txt).width, fontHeight);
 
-//                 // ctx.lineWidth = 1;
-//                 // ctx.strokeStyle = '#f00';
-//                 // ctx.beginPath();
-//                 // ctx.strokeRect(txtPos.x, txtPos.y, ctx.measureText(txt).width, fontHeight);
+                txtPos.y += fontHeight + txtMargin;
+            }
 
-//                 txtPos.y += fontHeight + txtMargin;
-//             }
+            txtPos = {...txtPosDefault};
+        },
+    };
 
-//             txtPos.set(txtPosDefault);
-//         },
-//     };
+    const set = (statistic: () => string) => statistics.push(statistic);
 
-//     gameStore.state.engine.setShow(show);
-// };
-
-// export const disableShow = () => {
-//     //
-// };
+    return {set, show};
+};

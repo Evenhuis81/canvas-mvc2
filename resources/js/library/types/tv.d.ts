@@ -47,7 +47,7 @@ export interface MethodsTV {
     setDefaults: (canvas: HTMLCanvasElement) => void;
     // getGrid: (context: CanvasRenderingContext2D) => Show;
     setMiddle: (target: Vector) => void;
-    moveTo: (target: Vector, slowR: number) => Update;
+    moveTo: (target: Vector, slowR?: number) => Update;
 }
 
 export type PropertiesTV = {

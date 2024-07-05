@@ -6,6 +6,7 @@ import {setTVEvents} from './input';
 import {vec, vector, vector2} from '../vector';
 import type {Vector, Vector2} from 'library/types/vector';
 import type {Zoom} from 'library/types/tv';
+import {statistics} from 'games/tombraid';
 
 // Use only vectors if possible
 export const getTV = (context: CanvasRenderingContext2D) => {
@@ -144,14 +145,12 @@ const setMiddle = (source: Vector) => {
     setOffset(vector(-properties.world.x + source.x, -properties.world.y + source.y));
 };
 
-const moveTo = (target: Vector) => {
-    const frictionChange = 0.4; // higher = faster halt?
-    let slowRadius = 2;
+const moveTo = (target: Vector, slowR = 2) => {
+    const frictionChange = 0.1;
     let count = 0;
+    const strength = vector();
 
-    // As soon as target gets too fast and of the tracks, it doesn't go directly for the target anymore
-    // It's needed at certain point to reset the acceleration.
-    // When x- and y-axis gets from positive to negative and vice versa, reset both acc
+    statistics.state.set(() => `strength.x: ${strength.x.toFixed(2)} & strength.y: ${strength.y.toFixed(2)}`);
 
     return {
         id: 11,
@@ -159,11 +158,12 @@ const moveTo = (target: Vector) => {
         fn: () => {
             if (++count < 20) return;
 
-            const strengthFactor = 1000;
+            const strengthFactor = 2000;
 
             const worldMiddle = s2W(getMiddleScreen());
 
-            const strength = vector(worldMiddle.x - target.x, worldMiddle.y - target.y);
+            strength.x = worldMiddle.x - target.x;
+            strength.y = worldMiddle.y - target.y;
 
             const acc = vector(strength.x / strengthFactor, strength.y / strengthFactor);
 
@@ -173,8 +173,8 @@ const moveTo = (target: Vector) => {
 
             const length = vec.mag(strength);
 
-            if (length < slowRadius) {
-                let friction = vec.mag(strength) / slowRadius;
+            if (length < slowR) {
+                let friction = vec.mag(strength) / slowR;
 
                 friction = 1 - friction;
 

@@ -2,16 +2,25 @@ import {createStore} from 'library/store';
 import {getLevel} from './levels';
 import {getLibraryOptions, initialize} from 'library/index';
 import {getPlayer} from './player';
-// import {getStartButton} from './button';
 import {setMouseInput} from 'library/input';
 import {vector} from 'library/vector';
 import type {LevelResource} from './types/level';
 import type {PlayerResource} from './types/game';
 import type {ResourcesAndTV} from 'library/types';
+import {setDualView} from 'library/menu';
+import {getContext2D} from 'library/canvas';
+import {getStatistics} from 'library/statistics';
+import {Show} from 'library/types/engine';
+
+interface StatisticsResource {
+    set: (statistic: () => string) => number;
+    show: Show;
+}
 
 export const resources = createStore<ResourcesAndTV>();
 export const levelStore = createStore<LevelResource>();
 export const playerStore = createStore<PlayerResource>();
+export const statistics = createStore<StatisticsResource>();
 
 const options = {
     full: true,
@@ -24,10 +33,18 @@ export default {
 
         resources.set({canvas, context, engine, tv});
 
+        const canvas2 = setDualView(canvas, 'container');
+        const context2 = getContext2D(canvas2);
+
+        const stats = getStatistics(context2, canvas2);
+
+        statistics.set(stats);
+
+        engine.setShow(statistics.state.show);
+
         const player = getPlayer();
         playerStore.set(player);
 
-        // Make globally available
         setMouseInput(canvas);
 
         const libOptions = getLibraryOptions(context, engine);
@@ -35,34 +52,13 @@ export default {
         libOptions.setClear();
         libOptions.setDot();
 
-        goToMenu(); // = start level directly for now
+        goToMenu();
     },
     run: () => resources.state.engine.run(),
     runOnce: () => resources.state.engine.runOnce(),
 };
 
-const goToMenu = () => {
-    // buttons:
-    // 1. start
-    // 2. settings
-    // 3. exit
-    // 4. admin options
-    // 5. show statistics
-    // 6. level editor
-    // 7. login
-    // 8. create account
-    // 9. load game
-    // 10. save game
-
-    // const startButton = getStartButton(resources.state.context);
-    // resources.state.engine.setShow(startButton.show);
-
-    // addEventListener('mouseup', () => {
-    //     if (startButton.inside()) startLevel(2);
-    // });
-
-    startLevel(3);
-};
+const goToMenu = () => startLevel(3);
 
 const startLevel = (levelNr: number) => {
     const level = getLevel(levelNr);
@@ -70,7 +66,7 @@ const startLevel = (levelNr: number) => {
 
     const {tv, canvas, engine} = resources.state;
     const player = playerStore.state;
-    const scale = canvas.width / 12;
+    const scale = canvas.width / 24;
 
     tv.setScale(vector(scale, scale));
     tv.setScaleFactor(0.99);
@@ -78,7 +74,10 @@ const startLevel = (levelNr: number) => {
 
     player.setPosition(level.playerStart);
 
-    // const tvUpdate = tv.moveTo(player.middlePos);
+    const tvUpdate = tv.moveTo(player.middlePos);
+    engine.setUpdate(tvUpdate);
+
+    tv.setMiddle(vector(level.playerStart.x + 0.5, level.playerStart.y + 0.5));
 
     const levelShow = level.createShow(level.map, level.coins, tv, canvas.width, canvas.height);
 
@@ -86,5 +85,4 @@ const startLevel = (levelNr: number) => {
     engine.setShow(player.show);
 
     engine.setUpdate(player.update);
-    // engine.setUpdate(tvUpdate);
 };

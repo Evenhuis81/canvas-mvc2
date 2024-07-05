@@ -5,4 +5,5 @@ export interface PlayerResource {
     update: Update;
     show: Show;
     setPosition: (pos: Vector) => void;
+    middlePos: Vector;
 }

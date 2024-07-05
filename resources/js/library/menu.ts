@@ -1,15 +1,11 @@
-import {getCanvas} from 'games/library/canvas';
+import {getCanvas} from 'library/canvas';
+import {getContainer} from '.';
 
 const canvas2 = getCanvas();
 let canvas1: HTMLCanvasElement;
 let container: HTMLDivElement;
 let timeout: ReturnType<typeof setTimeout>;
 let active = false;
-
-// create methods and use resource store
-export const initializeMenu = (canvas: HTMLCanvasElement, divContainer: HTMLDivElement) => {
-    setDualView(canvas, divContainer);
-};
 
 // resize events are only fired on the window object (mdn mozilla)
 onresize = () => resizeDualView();
@@ -27,9 +23,9 @@ const resizeDualView = () => {
     timeout = setTimeout(resize, 250);
 };
 
-const setDualView = (canvas: HTMLCanvasElement, divContainer: HTMLDivElement) => {
+export const setDualView = (canvas: HTMLCanvasElement, containerID: string) => {
     canvas1 = canvas;
-    container = divContainer;
+    container = getContainer(containerID);
     container.style.display = 'flex';
     container.style.width = '100vw';
     container.style.height = '100vh';
@@ -37,11 +33,15 @@ const setDualView = (canvas: HTMLCanvasElement, divContainer: HTMLDivElement) =>
     container.style.alignItems = 'center';
 
     canvas1.style.backgroundColor = '#000';
-    canvas2.style.backgroundColor = '#888';
+    canvas2.style.backgroundColor = '#111';
 
     resize();
 
     container.appendChild(canvas1);
+
+    toggleDualView();
+
+    return canvas2;
 };
 
 const toggleDualView = () => {
