@@ -1,7 +1,7 @@
-import {Vector} from './types/vector';
+import {Statistic} from './types/statistics';
 import {vector} from './vector';
 
-const statistics: (() => string)[] = [];
+const statistics: Statistic[] = [];
 
 export const getStatistics = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
     const txtPosDefault = vector(10, 10);
@@ -15,13 +15,13 @@ export const getStatistics = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasE
             console.log(statistics.length);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            ctx.font = '16px serif';
+            ctx.font = '16px OpenS';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = '#fff';
 
             for (let i = 0; i < statistics.length; i++) {
-                const txt = statistics[i]();
+                const txt = statistics[i].fn();
 
                 const metrics = ctx.measureText(txt);
 
@@ -44,7 +44,7 @@ export const getStatistics = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasE
         },
     };
 
-    const set = (statistic: () => string) => statistics.push(statistic);
+    const set = (statistic: Statistic) => statistics.push(statistic);
 
     return {set, show};
 };

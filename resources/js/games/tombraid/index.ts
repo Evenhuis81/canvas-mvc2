@@ -10,12 +10,9 @@ import type {ResourcesAndTV} from 'library/types';
 import {setDualView} from 'library/menu';
 import {getContext2D} from 'library/canvas';
 import {getStatistics} from 'library/statistics';
-import {Show} from 'library/types/engine';
-
-interface StatisticsResource {
-    set: (statistic: () => string) => number;
-    show: Show;
-}
+import {loadFont} from 'library/font';
+import {getDetector} from 'library/font/font';
+import {StatisticsResource} from 'library/types/statistics';
 
 export const resources = createStore<ResourcesAndTV>();
 export const levelStore = createStore<LevelResource>();
@@ -28,7 +25,7 @@ const options = {
 };
 
 export default {
-    setup: () => {
+    setup: async () => {
         const {canvas, context, engine, tv} = initialize('container', options);
 
         resources.set({canvas, context, engine, tv});
@@ -37,6 +34,12 @@ export default {
         const context2 = getContext2D(canvas2);
 
         const stats = getStatistics(context2, canvas2);
+
+        await loadFont('OpenS', 'OpenSans-VariableFont_wdth,wght.ttf');
+
+        const detector = getDetector();
+
+        console.log(detector.detect('OpenS'));
 
         statistics.set(stats);
 

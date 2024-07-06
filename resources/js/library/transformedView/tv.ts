@@ -150,7 +150,11 @@ const moveTo = (target: Vector, slowR = 2) => {
     let count = 0;
     const strength = vector();
 
-    statistics.state.set(() => `strength.x: ${strength.x.toFixed(2)} & strength.y: ${strength.y.toFixed(2)}`);
+    statistics.state.set({
+        id: 0, // test
+        name: 'test stat',
+        fn: () => `strength.x: ${strength.x.toFixed(2)} & strength.y: ${strength.y.toFixed(2)}`,
+    });
 
     return {
         id: 11,
