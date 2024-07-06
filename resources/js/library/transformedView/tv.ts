@@ -7,6 +7,7 @@ import {vec, vector, vector2} from '../vector';
 import type {Vector, Vector2} from 'library/types/vector';
 import type {Zoom} from 'library/types/tv';
 import {statistics} from 'games/tombraid';
+import {StatisticsResource} from 'library/types/statistics';
 
 // Use only vectors if possible
 export const getTV = (context: CanvasRenderingContext2D) => {
@@ -15,10 +16,19 @@ export const getTV = (context: CanvasRenderingContext2D) => {
     // Create an option out of this
     setTVEvents(properties, methods);
 
+    const setTVStatistics = (statistics: StatisticsResource) => {
+        statistics.set({
+            id: 99,
+            name: 'tv scale properties',
+            fn: () => `scale.x(=y): ${properties.scale.x}`,
+        });
+    };
+
     return {
         ...properties,
         ...paintMethods,
         ...methods,
+        setTVStatistics,
     };
 };
 
@@ -139,8 +149,13 @@ const setDefaults = (canvas: HTMLCanvasElement) => {
     setScreenSize(vector(width, height));
 };
 
+// This also resets offset to 0, 0 which is needed for resize
 const setMiddle = (source: Vector) => {
     const {x, y} = getMiddleScreen();
+
+    properties.offset.x = 0;
+    properties.offset.y = 0;
+
     screen2World(x, y);
     setOffset(vector(-properties.world.x + source.x, -properties.world.y + source.y));
 };

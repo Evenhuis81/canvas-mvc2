@@ -12,7 +12,7 @@ export const getStatistics = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasE
         id: 8,
         name: 'enable statistics',
         fn: () => {
-            console.log(statistics.length);
+            // console.log(canvas.width, canvas.height);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             ctx.font = '16px OpenS';

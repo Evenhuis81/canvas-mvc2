@@ -6,6 +6,7 @@ let canvas1: HTMLCanvasElement;
 let container: HTMLDivElement;
 let timeout: ReturnType<typeof setTimeout>;
 let active = false;
+let resizeCB: (() => void) | undefined;
 
 // resize events are only fired on the window object (mdn mozilla)
 onresize = () => resizeDualView();
@@ -21,6 +22,10 @@ addEventListener('keyup', ({code}) => {
 const resizeDualView = () => {
     clearTimeout(timeout);
     timeout = setTimeout(resize, 250);
+};
+
+export const onResize = (cb: () => void) => {
+    resizeCB = cb;
 };
 
 export const setDualView = (canvas: HTMLCanvasElement, containerID: string) => {
@@ -39,17 +44,18 @@ export const setDualView = (canvas: HTMLCanvasElement, containerID: string) => {
 
     container.appendChild(canvas1);
 
-    toggleDualView();
-
     return canvas2;
 };
 
 const toggleDualView = () => {
+    // Make this a transition, with target and bezier curve laid out transition effect
     if (active) {
         container.removeChild(canvas2);
         canvas1.width = innerWidth;
 
         active = false;
+
+        if (resizeCB) resizeCB();
 
         return;
     }
@@ -60,6 +66,9 @@ const toggleDualView = () => {
     container.appendChild(canvas2);
 
     active = true;
+
+    // This is more like a manual resize, triggered by keyUp event
+    if (resizeCB) resizeCB();
 };
 
 const resize = () => {
@@ -70,9 +79,13 @@ const resize = () => {
         canvas1.width = innerWidth / 2;
         canvas2.width = innerWidth / 2;
 
+        if (resizeCB) resizeCB();
+
         return;
     }
 
     canvas1.width = innerWidth;
     canvas2.width = innerWidth;
+
+    if (resizeCB) resizeCB();
 };

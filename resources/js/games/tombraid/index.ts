@@ -7,11 +7,10 @@ import {vector} from 'library/vector';
 import type {LevelResource} from './types/level';
 import type {PlayerResource} from './types/game';
 import type {ResourcesAndTV} from 'library/types';
-import {setDualView} from 'library/menu';
+import {setDualView, onResize} from 'library/menu';
 import {getContext2D} from 'library/canvas';
 import {getStatistics} from 'library/statistics';
 import {loadFont} from 'library/font';
-import {getDetector} from 'library/font/font';
 import {StatisticsResource} from 'library/types/statistics';
 
 export const resources = createStore<ResourcesAndTV>();
@@ -36,10 +35,6 @@ export default {
         const stats = getStatistics(context2, canvas2);
 
         await loadFont('OpenS', 'OpenSans-VariableFont_wdth,wght.ttf');
-
-        const detector = getDetector();
-
-        console.log(detector.detect('OpenS'));
 
         statistics.set(stats);
 
@@ -69,16 +64,16 @@ const startLevel = (levelNr: number) => {
 
     const {tv, canvas, engine} = resources.state;
     const player = playerStore.state;
-    const scale = canvas.width / 24;
 
+    const scale = canvas.width / 24;
     tv.setScale(vector(scale, scale));
     tv.setScaleFactor(0.99);
     tv.setScreenSize(vector(canvas.width, canvas.height));
 
     player.setPosition(level.playerStart);
 
-    const tvUpdate = tv.moveTo(player.middlePos);
-    engine.setUpdate(tvUpdate);
+    // const tvUpdate = tv.moveTo(player.middlePos);
+    // engine.setUpdate(tvUpdate);
 
     tv.setMiddle(vector(level.playerStart.x + 0.5, level.playerStart.y + 0.5));
 
@@ -88,4 +83,28 @@ const startLevel = (levelNr: number) => {
     engine.setShow(player.show);
 
     engine.setUpdate(player.update);
+
+    onResize(() => {
+        engine.removeShow(4);
+
+        const scale = canvas.width / 24;
+
+        tv.setScale(vector(scale, scale));
+        tv.setScaleFactor(0.99);
+        tv.setScreenSize(vector(canvas.width, canvas.height));
+        tv.setMiddle(vector(player.middlePos.x, player.middlePos.y));
+
+        const levelS = level.createShow(level.map, level.coins, tv, canvas.width, canvas.height);
+
+        engine.setShow(levelS);
+    });
+
+    // TODO::Make this a seperate module
+    tv.setTVStatistics(statistics.state);
+
+    statistics.state.set({
+        id: 8,
+        name: 'player (middle) pos',
+        fn: () => `player.x: ${player.middlePos.x}, player.y: ${player.middlePos.y}`,
+    });
 };

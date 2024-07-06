@@ -87,7 +87,7 @@ const createStrokeRect =
         world2Screen(obj.x, obj.y);
 
         ctx.strokeStyle = obj.stroke;
-        ctx.lineWidth = obj.lw / (scale.x * 0.1);
+        ctx.lineWidth = obj.lw * scale.x;
 
         ctx.beginPath();
         ctx.strokeRect(screen.x, screen.y, obj.w * scale.x, obj.h * scale.y);

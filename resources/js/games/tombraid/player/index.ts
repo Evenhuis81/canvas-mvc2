@@ -157,6 +157,7 @@ export const getPlayer = () => {
         player.lastPos.x = pos.x;
         player.lastPos.y = pos.y;
     };
+
     switchMovement.initiate();
 
     return {update, show: createShowCircle(tv), setPosition, middlePos: player.posMiddle};

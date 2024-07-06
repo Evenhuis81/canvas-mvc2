@@ -75,7 +75,7 @@ const createMapShow = (
                         // replace switch with an object
                         switch (levelMap[y][noEmptyX[y][x]]) {
                             case 'X':
-                                tv.strokeRect({x: noEmptyX[y][x], y, w: 1, h: 1, stroke: 'white', lw: 5});
+                                tv.strokeRect({x: noEmptyX[y][x], y, w: 1, h: 1, stroke: 'white', lw: 1});
 
                                 elementsDrawn.nr++;
                                 break;
