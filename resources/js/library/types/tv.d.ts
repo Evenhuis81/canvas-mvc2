@@ -9,7 +9,7 @@ type StrokeRect = Rect & {stroke: string; lw: number};
 type FillStrokeRect = FillRect & {stroke: string; lw: number};
 type RoundFillStrokeRect = FillStrokeRect & {r: number};
 type Line = Omit<Vector2, 'add' | 'set' | 'setManual'> & {stroke: string; lw: number};
-type Text = {x: number; y: number; txt: string; font: string; fill: string}; // auto-centered for now
+type Text = {x: number; y: number; txt: string; font?: string; fill: string; fontSize?: number}; // auto-centered for now
 type StrokeCircle = Circle & {stroke: string; lw: number; rS: number; rE: number}; // rS: arc start, rE: arc end
 type FillCircle = Circle & {fill: string};
 type FillStrokeCircle = StrokeCircle & {fill: string};
@@ -51,6 +51,7 @@ export interface MethodsTV {
     // getGrid: (context: CanvasRenderingContext2D) => Show;
     setMiddle: (target: Vector) => void;
     moveTo: (target: Vector, slowR?: number) => Update;
+    setUnitLineWidth: (unitLw: Vector) => void;
 }
 
 export type PropertiesTV = {

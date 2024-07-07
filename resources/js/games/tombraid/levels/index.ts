@@ -5,6 +5,7 @@ import {TransformedView} from 'library/types/tv';
 import {getCoinMap, getLevelMap} from './levels';
 import {vector} from 'library/vector';
 import type {CoinMap, LevelMap, MapElement} from 'games/tombraid/types/level';
+import {statistics} from '..';
 
 const getEmptyXFromRow = (levelMapRow: MapElement[], emptiesRow: number[], count = 0) => {
     // This works only if right side ends with no '.' or 'S'
@@ -59,6 +60,8 @@ const createMapShow = (
 ) => {
     const elementsDrawn = {nr: 0};
 
+    statistics.state.setFn(() => `elementsDrawn: ${elementsDrawn.nr}`);
+
     const noEmptyX = getEmptyX(levelMap);
 
     // eslint-disable-next-line complexity
@@ -75,9 +78,12 @@ const createMapShow = (
                         // replace switch with an object?
                         switch (levelMap[y][noEmptyX[y][x]]) {
                             case 'X':
-                                tv.strokeRect({x: noEmptyX[y][x], y, w: 1, h: 1, stroke: 'white', lw: 1});
+                                tv.strokeRect({x: noEmptyX[y][x], y, w: 1, h: 1, stroke: 'white', lw: 1}); // lw: 1 = unitLineWidth
 
                                 elementsDrawn.nr++;
+                                break;
+                            case 'T':
+                                tv.text({x: noEmptyX[y][x] + 0.5, y: y + 0.5, fill: '#fff', fontSize: 24, txt: 'T'});
                                 break;
                             case 'C': // for now C stand for cannon to the right
                                 // put this in a wireframemodel (for rotation)
@@ -146,5 +152,5 @@ export const getPlayerStart = (levelMap: LevelMap) => {
         if (playerX !== -1) return vector(playerX, y);
     }
 
-    // throw new Error('start position "S" for player not found in level map');
+    throw new Error('start position "S" for player not found in level map');
 };

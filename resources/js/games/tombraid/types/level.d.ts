@@ -2,7 +2,7 @@ import type {Show} from 'library/types/engine';
 import type {TransformedView} from 'library/types/tv';
 import type {Vector} from 'library/types/vector';
 
-export type MapElement = 'X' | '.' | 'S' | 'C';
+export type MapElement = 'X' | '.' | 'S' | 'C' | 'T';
 
 export type LevelMap = MapElement[][];
 

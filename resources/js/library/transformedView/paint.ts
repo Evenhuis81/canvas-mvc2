@@ -88,7 +88,6 @@ const createStrokeRect =
 
         ctx.strokeStyle = obj.stroke;
         ctx.lineWidth = obj.lw * unitLineWidth.x * scale.x;
-        console.log(unitLineWidth.x);
 
         ctx.beginPath();
         ctx.strokeRect(screen.x, screen.y, obj.w * scale.x, obj.h * scale.y);
@@ -113,7 +112,9 @@ const createText =
     (obj: Text) => {
         world2Screen(obj.x, obj.y);
 
-        ctx.font = `${scale.x}px serif`; // make non-hardcoded
+        const font = `${obj.fontSize ?? 16}px ${obj.font ?? 'OpenS'}`;
+
+        ctx.font = font;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillStyle = obj.fill;

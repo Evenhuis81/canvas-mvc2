@@ -56,10 +56,11 @@ export default {
     runOnce: () => resources.state.engine.runOnce(),
 };
 
-const goToMenu = () => startLevel(4);
+const goToMenu = () => startLevel(3);
 
 const startLevel = (levelNr: number) => {
     const level = getLevel(levelNr);
+
     levelStore.set(level);
 
     const {tv, canvas, engine} = resources.state;
@@ -70,17 +71,17 @@ const startLevel = (levelNr: number) => {
     tv.setUnitLineWidth({x: 1 / scale, y: 1 / scale});
 
     tv.setScale(vector(scale, scale));
-    // tv.setScaleFactor(0.9);
     tv.setScreenSize(vector(canvas.width, canvas.height));
 
-    // player.setPosition(level.playerStart);
+    player.setPosition(level.playerStart);
 
     // const tvUpdate = tv.moveTo(player.middlePos);
     // engine.setUpdate(tvUpdate);
 
-    // tv.setMiddle(vector(level.playerStart.x + 0.5, level.playerStart.y + 0.5));
+    tv.setMiddle(vector(level.playerStart.x + 0.5, level.playerStart.y + 0.5));
 
     const levelShow = level.createShow(level.map, level.coins, tv, canvas.width, canvas.height);
+    console.log(levelShow.id);
 
     engine.setShow(levelShow);
     engine.setShow(player.show);
@@ -88,32 +89,27 @@ const startLevel = (levelNr: number) => {
     engine.setUpdate(player.update);
 
     onResize(() => {
-        engine.removeShow(4);
+        engine.removeShow(4); // show id = 4
 
         const scale = canvas.width / 24;
 
-        tv.setUnitLineWidth({x: 1 / scale, y: 1 / scale});
+        const unitLw = 1 / scale;
+        tv.setUnitLineWidth({x: unitLw, y: unitLw});
 
         tv.setScale(vector(scale, scale));
-        // tv.setScaleFactor(0.9);
         tv.setScreenSize(vector(canvas.width, canvas.height));
         tv.setMiddle(vector(player.middlePos.x, player.middlePos.y));
 
-        const levelS = level.createShow(level.map, level.coins, tv, canvas.width, canvas.height);
+        const levelShow = level.createShow(level.map, level.coins, tv, canvas.width, canvas.height);
 
-        engine.setShow(levelS);
+        engine.setShow(levelShow);
     });
-
-    // TODO::Make this a seperate module
-    // const tvStats = tv.setTVStatistics();
-
-    // statistics.state.set(tvStats[0]);
-
-    statistics.state.setFn(() => `${tv.scale.x}`);
 
     statistics.state.set({
         id: 8,
         name: 'player (middle) pos',
         fn: () => `player.x: ${player.middlePos.x}, player.y: ${player.middlePos.y}`,
     });
+
+    statistics.state.setFn(() => `${tv.scale.x}`);
 };
