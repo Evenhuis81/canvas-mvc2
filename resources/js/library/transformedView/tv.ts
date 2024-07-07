@@ -7,7 +7,6 @@ import {vec, vector, vector2} from '../vector';
 import type {Vector, Vector2} from 'library/types/vector';
 import type {Zoom} from 'library/types/tv';
 import {statistics} from 'games/tombraid';
-import type {Statistic} from 'library/types/statistics';
 
 // Use only vectors if possible
 export const getTV = (context: CanvasRenderingContext2D) => {
@@ -16,23 +15,10 @@ export const getTV = (context: CanvasRenderingContext2D) => {
     // Create an option out of this
     setTVEvents(properties, methods);
 
-    const tVStatistics = (statFn: () => string) => ({
-        id: 99,
-        name: 'tv scale properties',
-        fn: () => `scale.x(=y): ${properties.scale.x}`,
-    });
-
-    const tvStats: Statistic[] = [];
-
-    const setTVStatistics = () => {
-        return tvStats;
-    };
-
     return {
         ...properties,
         ...paintMethods,
         ...methods,
-        setTVStatistics,
     };
 };
 
@@ -51,6 +37,7 @@ const properties = {
     scaleFactor: 0.95,
     worldView: vector2(),
     orientation: '',
+    unitLineWidth: vector(1, 1),
 };
 
 const screen2World = (x: number, y: number) => {
@@ -218,6 +205,11 @@ const moveTo = (target: Vector, slowR = 2) => {
 const s2W = (source: Vector) =>
     vector(source.x / properties.scale.x + properties.offset.x, source.y / properties.scale.y + properties.offset.y);
 
+const setUnitLineWidth = (unitLw: Vector) => {
+    properties.unitLineWidth.x = unitLw.x;
+    properties.unitLineWidth.y = unitLw.y;
+};
+
 const methods = {
     screen2World,
     world2Screen,
@@ -234,4 +226,5 @@ const methods = {
     setDefaults,
     setMiddle,
     moveTo,
+    setUnitLineWidth,
 };

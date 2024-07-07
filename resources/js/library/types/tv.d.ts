@@ -16,7 +16,7 @@ type FillStrokeCircle = StrokeCircle & {fill: string};
 type Zoom = 'in' | 'out';
 
 export interface TransformedView extends PropertiesTV, PaintTV, MethodsTV {
-    setTVStatistics: () => Statistic[];
+    // setTVStatistics: () => Statistic[];
 }
 
 export interface PaintTV {
@@ -67,4 +67,5 @@ export type PropertiesTV = {
     worldAfterZoom: Vector;
     scaleFactor: number;
     worldView: Vector2;
+    unitLineWidth: Vector;
 };

@@ -8,5 +8,6 @@ type Statistic = {
 
 interface StatisticsResource {
     set: (stat: Statistic) => number;
+    setFn: (fn: () => string) => void;
     show: Show;
 }

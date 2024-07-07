@@ -56,7 +56,7 @@ export default {
     runOnce: () => resources.state.engine.runOnce(),
 };
 
-const goToMenu = () => startLevel(3);
+const goToMenu = () => startLevel(4);
 
 const startLevel = (levelNr: number) => {
     const level = getLevel(levelNr);
@@ -66,16 +66,19 @@ const startLevel = (levelNr: number) => {
     const player = playerStore.state;
 
     const scale = canvas.width / 24;
+
+    tv.setUnitLineWidth({x: 1 / scale, y: 1 / scale});
+
     tv.setScale(vector(scale, scale));
-    tv.setScaleFactor(0.99);
+    // tv.setScaleFactor(0.9);
     tv.setScreenSize(vector(canvas.width, canvas.height));
 
-    player.setPosition(level.playerStart);
+    // player.setPosition(level.playerStart);
 
     // const tvUpdate = tv.moveTo(player.middlePos);
     // engine.setUpdate(tvUpdate);
 
-    tv.setMiddle(vector(level.playerStart.x + 0.5, level.playerStart.y + 0.5));
+    // tv.setMiddle(vector(level.playerStart.x + 0.5, level.playerStart.y + 0.5));
 
     const levelShow = level.createShow(level.map, level.coins, tv, canvas.width, canvas.height);
 
@@ -89,8 +92,10 @@ const startLevel = (levelNr: number) => {
 
         const scale = canvas.width / 24;
 
+        tv.setUnitLineWidth({x: 1 / scale, y: 1 / scale});
+
         tv.setScale(vector(scale, scale));
-        tv.setScaleFactor(0.99);
+        // tv.setScaleFactor(0.9);
         tv.setScreenSize(vector(canvas.width, canvas.height));
         tv.setMiddle(vector(player.middlePos.x, player.middlePos.y));
 
@@ -100,7 +105,11 @@ const startLevel = (levelNr: number) => {
     });
 
     // TODO::Make this a seperate module
-    tv.setTVStatistics(statistics.state);
+    // const tvStats = tv.setTVStatistics();
+
+    // statistics.state.set(tvStats[0]);
+
+    statistics.state.setFn(() => `${tv.scale.x}`);
 
     statistics.state.set({
         id: 8,

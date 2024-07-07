@@ -72,7 +72,7 @@ const createMapShow = (
             for (let y = 0; y < levelMap.length; y++) {
                 if (y > tv.worldView.y - 1 && y <= tv.worldView.y2) {
                     for (let x = 0; x < noEmptyX[y].length; x++) {
-                        // replace switch with an object
+                        // replace switch with an object?
                         switch (levelMap[y][noEmptyX[y][x]]) {
                             case 'X':
                                 tv.strokeRect({x: noEmptyX[y][x], y, w: 1, h: 1, stroke: 'white', lw: 1});
@@ -146,5 +146,5 @@ export const getPlayerStart = (levelMap: LevelMap) => {
         if (playerX !== -1) return vector(playerX, y);
     }
 
-    throw new Error('start position "S" for player not found in level map');
+    // throw new Error('start position "S" for player not found in level map');
 };

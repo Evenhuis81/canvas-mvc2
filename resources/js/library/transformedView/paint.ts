@@ -48,7 +48,7 @@ const createStrokeCircle =
         ctx.strokeStyle = obj.stroke;
 
         // set scale for every weight of line and others
-        ctx.lineWidth = obj.lw / scale.x;
+        ctx.lineWidth = obj.lw * scale.x;
 
         ctx.beginPath();
 
@@ -82,12 +82,13 @@ const createFillRect =
     };
 
 const createStrokeRect =
-    ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
+    ({screen, scale, unitLineWidth}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
     (obj: StrokeRect) => {
         world2Screen(obj.x, obj.y);
 
         ctx.strokeStyle = obj.stroke;
-        ctx.lineWidth = obj.lw * scale.x;
+        ctx.lineWidth = obj.lw * unitLineWidth.x * scale.x;
+        console.log(unitLineWidth.x);
 
         ctx.beginPath();
         ctx.strokeRect(screen.x, screen.y, obj.w * scale.x, obj.h * scale.y);

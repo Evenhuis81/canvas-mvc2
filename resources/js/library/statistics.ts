@@ -12,7 +12,6 @@ export const getStatistics = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasE
         id: 8,
         name: 'enable statistics',
         fn: () => {
-            // console.log(canvas.width, canvas.height);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             ctx.font = '16px OpenS';
@@ -46,5 +45,13 @@ export const getStatistics = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasE
 
     const set = (statistic: Statistic) => statistics.push(statistic);
 
-    return {set, show};
+    return {set, setFn, show};
+};
+
+const setFn = (fn: () => string) => {
+    statistics.push({
+        id: 0,
+        name: 'set property',
+        fn,
+    });
 };
