@@ -7,7 +7,7 @@ import {vec, vector, vector2} from '../vector';
 import type {Vector, Vector2} from 'library/types/vector';
 import type {Zoom} from 'library/types/tv';
 import {statistics} from 'games/tombraid';
-import {StatisticsResource} from 'library/types/statistics';
+import type {Statistic} from 'library/types/statistics';
 
 // Use only vectors if possible
 export const getTV = (context: CanvasRenderingContext2D) => {
@@ -16,12 +16,16 @@ export const getTV = (context: CanvasRenderingContext2D) => {
     // Create an option out of this
     setTVEvents(properties, methods);
 
-    const setTVStatistics = (statistics: StatisticsResource) => {
-        statistics.set({
-            id: 99,
-            name: 'tv scale properties',
-            fn: () => `scale.x(=y): ${properties.scale.x}`,
-        });
+    const tVStatistics = (statFn: () => string) => ({
+        id: 99,
+        name: 'tv scale properties',
+        fn: () => `scale.x(=y): ${properties.scale.x}`,
+    });
+
+    const tvStats: Statistic[] = [];
+
+    const setTVStatistics = () => {
+        return tvStats;
     };
 
     return {
@@ -31,8 +35,6 @@ export const getTV = (context: CanvasRenderingContext2D) => {
         setTVStatistics,
     };
 };
-
-const velocity = vector();
 
 const properties = {
     offset: vector(),
@@ -164,6 +166,7 @@ const moveTo = (target: Vector, slowR = 2) => {
     const frictionChange = 0.1;
     let count = 0;
     const strength = vector();
+    const velocity = vector();
 
     statistics.state.set({
         id: 0, // test

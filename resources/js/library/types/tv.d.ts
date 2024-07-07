@@ -1,4 +1,5 @@
 import {Show, Update} from './engine';
+import {Statistic} from './statistics';
 import {Vector, Vector2} from './vector';
 
 type Rect = {x: number; y: number; w: number; h: number};
@@ -14,7 +15,9 @@ type FillCircle = Circle & {fill: string};
 type FillStrokeCircle = StrokeCircle & {fill: string};
 type Zoom = 'in' | 'out';
 
-export interface TransformedView extends PropertiesTV, PaintTV, MethodsTV {}
+export interface TransformedView extends PropertiesTV, PaintTV, MethodsTV {
+    setTVStatistics: () => Statistic[];
+}
 
 export interface PaintTV {
     fillRect: (obj: FillRect) => void;
