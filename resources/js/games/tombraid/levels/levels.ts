@@ -1,4 +1,4 @@
-import {Levels} from 'games/tombraid/types/level';
+import {Block, Levels} from 'games/tombraid/types/level';
 
 // Legenda
 // X = solid block all sides
@@ -10,6 +10,18 @@ import {Levels} from 'games/tombraid/types/level';
 export const getLevelMap = (id: number) => levels[id];
 
 export const getCoinMap = (id: number) => coins[id];
+
+export const getBlockMap = (id: number) => blocks[id];
+
+type BlockKey = 'x' | 'y';
+
+interface Blocks {
+    [key: BlockKey]: Block[][];
+}
+
+const blocks: Blocks = [
+    x:
+];
 
 interface Coins {
     [key: number]: number[][];

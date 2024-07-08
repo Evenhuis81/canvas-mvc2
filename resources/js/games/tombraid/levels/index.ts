@@ -30,27 +30,6 @@ const getEmptyX = (levelMap: LevelMap) => {
     return empties;
 };
 
-// type Bullet = {
-//     x: number;
-//     y: number;
-//     vX: number;
-//     vY: number;
-// };
-
-// type Cannon = {
-//     x: number;
-//     y: number;
-//     direction: 'up' | 'down' | 'left' | 'right';
-// };
-
-// const getCannons = (map: LevelMap) => {
-//     const cannons: Cannon[] = [];
-//     for (let y = 0; y < map.length; y++)
-//         for (let x = 0; x < map.length; x++) if map[y][x] === 'C') cannons.push({x, y, direction: 'right'});
-
-//     return cannons;
-// };
-
 const createMapShow = (
     levelMap: LevelMap,
     coinMap: CoinMap,
@@ -131,12 +110,14 @@ const createMapShow = (
 
 export const getLevel = (id: number) => {
     const levelMap = getLevelMap(id);
-    // coin could also be a character on the map and this can be switched out (ie. lamba functions from javid9x)
+    // coin could also be a character on the map and this can be switched out (ie lamba functions from javid9x)
     const coinMap = getCoinMap(id);
+
+    const blockMap = getBlockMap(id);
 
     return {
         map: levelMap,
-        // blocks: blockMap,
+        blockMap,
         width: levelMap[0].length,
         height: levelMap.length,
         playerStart: getPlayerStart(levelMap),
@@ -154,3 +135,24 @@ export const getPlayerStart = (levelMap: LevelMap) => {
 
     throw new Error('start position "S" for player not found in level map');
 };
+
+// type Bullet = {
+//     x: number;
+//     y: number;
+//     vX: number;
+//     vY: number;
+// };
+
+// type Cannon = {
+//     x: number;
+//     y: number;
+//     direction: 'up' | 'down' | 'left' | 'right';
+// };
+
+// const getCannons = (map: LevelMap) => {
+//     const cannons: Cannon[] = [];
+//     for (let y = 0; y < map.length; y++)
+//         for (let x = 0; x < map.length; x++) if map[y][x] === 'C') cannons.push({x, y, direction: 'right'});
+
+//     return cannons;
+// };
