@@ -1,10 +1,9 @@
-import {keyHeld, mouse} from '../input';
+import {Input} from 'library/types';
 import type {MethodsTV, PropertiesTV} from '../types/tv';
 
 const mousedownHandler =
     ({startPan}: PropertiesTV, methods: MethodsTV) =>
     (evt: MouseEvent) => {
-        keyHeld[evt.button] = true;
         if (evt.button === 0) {
             startPan.x = evt.offsetX;
             startPan.y = evt.offsetY;
@@ -14,21 +13,14 @@ const mousedownHandler =
     };
 
 const mousemoveHandler = (props: PropertiesTV) => (evt: MouseEvent) => {
-    if (keyHeld[0]) {
-        props.offset.x -= (evt.offsetX - props.startPan.x) / props.scale.x;
-        props.offset.y -= (evt.offsetY - props.startPan.y) / props.scale.y;
+    props.offset.x -= (evt.offsetX - props.startPan.x) / props.scale.x;
+    props.offset.y -= (evt.offsetY - props.startPan.y) / props.scale.y;
 
-        props.startPan.x = evt.offsetX;
-        props.startPan.y = evt.offsetY;
-    }
+    props.startPan.x = evt.offsetX;
+    props.startPan.y = evt.offsetY;
 };
 
-const mouseupHandler =
-    () =>
-    ({button}: MouseEvent) => {
-        delete keyHeld[button];
-    };
-
+// TODO::Create zooming update that smoothly scales instead of react on keydown
 const keydownHandler =
     ({zoom, getMiddleScreen}: MethodsTV) =>
     ({code}: KeyboardEvent) => {
@@ -37,7 +29,7 @@ const keydownHandler =
     };
 
 const wheelHandler =
-    ({zoom}: MethodsTV) =>
+    ({zoom}: MethodsTV, {mouse}: Input) =>
     (evt: WheelEvent) => {
         if (evt.deltaY < 0) {
             zoom(mouse, 'in');
@@ -48,10 +40,9 @@ const wheelHandler =
         zoom(mouse, 'out');
     };
 
-export const setTVEvents = (props: PropertiesTV, methods: MethodsTV) => {
+export const setTVEvents = (props: PropertiesTV, methods: MethodsTV, input: Input) => {
     addEventListener('mousedown', mousedownHandler(props, methods));
     addEventListener('mousemove', mousemoveHandler(props));
-    addEventListener('mouseup', mouseupHandler());
     addEventListener('keydown', keydownHandler(methods));
-    addEventListener('wheel', wheelHandler(methods));
+    addEventListener('wheel', wheelHandler(methods, input));
 };

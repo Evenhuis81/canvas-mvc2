@@ -1,7 +1,7 @@
 import {createStore} from 'games/library/store';
 import {getPlayer} from './player';
 import {setDefaultResource} from 'games/library';
-import {setMouseInput} from 'games/library/input';
+// import {setMouseInput} from 'games/library/input';
 import type {Resources} from 'games/library/types';
 
 export default {
@@ -9,7 +9,7 @@ export default {
         const {canvas, context, engine, tv} = setDefaultResource();
 
         resources.set({canvas, context, engine, tv});
-        setMouseInput(canvas);
+        // setMouseInput(canvas);
 
         const player = getPlayer(tv);
 

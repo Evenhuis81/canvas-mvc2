@@ -47,21 +47,3 @@ export const setCanvas = (canvas: HTMLCanvasElement, options?: CanvasOptions, co
 
     setCanvasOptions(canvas, options);
 };
-
-// const setCanvasDefaults = (canvas: HTMLCanvasElement, containerID?: string) => {
-//     canvas.width = innerWidth;
-//     canvas.height = innerHeight;
-//     canvas.style.backgroundColor = '#000';
-
-//     if (containerID) {
-//         const container = getContainer;
-//     }
-
-//     container.style.display = 'flex';
-//     container.style.width = '100vw';
-//     container.style.height = '100vh';
-//     container.style.justifyContent = 'center';
-//     container.style.alignItems = 'center';
-
-//     container.appendChild(canvas);
-// };

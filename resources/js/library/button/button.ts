@@ -1,5 +1,5 @@
-import {resources} from 'library/demo';
-import {mouse} from 'library/input';
+// import {resources} from 'library/demo';
+// import {mouse} from 'library/input';
 import {ButtonOptions, ButtonOptionsRequired, ButtonType} from 'library/types/button';
 
 const getButtonProperties: (options?: ButtonOptions) => ButtonOptionsRequired = (options = {}) => ({
@@ -120,11 +120,11 @@ export const createButton = (ctx: CanvasRenderingContext2D, options: ButtonOptio
         },
     };
 
-    const inside = () =>
-        mouse.x >= props.x - props.w / 2 &&
-        mouse.x < props.x + props.w / 2 &&
-        mouse.y >= props.y - props.h / 2 &&
-        mouse.y < props.y + props.h / 2;
+    const inside = () => false;
+    // mouse.x >= props.x - props.w / 2 &&
+    // mouse.x < props.x + props.w / 2 &&
+    // mouse.y >= props.y - props.h / 2 &&
+    // mouse.y < props.y + props.h / 2;
 
     if (props.mouseup != null) {
         const {mouseup} = props;

@@ -1,7 +1,8 @@
 import {getCanvas, getContext2D, setCanvas} from './canvas';
 import {getEngine} from './engine';
 import {getTV} from './transformedView/tv';
-import {CanvasOptions} from './types';
+import {getInput} from 'library/input';
+import type {CanvasOptions} from './types';
 import type {Engine} from './types/engine';
 
 export const initialize = (containerID?: string, options?: CanvasOptions) => {
@@ -11,9 +12,11 @@ export const initialize = (containerID?: string, options?: CanvasOptions) => {
 
     setCanvas(canvas, options, containerID ? getContainer(containerID) : undefined);
 
-    const tv = getTV(context);
+    // TODO::Make these optional
+    const input = getInput(canvas);
+    const tv = getTV(context, input);
 
-    return {canvas, context, engine, tv};
+    return {canvas, context, engine, tv, input};
 };
 
 export const getContainer = (containerID: string) => {

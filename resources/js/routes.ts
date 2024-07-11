@@ -36,7 +36,7 @@ export const routes: RouteRecordRaw[] = [
     },
     {
         path: '/dev',
-        component: () => import('./Dev.vue'),
+        component: () => import('./dev/Dev.vue'),
         name: 'Dev',
         meta: {
             shouldBeLoggedIn: false,

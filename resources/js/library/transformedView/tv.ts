@@ -7,13 +7,14 @@ import {vec, vector, vector2} from '../vector';
 import type {Vector, Vector2} from 'library/types/vector';
 import type {Zoom} from 'library/types/tv';
 import {statistics} from 'games/tombraid';
+import {Input} from 'library/types';
 
 // Use only vectors if possible
-export const getTV = (context: CanvasRenderingContext2D) => {
+export const getTV = (context: CanvasRenderingContext2D, input: Input) => {
     const paintMethods = getPaintMethods(properties, methods, context);
 
     // Create an option out of this
-    setTVEvents(properties, methods);
+    setTVEvents(properties, methods, input);
 
     return {
         ...properties,
