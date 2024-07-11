@@ -1,6 +1,7 @@
-import {CanvasOptions, getCanvas, getContext2D, setCanvas} from './canvas';
+import {getCanvas, getContext2D, setCanvas} from './canvas';
 import {getEngine} from './engine';
 import {getTV} from './transformedView/tv';
+import {CanvasOptions} from './types';
 import type {Engine} from './types/engine';
 
 export const initialize = (containerID?: string, options?: CanvasOptions) => {
@@ -15,7 +16,7 @@ export const initialize = (containerID?: string, options?: CanvasOptions) => {
     return {canvas, context, engine, tv};
 };
 
-const getContainer = (containerID: string) => {
+export const getContainer = (containerID: string) => {
     const container = document.getElementById(containerID);
 
     if (!(container instanceof HTMLDivElement)) throw new Error(`can't find div with id '${containerID}'`);

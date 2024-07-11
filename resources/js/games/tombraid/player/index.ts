@@ -115,6 +115,8 @@ export const friction = () => {
 };
 
 export const getPlayer = () => {
+    // TV method to set player in middle of screen
+
     const {tv} = resources.state;
 
     const update = {
@@ -138,14 +140,14 @@ export const getPlayer = () => {
             collisionAndResolve();
 
             // integrated in transformed view
-            // const xChange = player.lastPos.x - player.pos.x;
-            // const yChange = player.lastPos.y - player.pos.y;
+            const xChange = player.lastPos.x - player.pos.x;
+            const yChange = player.lastPos.y - player.pos.y;
 
-            // player.posChangeHistory.shift();
-            // player.posChangeHistory.push(vector(-xChange, -yChange));
+            player.posChangeHistory.shift();
+            player.posChangeHistory.push(vector(-xChange, -yChange));
 
-            // resources.state.tv.offset.x += player.posChangeHistory[0].x;
-            // resources.state.tv.offset.y += player.posChangeHistory[0].y;
+            resources.state.tv.offset.x += player.posChangeHistory[0].x;
+            resources.state.tv.offset.y += player.posChangeHistory[0].y;
         },
     };
 
@@ -155,6 +157,7 @@ export const getPlayer = () => {
         player.lastPos.x = pos.x;
         player.lastPos.y = pos.y;
     };
+
     switchMovement.initiate();
 
     return {update, show: createShowCircle(tv), setPosition, middlePos: player.posMiddle};
@@ -174,8 +177,8 @@ const createShowCircle = (tv: TransformedView) => ({
     name: 'player',
     fn: () => {
         tv.fillStrokeCircle({
-            x: player.pos.x,
-            y: player.pos.y,
+            x: player.pos.x + 0.5,
+            y: player.pos.y + 0.5,
             r: 0.25,
             rS: 0,
             rE: Math.PI * 2,

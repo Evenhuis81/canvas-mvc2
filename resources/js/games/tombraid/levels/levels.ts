@@ -1,14 +1,29 @@
-import {Levels} from 'games/tombraid/types/level';
+import {Block, Levels} from 'games/tombraid/types/level';
 
 // Legenda
 // X = solid block all sides
 // S = player start position
 // . = empty space
 // C = cannon
+// T = Text (sample)
 
 export const getLevelMap = (id: number) => levels[id];
 
 export const getCoinMap = (id: number) => coins[id];
+
+export const getTextMap = (id: number) => textMap[id];
+
+// export const getBlockMap = (id: number) => blocks[id];
+
+// type BlockKey = 'x' | 'y';
+
+// interface Blocks {
+//     [key: BlockKey]: Block[][];
+// }
+
+// const blocks: Blocks = [];
+
+const textMap: Record<number, {}> = {};
 
 interface Coins {
     [key: number]: number[][];
@@ -19,6 +34,10 @@ const coins: Coins = {
     3: [[], [1, 2, 3], [], [1, 2, 3], [1], [1, 2, 3]],
     2: [[], [], [4, 5, 6, 7, 8, 9], [4, 5, 6, 7, 8, 9]],
     4: [[]],
+};
+
+const levelText = {
+    3: 'Text Example!',
 };
 
 const levels: Levels = {
@@ -41,7 +60,7 @@ const levels: Levels = {
         ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
         ['X', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'X'],
         ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', '.', 'X'],
-        ['X', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'X'],
+        ['X', '.', '.', '.', '.', 'T', 'T', 'T', 'T', '.', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', '.', '.', '.', 'X'],
         ['X', 'S', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
         ['X', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'X'],
         ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', '.', 'X'],
@@ -56,4 +75,5 @@ const levels: Levels = {
         ['X', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'X'],
         ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
     ],
+    4: [['X', 'S']],
 };

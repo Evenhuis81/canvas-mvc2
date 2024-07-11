@@ -3,33 +3,26 @@ import {mouse} from 'library/input';
 import {ButtonOptions, ButtonOptionsRequired, ButtonType} from 'library/types/button';
 
 const getButtonProperties: (options?: ButtonOptions) => ButtonOptionsRequired = (options = {}) => ({
-    type: 'fill',
+    id: 'noID',
+    name: 'noName',
+    type: 'fillStroke',
     x: innerWidth / 10,
     y: innerHeight / 10,
     w: innerWidth / 6,
     h: innerHeight / 10,
     stroke: '#f00',
-    fill: '#ccc',
+    fill: '#000',
     text: 'Default',
-    textColor: '#fff',
+    textFill: '#fff',
+    hoverFill: '#222',
     lw: 2,
     r: 5,
     font: '16px monospace',
     ...options,
 });
 
-// 1. make all button properties optional
-// 2. onhover:  -color (fill / stroke)
-//              -size (scale out/in)
-//              -dropShadow
-// 3. onClick:  -loadAnimation
-//              -dissapear / appear effects (slide / fade)
-// 4. make button object dynamic for property changes for button methods (point 2 and 3)
-
-let idCount = 0;
-
 export default {
-    create: (options: ButtonOptions = {}) => createButton(options),
+    create: (context: CanvasRenderingContext2D, options: ButtonOptions = {}) => createButton(context, options),
 };
 
 const createButtonShow: Record<
@@ -38,14 +31,12 @@ const createButtonShow: Record<
 > = {
     fill: (props, ctx) => () => {
         // button
-        ctx.fillStyle = props.fill;
-
         ctx.beginPath();
         ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
         ctx.fill();
 
         // text
-        ctx.fillStyle = props.textColor;
+        ctx.fillStyle = props.textFill;
         ctx.font = props.font;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -61,7 +52,7 @@ const createButtonShow: Record<
         ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
         ctx.stroke();
 
-        ctx.fillStyle = props.textColor;
+        ctx.fillStyle = props.textFill;
         ctx.font = props.font;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -79,7 +70,25 @@ const createButtonShow: Record<
         ctx.fill();
         ctx.stroke();
 
-        ctx.fillStyle = props.textColor;
+        ctx.fillStyle = props.textFill;
+        ctx.font = props.font;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        ctx.beginPath();
+        ctx.fillText(props.text, props.x, props.y);
+    },
+    fillStrokeRound: (props, ctx) => () => {
+        ctx.fillStyle = props.fill;
+        ctx.strokeStyle = props.stroke;
+        ctx.lineWidth = props.lw;
+
+        ctx.beginPath();
+        ctx.roundRect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h, props.r);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = props.textFill;
         ctx.font = props.font;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -89,39 +98,27 @@ const createButtonShow: Record<
     },
 };
 
-export const createButton = (options: ButtonOptions = {}) => {
-    const {context: ctx} = resources.state;
+export const createButton = (ctx: CanvasRenderingContext2D, options: ButtonOptions = {}) => {
     const props = getButtonProperties(options);
 
-    const original = (({x, y, w, h}) => ({x, y, w, h}))(props);
+    // const original = (({x, y, w, h}) => ({x, y, w, h}))(props);
 
     let pushed = false;
 
     const show = {
-        id: idCount++, // auto-create = auto-increase
-        name: `button ${idCount} show`,
+        id: options.id ?? 'noID',
+        name: options.name ?? 'noName',
         fn: createButtonShow[props.type](props, ctx),
     };
 
-    const update = {
-        id: idCount,
-        name: `button ${idCount} update`,
+    const defaultUpdate = {
+        id: options.id ?? 'noID',
+        name: options.name ?? 'noName',
         fn: () => {
-            slideInLeft();
-
-            if (inside()) return (props.fill = '#00f800');
-
-            props.fill = '#00a800';
-
-            return;
+            if (inside()) props.fill = `#f00`;
+            else props.fill = '#000';
         },
     };
-
-    const slideInLeft = () => {
-        props.x = -props.w / 2;
-    };
-
-    const slideInRight = () => {};
 
     const inside = () =>
         mouse.x >= props.x - props.w / 2 &&
@@ -137,12 +134,21 @@ export const createButton = (options: ButtonOptions = {}) => {
         });
     }
 
-    addEventListener('mousedown', (ev: MouseEvent) => {
+    addEventListener('mouseup', () => {
+        if (pushed) {
+            props.w *= 1.1;
+            props.h *= 1.1;
+
+            pushed = false;
+        }
+    });
+
+    addEventListener('mousedown', () => {
         if (inside()) {
             pushed = true;
-            props.w *= 0.9;
 
-            return;
+            props.w *= 0.9;
+            props.h *= 0.9;
         }
     });
 
@@ -154,7 +160,7 @@ export const createButton = (options: ButtonOptions = {}) => {
         };
     };
 
-    return {update, show, getTextProperties, slideInLeft, slideInRight};
+    return {update: defaultUpdate, show, getTextProperties};
 };
 
 // const getButtonLines = (x: number, y: number, w: number, h: number) => {
@@ -206,7 +212,7 @@ export const createButton = (options: ButtonOptions = {}) => {
 //     lw: 2,
 //     stroke: '#fff',
 //     fill: '#000',
-//     textColor: '#00f',
+//     textFill: '#00f',
 //     font: '20px normal sans-serif',
 // };
 

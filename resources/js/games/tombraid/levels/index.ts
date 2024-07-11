@@ -5,6 +5,7 @@ import {TransformedView} from 'library/types/tv';
 import {getCoinMap, getLevelMap} from './levels';
 import {vector} from 'library/vector';
 import type {CoinMap, LevelMap, MapElement} from 'games/tombraid/types/level';
+import {statistics} from '..';
 
 const getEmptyXFromRow = (levelMapRow: MapElement[], emptiesRow: number[], count = 0) => {
     // This works only if right side ends with no '.' or 'S'
@@ -29,27 +30,6 @@ const getEmptyX = (levelMap: LevelMap) => {
     return empties;
 };
 
-// type Bullet = {
-//     x: number;
-//     y: number;
-//     vX: number;
-//     vY: number;
-// };
-
-// type Cannon = {
-//     x: number;
-//     y: number;
-//     direction: 'up' | 'down' | 'left' | 'right';
-// };
-
-// const getCannons = (map: LevelMap) => {
-//     const cannons: Cannon[] = [];
-//     for (let y = 0; y < map.length; y++)
-//         for (let x = 0; x < map.length; x++) if map[y][x] === 'C') cannons.push({x, y, direction: 'right'});
-
-//     return cannons;
-// };
-
 const createMapShow = (
     levelMap: LevelMap,
     coinMap: CoinMap,
@@ -58,6 +38,11 @@ const createMapShow = (
     screenHeight: number,
 ) => {
     const elementsDrawn = {nr: 0};
+    let alpha = 0;
+    let alphaVel = 0.005;
+    let alphaActive = true;
+
+    statistics.state.setFn(() => `elementsDrawn: ${elementsDrawn.nr}`);
 
     const noEmptyX = getEmptyX(levelMap);
 
@@ -66,18 +51,46 @@ const createMapShow = (
         id: 4,
         name: 'level',
         fn: () => {
+            alpha += alphaVel;
+
+            if (alpha > 1) {
+                alpha = 1;
+                // alphaVel *= -1;
+                alphaVel = 0;
+
+                alphaActive = false;
+            } else if (alpha < 0) {
+                alpha = 0;
+                alphaVel *= -1;
+            }
+
             tv.setWorldView(0, 0, screenWidth, screenHeight);
             elementsDrawn.nr = 0;
 
             for (let y = 0; y < levelMap.length; y++) {
                 if (y > tv.worldView.y - 1 && y <= tv.worldView.y2) {
                     for (let x = 0; x < noEmptyX[y].length; x++) {
-                        // replace switch with an object
                         switch (levelMap[y][noEmptyX[y][x]]) {
                             case 'X':
-                                tv.strokeRect({x: noEmptyX[y][x], y, w: 1, h: 1, stroke: 'red', lw: 1});
+                                tv.strokeRect({
+                                    x: noEmptyX[y][x],
+                                    y,
+                                    w: 1,
+                                    h: 1,
+                                    stroke: `rgba(255, 255, 255, ${alpha})`,
+                                    lw: tv.unitWeight.x,
+                                });
 
                                 elementsDrawn.nr++;
+                                break;
+                            case 'T':
+                                tv.text({
+                                    x: noEmptyX[y][x] + 0.5,
+                                    y: y + 0.5,
+                                    fill: '#fff',
+                                    txt: 'T',
+                                    fontSize: 24 * tv.unitWeight.x,
+                                });
                                 break;
                             case 'C': // for now C stand for cannon to the right
                                 // put this in a wireframemodel (for rotation)
@@ -125,12 +138,14 @@ const createMapShow = (
 
 export const getLevel = (id: number) => {
     const levelMap = getLevelMap(id);
-    // coin could also be a character on the map and this can be switched out (ie. lamba functions from javid9x)
+    // coin could also be a character on the map and this can be switched out (ie lamba functions from javid9x)
     const coinMap = getCoinMap(id);
+
+    // const blockMap = getBlockMap(id);
 
     return {
         map: levelMap,
-        // blocks: blockMap,
+        // blockMap,
         width: levelMap[0].length,
         height: levelMap.length,
         playerStart: getPlayerStart(levelMap),
@@ -148,3 +163,24 @@ export const getPlayerStart = (levelMap: LevelMap) => {
 
     throw new Error('start position "S" for player not found in level map');
 };
+
+// type Bullet = {
+//     x: number;
+//     y: number;
+//     vX: number;
+//     vY: number;
+// };
+
+// type Cannon = {
+//     x: number;
+//     y: number;
+//     direction: 'up' | 'down' | 'left' | 'right';
+// };
+
+// const getCannons = (map: LevelMap) => {
+//     const cannons: Cannon[] = [];
+//     for (let y = 0; y < map.length; y++)
+//         for (let x = 0; x < map.length; x++) if map[y][x] === 'C') cannons.push({x, y, direction: 'right'});
+
+//     return cannons;
+// };

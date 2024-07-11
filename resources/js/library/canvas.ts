@@ -21,7 +21,9 @@ export const getContext2D = (canvas: HTMLCanvasElement) => {
     return context;
 };
 
-const setCanvasOptions = (canvas: HTMLCanvasElement, options: CanvasOptions, container?: HTMLDivElement) => {
+const setCanvasOptions = (canvas: HTMLCanvasElement, options?: CanvasOptions) => {
+    if (!options) return;
+
     if (options.full) {
         canvas.width = innerWidth;
         canvas.height = innerHeight;
@@ -29,39 +31,21 @@ const setCanvasOptions = (canvas: HTMLCanvasElement, options: CanvasOptions, con
     if (options.width && !options.full) canvas.width = options.width;
     if (options.height && !options.full) canvas.height = options.height;
     if (options.backgroundColor) canvas.style.backgroundColor = options.backgroundColor;
-
-    if (options.center) {
-        // should not be needed when full is true, but with scaling you get a scroll bar otherwise
-        if (!container) throw new Error('center option requires a container');
-
-        container.style.display = 'flex';
-        container.style.width = '100vw';
-        container.style.height = '100vh';
-        container.style.justifyContent = 'center';
-        container.style.alignItems = 'center';
-
-        container.appendChild(canvas);
-
-        return;
-    }
-
-    if (container) container.appendChild(canvas);
 };
 
-/**
- * Set canvas with optional options and container parameters
- *
- * @param {HTMLCanvasElement} canvas
- * @param {CanvasOptions} [options]
- * @param {HTMLDivElement} [container]
- *
- * @return {void}
- */
-export const setCanvas = (canvas: HTMLCanvasElement, options?: CanvasOptions, container?: HTMLDivElement) => {
-    if (options) return setCanvasOptions(canvas, options, container);
+const setContainer = (canvas: HTMLCanvasElement, container: HTMLDivElement) => {
+    container.style.display = 'flex';
+    container.style.width = '100vw';
+    container.style.height = '100vh';
+    container.style.justifyContent = 'center';
+    container.style.alignItems = 'center';
+    container.appendChild(canvas);
+};
 
-    // defaults
-    canvas.style.backgroundColor = '#888';
+export const setCanvas = (canvas: HTMLCanvasElement, options?: CanvasOptions, container?: HTMLDivElement): void => {
+    if (container) setContainer(canvas, container);
+
+    setCanvasOptions(canvas, options);
 };
 
 // const setCanvasDefaults = (canvas: HTMLCanvasElement, containerID?: string) => {

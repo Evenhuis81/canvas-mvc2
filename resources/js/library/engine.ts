@@ -62,7 +62,7 @@ const createSetAndRemoveUpdatesAndShows = (properties: EngineProperties) => {
         properties.shows.push(show);
     };
 
-    const removeUpdate = (id: number) => {
+    const removeUpdate = (id: number | string) => {
         const index = properties.updates.findIndex(update => update.id === id);
 
         if (index === -1) throw Error(`update with id '${id}' not found, nothing to remove`);
@@ -70,7 +70,7 @@ const createSetAndRemoveUpdatesAndShows = (properties: EngineProperties) => {
         properties.updates.splice(index, 1);
     };
 
-    const removeShow = (id: number) => {
+    const removeShow = (id: number | string) => {
         const index = properties.shows.findIndex(show => show.id === id);
 
         if (index === -1) throw Error(`show with id '${id}' not found, nothing to remove`);

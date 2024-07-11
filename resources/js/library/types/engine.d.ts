@@ -1,5 +1,5 @@
 export type Update = {
-    id: number;
+    id: number | string;
     name: string;
     fn: () => void;
 };
@@ -12,8 +12,8 @@ export interface Engine {
     halt: () => void;
     setUpdate: (update: Update) => void;
     setShow: (show: Show) => void;
-    removeUpdate: (id: number) => void;
-    removeShow: (id: number) => void;
+    removeUpdate: (id: number | string) => void;
+    removeShow: (id: number | string) => void;
 }
 
 type EngineProperties = {
