@@ -6,9 +6,11 @@ type Button = {
     getTextProperties: () => {width: number};
 };
 
-type ButtonType = 'fill' | 'stroke' | 'fillStroke';
+type ButtonType = 'fill' | 'stroke' | 'fillStroke' | 'fillStrokeRound';
 
 type ButtonOptions = {
+    id?: number | string;
+    name?: string;
     type?: ButtonType;
     x?: number;
     y?: number;
@@ -19,7 +21,8 @@ type ButtonOptions = {
     stroke?: string;
     fill?: string;
     text?: string;
-    textColor?: string;
+    textFill?: string;
+    hoverFill?: string;
     font?: string;
     mouseup?: (ev: MouseEvent) => void;
 };

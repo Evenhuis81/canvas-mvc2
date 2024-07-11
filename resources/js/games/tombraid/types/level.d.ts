@@ -24,7 +24,7 @@ interface TextBlock extends Block {
 
 export interface LevelResource {
     map: LevelMap;
-    blocks: Block[][];
+    // blocks: Block[][];
     coins: CoinMap;
     width: number;
     height: number;

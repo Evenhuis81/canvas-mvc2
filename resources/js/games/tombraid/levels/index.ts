@@ -38,6 +38,9 @@ const createMapShow = (
     screenHeight: number,
 ) => {
     const elementsDrawn = {nr: 0};
+    let alpha = 0;
+    let alphaVel = 0.005;
+    let alphaActive = true;
 
     statistics.state.setFn(() => `elementsDrawn: ${elementsDrawn.nr}`);
 
@@ -48,21 +51,46 @@ const createMapShow = (
         id: 4,
         name: 'level',
         fn: () => {
+            alpha += alphaVel;
+
+            if (alpha > 1) {
+                alpha = 1;
+                // alphaVel *= -1;
+                alphaVel = 0;
+
+                alphaActive = false;
+            } else if (alpha < 0) {
+                alpha = 0;
+                alphaVel *= -1;
+            }
+
             tv.setWorldView(0, 0, screenWidth, screenHeight);
             elementsDrawn.nr = 0;
 
             for (let y = 0; y < levelMap.length; y++) {
                 if (y > tv.worldView.y - 1 && y <= tv.worldView.y2) {
                     for (let x = 0; x < noEmptyX[y].length; x++) {
-                        // replace switch with an object?
                         switch (levelMap[y][noEmptyX[y][x]]) {
                             case 'X':
-                                tv.strokeRect({x: noEmptyX[y][x], y, w: 1, h: 1, stroke: 'white', lw: 1}); // lw: 1 = unitLineWidth
+                                tv.strokeRect({
+                                    x: noEmptyX[y][x],
+                                    y,
+                                    w: 1,
+                                    h: 1,
+                                    stroke: `rgba(255, 255, 255, ${alpha})`,
+                                    lw: tv.unitWeight.x,
+                                });
 
                                 elementsDrawn.nr++;
                                 break;
                             case 'T':
-                                tv.text({x: noEmptyX[y][x] + 0.5, y: y + 0.5, fill: '#fff', fontSize: 24, txt: 'T'});
+                                tv.text({
+                                    x: noEmptyX[y][x] + 0.5,
+                                    y: y + 0.5,
+                                    fill: '#fff',
+                                    txt: 'T',
+                                    fontSize: 24 * tv.unitWeight.x,
+                                });
                                 break;
                             case 'C': // for now C stand for cannon to the right
                                 // put this in a wireframemodel (for rotation)
@@ -113,11 +141,11 @@ export const getLevel = (id: number) => {
     // coin could also be a character on the map and this can be switched out (ie lamba functions from javid9x)
     const coinMap = getCoinMap(id);
 
-    const blockMap = getBlockMap(id);
+    // const blockMap = getBlockMap(id);
 
     return {
         map: levelMap,
-        blockMap,
+        // blockMap,
         width: levelMap[0].length,
         height: levelMap.length,
         playerStart: getPlayerStart(levelMap),

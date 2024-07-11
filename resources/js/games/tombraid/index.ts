@@ -11,7 +11,8 @@ import {setDualView, onResize} from 'library/menu';
 import {getContext2D} from 'library/canvas';
 import {getStatistics} from 'library/statistics';
 import {loadFont} from 'library/font';
-import {StatisticsResource} from 'library/types/statistics';
+import type {StatisticsResource} from 'library/types/statistics';
+import button from 'library/button/button';
 
 export const resources = createStore<ResourcesAndTV>();
 export const levelStore = createStore<LevelResource>();
@@ -29,12 +30,12 @@ export default {
 
         resources.set({canvas, context, engine, tv});
 
+        // await loadFont('OpenS', 'OpenSans-VariableFont_wdth,wght.ttf');
+
         const canvas2 = setDualView(canvas, 'container');
         const context2 = getContext2D(canvas2);
 
         const stats = getStatistics(context2, canvas2);
-
-        await loadFont('OpenS', 'OpenSans-VariableFont_wdth,wght.ttf');
 
         statistics.set(stats);
 
@@ -56,7 +57,22 @@ export default {
     runOnce: () => resources.state.engine.runOnce(),
 };
 
-const goToMenu = () => startLevel(3);
+const mouseUp3 = () => {
+    resources.state.engine.removeShow('startButton');
+
+    startLevel(3);
+};
+
+const goToMenu = () => {
+    const startButton = button.create(resources.state.context, {
+        id: 'startButton',
+        text: 'set level 3',
+        mouseup: mouseUp3,
+    });
+
+    resources.state.engine.setUpdate(startButton.update);
+    resources.state.engine.setShow(startButton.show);
+};
 
 const startLevel = (levelNr: number) => {
     const level = getLevel(levelNr);
@@ -68,20 +84,16 @@ const startLevel = (levelNr: number) => {
 
     const scale = canvas.width / 24;
 
-    tv.setUnitLineWidth({x: 1 / scale, y: 1 / scale});
+    tv.setUnitWeight({x: 1 / scale, y: 1 / scale});
 
     tv.setScale(vector(scale, scale));
     tv.setScreenSize(vector(canvas.width, canvas.height));
 
     player.setPosition(level.playerStart);
 
-    // const tvUpdate = tv.moveTo(player.middlePos);
-    // engine.setUpdate(tvUpdate);
-
     tv.setMiddle(vector(level.playerStart.x + 0.5, level.playerStart.y + 0.5));
 
     const levelShow = level.createShow(level.map, level.coins, tv, canvas.width, canvas.height);
-    console.log(levelShow.id);
 
     engine.setShow(levelShow);
     engine.setShow(player.show);
@@ -89,12 +101,12 @@ const startLevel = (levelNr: number) => {
     engine.setUpdate(player.update);
 
     onResize(() => {
-        engine.removeShow(4); // show id = 4
+        engine.removeShow(4);
 
         const scale = canvas.width / 24;
 
-        const unitLw = 1 / scale;
-        tv.setUnitLineWidth({x: unitLw, y: unitLw});
+        const unitLength = 1 / scale;
+        tv.setUnitWeight({x: unitLength, y: unitLength});
 
         tv.setScale(vector(scale, scale));
         tv.setScreenSize(vector(canvas.width, canvas.height));

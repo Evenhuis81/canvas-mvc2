@@ -11,17 +11,19 @@ export const getLevelMap = (id: number) => levels[id];
 
 export const getCoinMap = (id: number) => coins[id];
 
-export const getBlockMap = (id: number) => blocks[id];
+export const getTextMap = (id: number) => textMap[id];
 
-type BlockKey = 'x' | 'y';
+// export const getBlockMap = (id: number) => blocks[id];
 
-interface Blocks {
-    [key: BlockKey]: Block[][];
-}
+// type BlockKey = 'x' | 'y';
 
-const blocks: Blocks = [
-    x:
-];
+// interface Blocks {
+//     [key: BlockKey]: Block[][];
+// }
+
+// const blocks: Blocks = [];
+
+const textMap: Record<number, {}> = {};
 
 interface Coins {
     [key: number]: number[][];
@@ -32,6 +34,10 @@ const coins: Coins = {
     3: [[], [1, 2, 3], [], [1, 2, 3], [1], [1, 2, 3]],
     2: [[], [], [4, 5, 6, 7, 8, 9], [4, 5, 6, 7, 8, 9]],
     4: [[]],
+};
+
+const levelText = {
+    3: 'Text Example!',
 };
 
 const levels: Levels = {
@@ -54,7 +60,7 @@ const levels: Levels = {
         ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
         ['X', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'X'],
         ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', '.', 'X'],
-        ['X', '.', '.', '.', '.', 'T', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'X'],
+        ['X', '.', '.', '.', '.', 'T', 'T', 'T', 'T', '.', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', '.', '.', '.', 'X'],
         ['X', 'S', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
         ['X', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'X'],
         ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', '.', 'X'],

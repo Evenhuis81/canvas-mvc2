@@ -216,15 +216,12 @@ export const showCollisionCorners = (ctx: CanvasRenderingContext2D, sq: Square) 
 const permaSquareAnimateNextPhase = (permaSq: Square[]) => {
     // optional at perma animate x / y => make them rotate to a certain degree (neg and pos)
 
-    // console.log();
     animate.perma.atY = 0;
     animate.perma.y = false;
     animate.paused = true;
 
     for (const sq of permaSq) {
         const rand2D = vec.random();
-
-        // console.log(rand2D);
 
         sq.vX = rand2D.x * animate.perma.rand2DMult;
         sq.vY = rand2D.y * animate.perma.rand2DMult;

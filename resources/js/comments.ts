@@ -16,3 +16,14 @@
 // addEventListener('mouseup', () => {
 //     if (startButton.inside()) startLevel(2);
 // });
+
+// 1. make all button properties optional
+// 2. onhover:  -color (fill / stroke)
+//              -size (scale out/in)
+//              -dropShadow
+// 3. onClick:  -loadAnimation
+//              -dissapear / appear effects (slide / fade)
+// 4. make button object dynamic for property changes for button methods (point 2 and 3)
+
+// const tvUpdate = tv.moveTo(player.middlePos);
+// engine.setUpdate(tvUpdate);

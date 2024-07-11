@@ -51,7 +51,7 @@ export interface MethodsTV {
     // getGrid: (context: CanvasRenderingContext2D) => Show;
     setMiddle: (target: Vector) => void;
     moveTo: (target: Vector, slowR?: number) => Update;
-    setUnitLineWidth: (unitLw: Vector) => void;
+    setUnitWeight: (unitLw: Vector) => void;
 }
 
 export type PropertiesTV = {
@@ -68,5 +68,5 @@ export type PropertiesTV = {
     worldAfterZoom: Vector;
     scaleFactor: number;
     worldView: Vector2;
-    unitLineWidth: Vector;
+    unitWeight: Vector;
 };

@@ -37,7 +37,7 @@ const properties = {
     scaleFactor: 0.95,
     worldView: vector2(),
     orientation: '',
-    unitLineWidth: vector(1, 1),
+    unitWeight: vector(1, 1),
 };
 
 const screen2World = (x: number, y: number) => {
@@ -205,9 +205,9 @@ const moveTo = (target: Vector, slowR = 2) => {
 const s2W = (source: Vector) =>
     vector(source.x / properties.scale.x + properties.offset.x, source.y / properties.scale.y + properties.offset.y);
 
-const setUnitLineWidth = (unitLw: Vector) => {
-    properties.unitLineWidth.x = unitLw.x;
-    properties.unitLineWidth.y = unitLw.y;
+const setUnitWeight = (unitWeight: Vector) => {
+    properties.unitWeight.x = unitWeight.x;
+    properties.unitWeight.y = unitWeight.y;
 };
 
 const methods = {
@@ -226,5 +226,5 @@ const methods = {
     setDefaults,
     setMiddle,
     moveTo,
-    setUnitLineWidth,
+    setUnitWeight,
 };
