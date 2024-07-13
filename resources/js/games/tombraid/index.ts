@@ -2,7 +2,6 @@ import {createStore} from 'library/store';
 import {getLevel} from './levels';
 import {getLibraryOptions, initialize} from 'library/index';
 import {getPlayer} from './player';
-// import {setMouseInput} from 'library/input';
 import {vector} from 'library/vector';
 import type {LevelResource} from './types/level';
 import type {PlayerResource} from './types/game';
@@ -10,9 +9,11 @@ import type {ResourcesAndTV} from 'library/types';
 import {setDualView, onResize} from 'library/menu';
 import {getContext2D} from 'library/canvas';
 import {getStatistics} from 'library/statistics';
-import {loadFont} from 'library/font';
+// import {loadFont} from 'library/font';
 import type {StatisticsResource} from 'library/types/statistics';
 import button from 'library/button/button';
+import {Button} from 'library/types/button';
+import {Engine} from 'library/types/engine';
 
 export const resources = createStore<ResourcesAndTV>();
 export const levelStore = createStore<LevelResource>();
@@ -26,20 +27,20 @@ const options = {
 
 export default {
     setup: async () => {
-        const {canvas, context, engine, tv} = initialize('container', options);
+        const {canvas, context, engine, tv, input} = initialize('container', options);
 
-        resources.set({canvas, context, engine, tv});
+        resources.set({canvas, context, engine, tv, input});
 
         // await loadFont('OpenS', 'OpenSans-VariableFont_wdth,wght.ttf');
 
-        const canvas2 = setDualView(canvas, 'container');
-        const context2 = getContext2D(canvas2);
+        // const canvas2 = setDualView(canvas, 'container');
+        // const context2 = getContext2D(canvas2);
 
-        const stats = getStatistics(context2, canvas2);
+        // const stats = getStatistics(context2, canvas2);
 
-        statistics.set(stats);
+        // statistics.set(stats);
 
-        engine.setShow(statistics.state.show);
+        // engine.setShow(statistics.state.show);
 
         const player = getPlayer();
         playerStore.set(player);
@@ -57,21 +58,27 @@ export default {
     runOnce: () => resources.state.engine.runOnce(),
 };
 
-const mouseUp3 = () => {
-    resources.state.engine.removeShow('startButton');
+const createMouseUpForStartButton = (engine: Engine) => (evt: MouseEvent, destruct: Button['destruct']) => {
+    engine.removeShow('startButton');
+    engine.removeUpdate('startButton');
+
+    destruct();
 
     startLevel(3);
 };
 
 const goToMenu = () => {
-    const startButton = button.create(resources.state.context, {
+    const {context, engine, input} = resources.state;
+
+    const startButton = button.create(context, input, {
         id: 'startButton',
+        name: 'startButton',
         text: 'set level 3',
-        mouseup: mouseUp3,
+        mouseup: createMouseUpForStartButton(engine),
     });
 
-    resources.state.engine.setUpdate(startButton.update);
-    resources.state.engine.setShow(startButton.show);
+    engine.setUpdate(startButton.update);
+    engine.setShow(startButton.show);
 };
 
 const startLevel = (levelNr: number) => {
@@ -100,28 +107,28 @@ const startLevel = (levelNr: number) => {
 
     engine.setUpdate(player.update);
 
-    onResize(() => {
-        engine.removeShow(4);
+    // onResize(() => {
+    //     engine.removeShow(4);
 
-        const scale = canvas.width / 24;
+    //     const scale = canvas.width / 24;
 
-        const unitLength = 1 / scale;
-        tv.setUnitWeight({x: unitLength, y: unitLength});
+    //     const unitLength = 1 / scale;
+    //     tv.setUnitWeight({x: unitLength, y: unitLength});
 
-        tv.setScale(vector(scale, scale));
-        tv.setScreenSize(vector(canvas.width, canvas.height));
-        tv.setMiddle(vector(player.middlePos.x, player.middlePos.y));
+    //     tv.setScale(vector(scale, scale));
+    //     tv.setScreenSize(vector(canvas.width, canvas.height));
+    //     tv.setMiddle(vector(player.middlePos.x, player.middlePos.y));
 
-        const levelShow = level.createShow(level.map, level.coins, tv, canvas.width, canvas.height);
+    //     const levelShow = level.createShow(level.map, level.coins, tv, canvas.width, canvas.height);
 
-        engine.setShow(levelShow);
-    });
+    //     engine.setShow(levelShow);
+    // });
 
-    statistics.state.set({
-        id: 8,
-        name: 'player (middle) pos',
-        fn: () => `player.x: ${player.middlePos.x}, player.y: ${player.middlePos.y}`,
-    });
+    // statistics.state.set({
+    //     id: 8,
+    //     name: 'player (middle) pos',
+    //     fn: () => `player.x: ${player.middlePos.x}, player.y: ${player.middlePos.y}`,
+    // });
 
-    statistics.state.setFn(() => `${tv.scale.x}`);
+    // statistics.state.setFn(() => `${tv.scale.x}`);
 };

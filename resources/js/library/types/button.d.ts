@@ -3,7 +3,7 @@ import type {Show, Update} from './engine';
 type Button = {
     show: Show;
     update: Update;
-    getTextProperties: () => {width: number};
+    destruct: () => void;
 };
 
 type ButtonType = 'fill' | 'stroke' | 'fillStroke' | 'fillStrokeRound';
@@ -24,7 +24,9 @@ type ButtonOptions = {
     textFill?: string;
     hoverFill?: string;
     font?: string;
-    mouseup?: (ev: MouseEvent) => void;
+    mouseup?: (ev: MouseEvent, destruct: Button['destruct']) => void;
 };
 
-type ButtonOptionsRequired = Required<Omit<ButtonOptions, 'mouseup'>> & {mouseup?: (ev: MouseEvent) => void};
+type ButtonOptionsRequired = Required<Omit<ButtonOptions, 'mouseup'>> & {
+    mouseup?: (ev: MouseEvent, destruct: Button['destruct']) => void;
+};

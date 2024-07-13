@@ -1,6 +1,7 @@
 // import {resources} from 'library/demo';
 // import {mouse} from 'library/input';
 import {ButtonOptions, ButtonOptionsRequired, ButtonType} from 'library/types/button';
+import {Input} from 'library/types/input';
 
 const getButtonProperties: (options?: ButtonOptions) => ButtonOptionsRequired = (options = {}) => ({
     id: 'noID',
@@ -22,7 +23,8 @@ const getButtonProperties: (options?: ButtonOptions) => ButtonOptionsRequired = 
 });
 
 export default {
-    create: (context: CanvasRenderingContext2D, options: ButtonOptions = {}) => createButton(context, options),
+    create: (context: CanvasRenderingContext2D, input: Input, options: ButtonOptions = {}) =>
+        createButton(context, input, options),
 };
 
 const createButtonShow: Record<
@@ -98,69 +100,75 @@ const createButtonShow: Record<
     },
 };
 
-export const createButton = (ctx: CanvasRenderingContext2D, options: ButtonOptions = {}) => {
+export const createButton = (ctx: CanvasRenderingContext2D, input: Input, options: ButtonOptions = {}) => {
     const props = getButtonProperties(options);
+    const {mouse} = input;
 
     // const original = (({x, y, w, h}) => ({x, y, w, h}))(props);
 
     let pushed = false;
 
     const show = {
-        id: options.id ?? 'noID',
-        name: options.name ?? 'noName',
+        id: props.id,
+        name: props.name,
         fn: createButtonShow[props.type](props, ctx),
     };
 
     const defaultUpdate = {
-        id: options.id ?? 'noID',
-        name: options.name ?? 'noName',
+        id: props.id,
+        name: props.name,
         fn: () => {
             if (inside()) props.fill = `#f00`;
             else props.fill = '#000';
         },
     };
 
-    const inside = () => false;
-    // mouse.x >= props.x - props.w / 2 &&
-    // mouse.x < props.x + props.w / 2 &&
-    // mouse.y >= props.y - props.h / 2 &&
-    // mouse.y < props.y + props.h / 2;
+    const inside = () =>
+        mouse.x >= props.x - props.w / 2 &&
+        mouse.x < props.x + props.w / 2 &&
+        mouse.y >= props.y - props.h / 2 &&
+        mouse.y < props.y + props.h / 2;
 
-    if (props.mouseup != null) {
+    let mouseupEvent: ((ev: MouseEvent) => void) | undefined;
+
+    if (props.mouseup) {
         const {mouseup} = props;
 
-        addEventListener('mouseup', (ev: MouseEvent) => {
-            if (inside()) mouseup(ev);
-        });
+        mouseupEvent = (ev: MouseEvent) => {
+            if (inside() && ev.button === 0) mouseup(ev, destruct);
+        };
+
+        addEventListener('mouseup', mouseupEvent);
     }
 
-    addEventListener('mouseup', () => {
+    const internalMousedownEvent = ({button}: MouseEvent) => {
+        if (inside() && button === 0) {
+            pushed = true;
+
+            props.w *= 0.9;
+            props.h *= 0.9;
+        }
+    };
+
+    const internalMouseupEvent = () => {
         if (pushed) {
             props.w *= 1.1;
             props.h *= 1.1;
 
             pushed = false;
         }
-    });
-
-    addEventListener('mousedown', () => {
-        if (inside()) {
-            pushed = true;
-
-            props.w *= 0.9;
-            props.h *= 0.9;
-        }
-    });
-
-    const getTextProperties = () => {
-        ctx.font = props.font;
-
-        return {
-            width: ctx.measureText(props.text).width,
-        };
     };
 
-    return {update: defaultUpdate, show, getTextProperties};
+    addEventListener('mouseup', internalMouseupEvent);
+    addEventListener('mousedown', internalMousedownEvent);
+
+    const destruct = () => {
+        removeEventListener('mouseup', internalMouseupEvent);
+        removeEventListener('mousedown', internalMousedownEvent);
+        if (mouseupEvent) removeEventListener('mouseup', mouseupEvent);
+    };
+
+    return {update: defaultUpdate, show, destruct};
 };
 
 // const getButtonLines = (x: number, y: number, w: number, h: number) => {

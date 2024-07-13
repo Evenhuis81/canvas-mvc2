@@ -1,6 +1,6 @@
 import type {Engine} from './engine';
+import type {Input} from './input';
 import type {TransformedView} from './tv';
-import {Vector} from './vector';
 
 interface Resources {
     canvas: HTMLCanvasElement;
@@ -19,10 +19,4 @@ type CanvasOptions = {
     backgroundColor?: string;
     center?: boolean;
     full?: boolean; // full tab (innerWidth, innerHeight)
-};
-
-type Input = {
-    mouse: Vector;
-    buttonHeld: Record<number, boolean>;
-    keyHeld: Record<string, boolean>;
 };
