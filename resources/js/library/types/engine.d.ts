@@ -1,6 +1,6 @@
 export type Update = {
-    id: number | string;
-    name: string;
+    id?: number | string;
+    name?: string;
     fn: () => void;
 };
 

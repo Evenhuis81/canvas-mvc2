@@ -23,13 +23,27 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         mouse.y = +(evt.clientY - rect.top).toFixed(0);
     });
 
-    addEventListener('keydown', evt => {
+    canvas.addEventListener('keydown', evt => {
         keyHeld[evt.code] = true;
     });
 
-    addEventListener('keyup', evt => {
+    canvas.addEventListener('keyup', evt => {
         delete keyHeld[evt.code];
     });
+
+    const resize = () => {
+        canvas.width = innerWidth;
+        canvas.height = innerHeight;
+    };
+
+    let timeout: ReturnType<typeof setTimeout>;
+
+    const resizeCanvas = () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(resize, 250);
+    };
+
+    onresize = () => resizeCanvas();
 
     return {mouse, buttonHeld, keyHeld};
 };

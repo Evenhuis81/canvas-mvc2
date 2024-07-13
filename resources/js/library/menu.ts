@@ -4,12 +4,16 @@ import {getContainer} from '.';
 const canvas2 = getCanvas();
 let canvas1: HTMLCanvasElement;
 let container: HTMLDivElement;
-let timeout: ReturnType<typeof setTimeout>;
 let active = false;
 const resizeCB: (() => void)[] = [];
 
 // resize events are only fired on the window object (mdn mozilla)
-onresize = () => resizeDualView();
+// let timeout: ReturnType<typeof setTimeout>;
+// const resizeDualView = () => {
+//     clearTimeout(timeout);
+//     timeout = setTimeout(resize, 250);
+// };
+// onresize = () => resizeDualView();
 
 addEventListener('keydown', ({code}) => {
     if (code === 'KeyT') toggleDualView();
@@ -19,14 +23,12 @@ addEventListener('keyup', ({code}) => {
     if (code === 'F11') resize();
 });
 
-const resizeDualView = () => {
-    clearTimeout(timeout);
-    timeout = setTimeout(resize, 250);
-};
+// const resizeDualView = () => {
+//     clearTimeout(timeout);
+//     timeout = setTimeout(resize, 250);
+// };
 
-export const onResize = (cb: () => void) => {
-    resizeCB.push(cb);
-};
+export const onResize = (cb: () => number) => resizeCB.push(cb);
 
 export const setDualView = (canvas: HTMLCanvasElement, containerID: string) => {
     canvas1 = canvas;

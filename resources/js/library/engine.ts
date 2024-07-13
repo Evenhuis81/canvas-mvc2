@@ -55,10 +55,16 @@ const createLoop = (properties: EngineProperties) => {
 // TODO::Create a set/remove update/show that orders according to id number (lower = first, higher = last)
 const createSetAndRemoveUpdatesAndShows = (properties: EngineProperties) => {
     const setUpdate = (update: Update) => {
+        if (!update.id) update.id = 'noID';
+        if (!update.name) update.name = 'noName';
+
         properties.updates.push(update);
     };
 
     const setShow = (show: Show) => {
+        if (!show.id) show.id = 'noID';
+        if (!show.name) show.name = 'noName';
+
         properties.shows.push(show);
     };
 
