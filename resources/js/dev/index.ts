@@ -19,26 +19,6 @@ export default {
 
         libOptions.setClear();
         libOptions.setDot();
-
-        const testUpdate = {
-            fn: () => {
-                // console.log(input.mouse.x, input.mouse.y);
-            },
-        };
-
-        const testShow = {
-            fn: () => {
-                context.fillStyle = 'blue';
-
-                context.beginPath();
-
-                context.arc(input.mouse.x, input.mouse.y, 5, 0, Math.PI * 2);
-                context.fill();
-            },
-        };
-
-        engine.setUpdate(testUpdate);
-        engine.setShow(testShow);
     },
     run: () => devResources.state.engine.run(),
     runOnce: () => devResources.state.engine.runOnce(),
