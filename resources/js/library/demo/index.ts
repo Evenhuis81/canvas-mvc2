@@ -1,6 +1,6 @@
 import {createStore} from 'library/store';
 import {getLibraryOptions, initialize} from 'library/index';
-import {setMouseInput} from 'library/input';
+// import {setMouseInput} from 'library/input';
 import {loadFont} from 'library/font';
 import {Button} from 'library/types/button';
 import type {ResourcesAndTV} from 'library/types';
@@ -30,7 +30,7 @@ export default {
 
         resources.set({canvas, context, engine, tv});
 
-        setMouseInput(canvas);
+        // setMouseInput(canvas);
 
         const options = getLibraryOptions(context, engine);
 

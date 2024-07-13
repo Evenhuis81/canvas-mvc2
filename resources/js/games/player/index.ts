@@ -4,7 +4,7 @@ import {getPlayer} from './player';
 import {getResources} from 'games/library';
 import {getTV} from 'games/library/transformedView';
 import {initializeMenu} from 'library/menu';
-import {setMouseInput} from 'games/library/input';
+// import {setMouseInput} from 'games/library/input';
 import type {Resources} from 'games/library/types';
 
 export default {
@@ -18,7 +18,7 @@ export default {
 
         tv.setDefaults(context);
 
-        setMouseInput(canvas);
+        // setMouseInput(canvas);
 
         // Each of these also has a remove[name] method, TODO:: refactor to make unique use (?) + import from store
         // Make list of extended use of modules from library (prefer = no interchange)

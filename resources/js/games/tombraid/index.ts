@@ -2,7 +2,7 @@ import {createStore} from 'library/store';
 import {getLevel} from './levels';
 import {getLibraryOptions, initialize} from 'library/index';
 import {getPlayer} from './player';
-import {setMouseInput} from 'library/input';
+// import {setMouseInput} from 'library/input';
 import {vector} from 'library/vector';
 import type {LevelResource} from './types/level';
 import type {PlayerResource} from './types/game';
@@ -44,7 +44,7 @@ export default {
         const player = getPlayer();
         playerStore.set(player);
 
-        setMouseInput(canvas);
+        // setMouseInput(canvas);
 
         const libOptions = getLibraryOptions(context, engine);
 

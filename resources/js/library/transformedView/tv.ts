@@ -6,14 +6,14 @@ import {setTVEvents} from './input';
 import {vec, vector, vector2} from '../vector';
 import type {Vector, Vector2} from 'library/types/vector';
 import type {Zoom} from 'library/types/tv';
-import {statistics} from 'games/tombraid';
+import type {Input} from 'library/types';
 
 // Use only vectors if possible
-export const getTV = (context: CanvasRenderingContext2D) => {
+export const getTV = (context: CanvasRenderingContext2D, input: Input) => {
     const paintMethods = getPaintMethods(properties, methods, context);
 
-    // Create an option out of this
-    setTVEvents(properties, methods);
+    // Make optional
+    setTVEvents(properties, methods, input);
 
     return {
         ...properties,
@@ -154,12 +154,6 @@ const moveTo = (target: Vector, slowR = 2) => {
     let count = 0;
     const strength = vector();
     const velocity = vector();
-
-    statistics.state.set({
-        id: 0, // test
-        name: 'test stat',
-        fn: () => `strength.x: ${strength.x.toFixed(2)} & strength.y: ${strength.y.toFixed(2)}`,
-    });
 
     return {
         id: 11,
