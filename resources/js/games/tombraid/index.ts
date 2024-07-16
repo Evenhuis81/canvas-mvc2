@@ -1,14 +1,9 @@
 import {createStore} from 'library/store';
-import {getLevel} from './levels';
 import {getLibraryOptions, initialize} from 'library/index';
 import {getPlayer} from './player';
-import {vector} from 'library/vector';
 import type {LevelResource} from './types/level';
 import type {PlayerResource} from './types/game';
 import type {ResourcesAndTV} from 'library/types';
-// import {setDualView, onResize} from 'library/menu';
-// import {getContext2D} from 'library/canvas';
-// import {getStatistics} from 'library/statistics';
 import type {StatisticsResource} from 'library/types/statistics';
 import button from 'library/button/button';
 import {Engine} from 'library/types/engine';
@@ -18,14 +13,9 @@ export const levelStore = createStore<LevelResource>();
 export const playerStore = createStore<PlayerResource>();
 export const statistics = createStore<StatisticsResource>();
 
-const options = {
-    full: true,
-    backgroundColor: '#000',
-};
-
 export default {
     setup: async () => {
-        const {canvas, context, engine, tv, input} = initialize('container', options);
+        const {canvas, context, engine, tv, input} = initialize('container', {full: true, bg: '#000'});
 
         resources.set({canvas, context, engine, tv, input});
 

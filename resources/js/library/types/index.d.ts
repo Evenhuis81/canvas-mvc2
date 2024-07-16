@@ -16,7 +16,7 @@ interface ResourcesAndTV extends Resources {
 type CanvasOptions = {
     width?: number;
     height?: number;
-    backgroundColor?: string;
+    bg?: string;
     center?: boolean;
     full?: boolean; // full tab (innerWidth, innerHeight)
 };
