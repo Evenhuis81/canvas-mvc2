@@ -35,7 +35,7 @@ export default {
         const libOptions = getLibraryOptions(context, engine);
 
         libOptions.setClear();
-        libOptions.setDot();
+        // libOptions.setDot();
 
         goToMenu();
     },
@@ -62,25 +62,29 @@ const startEditor = () => {
 const goToMenu = () => {
     const {context, engine, input} = resources.state;
 
-    button.create(context, engine, input, {
-        x: innerWidth * 0.1,
-        y: innerHeight * 0.1,
-        id: 'startButton',
-        name: 'startButton',
-        text: 'set level 3',
-        mouseup: createMouseUpForStartButton(),
-    });
+    button.create(context, engine, input, editorButton);
 
-    button.create(context, engine, input, {
-        x: innerWidth * 0.1,
-        y: innerHeight * 0.25,
-        id: 'editorButton',
-        name: 'editorButton',
-        text: 'edit a level',
-        mouseup: createMouseUpForEditorButton(),
-    });
+    button.create(context, engine, input, startButton);
 };
 
 const startLevel = (levelNr: number) => {
     console.log(`start level: ${levelNr}`);
+};
+
+const startButton = {
+    x: innerWidth * 0.1,
+    y: innerHeight * 0.25,
+    id: 'editorButton',
+    name: 'editorButton',
+    text: 'edit a level',
+    mouseup: createMouseUpForEditorButton(),
+};
+
+const editorButton = {
+    x: innerWidth * 0.1,
+    y: innerHeight * 0.1,
+    id: 'startButton',
+    name: 'startButton',
+    text: 'start level 3',
+    mouseup: createMouseUpForStartButton(),
 };
