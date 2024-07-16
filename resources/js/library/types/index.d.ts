@@ -19,4 +19,5 @@ type CanvasOptions = {
     bg?: string;
     center?: boolean;
     full?: boolean; // full tab (innerWidth, innerHeight)
+    clear?: boolean;
 };

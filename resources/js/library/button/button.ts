@@ -2,14 +2,30 @@ import type {Button, ButtonOptions, ButtonOptionsRequired, ButtonType} from 'lib
 import {Engine} from 'library/types/engine';
 import {Input} from 'library/types/input';
 
-const getButtonProperties: (options?: ButtonOptions) => ButtonOptionsRequired = (options = {}) => ({
+export default {
+    create: (context: CanvasRenderingContext2D, engine: Engine, input: Input, options: ButtonOptions = {}) =>
+        createButton(context, engine, input, options),
+    destruct: (id: (string | number) | (string | string[])) => {
+        if (Array.isArray(id)) {
+            id.forEach(i => {
+                findAndDestroy(i);
+            });
+
+            return;
+        }
+
+        findAndDestroy(id);
+    },
+};
+
+const getButtonProperties: (options: ButtonOptions) => ButtonOptionsRequired = options => ({
     id: 'noID',
     name: 'noName',
-    type: 'fillStroke',
-    x: innerWidth / 10,
-    y: innerHeight / 10,
-    w: innerWidth / 6,
-    h: innerHeight / 10,
+    type: 'fillStrokeRound',
+    x: innerWidth * 0.1,
+    y: innerHeight * 0.1,
+    w: innerWidth * 0.6,
+    h: innerHeight * 0.1,
     stroke: '#f00',
     fill: '#000',
     text: 'Default',
@@ -33,101 +49,7 @@ const findAndDestroy = (id: string | number) => {
     buttons.splice(index, 1);
 };
 
-export default {
-    create: (context: CanvasRenderingContext2D, engine: Engine, input: Input, options: ButtonOptions = {}) =>
-        createButton(context, engine, input, options),
-    destruct: (id: (string | number) | (string | string[])) => {
-        if (Array.isArray(id)) {
-            id.forEach(i => {
-                findAndDestroy(i);
-            });
-
-            return;
-        }
-
-        findAndDestroy(id);
-    },
-};
-
-const createButtonShow: Record<
-    ButtonType,
-    (props: ButtonOptionsRequired, ctx: CanvasRenderingContext2D) => () => void
-> = {
-    fill: (props, ctx) => () => {
-        // button
-        ctx.beginPath();
-        ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
-        ctx.fill();
-
-        // text
-        ctx.fillStyle = props.textFill;
-        ctx.font = props.font;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-
-        ctx.beginPath();
-        ctx.fillText(props.text, props.x, props.y);
-    },
-    stroke: (props, ctx) => () => {
-        ctx.strokeStyle = props.stroke;
-        ctx.lineWidth = props.lw;
-
-        ctx.beginPath();
-        ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
-        ctx.stroke();
-
-        ctx.fillStyle = props.textFill;
-        ctx.font = props.font;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-
-        ctx.beginPath();
-        ctx.fillText(props.text, props.x, props.y);
-    },
-    fillStroke: (props, ctx) => () => {
-        ctx.fillStyle = props.fill;
-        ctx.strokeStyle = props.stroke;
-        ctx.lineWidth = props.lw;
-
-        ctx.beginPath();
-        ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.fillStyle = props.textFill;
-        ctx.font = props.font;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-
-        ctx.beginPath();
-        ctx.fillText(props.text, props.x, props.y);
-    },
-    fillStrokeRound: (props, ctx) => () => {
-        ctx.fillStyle = props.fill;
-        ctx.strokeStyle = props.stroke;
-        ctx.lineWidth = props.lw;
-
-        ctx.beginPath();
-        ctx.roundRect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h, props.r);
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.fillStyle = props.textFill;
-        ctx.font = props.font;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-
-        ctx.beginPath();
-        ctx.fillText(props.text, props.x, props.y);
-    },
-};
-
-export const createButton = (
-    ctx: CanvasRenderingContext2D,
-    engine: Engine,
-    {mouse}: Input,
-    options: ButtonOptions = {},
-) => {
+export const createButton = (ctx: CanvasRenderingContext2D, engine: Engine, {mouse}: Input, options: ButtonOptions) => {
     const props = getButtonProperties(options);
     let pushed = false;
     let destructed = false;
@@ -205,4 +127,77 @@ export const createButton = (
     engine.setUpdate(update);
 
     buttons.push({id: props.id, update, show, selfDestruct});
+};
+
+const createButtonShow: Record<
+    ButtonType,
+    (props: ButtonOptionsRequired, ctx: CanvasRenderingContext2D) => () => void
+> = {
+    fill: (props, ctx) => () => {
+        // button
+        ctx.beginPath();
+        ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
+        ctx.fill();
+
+        // text
+        ctx.fillStyle = props.textFill;
+        ctx.font = props.font;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        ctx.beginPath();
+        ctx.fillText(props.text, props.x, props.y);
+    },
+    stroke: (props, ctx) => () => {
+        ctx.strokeStyle = props.stroke;
+        ctx.lineWidth = props.lw;
+
+        ctx.beginPath();
+        ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
+        ctx.stroke();
+
+        ctx.fillStyle = props.textFill;
+        ctx.font = props.font;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        ctx.beginPath();
+        ctx.fillText(props.text, props.x, props.y);
+    },
+    fillStroke: (props, ctx) => () => {
+        ctx.fillStyle = props.fill;
+        ctx.strokeStyle = props.stroke;
+        ctx.lineWidth = props.lw;
+
+        ctx.beginPath();
+        ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = props.textFill;
+        ctx.font = props.font;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        ctx.beginPath();
+        ctx.fillText(props.text, props.x, props.y);
+    },
+    fillStrokeRound: (props, ctx) => () => {
+        ctx.fillStyle = props.fill;
+        ctx.strokeStyle = props.stroke;
+        ctx.lineWidth = props.lw;
+
+        ctx.beginPath();
+        ctx.roundRect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h, props.r);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = props.textFill;
+        ctx.font = props.font;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        ctx.beginPath();
+        ctx.fillText(props.text, props.x, props.y);
+    },
 };

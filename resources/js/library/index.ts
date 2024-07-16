@@ -16,6 +16,8 @@ export const initialize = (containerID?: string, options?: CanvasOptions) => {
     const input = getInput(canvas);
     const tv = getTV(context, input);
 
+    if (options?.clear) clearOn(engine, context);
+
     return {canvas, context, engine, tv, input};
 };
 
