@@ -1,9 +1,10 @@
 import type {Show, Update} from './engine';
 
 type Button = {
+    id: string | number;
     show: Show;
     update: Update;
-    destruct: () => void;
+    selfDestruct: () => void;
 };
 
 type ButtonType = 'fill' | 'stroke' | 'fillStroke' | 'fillStrokeRound';
@@ -24,9 +25,9 @@ type ButtonOptions = {
     textFill?: string;
     hoverFill?: string;
     font?: string;
-    mouseup?: (ev: MouseEvent, destruct: Button['destruct']) => void;
+    mouseup?: (ev: MouseEvent) => void;
 };
 
 type ButtonOptionsRequired = Required<Omit<ButtonOptions, 'mouseup'>> & {
-    mouseup?: (ev: MouseEvent, destruct: Button['destruct']) => void;
+    mouseup?: (ev: MouseEvent) => void;
 };

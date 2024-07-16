@@ -64,6 +64,7 @@ const createMapShow = (
                 alphaVel *= -1;
             }
 
+            // Make this part of the tv/engine update
             tv.setWorldView(0, 0, screenWidth, screenHeight);
             elementsDrawn.nr = 0;
 
@@ -128,10 +129,10 @@ const createMapShow = (
                 }
             }
 
-            for (let y = 0; y < coinMap.length; y++) {
-                for (let x = 0; x < coinMap[y].length; x++)
-                    tv.fillCircle({x: coinMap[y][x] + 0.5, y: y + 0.5, r: 0.1, fill: 'yellow'});
-            }
+            // for (let y = 0; y < coinMap.length; y++) {
+            //     for (let x = 0; x < coinMap[y].length; x++)
+            //         tv.fillCircle({x: coinMap[y][x] + 0.5, y: y + 0.5, r: 0.1, fill: 'yellow'});
+            // }
         },
     };
 };

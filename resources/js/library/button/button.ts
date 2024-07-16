@@ -1,6 +1,5 @@
-// import {resources} from 'library/demo';
-// import {mouse} from 'library/input';
-import {ButtonOptions, ButtonOptionsRequired, ButtonType} from 'library/types/button';
+import type {Button, ButtonOptions, ButtonOptionsRequired, ButtonType} from 'library/types/button';
+import {Engine} from 'library/types/engine';
 import {Input} from 'library/types/input';
 
 const getButtonProperties: (options?: ButtonOptions) => ButtonOptionsRequired = (options = {}) => ({
@@ -22,9 +21,32 @@ const getButtonProperties: (options?: ButtonOptions) => ButtonOptionsRequired = 
     ...options,
 });
 
+const buttons: Button[] = [];
+
+const findAndDestroy = (id: string | number) => {
+    const index = buttons.findIndex(button => button.id === id);
+
+    if (id === -1) return;
+
+    buttons[index].selfDestruct();
+
+    buttons.splice(index, 1);
+};
+
 export default {
-    create: (context: CanvasRenderingContext2D, input: Input, options: ButtonOptions = {}) =>
-        createButton(context, input, options),
+    create: (context: CanvasRenderingContext2D, engine: Engine, input: Input, options: ButtonOptions = {}) =>
+        createButton(context, engine, input, options),
+    destruct: (id: (string | number) | (string | string[])) => {
+        if (Array.isArray(id)) {
+            id.forEach(i => {
+                findAndDestroy(i);
+            });
+
+            return;
+        }
+
+        findAndDestroy(id);
+    },
 };
 
 const createButtonShow: Record<
@@ -100,13 +122,15 @@ const createButtonShow: Record<
     },
 };
 
-export const createButton = (ctx: CanvasRenderingContext2D, input: Input, options: ButtonOptions = {}) => {
+export const createButton = (
+    ctx: CanvasRenderingContext2D,
+    engine: Engine,
+    {mouse}: Input,
+    options: ButtonOptions = {},
+) => {
     const props = getButtonProperties(options);
-    const {mouse} = input;
-
-    // const original = (({x, y, w, h}) => ({x, y, w, h}))(props);
-
     let pushed = false;
+    let destructed = false;
 
     const show = {
         id: props.id,
@@ -114,7 +138,7 @@ export const createButton = (ctx: CanvasRenderingContext2D, input: Input, option
         fn: createButtonShow[props.type](props, ctx),
     };
 
-    const defaultUpdate = {
+    const update = {
         id: props.id,
         name: props.name,
         fn: () => {
@@ -135,7 +159,7 @@ export const createButton = (ctx: CanvasRenderingContext2D, input: Input, option
         const {mouseup} = props;
 
         mouseupEvent = (ev: MouseEvent) => {
-            if (inside() && ev.button === 0) mouseup(ev, destruct);
+            if (inside() && ev.button === 0) mouseup(ev);
         };
 
         addEventListener('mouseup', mouseupEvent);
@@ -162,13 +186,25 @@ export const createButton = (ctx: CanvasRenderingContext2D, input: Input, option
     addEventListener('mouseup', internalMouseupEvent);
     addEventListener('mousedown', internalMousedownEvent);
 
-    const destruct = () => {
+    const selfDestruct = () => {
+        if (destructed) {
+            console.log(`Button ${props.id} is already destroyed!`);
+        }
+
         removeEventListener('mouseup', internalMouseupEvent);
         removeEventListener('mousedown', internalMousedownEvent);
         if (mouseupEvent) removeEventListener('mouseup', mouseupEvent);
+
+        engine.removeUpdate(props.id);
+        engine.removeShow(props.id);
+
+        destructed = true;
     };
 
-    return {update: defaultUpdate, show, destruct};
+    engine.setShow(show);
+    engine.setUpdate(update);
+
+    buttons.push({id: props.id, update, show, selfDestruct});
 };
 
 // const getButtonLines = (x: number, y: number, w: number, h: number) => {

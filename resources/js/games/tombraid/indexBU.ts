@@ -75,6 +75,17 @@
 //     runOnce: () => gameStore.state.engine.runOnce(),
 // };
 
+// await loadFont('OpenS', 'OpenSans-VariableFont_wdth,wght.ttf');
+
+// const canvas2 = setDualView(canvas, 'container');
+// const context2 = getContext2D(canvas2);
+
+// const stats = getStatistics(context2, canvas2);
+
+// statistics.set(stats);
+
+// engine.setShow(statistics.state.show);
+
 // const startLevel = (
 //     levelNr: number,
 //     tv: TransformedView,
@@ -100,4 +111,56 @@
 
 //     engine.showsOverview();
 //     engine.updatesOverview();
+// };
+
+// const startLevel = (levelNr: number) => {
+//     const level = getLevel(levelNr);
+
+//     levelStore.set(level);
+
+//     const {tv, canvas, engine} = resources.state;
+//     const player = playerStore.state;
+
+//     const scale = canvas.width / 24;
+
+//     tv.setUnitWeight({x: 1 / scale, y: 1 / scale});
+
+//     tv.setScale(vector(scale, scale));
+//     tv.setScreenSize(vector(canvas.width, canvas.height));
+
+//     player.setPosition(level.playerStart);
+
+//     tv.setMiddle(vector(level.playerStart.x + 0.5, level.playerStart.y + 0.5));
+
+//     const levelShow = level.createShow(level.map, level.coins, tv, canvas.width, canvas.height);
+
+//     engine.setShow(levelShow);
+//     engine.setShow(player.show);
+
+//     engine.setUpdate(player.update);
+
+// onResize(() => {
+//     engine.removeShow(4);
+
+//     const scale = canvas.width / 24;
+
+//     const unitLength = 1 / scale;
+//     tv.setUnitWeight({x: unitLength, y: unitLength});
+
+//     tv.setScale(vector(scale, scale));
+//     tv.setScreenSize(vector(canvas.width, canvas.height));
+//     tv.setMiddle(vector(player.middlePos.x, player.middlePos.y));
+
+//     const levelShow = level.createShow(level.map, level.coins, tv, canvas.width, canvas.height);
+
+//     engine.setShow(levelShow);
+// });
+
+// statistics.state.set({
+//     id: 8,
+//     name: 'player (middle) pos',
+//     fn: () => `player.x: ${player.middlePos.x}, player.y: ${player.middlePos.y}`,
+// });
+
+// statistics.state.setFn(() => `${tv.scale.x}`);
 // };
