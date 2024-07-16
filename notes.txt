@@ -5,4 +5,6 @@
 5. namechange transformedview => tv (folder)
 6. getEmptyX or Y = not functioning properly if border is absent;
 7. ElementsDrawn fix;
-8. levelBlocks (ie. text, which character)
+8. levelBlocks (ie. text, which character);
+9. cleanup branch locally (and check remote vs local);
+10. github settings for project (auth / permissions);
