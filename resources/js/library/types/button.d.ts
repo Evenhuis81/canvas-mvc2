@@ -1,9 +1,10 @@
 import type {Show, Update} from './engine';
 
 type Button = {
+    id: string | number;
     show: Show;
     update: Update;
-    getTextProperties: () => {width: number};
+    selfDestruct: () => void;
 };
 
 type ButtonType = 'fill' | 'stroke' | 'fillStroke' | 'fillStrokeRound';
@@ -27,4 +28,6 @@ type ButtonOptions = {
     mouseup?: (ev: MouseEvent) => void;
 };
 
-type ButtonOptionsRequired = Required<Omit<ButtonOptions, 'mouseup'>> & {mouseup?: (ev: MouseEvent) => void};
+type ButtonOptionsRequired = Required<Omit<ButtonOptions, 'mouseup'>> & {
+    mouseup?: (ev: MouseEvent) => void;
+};

@@ -5,7 +5,7 @@ import {TransformedView} from 'library/types/tv';
 import {getCoinMap, getLevelMap} from './levels';
 import {vector} from 'library/vector';
 import type {CoinMap, LevelMap, MapElement} from 'games/tombraid/types/level';
-import {statistics} from '..';
+// import {statistics} from '..';
 
 const getEmptyXFromRow = (levelMapRow: MapElement[], emptiesRow: number[], count = 0) => {
     // This works only if right side ends with no '.' or 'S'
@@ -42,7 +42,7 @@ const createMapShow = (
     let alphaVel = 0.005;
     let alphaActive = true;
 
-    statistics.state.setFn(() => `elementsDrawn: ${elementsDrawn.nr}`);
+    // statistics.state.setFn(() => `elementsDrawn: ${elementsDrawn.nr}`);
 
     const noEmptyX = getEmptyX(levelMap);
 
@@ -64,6 +64,7 @@ const createMapShow = (
                 alphaVel *= -1;
             }
 
+            // Make this part of the tv/engine update
             tv.setWorldView(0, 0, screenWidth, screenHeight);
             elementsDrawn.nr = 0;
 
@@ -128,10 +129,10 @@ const createMapShow = (
                 }
             }
 
-            for (let y = 0; y < coinMap.length; y++) {
-                for (let x = 0; x < coinMap[y].length; x++)
-                    tv.fillCircle({x: coinMap[y][x] + 0.5, y: y + 0.5, r: 0.1, fill: 'yellow'});
-            }
+            // for (let y = 0; y < coinMap.length; y++) {
+            //     for (let x = 0; x < coinMap[y].length; x++)
+            //         tv.fillCircle({x: coinMap[y][x] + 0.5, y: y + 0.5, r: 0.1, fill: 'yellow'});
+            // }
         },
     };
 };

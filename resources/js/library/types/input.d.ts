@@ -1,11 +1,13 @@
-export type MouseDown = 'mousedown';
-export type MouseMove = 'mousemove';
-export type MouseUp = 'mouseup';
-export type KeyDown = 'keydown';
-export type KeyUp = 'keyup';
-export type Wheel = 'wheel';
+import {Vector} from './vector';
 
-export interface Events {
+type MouseDown = 'mousedown';
+type MouseMove = 'mousemove';
+type MouseUp = 'mouseup';
+type KeyDown = 'keydown';
+type KeyUp = 'keyup';
+type Wheel = 'wheel';
+
+interface Events {
     mousedown: MouseDown;
     mousemove: MouseMove;
     mouseup: MouseUp;
@@ -13,3 +15,9 @@ export interface Events {
     keyup: KeyUp;
     wheel: Wheel;
 }
+
+type Input = {
+    mouse: Vector;
+    buttonHeld: Record<number, boolean>;
+    keyHeld: Record<string, boolean>;
+};
