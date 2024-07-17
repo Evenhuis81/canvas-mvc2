@@ -4,8 +4,7 @@
 
 <script setup lang="ts">
 import {onMounted} from 'vue';
-import {getDetector} from './font';
-import {loadFont} from 'library/font';
+import {getDetector, loadFont} from './font';
 
 onMounted(async () => {
     await loadFont('OpenS', 'OpenSans-VariableFont_wdth,wght.ttf');

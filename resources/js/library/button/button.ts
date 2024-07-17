@@ -1,4 +1,4 @@
-import type {Button, ButtonOptions, ButtonOptionsRequired, ButtonType} from 'library/types/button';
+import type {Button, ButtonEvent, ButtonOptions, ButtonOptionsRequired, ButtonType} from 'library/types/button';
 import {Engine} from 'library/types/engine';
 import {Input} from 'library/types/input';
 
@@ -15,6 +15,13 @@ export default {
         }
 
         findAndDestroy(id);
+    },
+    destructAll: () => {
+        buttons.forEach(button => {
+            button.selfDestruct();
+        });
+
+        buttons.length = 0;
     },
 };
 
@@ -54,6 +61,8 @@ export const createButton = (ctx: CanvasRenderingContext2D, engine: Engine, {mou
     let pushed = false;
     let destructed = false;
 
+    const origFill = props.fill;
+
     const show = {
         id: props.id,
         name: props.name,
@@ -64,8 +73,13 @@ export const createButton = (ctx: CanvasRenderingContext2D, engine: Engine, {mou
         id: props.id,
         name: props.name,
         fn: () => {
-            if (inside()) props.fill = `#f00`;
-            else props.fill = '#000';
+            if (inside()) {
+                props.fill = props.hoverFill;
+
+                return;
+            }
+
+            props.fill = origFill;
         },
     };
 
@@ -75,13 +89,15 @@ export const createButton = (ctx: CanvasRenderingContext2D, engine: Engine, {mou
         mouse.y >= props.y - props.h / 2 &&
         mouse.y < props.y + props.h / 2;
 
-    let mouseupEvent: ((ev: MouseEvent) => void) | undefined;
+    type ButtonMouseupEvent = ((event: ButtonEvent) => void) | undefined;
+
+    let mouseupEvent: ((event: MouseEvent) => void) | undefined;
 
     if (props.mouseup) {
         const {mouseup} = props;
 
-        mouseupEvent = (ev: MouseEvent) => {
-            if (inside() && ev.button === 0) mouseup(ev);
+        mouseupEvent = (evt: MouseEvent) => {
+            if (inside() && evt.button === 0) mouseup({evt, button: {id: props.id, update, show, selfDestruct}});
         };
 
         addEventListener('mouseup', mouseupEvent);

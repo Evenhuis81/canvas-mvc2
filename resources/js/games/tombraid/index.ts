@@ -1,16 +1,17 @@
 import {createStore} from 'library/store';
-import {getLibraryOptions, initialize} from 'library/index';
-import {getPlayer} from './player';
-import type {LevelResource} from './types/level';
-import type {PlayerResource} from './types/game';
+import {initialize} from 'library/index';
 import type {ResourcesAndTV} from 'library/types';
-import type {StatisticsResource} from 'library/types/statistics';
+// import type {LevelResource} from './types/level';
+// import type {PlayerResource} from './types/game';
+// import type {StatisticsResource} from 'library/types/statistics';
+// import {getPlayer} from './player';
 import {goToMenu} from './menu';
+import {getDetector, loadFont} from 'library/font/font';
 
 export const Resources = createStore<ResourcesAndTV>();
-export const levelStore = createStore<LevelResource>();
-export const playerStore = createStore<PlayerResource>();
-export const statistics = createStore<StatisticsResource>();
+// export const PlayerStore = createStore<PlayerResource>();
+// export const LevelStore = createStore<LevelResource>();
+// export const Statistics = createStore<StatisticsResource>();
 
 export default {
     setup: async () => {
@@ -18,8 +19,11 @@ export default {
 
         Resources.set({canvas, context, engine, tv, input});
 
-        // const player = getPlayer();
-        // playerStore.set(player);
+        await loadFont('OpenS', 'OpenSans-VariableFont_wdth,wght.ttf');
+
+        const detector = getDetector();
+
+        // console.log(detector.detect('OpenS'));
 
         goToMenu();
     },

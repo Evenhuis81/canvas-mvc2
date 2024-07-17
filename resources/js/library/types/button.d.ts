@@ -7,6 +7,11 @@ type Button = {
     selfDestruct: () => void;
 };
 
+type ButtonEvent = {
+    evt: MouseEvent;
+    button: Button;
+};
+
 type ButtonType = 'fill' | 'stroke' | 'fillStroke' | 'fillStrokeRound';
 
 type ButtonOptions = Partial<{
@@ -25,9 +30,9 @@ type ButtonOptions = Partial<{
     textFill: string;
     hoverFill: string;
     font: string;
-    mouseup: (ev: MouseEvent) => void;
+    mouseup: (event: ButtonEvent) => void;
 }>;
 
 type ButtonOptionsRequired = Required<Omit<ButtonOptions, 'mouseup'>> & {
-    mouseup?: (ev: MouseEvent) => void;
+    mouseup?: (event: ButtonEvent) => void;
 };
