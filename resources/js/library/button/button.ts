@@ -2,6 +2,13 @@ import type {Button, ButtonEvent, ButtonOptions, ButtonOptionsRequired, ButtonTy
 import {Engine} from 'library/types/engine';
 import {Input} from 'library/types/input';
 
+// Ideas for buttons:
+// 01. Transition from 1 button to the other
+// 02. Fade out/in
+// 03. Active/inactive mode
+// 04. Make module that shows which button is currently active (or alive as you will)
+// 05.
+
 export default {
     create: (context: CanvasRenderingContext2D, engine: Engine, input: Input, options: ButtonOptions = {}) =>
         createButton(context, engine, input, options),

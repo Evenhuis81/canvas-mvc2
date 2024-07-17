@@ -4,7 +4,6 @@ import {ButtonEvent, ButtonOptions} from 'library/types/button';
 import {loadButtonEditor} from './buttonEditor/buttonEditor';
 
 const createMouseUpForButtonEditorButton = (evt: ButtonEvent) => {
-    // console.log(evt);
     Button.destructAll();
 
     loadButtonEditor();
@@ -14,6 +13,8 @@ export const goToMenu = () => {
     const {context, engine, input} = Resources.state;
 
     // Get resources from a 'resourceID'
+    // AKA Change state of resource from store creator to match certain ID's , make this a generic typescript module
+
     Button.create(context, engine, input, buttonEditorButton);
 };
 
