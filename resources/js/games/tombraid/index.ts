@@ -19,12 +19,6 @@ export default {
 
         Resources.set({canvas, context, engine, tv, input});
 
-        await loadFont('OpenS', 'OpenSans-VariableFont_wdth,wght.ttf');
-
-        const detector = getDetector();
-
-        // console.log(detector.detect('OpenS'));
-
         goToMenu();
     },
     run: () => Resources.state.engine.run(),
