@@ -1,9 +1,9 @@
 import Button from 'library/button/button';
-import {Resources} from '..';
+import {resources} from 'library/index';
 import {ButtonEvent, ButtonOptions} from 'library/types/button';
 
 export const loadButtonEditor = () => {
-    const {context, engine, input} = Resources.state;
+    const {context, engine, input} = resources.tr;
 
     Button.create(context, engine, input, createNewButtonOptions);
     // Button.create(context, engine, input, backButton);
@@ -19,7 +19,6 @@ const mouseupCreateNewButton = ({evt, button}: ButtonEvent) => {
 
 const createMouseUpForBackButton = () => () => {
     // Button.destruct('back');
-    //
 };
 
 const createNewButtonOptions: ButtonOptions = {

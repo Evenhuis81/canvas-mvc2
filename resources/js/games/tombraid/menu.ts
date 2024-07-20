@@ -1,23 +1,23 @@
 import Button from 'library/button/button';
-import {Resources} from '.';
-import {ButtonEvent, ButtonOptions} from 'library/types/button';
+import {ButtonOptions} from 'library/types/button';
 import {loadButtonEditor} from './buttonEditor/buttonEditor';
 import {loadTextEditor} from './textEditor/textEditor';
+import {resources} from 'library/index';
 
-const mouseupButtonEditor = (evt: ButtonEvent) => {
+const mouseupButtonEditor = () => {
     Button.destructAll();
 
     loadButtonEditor();
 };
 
-const mouseupTextEditor = (evt: ButtonEvent) => {
+const mouseupTextEditor = () => {
     Button.destructAll();
 
     loadTextEditor();
 };
 
 export const goToMenu = () => {
-    const {context, engine, input} = Resources.state;
+    const {context, engine, input} = resources.tr;
 
     // Get resources from a 'resourceID'
     // Change state of resource from store creator to match certain ID's, make  generic typescript module

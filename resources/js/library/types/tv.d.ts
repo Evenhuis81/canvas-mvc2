@@ -19,6 +19,10 @@ export interface TransformedView extends PropertiesTV, PaintTV, MethodsTV {
     // setTVStatistics: () => Statistic[];
 }
 
+export interface StaticView {
+    text: (obj: Text) => void;
+}
+
 export interface PaintTV {
     fillRect: (obj: FillRect) => void;
     strokeRect: (obj: StrokeRect) => void;

@@ -1,24 +1,26 @@
 import {getCanvas, getContext2D, setCanvas} from './canvas';
 import {getEngine} from './engine';
-import {getTV} from './transformedView/tv';
+import {getStaticView, getTV} from './transformedView/tv';
 import {getInput} from 'library/input';
-import type {CanvasOptions} from './types';
+import type {CanvasOptions, Resources} from './types';
 import type {Engine} from './types/engine';
 
-export const initialize = (containerID?: string, options?: CanvasOptions) => {
+export const resources: Record<string | number, Resources> = {};
+
+export const initialize = (id: string | number, options?: CanvasOptions) => {
     const canvas = getCanvas();
     const context = getContext2D(canvas);
     const engine = getEngine();
 
-    setCanvas(canvas, options, containerID ? getContainer(containerID) : undefined);
+    setCanvas(canvas, options, options?.containerID ? getContainer(options.containerID) : undefined);
 
-    // TODO::Make these optional
     const input = getInput(canvas);
     const tv = getTV(context, input);
+    const sv = getStaticView(context);
 
     if (options?.clear) clearOn(engine, context);
 
-    return {canvas, context, engine, tv, input};
+    resources[id] = {canvas, context, engine, sv, tv, input};
 };
 
 export const getContainer = (containerID: string) => {
