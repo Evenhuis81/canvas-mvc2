@@ -1,24 +1,25 @@
 import button from 'library/button/button';
 import {loadFont} from 'library/font/font';
 import {resources} from 'library/index';
-import {ButtonEvent, ButtonOptions} from 'library/types/button';
+import {ClickEvent, ButtonOptions} from 'library/types/button';
 
 export const loadTextEditor = async () => {
     // const detector = getDetector();
 
-    button.create(resources.tr.context, resources.tr.engine, resources.tr.input, loadFontButtonOptions);
-    button.create(resources.tr.context, resources.tr.engine, resources.tr.input, loadFontButtonOptions2);
-    button.create(resources.tr.context, resources.tr.engine, resources.tr.input, loadFontButtonOptions3);
-    button.create(resources.tr.context, resources.tr.engine, resources.tr.input, loadFontButtonOptions4);
-    button.create(resources.tr.context, resources.tr.engine, resources.tr.input, loadFontButtonOptions5);
+    // Create a button using the last known buttonoptions, by using option: useLastOptions = true on buttonOptions?
+    button.create('tr', loadFontButtonOptions);
+    button.create('tr', loadFontButtonOptions2);
+    button.create('tr', loadFontButtonOptions3);
+    button.create('tr', loadFontButtonOptions4);
+    button.create('tr', loadFontButtonOptions5);
 };
 
-const mouseupLoadfont = async (event: ButtonEvent) => {
+const mouseupLoadfont = async (event: ClickEvent) => {
+    console.log(event);
     const {sv} = resources.tr;
 
     await loadFont('OpenS', 'OpenSans-VariableFont_wdth,wght.ttf');
 
-    // {x: number; y: number; txt: string; font?: string; fill: string; fontSize?: number};
     resources.tr.engine.setShow({
         fn: () =>
             sv.text({
@@ -32,7 +33,7 @@ const mouseupLoadfont = async (event: ButtonEvent) => {
     });
 };
 
-const mouseupLoadfont2 = async (event: ButtonEvent) => {
+const mouseupLoadfont2 = async (event: ClickEvent) => {
     const {sv} = resources.tr;
 
     await loadFont('Harmond', 'Harmond-SemiBoldCondensed.otf');
@@ -50,7 +51,7 @@ const mouseupLoadfont2 = async (event: ButtonEvent) => {
     });
 };
 
-const mouseupLoadfont3 = async (event: ButtonEvent) => {
+const mouseupLoadfont3 = async (event: ClickEvent) => {
     const {sv} = resources.tr;
 
     await loadFont('Harmond2', 'Harmond-SemBdItaCond.otf');
@@ -68,7 +69,7 @@ const mouseupLoadfont3 = async (event: ButtonEvent) => {
     });
 };
 
-const mouseupLoadfont4 = async (event: ButtonEvent) => {
+const mouseupLoadfont4 = async (event: ClickEvent) => {
     const {sv} = resources.tr;
 
     await loadFont('Harmond3', 'Harmond-ExtraBoldExpanded.otf');
@@ -86,7 +87,7 @@ const mouseupLoadfont4 = async (event: ButtonEvent) => {
     });
 };
 
-const mouseupLoadfont5 = async (event: ButtonEvent) => {
+const mouseupLoadfont5 = async (event: ClickEvent) => {
     const {sv} = resources.tr;
 
     await loadFont('Harmond4', 'Harmond-ExtBdItaExp.otf');
@@ -117,7 +118,7 @@ const loadFontButtonOptions: ButtonOptions = {
     id: 'loadfont',
     text: 'Load Font OpenS 24',
     font: '24px monospace',
-    mouseup: mouseupLoadfont,
+    click: mouseupLoadfont,
 };
 
 const loadFontButtonOptions2: ButtonOptions = {
@@ -133,7 +134,7 @@ const loadFontButtonOptions2: ButtonOptions = {
     id: 'loadfont',
     text: 'Load Font Harm1',
     font: '24px monospace',
-    mouseup: mouseupLoadfont2,
+    click: mouseupLoadfont2,
 };
 
 const loadFontButtonOptions3: ButtonOptions = {
@@ -149,7 +150,7 @@ const loadFontButtonOptions3: ButtonOptions = {
     id: 'loadfont',
     text: 'Load Font Harm2',
     font: '24px monospace',
-    mouseup: mouseupLoadfont3,
+    click: mouseupLoadfont3,
 };
 
 const loadFontButtonOptions4: ButtonOptions = {
@@ -165,7 +166,7 @@ const loadFontButtonOptions4: ButtonOptions = {
     id: 'loadfont',
     text: 'Load Font Harm3',
     font: '24px monospace',
-    mouseup: mouseupLoadfont4,
+    click: mouseupLoadfont4,
 };
 
 const loadFontButtonOptions5: ButtonOptions = {
@@ -181,49 +182,5 @@ const loadFontButtonOptions5: ButtonOptions = {
     id: 'loadfont',
     text: 'Load Font Harm4',
     font: '24px monospace',
-    mouseup: mouseupLoadfont5,
+    click: mouseupLoadfont5,
 };
-
-// Resources.state.engine.setShow({
-//     fn: () =>
-//         sv.text({
-//             x: innerWidth * 0.5,
-//             y: innerHeight * 0.55,
-//             txt: 'Loaded Font Example Text monospace',
-//             font: 'monospace',
-//             fill: '#fff',
-//         }),
-// });
-
-// Resources.state.engine.setShow({
-//     fn: () =>
-//         sv.text({
-//             x: innerWidth * 0.5,
-//             y: innerHeight * 0.6,
-//             txt: 'Loaded Font Example Text Arial',
-//             font: 'Arial',
-//             fill: '#fff',
-//         }),
-// });
-
-// Resources.state.engine.setShow({
-//     fn: () =>
-//         sv.text({
-//             x: innerWidth * 0.5,
-//             y: innerHeight * 0.65,
-//             txt: 'Loaded Font Example Text serif',
-//             font: 'serif',
-//             fill: '#fff',
-//         }),
-// });
-
-// Resources.state.engine.setShow({
-//     fn: () =>
-//         sv.text({
-//             x: innerWidth * 0.5,
-//             y: innerHeight * 0.7,
-//             txt: 'Loaded Font Example Text sans-serif',
-//             font: 'sans-serif',
-//             fill: '#fff',
-//         }),
-// });

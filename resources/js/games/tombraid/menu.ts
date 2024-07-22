@@ -2,28 +2,22 @@ import Button from 'library/button/button';
 import {ButtonOptions} from 'library/types/button';
 import {loadButtonEditor} from './buttonEditor/buttonEditor';
 import {loadTextEditor} from './textEditor/textEditor';
-import {resources} from 'library/index';
 
-const mouseupButtonEditor = () => {
+const clickButtonEditor = () => {
     Button.destructAll();
 
     loadButtonEditor();
 };
 
-const mouseupTextEditor = () => {
+const clickTextEditor = () => {
     Button.destructAll();
 
     loadTextEditor();
 };
 
 export const goToMenu = () => {
-    const {context, engine, input} = resources.tr;
-
-    // Get resources from a 'resourceID'
-    // Change state of resource from store creator to match certain ID's, make  generic typescript module
-
-    Button.create(context, engine, input, buttonEditor);
-    Button.create(context, engine, input, textEditor);
+    Button.create('tr', buttonEditor);
+    Button.create('tr', textEditor);
 };
 
 const buttonEditor: ButtonOptions = {
@@ -39,7 +33,7 @@ const buttonEditor: ButtonOptions = {
     id: 'buttonEditor',
     text: 'Button Editor',
     font: '36px sans-serif',
-    mouseup: mouseupButtonEditor,
+    click: clickButtonEditor,
 };
 
 const textEditor: ButtonOptions = {
@@ -55,5 +49,5 @@ const textEditor: ButtonOptions = {
     id: 'textEditor',
     text: 'Text Editor',
     font: '36px monospace',
-    mouseup: mouseupTextEditor,
+    click: clickTextEditor,
 };

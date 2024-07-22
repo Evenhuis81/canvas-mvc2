@@ -7,8 +7,8 @@ type Button = {
     selfDestruct: () => void;
 };
 
-type ButtonEvent = {
-    evt: MouseEvent;
+type ClickEvent = {
+    evt: MouseEvent | TouchEvent;
     button: Button;
 };
 
@@ -30,9 +30,9 @@ type ButtonOptions = Partial<{
     textFill: string;
     hoverFill: string;
     font: string;
-    mouseup: (event: ButtonEvent) => void;
+    click: (event: ClickEvent) => void;
 }>;
 
-type ButtonOptionsRequired = Required<Omit<ButtonOptions, 'mouseup'>> & {
-    mouseup?: (event: ButtonEvent) => void;
+type ButtonOptionsRequired = Required<Omit<ButtonOptions, 'click'>> & {
+    click?: (event: ClickEvent) => void;
 };

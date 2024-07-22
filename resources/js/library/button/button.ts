@@ -1,6 +1,7 @@
-import type {Button, ButtonEvent, ButtonOptions, ButtonOptionsRequired, ButtonType} from 'library/types/button';
+import type {Button, ButtonOptions, ButtonOptionsRequired, ButtonType} from 'library/types/button';
 import {Engine} from 'library/types/engine';
 import {Input} from 'library/types/input';
+import {resources} from '..';
 
 // Ideas for buttons:
 // 01. Transition from 1 button to the other
@@ -10,8 +11,7 @@ import {Input} from 'library/types/input';
 // 05.
 
 export default {
-    create: (context: CanvasRenderingContext2D, engine: Engine, input: Input, options: ButtonOptions = {}) =>
-        createButton(context, engine, input, options),
+    create: (resourceID: string, options: ButtonOptions = {}) => createButton(resourceID, options),
     destruct: (id: (string | number) | (string | string[])) => {
         if (Array.isArray(id)) {
             id.forEach(i => {
@@ -63,7 +63,12 @@ const findAndDestroy = (id: string | number) => {
     buttons.splice(index, 1);
 };
 
-export const createButton = (ctx: CanvasRenderingContext2D, engine: Engine, {mouse}: Input, options: ButtonOptions) => {
+export const createButton = (resourceID: string, options: ButtonOptions) => {
+    const {
+        context: ctx,
+        engine,
+        input: {mouse, touch},
+    } = resources[resourceID];
     const props = getButtonProperties(options);
     let pushed = false;
     let destructed = false;
@@ -80,7 +85,7 @@ export const createButton = (ctx: CanvasRenderingContext2D, engine: Engine, {mou
         id: props.id,
         name: props.name,
         fn: () => {
-            if (inside()) {
+            if (mouse.insideRect(props) && !mouse.touchEnded) {
                 props.fill = props.hoverFill;
 
                 return;
@@ -90,30 +95,28 @@ export const createButton = (ctx: CanvasRenderingContext2D, engine: Engine, {mou
         },
     };
 
-    const inside = () =>
-        mouse.x >= props.x - props.w / 2 &&
-        mouse.x < props.x + props.w / 2 &&
-        mouse.y >= props.y - props.h / 2 &&
-        mouse.y < props.y + props.h / 2;
-
-    type ButtonMouseupEvent = ((event: ButtonEvent) => void) | undefined;
-
     let mouseupEvent: ((event: MouseEvent) => void) | undefined;
+    let touchendEvent: ((event: TouchEvent) => void) | undefined;
 
-    if (props.mouseup) {
-        const {mouseup} = props;
+    if (props.click) {
+        const {click} = props;
 
         mouseupEvent = (evt: MouseEvent) => {
-            if (inside() && evt.button === 0) mouseup({evt, button: {id: props.id, update, show, selfDestruct}});
+            if (mouse.insideRect(props) && evt.button === 0)
+                click({evt, button: {id: props.id, update, show, selfDestruct}});
+        };
+
+        touchendEvent = (evt: TouchEvent) => {
+            if (touch.insideRect(props)) click({evt, button: {id: props.id, update, show, selfDestruct}});
         };
 
         addEventListener('mouseup', mouseupEvent);
+        addEventListener('touchend', touchendEvent);
     }
 
     const internalMousedownEvent = ({button}: MouseEvent) => {
-        if (inside() && button === 0) {
+        if (mouse.insideRect(props) && button === 0) {
             pushed = true;
-
             props.w *= 0.9;
             props.h *= 0.9;
         }
@@ -128,6 +131,25 @@ export const createButton = (ctx: CanvasRenderingContext2D, engine: Engine, {mou
         }
     };
 
+    const internalTouchstartEvent = () => {
+        if (touch.insideRect(props)) {
+            pushed = true;
+            props.w *= 0.9;
+            props.h *= 0.9;
+        }
+    };
+
+    const internalTouchendEvent = () => {
+        if (pushed) {
+            props.w *= 1.1;
+            props.h *= 1.1;
+
+            pushed = false;
+        }
+    };
+
+    addEventListener('touchstart', internalTouchstartEvent);
+    addEventListener('touchend', internalTouchendEvent);
     addEventListener('mouseup', internalMouseupEvent);
     addEventListener('mousedown', internalMousedownEvent);
 
@@ -136,9 +158,15 @@ export const createButton = (ctx: CanvasRenderingContext2D, engine: Engine, {mou
             console.log(`Button ${props.id} is already destroyed!`);
         }
 
+        removeEventListener('touchstart', internalTouchstartEvent);
+        removeEventListener('touchend', internalTouchendEvent);
         removeEventListener('mouseup', internalMouseupEvent);
         removeEventListener('mousedown', internalMousedownEvent);
-        if (mouseupEvent) removeEventListener('mouseup', mouseupEvent);
+
+        if (mouseupEvent && touchendEvent) {
+            removeEventListener('touchend', touchendEvent);
+            removeEventListener('mouseup', mouseupEvent);
+        }
 
         engine.removeUpdate(props.id);
         engine.removeShow(props.id);
