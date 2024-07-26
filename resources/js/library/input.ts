@@ -1,34 +1,57 @@
-import {vector} from './vector';
-
 export const getInput = (canvas: HTMLCanvasElement) => {
-    const mouse = vector();
-
+    const canvasRect = canvas.getBoundingClientRect();
     const buttonHeld: Record<number, boolean> = {};
     const keyHeld: Record<string, boolean> = {};
-
-    const rect = canvas.getBoundingClientRect();
+    const mouse = {x: 0, y: 0, touchEnded: false};
+    const touch = {x: 0, y: 0};
 
     canvas.addEventListener('mousedown', evt => {
+        mouse.touchEnded = false;
+
         buttonHeld[evt.button] = true;
     });
 
     canvas.addEventListener('mouseup', evt => {
+        mouse.touchEnded = false;
+
         delete buttonHeld[evt.button];
     });
 
     canvas.addEventListener('mousemove', evt => {
-        // mouse.setXY(+evt.offsetX.toFixed(0), +evt.offsetY.toFixed(0));
+        mouse.touchEnded = false;
 
-        mouse.x = +(evt.clientX - rect.left).toFixed(0);
-        mouse.y = +(evt.clientY - rect.top).toFixed(0);
+        mouse.x = +(evt.clientX - canvasRect.left).toFixed(0);
+        mouse.y = +(evt.clientY - canvasRect.top).toFixed(0);
     });
 
     canvas.addEventListener('keydown', evt => {
+        mouse.touchEnded = false;
+
         keyHeld[evt.code] = true;
     });
 
     canvas.addEventListener('keyup', evt => {
+        mouse.touchEnded = false;
+
         delete keyHeld[evt.code];
+    });
+
+    canvas.addEventListener('touchstart', (evt: TouchEvent) => {
+        touch.x = +(evt.touches[0].clientX - canvasRect.left).toFixed(0);
+        touch.y = +(evt.touches[0].clientY - canvasRect.top).toFixed(0);
+    });
+
+    canvas.addEventListener('touchmove', (evt: TouchEvent) => {
+        evt.preventDefault(); // prevents scrolling for example
+
+        touch.x = +(evt.touches[0].clientX - canvasRect.left).toFixed(0);
+        touch.y = +(evt.touches[0].clientY - canvasRect.top).toFixed(0);
+    });
+
+    canvas.addEventListener('touchend', (evt: TouchEvent) => {
+        evt.preventDefault(); // otherwise mouse gets moved to touch spot, firing all other mouse events
+
+        mouse.touchEnded = true;
     });
 
     const resize = () => {
@@ -45,5 +68,15 @@ export const getInput = (canvas: HTMLCanvasElement) => {
 
     onresize = () => resizeCanvas();
 
-    return {mouse, buttonHeld, keyHeld};
+    const createInsideRect =
+        (inputDevice: {x: number; y: number}) => (rect: {x: number; y: number; w: number; h: number}) =>
+            inputDevice.x >= rect.x - rect.w / 2 &&
+            inputDevice.x < rect.x + rect.w / 2 &&
+            inputDevice.y >= rect.y - rect.h / 2 &&
+            inputDevice.y < rect.y + rect.h / 2;
+
+    Object.assign(mouse, {insideRect: createInsideRect(mouse)});
+    Object.assign(touch, {insideRect: createInsideRect(touch)});
+
+    return {mouse, touch, buttonHeld, keyHeld};
 };

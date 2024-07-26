@@ -111,7 +111,7 @@ const createFillText =
     (obj: Text) => {
         world2Screen(obj.x, obj.y);
 
-        const font = `${obj.fontSize ? obj.fontSize * scale.x : 24 * scale.x}px ${obj.font ?? 'OpenS'}`;
+        const font = `${obj.fontSize ? obj.fontSize * scale.x : 24 * scale.x}px ${obj.font ?? 'monospace'}`;
 
         ctx.font = font;
         ctx.textAlign = 'center';

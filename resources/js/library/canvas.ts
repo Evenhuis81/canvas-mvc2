@@ -30,7 +30,7 @@ const setCanvasOptions = (canvas: HTMLCanvasElement, options?: CanvasOptions) =>
     }
     if (options.width && !options.full) canvas.width = options.width;
     if (options.height && !options.full) canvas.height = options.height;
-    if (options.backgroundColor) canvas.style.backgroundColor = options.backgroundColor;
+    if (options.bg) canvas.style.backgroundColor = options.bg;
 };
 
 const setContainer = (canvas: HTMLCanvasElement, container: HTMLDivElement) => {

@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable complexity */
-import {levelStore, resources} from '..';
+import {levelStore, Resources} from '..';
 import {vec, vector} from 'library/vector';
 import type {Vector} from 'library/types/vector';
 import {TransformedView} from 'library/types/tv';
@@ -117,7 +117,7 @@ export const friction = () => {
 export const getPlayer = () => {
     // TV method to set player in middle of screen
 
-    const {tv} = resources.state;
+    const {tv} = Resources.state;
 
     const update = {
         id: 3,
@@ -146,8 +146,8 @@ export const getPlayer = () => {
             player.posChangeHistory.shift();
             player.posChangeHistory.push(vector(-xChange, -yChange));
 
-            resources.state.tv.offset.x += player.posChangeHistory[0].x;
-            resources.state.tv.offset.y += player.posChangeHistory[0].y;
+            Resources.state.tv.offset.x += player.posChangeHistory[0].x;
+            Resources.state.tv.offset.y += player.posChangeHistory[0].y;
         },
     };
 

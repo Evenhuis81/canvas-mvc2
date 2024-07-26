@@ -1,15 +1,45 @@
 import type {Button, ButtonOptions, ButtonOptionsRequired, ButtonType} from 'library/types/button';
 import {Engine} from 'library/types/engine';
 import {Input} from 'library/types/input';
+import {resources} from '..';
 
-const getButtonProperties: (options?: ButtonOptions) => ButtonOptionsRequired = (options = {}) => ({
+// Ideas for buttons:
+// 01. Transition from 1 button to the other
+// 02. Fade out/in
+// 03. Active/inactive mode
+// 04. Make module that shows which button is currently active (or alive as you will)
+// 05.
+
+export default {
+    create: (resourceID: string, options: ButtonOptions = {}) => createButton(resourceID, options),
+    destruct: (id: (string | number) | (string | string[])) => {
+        if (Array.isArray(id)) {
+            id.forEach(i => {
+                findAndDestroy(i);
+            });
+
+            return;
+        }
+
+        findAndDestroy(id);
+    },
+    destructAll: () => {
+        buttons.forEach(button => {
+            button.selfDestruct();
+        });
+
+        buttons.length = 0;
+    },
+};
+
+const getButtonProperties: (options: ButtonOptions) => ButtonOptionsRequired = options => ({
     id: 'noID',
     name: 'noName',
-    type: 'fillStroke',
-    x: innerWidth / 10,
-    y: innerHeight / 10,
-    w: innerWidth / 6,
-    h: innerHeight / 10,
+    type: 'fillStrokeRound',
+    x: innerWidth * 0.1,
+    y: innerHeight * 0.1,
+    w: innerWidth * 0.6,
+    h: innerHeight * 0.1,
     stroke: '#f00',
     fill: '#000',
     text: 'Default',
@@ -33,20 +63,121 @@ const findAndDestroy = (id: string | number) => {
     buttons.splice(index, 1);
 };
 
-export default {
-    create: (context: CanvasRenderingContext2D, engine: Engine, input: Input, options: ButtonOptions = {}) =>
-        createButton(context, engine, input, options),
-    destruct: (id: (string | number) | (string | string[])) => {
-        if (Array.isArray(id)) {
-            id.forEach(i => {
-                findAndDestroy(i);
-            });
+export const createButton = (resourceID: string, options: ButtonOptions) => {
+    const {
+        context: ctx,
+        engine,
+        input: {mouse, touch},
+    } = resources[resourceID];
+    const props = getButtonProperties(options);
+    let pushed = false;
+    let destructed = false;
 
-            return;
+    const origFill = props.fill;
+
+    const show = {
+        id: props.id,
+        name: props.name,
+        fn: createButtonShow[props.type](props, ctx),
+    };
+
+    const update = {
+        id: props.id,
+        name: props.name,
+        fn: () => {
+            if (mouse.insideRect(props) && !mouse.touchEnded) {
+                props.fill = props.hoverFill;
+
+                return;
+            }
+
+            props.fill = origFill;
+        },
+    };
+
+    let mouseupEvent: ((event: MouseEvent) => void) | undefined;
+    let touchendEvent: ((event: TouchEvent) => void) | undefined;
+
+    if (props.click) {
+        const {click} = props;
+
+        mouseupEvent = (evt: MouseEvent) => {
+            if (mouse.insideRect(props) && evt.button === 0)
+                click({evt, button: {id: props.id, update, show, selfDestruct}});
+        };
+
+        touchendEvent = (evt: TouchEvent) => {
+            if (touch.insideRect(props)) click({evt, button: {id: props.id, update, show, selfDestruct}});
+        };
+
+        addEventListener('mouseup', mouseupEvent);
+        addEventListener('touchend', touchendEvent);
+    }
+
+    const internalMousedownEvent = ({button}: MouseEvent) => {
+        if (mouse.insideRect(props) && button === 0) {
+            pushed = true;
+            props.w *= 0.9;
+            props.h *= 0.9;
+        }
+    };
+
+    const internalMouseupEvent = () => {
+        if (pushed) {
+            props.w *= 1.1;
+            props.h *= 1.1;
+
+            pushed = false;
+        }
+    };
+
+    const internalTouchstartEvent = () => {
+        if (touch.insideRect(props)) {
+            pushed = true;
+            props.w *= 0.9;
+            props.h *= 0.9;
+        }
+    };
+
+    const internalTouchendEvent = () => {
+        if (pushed) {
+            props.w *= 1.1;
+            props.h *= 1.1;
+
+            pushed = false;
+        }
+    };
+
+    addEventListener('touchstart', internalTouchstartEvent);
+    addEventListener('touchend', internalTouchendEvent);
+    addEventListener('mouseup', internalMouseupEvent);
+    addEventListener('mousedown', internalMousedownEvent);
+
+    const selfDestruct = () => {
+        if (destructed) {
+            console.log(`Button ${props.id} is already destroyed!`);
         }
 
-        findAndDestroy(id);
-    },
+        removeEventListener('touchstart', internalTouchstartEvent);
+        removeEventListener('touchend', internalTouchendEvent);
+        removeEventListener('mouseup', internalMouseupEvent);
+        removeEventListener('mousedown', internalMousedownEvent);
+
+        if (mouseupEvent && touchendEvent) {
+            removeEventListener('touchend', touchendEvent);
+            removeEventListener('mouseup', mouseupEvent);
+        }
+
+        engine.removeUpdate(props.id);
+        engine.removeShow(props.id);
+
+        destructed = true;
+    };
+
+    engine.setShow(show);
+    engine.setUpdate(update);
+
+    buttons.push({id: props.id, update, show, selfDestruct});
 };
 
 const createButtonShow: Record<
@@ -121,189 +252,3 @@ const createButtonShow: Record<
         ctx.fillText(props.text, props.x, props.y);
     },
 };
-
-export const createButton = (
-    ctx: CanvasRenderingContext2D,
-    engine: Engine,
-    {mouse}: Input,
-    options: ButtonOptions = {},
-) => {
-    const props = getButtonProperties(options);
-    let pushed = false;
-    let destructed = false;
-
-    const show = {
-        id: props.id,
-        name: props.name,
-        fn: createButtonShow[props.type](props, ctx),
-    };
-
-    const update = {
-        id: props.id,
-        name: props.name,
-        fn: () => {
-            if (inside()) props.fill = `#f00`;
-            else props.fill = '#000';
-        },
-    };
-
-    const inside = () =>
-        mouse.x >= props.x - props.w / 2 &&
-        mouse.x < props.x + props.w / 2 &&
-        mouse.y >= props.y - props.h / 2 &&
-        mouse.y < props.y + props.h / 2;
-
-    let mouseupEvent: ((ev: MouseEvent) => void) | undefined;
-
-    if (props.mouseup) {
-        const {mouseup} = props;
-
-        mouseupEvent = (ev: MouseEvent) => {
-            if (inside() && ev.button === 0) mouseup(ev);
-        };
-
-        addEventListener('mouseup', mouseupEvent);
-    }
-
-    const internalMousedownEvent = ({button}: MouseEvent) => {
-        if (inside() && button === 0) {
-            pushed = true;
-
-            props.w *= 0.9;
-            props.h *= 0.9;
-        }
-    };
-
-    const internalMouseupEvent = () => {
-        if (pushed) {
-            props.w *= 1.1;
-            props.h *= 1.1;
-
-            pushed = false;
-        }
-    };
-
-    addEventListener('mouseup', internalMouseupEvent);
-    addEventListener('mousedown', internalMousedownEvent);
-
-    const selfDestruct = () => {
-        if (destructed) {
-            console.log(`Button ${props.id} is already destroyed!`);
-        }
-
-        removeEventListener('mouseup', internalMouseupEvent);
-        removeEventListener('mousedown', internalMousedownEvent);
-        if (mouseupEvent) removeEventListener('mouseup', mouseupEvent);
-
-        engine.removeUpdate(props.id);
-        engine.removeShow(props.id);
-
-        destructed = true;
-    };
-
-    engine.setShow(show);
-    engine.setUpdate(update);
-
-    buttons.push({id: props.id, update, show, selfDestruct});
-};
-
-// const getButtonLines = (x: number, y: number, w: number, h: number) => {
-//     const mTB = h / 3;
-//     const mLR = w / 5;
-//     const yStep = (h - mTB * 2) / 2;
-
-//     const line1 = {x: x + mLR, y: y + mTB, x2: x + w - mLR, y2: y + mTB};
-//     const line2 = {x: x + mLR, y: y + mTB + yStep, x2: x + w - mLR, y2: y + mTB + yStep};
-//     const line3 = {x: x + mLR, y: y + mTB + yStep * 2, x2: x + w - mLR, y2: y + mTB + yStep * 2};
-
-//     return [line1, line2, line3];
-// };
-
-// const menuBorder = {
-//     x: 250,
-//     y: 40,
-//     w: 240,
-//     h: 210,
-//     r: 5,
-// };
-
-// const openMenu = () => {
-//     // menu border (slide-in from above)
-//     const {x, y, w, h, r} = menuBorder;
-//     const {context: ctx} = gameStore.state;
-
-//     const show = () => {
-//         ctx.fillStyle = '555';
-//         ctx.strokeStyle = '#fff';
-//         ctx.lineWidth = 2;
-
-//         ctx.beginPath();
-//         ctx.roundRect(x, y, w, h, r);
-//         ctx.fill();
-//         ctx.stroke();
-//     };
-
-//     return show;
-// };
-
-// const startButton = {
-//     txt: 'Start',
-//     x: 50,
-//     y: 450,
-//     w: 50,
-//     h: 20,
-//     r: 5,
-//     lw: 2,
-//     stroke: '#fff',
-//     fill: '#000',
-//     textFill: '#00f',
-//     font: '20px normal sans-serif',
-// };
-
-// export const getMenuButton = (ctx: CanvasRenderingContext2D) => {
-//     const {w, h, r, lw, stroke} = menuButton;
-//     let fill = 0;
-//     const fillAcc = 5;
-//     const fillMax = 100;
-//     const fillMin = 0;
-//     const x = ctx.canvas.width - 30;
-//     const y = 10;
-
-//     const lines = getButtonLines(x, y, w, h);
-
-//     const show = () => {
-//         const newFill = `rgb(${fill}, ${fill}, ${fill})`;
-//         ctx.strokeStyle = stroke;
-//         ctx.fillStyle = newFill;
-//         ctx.lineWidth = lw;
-
-//         ctx.beginPath();
-//         ctx.roundRect(x, y, w, h, r);
-//         ctx.fill();
-//         ctx.stroke();
-
-//         for (const line of lines) {
-//             ctx.strokeStyle = '#fff';
-//             ctx.lineWidth = 1;
-
-//             ctx.beginPath();
-//             ctx.moveTo(line.x, line.y);
-//             ctx.lineTo(line.x2, line.y2);
-//             ctx.stroke();
-//         }
-//     };
-
-//     const update = () => {
-//         if (inside() && fill < fillMax) fill += fillAcc;
-
-//         if (!inside() && fill > fillMin) fill -= fillAcc;
-//     };
-
-//     const inside = () => mouse.x >= x && mouse.x < x + w && mouse.y >= y && mouse.y < y + h;
-
-//     addEventListener('mouseup', ({button}) => {
-//         if (button === 0 && inside()) gameStore.state.engine.setShow({id: 0, name: 'open menu', fn: openMenu()});
-//     });
-
-//     return {show, update};
-// };

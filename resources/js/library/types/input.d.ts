@@ -16,8 +16,20 @@ interface Events {
     wheel: Wheel;
 }
 
+type InsideRect = (rect: {x: number; y: number; w: number; h: number}) => boolean;
+
 type Input = {
-    mouse: Vector;
+    mouse: {
+        x: number;
+        y: number;
+        insideRect: InsideRect;
+        touchEnded: boolean;
+    };
+    touch: {
+        x: number;
+        y: number;
+        insideRect: InsideRect;
+    };
     buttonHeld: Record<number, boolean>;
     keyHeld: Record<string, boolean>;
 };
