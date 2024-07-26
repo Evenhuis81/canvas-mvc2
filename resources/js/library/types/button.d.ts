@@ -27,11 +27,26 @@ type ButtonOptions = Partial<{
     stroke: string;
     fill: string;
     text: string;
-    textFill: string;
-    hoverFill: string;
+    textFill: ColorRGB;
+    hoverFill: ColorRGB;
     font: string;
     click: (event: ClickEvent) => void;
 }>;
+
+type HoverProperties = {
+    source: ColorRGB;
+    target: ColorRGB;
+    min: ColorRGB;
+};
+
+type ColorRGB = {
+    r: number;
+    g: number;
+    b: number;
+};
+
+// For future use (not yet implemented)
+type ColorRGBA = ColorRGB & {a: number};
 
 type ButtonOptionsRequired = Required<Omit<ButtonOptions, 'click'>> & {
     click?: (event: ClickEvent) => void;
