@@ -58,4 +58,12 @@ export const routes: RouteRecordRaw[] = [
             shouldBeLoggedIn: false,
         },
     },
+    {
+        path: '/survival',
+        component: () => import('./games/survival/Survival.vue'),
+        name: 'Survival',
+        meta: {
+            shouldBeLoggedIn: false,
+        },
+    },
 ];
