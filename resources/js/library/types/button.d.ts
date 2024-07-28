@@ -14,6 +14,19 @@ type ClickEvent = {
 
 type ButtonType = 'fill' | 'stroke' | 'fillStroke' | 'fillStrokeRound';
 
+type ColorAndHoverProperties = {
+    fill: ColorRGBA;
+    stroke: ColorRGBA;
+    textFill: ColorRGBA;
+    textStroke: ColorRGBA;
+    hover: {
+        fill: ColorRGBA;
+        stroke: ColorRGBA;
+        textFill: ColorRGBA;
+        textStroke: ColorRGBA;
+    };
+};
+
 type ButtonOptions = Partial<{
     id: number | string;
     name: string;
@@ -24,20 +37,9 @@ type ButtonOptions = Partial<{
     h: number;
     lw: number;
     r: number;
-    stroke: string;
-    fill: string;
-    text: string;
-    textFill: ColorRGB;
-    hoverFill: ColorRGB;
     font: string;
     click: (event: ClickEvent) => void;
 }>;
-
-type HoverProperties = {
-    source: ColorRGB;
-    target: ColorRGB;
-    min: ColorRGB;
-};
 
 type ColorRGB = {
     r: number;
@@ -45,9 +47,11 @@ type ColorRGB = {
     b: number;
 };
 
-// For future use (not yet implemented)
 type ColorRGBA = ColorRGB & {a: number};
 
 type ButtonOptionsRequired = Required<Omit<ButtonOptions, 'click'>> & {
     click?: (event: ClickEvent) => void;
+    pushed: boolean;
+    destructed: boolean;
+    color: ColorAndHoverProperties;
 };

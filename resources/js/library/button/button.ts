@@ -1,30 +1,15 @@
-import type {
-    Button,
-    ButtonOptions,
-    ButtonOptionsRequired,
-    ButtonType,
-    ColorRGB,
-    ColorRGBA,
-    HoverProperties,
-} from 'library/types/button';
-import {Engine} from 'library/types/engine';
-import {Input} from 'library/types/input';
+import type {Button, ButtonOptions, ButtonOptionsRequired, ButtonType, ColorRGBA} from 'library/types/button';
 import {resources} from '..';
+import {getColorRGBA} from 'library/colors';
+import {getHoverProperties} from './hover';
 
-// Ideas for buttons:
-// 01. Transition from 1 button to the other
-// 02. Fade out/in
-// 03. Active/inactive mode
-// 04. Make module that shows which button is currently active (or alive as you will)
-// 05.
+const buttons: Button[] = [];
 
 export default {
     create: (resourceID: string, options: ButtonOptions = {}) => createButton(resourceID, options),
     destruct: (id: (string | number) | (string | string[])) => {
         if (Array.isArray(id)) {
-            id.forEach(i => {
-                findAndDestroy(i);
-            });
+            id.forEach(i => findAndDestroy(i));
 
             return;
         }
@@ -32,16 +17,11 @@ export default {
         findAndDestroy(id);
     },
     destructAll: () => {
-        buttons.forEach(button => {
-            button.selfDestruct();
-        });
+        buttons.forEach(button => button.selfDestruct());
 
         buttons.length = 0;
     },
 };
-
-// TODO::Make this a seperate module that exports various methods used for different type of color system (HSL/RGB);
-const colors = (r: number, g: number, b: number, a: number) => ({r, g, b, a});
 
 const getButtonProperties: (options: ButtonOptions) => ButtonOptionsRequired = options => ({
     id: 'noID',
@@ -51,18 +31,26 @@ const getButtonProperties: (options: ButtonOptions) => ButtonOptionsRequired = o
     y: innerHeight * 0.1,
     w: innerWidth * 0.2,
     h: innerHeight * 0.05,
-    stroke: '#f00',
-    fill: '#000',
+    color: {
+        fill: getColorRGBA(0, 0, 0, 1),
+        stroke: getColorRGBA(255, 0, 0, 1),
+        textFill: getColorRGBA(255, 255, 255, 1),
+        textStroke: getColorRGBA(255, 255, 255, 1),
+        hover: {
+            fill: getColorRGBA(100, 100, 100, 1),
+            stroke: getColorRGBA(155, 0, 0, 1),
+            textFill: getColorRGBA(0, 255, 0, 1),
+            textStroke: getColorRGBA(255, 0, 0, 1),
+        },
+    },
     text: 'NoText',
-    textFill: colors(255, 255, 255, 1),
-    hoverFill: colors(185, 185, 185, 1),
     lw: 2,
     r: 5,
     font: '16px monospace',
+    pushed: false,
+    destructed: false,
     ...options,
 });
-
-const buttons: Button[] = [];
 
 const findAndDestroy = (id: string | number) => {
     const index = buttons.findIndex(button => button.id === id);
@@ -74,31 +62,6 @@ const findAndDestroy = (id: string | number) => {
     buttons.splice(index, 1);
 };
 
-const stepsObj = {
-    button: 10,
-};
-
-const hoverOn = ({min}: HoverProperties, button: ButtonOptionsRequired, steps = 10) => {
-    if (stepsObj.button === 0) return;
-
-    // Do this according to the number of steps or make a if max / min statement
-    // Also possible to add or remove different types of updates to the engine to sort this problem
-    button.textFill.r += min.r;
-    button.textFill.g += min.g;
-    button.textFill.b += min.b;
-
-    stepsObj.button--;
-};
-const hoverOff = ({min}: HoverProperties, button: ButtonOptionsRequired, steps = 10) => {
-    if (stepsObj.button === 10) return;
-
-    button.textFill.r -= min.r;
-    button.textFill.g -= min.g;
-    button.textFill.b -= min.b;
-
-    stepsObj.button++;
-};
-
 export const createButton = (resourceID: string, options: ButtonOptions) => {
     const {
         context: ctx,
@@ -106,47 +69,35 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
         input: {mouse, touch},
     } = resources[resourceID];
     const props = getButtonProperties(options);
-    let pushed = false;
-    let destructed = false;
+    const hover = getHoverProperties(props.color);
 
     const show = {
         id: props.id,
         name: props.name,
-        fn: createButtonShow[props.type](props, ctx),
+        // fn: createButtonShow[props.type](props, ctx),
+        fn: () => {},
     };
 
-    // {r: 0, g: 0, b: 0, a: 0}
-    const colorMinMax = (source: ColorRGB, target: ColorRGB, steps: number = 10) => {
+    const colorRGBAMin = (source: ColorRGBA, target: ColorRGBA, steps: number = 10) => {
         const minR = (target.r - source.r) / steps;
         const minG = (target.g - source.g) / steps;
         const minB = (target.b - source.b) / steps;
+        const minA = (target.a - source.a) / steps;
 
-        // console.log(minR, minB, minG);
-        // console.log(source.r);
-
-        return {r: minR, g: minG, b: minB};
+        return {r: minR, g: minG, b: minB, a: minA};
     };
-
-    const hoverProperties = {
-        source: {...props.textFill},
-        target: {...props.hoverFill},
-        min: colorMinMax(props.textFill, props.hoverFill),
-    };
-
-    // extract this to a seperate module for abstract use in library
-    console.log(hoverProperties.min);
 
     const update = {
         id: props.id,
         name: props.name,
         fn: () => {
             if (mouse.insideRect(props) && !mouse.touchEnded) {
-                hoverOn(hoverProperties, props);
+                // hover(props);
 
                 return;
             }
 
-            hoverOff(hoverProperties, props);
+            // hoverOff(hoverProperties, props);
         },
     };
 
@@ -171,35 +122,35 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
 
     const internalMousedownEvent = ({button}: MouseEvent) => {
         if (mouse.insideRect(props) && button === 0) {
-            pushed = true;
+            props.pushed = true;
             props.w *= 0.9;
             props.h *= 0.9;
         }
     };
 
     const internalMouseupEvent = () => {
-        if (pushed) {
+        if (props.pushed) {
             props.w *= 1.1;
             props.h *= 1.1;
 
-            pushed = false;
+            props.pushed = false;
         }
     };
 
     const internalTouchstartEvent = () => {
         if (touch.insideRect(props)) {
-            pushed = true;
+            props.pushed = true;
             props.w *= 0.9;
             props.h *= 0.9;
         }
     };
 
     const internalTouchendEvent = () => {
-        if (pushed) {
+        if (props.pushed) {
             props.w *= 1.1;
             props.h *= 1.1;
 
-            pushed = false;
+            props.pushed = false;
         }
     };
 
@@ -209,7 +160,7 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
     addEventListener('mousedown', internalMousedownEvent);
 
     const selfDestruct = () => {
-        if (destructed) {
+        if (props.destructed) {
             console.log(`Button ${props.id} is already destroyed!`);
         }
 
@@ -226,7 +177,7 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
         engine.removeUpdate(props.id);
         engine.removeShow(props.id);
 
-        destructed = true;
+        props.destructed = true;
     };
 
     engine.setShow(show);
@@ -235,75 +186,94 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
     buttons.push({id: props.id, update, show, selfDestruct});
 };
 
-const createButtonShow: Record<
-    ButtonType,
-    (props: ButtonOptionsRequired, ctx: CanvasRenderingContext2D) => () => void
-> = {
-    fill: (props, ctx) => () => {
-        // button
-        ctx.beginPath();
-        ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
-        ctx.fill();
+// const show = (props: ButtonOptionsRequired, ctx: CanvasRenderingContext2D) => () => {
+//     ctx.fillStyle = `rgba(${props.textFill.r}, ${props.textFill.g}, ${props.textFill.b}, 1)`;
+//     ctx.strokeStyle = props.stroke;
+//     ctx.lineWidth = props.lw;
 
-        // text
-        ctx.fillStyle = `rgba(${props.textFill.r}, ${props.textFill.g}, ${props.textFill.b}, 1)`;
-        ctx.font = props.font;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+//     ctx.beginPath();
+//     ctx.roundRect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h, props.r);
+//     ctx.fill();
+//     ctx.stroke();
 
-        ctx.beginPath();
-        ctx.fillText(props.text, props.x, props.y);
-    },
-    stroke: (props, ctx) => () => {
-        ctx.strokeStyle = props.stroke;
-        ctx.lineWidth = props.lw;
+//     ctx.fillStyle = `rgba(${props.textFill.r}, ${props.textFill.g}, ${props.textFill.b}, 1)`;
+//     ctx.font = props.font;
+//     ctx.textAlign = 'center';
+//     ctx.textBaseline = 'middle';
 
-        ctx.beginPath();
-        ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
-        ctx.stroke();
+//     ctx.beginPath();
+//     ctx.fillText(props.text, props.x, props.y);
+// };
 
-        ctx.fillStyle = `rgba(${props.textFill.r}, ${props.textFill.g}, ${props.textFill.b}, 1)`;
-        ctx.font = props.font;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+// const createButtonShow: Record<
+//     ButtonType,
+//     (props: ButtonOptionsRequired, ctx: CanvasRenderingContext2D) => () => void
+// > = {
+//     fill: (props, ctx) => () => {
+//         // button
+//         ctx.beginPath();
+//         ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
+//         ctx.fill();
 
-        ctx.beginPath();
-        ctx.fillText(props.text, props.x, props.y);
-    },
-    fillStroke: (props, ctx) => () => {
-        ctx.fillStyle = props.fill;
-        ctx.strokeStyle = props.stroke;
-        ctx.lineWidth = props.lw;
+//         // text
+//         ctx.fillStyle = `rgba(${props.textFill.r}, ${props.textFill.g}, ${props.textFill.b}, 1)`;
+//         ctx.font = props.font;
+//         ctx.textAlign = 'center';
+//         ctx.textBaseline = 'middle';
 
-        ctx.beginPath();
-        ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
-        ctx.fill();
-        ctx.stroke();
+//         ctx.beginPath();
+//         ctx.fillText(props.text, props.x, props.y);
+//     },
+//     stroke: (props, ctx) => () => {
+//         ctx.strokeStyle = props.stroke;
+//         ctx.lineWidth = props.lw;
 
-        ctx.fillStyle = `rgba(${props.textFill.r}, ${props.textFill.g}, ${props.textFill.b}, 1)`;
-        ctx.font = props.font;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+//         ctx.beginPath();
+//         ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
+//         ctx.stroke();
 
-        ctx.beginPath();
-        ctx.fillText(props.text, props.x, props.y);
-    },
-    fillStrokeRound: (props, ctx) => () => {
-        ctx.fillStyle = props.fill;
-        ctx.strokeStyle = props.stroke;
-        ctx.lineWidth = props.lw;
+//         ctx.fillStyle = `rgba(${props.textFill.r}, ${props.textFill.g}, ${props.textFill.b}, 1)`;
+//         ctx.font = props.font;
+//         ctx.textAlign = 'center';
+//         ctx.textBaseline = 'middle';
 
-        ctx.beginPath();
-        ctx.roundRect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h, props.r);
-        ctx.fill();
-        ctx.stroke();
+//         ctx.beginPath();
+//         ctx.fillText(props.text, props.x, props.y);
+//     },
+//     fillStroke: (props, ctx) => () => {
+//         ctx.fillStyle = props.fill;
+//         ctx.strokeStyle = props.stroke;
+//         ctx.lineWidth = props.lw;
 
-        ctx.fillStyle = `rgba(${props.textFill.r}, ${props.textFill.g}, ${props.textFill.b}, 1)`;
-        ctx.font = props.font;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+//         ctx.beginPath();
+//         ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
+//         ctx.fill();
+//         ctx.stroke();
 
-        ctx.beginPath();
-        ctx.fillText(props.text, props.x, props.y);
-    },
-};
+//         ctx.fillStyle = `rgba(${props.textFill.r}, ${props.textFill.g}, ${props.textFill.b}, 1)`;
+//         ctx.font = props.font;
+//         ctx.textAlign = 'center';
+//         ctx.textBaseline = 'middle';
+
+//         ctx.beginPath();
+//         ctx.fillText(props.text, props.x, props.y);
+//     },
+//     fillStrokeRound: (props, ctx) => () => {
+//         ctx.fillStyle = props.fill;
+//         ctx.strokeStyle = props.stroke;
+//         ctx.lineWidth = props.lw;
+
+//         ctx.beginPath();
+//         ctx.roundRect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h, props.r);
+//         ctx.fill();
+//         ctx.stroke();
+
+//         ctx.fillStyle = `rgba(${props.textFill.r}, ${props.textFill.g}, ${props.textFill.b}, 1)`;
+//         ctx.font = props.font;
+//         ctx.textAlign = 'center';
+//         ctx.textBaseline = 'middle';
+
+//         ctx.beginPath();
+//         ctx.fillText(props.text, props.x, props.y);
+//     },
+// };
