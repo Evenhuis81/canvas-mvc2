@@ -14,18 +14,17 @@ type ClickEvent = {
 
 type ButtonType = 'fill' | 'stroke' | 'fillStroke' | 'fillStrokeRound';
 
-type ColorAndHoverProperties = {
-    fill: ColorRGBA;
-    stroke: ColorRGBA;
-    textFill: ColorRGBA;
-    textStroke: ColorRGBA;
-    hover: {
-        fill: ColorRGBA;
-        stroke: ColorRGBA;
-        textFill: ColorRGBA;
-        textStroke: ColorRGBA;
-    };
+type TransitionTypes = 'fill' | 'stroke' | 'textFill';
+
+type ColorAndTransitionProperties = Record<TransitionTypes, ColorRGBA> & {
+    transition: Record<TransitionTypes, ColorRGBA>;
 };
+
+type Transitions = {
+    steps: number;
+    on: (id: string) => void;
+    off: (id: string) => void;
+}[];
 
 type ButtonOptions = Partial<{
     id: number | string;
@@ -39,6 +38,7 @@ type ButtonOptions = Partial<{
     r: number;
     font: string;
     text: string;
+    transitionSteps: number;
     click: (event: ClickEvent) => void;
 }>;
 
@@ -54,5 +54,5 @@ type ButtonOptionsRequired = Required<Omit<ButtonOptions, 'click'>> & {
     click?: (event: ClickEvent) => void;
     pushed: boolean;
     destructed: boolean;
-    color: ColorAndHoverProperties;
+    color: ColorAndTransitionProperties;
 };

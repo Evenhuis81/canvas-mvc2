@@ -35,14 +35,13 @@ const getButtonProperties: (options: ButtonOptions) => ButtonOptionsRequired = o
         fill: getColorRGBA(0, 0, 0, 1),
         stroke: getColorRGBA(255, 0, 0, 1),
         textFill: getColorRGBA(255, 255, 255, 1),
-        textStroke: getColorRGBA(255, 255, 255, 1),
-        hover: {
+        transition: {
             fill: getColorRGBA(100, 100, 100, 1),
             stroke: getColorRGBA(155, 0, 0, 1),
             textFill: getColorRGBA(0, 255, 0, 1),
-            textStroke: getColorRGBA(255, 0, 0, 1),
         },
     },
+    transitionSteps: 10, // convert to deltaTime
     text: 'NoText',
     lw: 2,
     r: 5,
