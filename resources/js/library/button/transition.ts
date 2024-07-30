@@ -1,4 +1,4 @@
-import {ButtonOptionsRequired} from 'library/types/button';
+import {ButtonOptionsRequired, ColorRGBA} from 'library/types/button';
 
 // const stepsObj = {
 //     button: 10,
@@ -8,8 +8,22 @@ import {ButtonOptionsRequired} from 'library/types/button';
 //     steps: 10,
 // };
 
-export const getHoverProperties = (color: ButtonOptionsRequired['color']) => {
+export const getTransitions = (color: ButtonOptionsRequired['color']) => {
     console.log(color);
+
+    const on = () => {};
+    const off = () => {};
+
+    return {on, off};
+};
+
+const colorRGBAMin = (source: ColorRGBA, target: ColorRGBA, steps: number = 10) => {
+    const minR = (target.r - source.r) / steps;
+    const minG = (target.g - source.g) / steps;
+    const minB = (target.b - source.b) / steps;
+    const minA = (target.a - source.a) / steps;
+
+    return {r: minR, g: minG, b: minB, a: minA};
 };
 
 // Do this according to the number of steps or make a if max / min statement

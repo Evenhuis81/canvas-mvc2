@@ -1,7 +1,7 @@
 import type {Button, ButtonOptions, ButtonOptionsRequired, ButtonType, ColorRGBA} from 'library/types/button';
 import {resources} from '..';
 import {getColorRGBA} from 'library/colors';
-import {getHoverProperties} from './hover';
+import {getTransitions} from './transition';
 
 const buttons: Button[] = [];
 
@@ -64,27 +64,18 @@ const findAndDestroy = (id: string | number) => {
 
 export const createButton = (resourceID: string, options: ButtonOptions) => {
     const {
-        context: ctx,
+        context,
         engine,
         input: {mouse, touch},
     } = resources[resourceID];
     const props = getButtonProperties(options);
-    const hover = getHoverProperties(props.color);
+    const transitions = getTransitions(props.color);
 
     const show = {
         id: props.id,
         name: props.name,
         // fn: createButtonShow[props.type](props, ctx),
-        fn: () => {},
-    };
-
-    const colorRGBAMin = (source: ColorRGBA, target: ColorRGBA, steps: number = 10) => {
-        const minR = (target.r - source.r) / steps;
-        const minG = (target.g - source.g) / steps;
-        const minB = (target.b - source.b) / steps;
-        const minA = (target.a - source.a) / steps;
-
-        return {r: minR, g: minG, b: minB, a: minA};
+        fn: createButtonShow(props, context),
     };
 
     const update = {
@@ -92,12 +83,12 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
         name: props.name,
         fn: () => {
             if (mouse.insideRect(props) && !mouse.touchEnded) {
-                // hover(props);
+                transitions.on();
 
                 return;
             }
 
-            // hoverOff(hoverProperties, props);
+            transitions.off();
         },
     };
 
@@ -186,24 +177,25 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
     buttons.push({id: props.id, update, show, selfDestruct});
 };
 
-// const show = (props: ButtonOptionsRequired, ctx: CanvasRenderingContext2D) => () => {
-//     ctx.fillStyle = `rgba(${props.textFill.r}, ${props.textFill.g}, ${props.textFill.b}, 1)`;
-//     ctx.strokeStyle = props.stroke;
-//     ctx.lineWidth = props.lw;
+const createButtonShow = (props: ButtonOptionsRequired, ctx: CanvasRenderingContext2D) => () => {
+    const {fill, stroke, textFill} = props.color;
+    ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
+    ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
+    ctx.lineWidth = props.lw;
 
-//     ctx.beginPath();
-//     ctx.roundRect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h, props.r);
-//     ctx.fill();
-//     ctx.stroke();
+    ctx.beginPath();
+    ctx.roundRect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h, props.r);
+    ctx.fill();
+    ctx.stroke();
 
-//     ctx.fillStyle = `rgba(${props.textFill.r}, ${props.textFill.g}, ${props.textFill.b}, 1)`;
-//     ctx.font = props.font;
-//     ctx.textAlign = 'center';
-//     ctx.textBaseline = 'middle';
+    ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, 1)`;
+    ctx.font = props.font;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
 
-//     ctx.beginPath();
-//     ctx.fillText(props.text, props.x, props.y);
-// };
+    ctx.beginPath();
+    ctx.fillText(props.text, props.x, props.y);
+};
 
 // const createButtonShow: Record<
 //     ButtonType,
