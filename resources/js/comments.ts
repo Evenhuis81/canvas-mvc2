@@ -128,3 +128,9 @@
 
 //     return {show, update};
 // };
+
+// Ideas for buttons:
+// 01. Transition from 1 button to the other
+// 02. Fade out/in
+// 03. Active/inactive mode
+// 04. Make module that shows which button is currently active (or alive as you will)

@@ -75,8 +75,10 @@ export const getInput = (canvas: HTMLCanvasElement) => {
             inputDevice.y >= rect.y - rect.h / 2 &&
             inputDevice.y < rect.y + rect.h / 2;
 
-    Object.assign(mouse, {insideRect: createInsideRect(mouse)});
-    Object.assign(touch, {insideRect: createInsideRect(touch)});
-
-    return {mouse, touch, buttonHeld, keyHeld};
+    return {
+        mouse: Object.assign(mouse, {insideRect: createInsideRect(mouse)}),
+        touch: Object.assign(touch, {insideRect: createInsideRect(touch)}),
+        buttonHeld,
+        keyHeld,
+    };
 };
