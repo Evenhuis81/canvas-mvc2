@@ -66,4 +66,12 @@ export const routes: RouteRecordRaw[] = [
             shouldBeLoggedIn: false,
         },
     },
+    {
+        path: '/train',
+        component: () => import('./games/train/Train.vue'),
+        name: 'Train Game',
+        meta: {
+            shouldBeLoggedIn: false,
+        },
+    },
 ];
