@@ -73,7 +73,6 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
     const show = {
         id: props.id,
         name: props.name,
-        // fn: createButtonShow[props.type](props, ctx),
         fn: createButtonShow(props, context),
     };
 
@@ -82,12 +81,12 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
         name: props.name,
         fn: () => {
             if (mouse.insideRect(props) && !mouse.touchEnded) {
-                transitions.on();
+                transitions.forward();
 
                 return;
             }
 
-            transitions.off();
+            transitions.reverse();
         },
     };
 

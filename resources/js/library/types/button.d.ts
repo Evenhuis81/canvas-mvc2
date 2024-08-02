@@ -20,6 +20,8 @@ type ColorAndTransitionProperties = Record<TransitionTypes, ColorRGBA> & {
     transition: Record<TransitionTypes, ColorRGBA>;
 };
 
+type ColorValues = 'r' | 'g' | 'b' | 'a';
+
 type Transitions = {
     steps: number;
     on: (id: string) => void;
@@ -38,7 +40,6 @@ type ButtonOptions = Partial<{
     r: number;
     font: string;
     text: string;
-    transitionSteps: number;
     click: (event: ClickEvent) => void;
 }>;
 
@@ -55,4 +56,5 @@ type ButtonOptionsRequired = Required<Omit<ButtonOptions, 'click'>> & {
     pushed: boolean;
     destructed: boolean;
     color: ColorAndTransitionProperties;
+    transitionSteps?: number;
 };
