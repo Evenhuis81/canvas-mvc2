@@ -1,13 +1,56 @@
 import {ButtonOptionsRequired, ColorRGBA, ColorValues, TransitionTypes} from 'library/types/button';
 import {Rect} from 'library/types/tv';
+import {resources} from '..';
 
 const transitionTypes: TransitionTypes[] = ['fill', 'stroke', 'textFill'];
 const colorValues: ColorValues[] = ['r', 'g', 'b', 'a'];
 
-export const createTransition = (rect: Rect) => {
-    return () => {
-        // console.log('transitioning');
+let id = `transition ${0}`;
+
+export const createTransition = (rect: Rect, resourceID: string, id: string | number) => {
+    // id = button ID (this has to be unique)
+
+    const {engine} = resources[resourceID];
+    let widthShrink = true;
+    const steps = 10;
+    let count = 0;
+
+    const changePerStep = {
+        w: calculateDifferencePerStep2(rect.w, 0, steps),
+        h: calculateDifferencePerStep2(rect.h, 0, steps),
     };
+
+    console.log(changePerStep);
+
+    const returnObject = {
+        finished: false,
+        run: () => {
+            if (returnObject.finished) return;
+
+            if (widthShrink) {
+                rect.w += changePerStep.w;
+
+                count++;
+
+                if (count >= steps) widthShrink = false;
+
+                return;
+            }
+
+            rect.h += changePerStep.h;
+
+            count--;
+
+            if (count <= 0) {
+                engine.removeUpdate(id);
+
+                widthShrink = true;
+                returnObject.finished = true;
+            }
+        },
+    };
+
+    return returnObject;
 };
 
 export const getTransitions = (color: ButtonOptionsRequired['color'], steps = 10) => {

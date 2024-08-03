@@ -171,7 +171,7 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
 
     const fadeOut = () => {
         engine.removeUpdate(props.id);
-        engine.setUpdate(createFadeOutUpdate(props));
+        engine.setUpdate(createFadeOutUpdate(props, resourceID, selfDestruct).update);
     };
 
     engine.setShow(show);
@@ -180,15 +180,29 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
     buttons.push({id: props.id, update, show, selfDestruct, fadeOut});
 };
 
-const createFadeOutUpdate = (props: ButtonOptionsRequired) => {
-    const transition = createTransition(props);
-    return {
-        id: props.id,
-        name: props.name,
-        fn: () => {
-            transition();
+const createFadeOutUpdate = (
+    props: ButtonOptionsRequired,
+    resourceID: string,
+    selfDestruct: Button['selfDestruct'],
+) => {
+    const transition = createTransition(props, resourceID, props.id);
+
+    const returnObject = {
+        finished: false,
+        update: {
+            id: props.id,
+            name: props.name,
+            fn: () => {
+                transition.run();
+
+                if (transition.finished) {
+                    selfDestruct();
+                }
+            },
         },
     };
+
+    return returnObject;
 };
 
 const createButtonShow = (props: ButtonOptionsRequired, ctx: CanvasRenderingContext2D) => () => {
