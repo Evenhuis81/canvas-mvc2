@@ -35,14 +35,6 @@ export const routes: RouteRecordRaw[] = [
         },
     },
     {
-        path: '/dev',
-        component: () => import('./dev/Dev.vue'),
-        name: 'Dev',
-        meta: {
-            shouldBeLoggedIn: false,
-        },
-    },
-    {
         path: '/demo',
         component: () => import('./library/demo/Demo.vue'),
         name: 'Demo',

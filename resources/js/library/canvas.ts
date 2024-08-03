@@ -3,7 +3,6 @@ import {CanvasOptions} from './types';
 export const getCanvas = () => {
     const canvas = document.createElement('canvas');
 
-    // This could be an option
     canvas.addEventListener('contextmenu', e => {
         e.preventDefault();
 

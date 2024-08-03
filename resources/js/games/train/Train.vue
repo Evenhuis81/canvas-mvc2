@@ -1,5 +1,5 @@
 <template>
-    <div>Train</div>
+    <div id="container" />
 </template>
 
 <script setup lang="ts">

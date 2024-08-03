@@ -1,7 +1,12 @@
-export default {
-    setup: () => {},
-    run: () => {},
-    runOnce: () => {},
-};
+import {initialize, resources} from 'library/index';
+import {CanvasOptions} from 'library/types';
 
-console.log('train.ts');
+const canvasOptions: CanvasOptions = {full: true, clear: true, containerID: 'container', bg: '#000'};
+
+export default {
+    setup: () => {
+        initialize('train', canvasOptions);
+    },
+    run: () => resources.train.engine.run(),
+    runOnce: () => resources.train.engine.runOnce(),
+};
