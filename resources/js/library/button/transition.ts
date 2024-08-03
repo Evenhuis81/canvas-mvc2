@@ -1,7 +1,14 @@
 import {ButtonOptionsRequired, ColorRGBA, ColorValues, TransitionTypes} from 'library/types/button';
+import {Rect} from 'library/types/tv';
 
 const transitionTypes: TransitionTypes[] = ['fill', 'stroke', 'textFill'];
 const colorValues: ColorValues[] = ['r', 'g', 'b', 'a'];
+
+export const createTransition = (rect: Rect) => {
+    return () => {
+        // console.log('transitioning');
+    };
+};
 
 export const getTransitions = (color: ButtonOptionsRequired['color'], steps = 10) => {
     const colorChangePerStep = <Record<TransitionTypes, ReturnType<typeof calculateDifferencePerStep>>>{};
@@ -57,3 +64,5 @@ const calculateDifferencePerStep = (source: ColorRGBA, target: ColorRGBA, steps:
 
     return diffPerStep;
 };
+
+const calculateDifferencePerStep2 = (source: number, target: number, steps: number) => (target - source) / steps;

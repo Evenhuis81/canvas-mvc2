@@ -1,16 +1,26 @@
 import button from 'library/button/button';
 import {initialize, resources} from 'library/index';
+import {ButtonOptions} from 'library/types/button';
 
 export default {
     setup: async () => {
-        initialize('surv', {containerID: 'container', full: true, clear: true, bg: '#000'});
+        initialize('survival', {containerID: 'container', full: true, clear: true, bg: '#000'});
 
         startLevel();
     },
-    run: () => resources.surv.engine.run(),
-    runOnce: () => resources.surv.engine.runOnce(),
+    run: () => resources.survival.engine.run(),
+    runOnce: () => resources.survival.engine.runOnce(),
 };
 
 const startLevel = () => {
-    button.create('surv');
+    button.create('survival', startButton);
+};
+
+const startButton: ButtonOptions = {
+    id: 'start',
+    name: 'Start Button',
+    text: 'Start Level #',
+    click: event => {
+        event.button.fadeOut();
+    },
 };

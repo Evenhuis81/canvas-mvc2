@@ -1,3 +1,4 @@
+import {Rect} from './tv';
 import {Vector} from './vector';
 
 type MouseDown = 'mousedown';
@@ -16,7 +17,7 @@ interface Events {
     wheel: Wheel;
 }
 
-type InsideRect = (rect: {x: number; y: number; w: number; h: number}) => boolean;
+type InsideRect = (rect: Rect) => boolean;
 
 type Input = {
     mouse: {

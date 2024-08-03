@@ -1,7 +1,7 @@
 import type {Button, ButtonOptions, ButtonOptionsRequired, ButtonType, ColorRGBA} from 'library/types/button';
 import {resources} from '..';
 import {getColorRGBA} from 'library/colors';
-import {getTransitions} from './transition';
+import {createTransition, getTransitions} from './transition';
 
 const buttons: Button[] = [];
 
@@ -98,11 +98,11 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
 
         mouseupEvent = (evt: MouseEvent) => {
             if (mouse.insideRect(props) && evt.button === 0)
-                click({evt, button: {id: props.id, update, show, selfDestruct}});
+                click({evt, button: {id: props.id, update, show, selfDestruct, fadeOut}});
         };
 
         touchendEvent = (evt: TouchEvent) => {
-            if (touch.insideRect(props)) click({evt, button: {id: props.id, update, show, selfDestruct}});
+            if (touch.insideRect(props)) click({evt, button: {id: props.id, update, show, selfDestruct, fadeOut}});
         };
 
         addEventListener('mouseup', mouseupEvent);
@@ -169,10 +169,26 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
         props.destructed = true;
     };
 
+    const fadeOut = () => {
+        engine.removeUpdate(props.id);
+        engine.setUpdate(createFadeOutUpdate(props));
+    };
+
     engine.setShow(show);
     engine.setUpdate(update);
 
-    buttons.push({id: props.id, update, show, selfDestruct});
+    buttons.push({id: props.id, update, show, selfDestruct, fadeOut});
+};
+
+const createFadeOutUpdate = (props: ButtonOptionsRequired) => {
+    const transition = createTransition(props);
+    return {
+        id: props.id,
+        name: props.name,
+        fn: () => {
+            transition();
+        },
+    };
 };
 
 const createButtonShow = (props: ButtonOptionsRequired, ctx: CanvasRenderingContext2D) => () => {
