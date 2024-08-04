@@ -20,7 +20,8 @@ const startButton: ButtonOptions = {
     id: 'start',
     name: 'Start Button',
     text: 'Start Level #',
+    onClickEffect: 'shrinkFadeText',
     click: event => {
-        event.button.fadeOut();
+        //
     },
 };

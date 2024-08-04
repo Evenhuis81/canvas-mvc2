@@ -5,7 +5,6 @@ type Button = {
     show: Show;
     update: Update;
     selfDestruct: () => void;
-    fadeOut: () => void;
 };
 
 type ClickEvent = {
@@ -37,6 +36,8 @@ type Transitions = {
 
 type ButtonType = 'fill' | 'stroke' | 'fillStroke' | 'fillStrokeRound';
 
+type ClickEffects = 'shrinkFadeText';
+
 type ButtonOptions = Partial<{
     id: number | string;
     name: string;
@@ -49,6 +50,7 @@ type ButtonOptions = Partial<{
     r: number;
     font: string;
     text: string;
+    onClickEffect: ClickEffects;
     click: (event: ClickEvent) => void;
 }>;
 

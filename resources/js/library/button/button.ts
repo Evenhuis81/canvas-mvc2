@@ -41,13 +41,14 @@ const getButtonProperties: (options: ButtonOptions) => ButtonOptionsRequired = o
             textFill: getColorRGBA(0, 255, 0, 1),
         },
     },
-    transitionSteps: 10, // convert to deltaTime
+    transitionSteps: 20, // convert to deltaTime
     text: 'NoText',
     lw: 2,
     r: 5,
     font: '16px monospace',
     pushed: false,
     destructed: false,
+    onClickEffect: 'shrinkFadeText',
     ...options,
 });
 
@@ -68,7 +69,7 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
         input: {mouse, touch},
     } = resources[resourceID];
     const props = getButtonProperties(options);
-    const transitions = getTransitions(props.color);
+    const hoverTransition = getTransitions(props.color);
 
     const show = {
         id: props.id,
@@ -81,12 +82,12 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
         name: props.name,
         fn: () => {
             if (mouse.insideRect(props) && !mouse.touchEnded) {
-                transitions.forward();
+                hoverTransition.forward();
 
                 return;
             }
 
-            transitions.reverse();
+            hoverTransition.reverse();
         },
     };
 
@@ -98,11 +99,13 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
 
         mouseupEvent = (evt: MouseEvent) => {
             if (mouse.insideRect(props) && evt.button === 0)
-                click({evt, button: {id: props.id, update, show, selfDestruct, fadeOut}});
+                click({evt, button: {id: props.id, update, show, selfDestruct}});
+
+            resources.survival.engine.setUpdate();
         };
 
         touchendEvent = (evt: TouchEvent) => {
-            if (touch.insideRect(props)) click({evt, button: {id: props.id, update, show, selfDestruct, fadeOut}});
+            if (touch.insideRect(props)) click({evt, button: {id: props.id, update, show, selfDestruct}});
         };
 
         addEventListener('mouseup', mouseupEvent);
@@ -169,40 +172,20 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
         props.destructed = true;
     };
 
-    const fadeOut = () => {
-        engine.removeUpdate(props.id);
-        engine.setUpdate(createFadeOutUpdate(props, resourceID, selfDestruct).update);
-    };
-
     engine.setShow(show);
     engine.setUpdate(update);
 
-    buttons.push({id: props.id, update, show, selfDestruct, fadeOut});
+    buttons.push({id: props.id, update, show, selfDestruct});
 };
 
-const createFadeOutUpdate = (
-    props: ButtonOptionsRequired,
-    resourceID: string,
-    selfDestruct: Button['selfDestruct'],
-) => {
-    const transition = createTransition(props, resourceID, props.id);
-
-    const returnObject = {
-        finished: false,
-        update: {
-            id: props.id,
-            name: props.name,
-            fn: () => {
-                transition.run();
-
-                if (transition.finished) {
-                    selfDestruct();
-                }
-            },
-        },
+const createFadeOutUpdate = (props: ButtonOptionsRequired) => {
+    const onTransitionFinished = () => {
+        console.log('transition finished');
     };
 
-    return returnObject;
+    const transition = createTransition(props, onTransitionFinished);
+
+    return transition;
 };
 
 const createButtonShow = (props: ButtonOptionsRequired, ctx: CanvasRenderingContext2D) => () => {

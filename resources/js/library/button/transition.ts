@@ -1,34 +1,32 @@
 import {ButtonOptionsRequired, ColorRGBA, ColorValues, TransitionTypes} from 'library/types/button';
 import {Rect} from 'library/types/tv';
-import {resources} from '..';
 
 const transitionTypes: TransitionTypes[] = ['fill', 'stroke', 'textFill'];
 const colorValues: ColorValues[] = ['r', 'g', 'b', 'a'];
 
-let id = `transition ${0}`;
+let id = 0;
 
-export const createTransition = (rect: Rect, resourceID: string, id: string | number) => {
-    // id = button ID (this has to be unique)
-
-    const {engine} = resources[resourceID];
+export const createTransition = (props: Rect & {color: {textFill: ColorRGBA}}, onTransitionFinished: () => void) => {
+    // Use onClickEffect type from button/other to determine kind of transition
     let widthShrink = true;
-    const steps = 10;
+    let finished = false;
+    const steps = 20;
     let count = 0;
 
     const changePerStep = {
-        w: calculateDifferencePerStep2(rect.w, 0, steps),
-        h: calculateDifferencePerStep2(rect.h, 0, steps),
+        w: calculateDifferencePerStep2(props.w, 0, steps),
+        h: calculateDifferencePerStep2(props.h, 0, steps),
     };
 
-    console.log(changePerStep);
+    const update = {
+        id: `transition ${id++}`,
+        fn: () => {
+            if (finished) return;
 
-    const returnObject = {
-        finished: false,
-        run: () => {
-            if (returnObject.finished) return;
+            props.color.textFill.a -= 0.01;
 
             if (widthShrink) {
-                rect.w += changePerStep.w;
+                props.w += changePerStep.w;
 
                 count++;
 
@@ -37,20 +35,20 @@ export const createTransition = (rect: Rect, resourceID: string, id: string | nu
                 return;
             }
 
-            rect.h += changePerStep.h;
+            props.h += changePerStep.h;
 
             count--;
 
             if (count <= 0) {
-                engine.removeUpdate(id);
-
                 widthShrink = true;
-                returnObject.finished = true;
+                finished = true;
+
+                onTransitionFinished();
             }
         },
     };
 
-    return returnObject;
+    return update;
 };
 
 export const getTransitions = (color: ButtonOptionsRequired['color'], steps = 10) => {
