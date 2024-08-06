@@ -21,7 +21,8 @@ const startButton: ButtonOptions = {
     name: 'Start Button',
     text: 'Start Level #',
     onClickEffect: 'shrinkFadeText',
-    click: event => {
-        //
+    // Optional to have onclick and on transition end etc. Different hooks for different purposes
+    click: () => {
+        console.log('click function on start button properties');
     },
 };

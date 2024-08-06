@@ -1,7 +1,7 @@
 import type {Button, ButtonOptions, ButtonOptionsRequired, ButtonType, ColorRGBA} from 'library/types/button';
 import {resources} from '..';
 import {getColorRGBA} from 'library/colors';
-import {createTransition, getTransitions} from './transition';
+import {createTransitionUpdate, getTransitions} from './transition';
 
 const buttons: Button[] = [];
 
@@ -101,7 +101,8 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
             if (mouse.insideRect(props) && evt.button === 0)
                 click({evt, button: {id: props.id, update, show, selfDestruct}});
 
-            resources.survival.engine.setUpdate();
+            // TODO:: Make this an option or theme
+            // resources.survival.engine.setUpdate();
         };
 
         touchendEvent = (evt: TouchEvent) => {
@@ -183,9 +184,9 @@ const createFadeOutUpdate = (props: ButtonOptionsRequired) => {
         console.log('transition finished');
     };
 
-    const transition = createTransition(props, onTransitionFinished);
+    const transitionUpdate = createTransitionUpdate(props, onTransitionFinished);
 
-    return transition;
+    return transitionUpdate;
 };
 
 const createButtonShow = (props: ButtonOptionsRequired, ctx: CanvasRenderingContext2D) => () => {

@@ -6,7 +6,10 @@ const colorValues: ColorValues[] = ['r', 'g', 'b', 'a'];
 
 let id = 0;
 
-export const createTransition = (props: Rect & {color: {textFill: ColorRGBA}}, onTransitionFinished: () => void) => {
+export const createTransitionUpdate = (
+    props: Rect & {color: {textFill: ColorRGBA}},
+    onTransitionFinished: () => void,
+) => {
     // Use onClickEffect type from button/other to determine kind of transition
     let widthShrink = true;
     let finished = false;
@@ -18,37 +21,37 @@ export const createTransition = (props: Rect & {color: {textFill: ColorRGBA}}, o
         h: calculateDifferencePerStep2(props.h, 0, steps),
     };
 
-    const update = {
-        id: `transition ${id++}`,
-        fn: () => {
-            if (finished) return;
+    const fn = () => {
+        if (finished) return;
 
-            props.color.textFill.a -= 0.01;
+        props.color.textFill.a -= 0.01;
 
-            if (widthShrink) {
-                props.w += changePerStep.w;
+        if (widthShrink) {
+            props.w += changePerStep.w;
 
-                count++;
+            count++;
 
-                if (count >= steps) widthShrink = false;
+            if (count >= steps) widthShrink = false;
 
-                return;
-            }
+            return;
+        }
 
-            props.h += changePerStep.h;
+        props.h += changePerStep.h;
 
-            count--;
+        count--;
 
-            if (count <= 0) {
-                widthShrink = true;
-                finished = true;
+        if (count <= 0) {
+            widthShrink = true;
+            finished = true;
 
-                onTransitionFinished();
-            }
-        },
+            onTransitionFinished();
+        }
     };
 
-    return update;
+    return {
+        id: `transition ${id++}`,
+        fn,
+    };
 };
 
 export const getTransitions = (color: ButtonOptionsRequired['color'], steps = 10) => {
