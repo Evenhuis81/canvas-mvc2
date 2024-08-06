@@ -19,10 +19,18 @@ const startLevel = () => {
 const startButton: ButtonOptions = {
     id: 'start',
     name: 'Start Button',
-    text: 'Start Level #',
-    onClickEffect: 'shrinkFadeText',
-    // Optional to have onclick and on transition end etc. Different hooks for different purposes
-    click: () => {
-        console.log('click function on start button properties');
+    w: innerWidth * 0.1,
+    text: 'Start #',
+    // onClickEffect: 'shrinkFadeText',
+    click: {
+        down: () => {
+            console.log('down');
+        },
+        up: () => {
+            console.log('up');
+        },
+        end: () => {
+            console.log('end');
+        },
     },
 };

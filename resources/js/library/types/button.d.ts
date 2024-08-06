@@ -1,9 +1,7 @@
 import type {Show, Update} from './engine';
 
 type Button = {
-    id: string | number;
-    show: Show;
-    update: Update;
+    id: number | string;
     selfDestruct: () => void;
 };
 
@@ -36,8 +34,6 @@ type Transitions = {
 
 type ButtonType = 'fill' | 'stroke' | 'fillStroke' | 'fillStrokeRound';
 
-type ClickEffects = 'shrinkFadeText';
-
 type ButtonOptions = Partial<{
     id: number | string;
     name: string;
@@ -50,14 +46,21 @@ type ButtonOptions = Partial<{
     r: number;
     font: string;
     text: string;
-    onClickEffect: ClickEffects;
-    click: (event: ClickEvent) => void;
+    // onClickEffect: ClickEffects;
+    click: {
+        down?: (event: ClickEvent) => void;
+        up?: (event: ClickEvent) => void;
+        end?: (event: ClickEvent) => void;
+    };
 }>;
 
+// Internal button properties
 type ButtonOptionsRequired = Required<Omit<ButtonOptions, 'click'>> & {
-    click?: (event: ClickEvent) => void;
+    click?: ButtonOptions['click'];
     pushed: boolean;
     destructed: boolean;
     color: ColorAndTransitionProperties;
-    transitionSteps?: number;
+    transitionSteps: number;
 };
+
+// type ClickEffects = 'default';

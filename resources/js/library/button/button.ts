@@ -1,7 +1,8 @@
-import type {Button, ButtonOptions, ButtonOptionsRequired, ButtonType, ColorRGBA} from 'library/types/button';
+import type {Button, ButtonOptions, ButtonOptionsRequired} from 'library/types/button';
 import {resources} from '..';
 import {getColorRGBA} from 'library/colors';
-import {createTransitionUpdate, getTransitions} from './transition';
+import {getTransitions} from './transition';
+import {Resources} from 'library/types';
 
 const buttons: Button[] = [];
 
@@ -48,7 +49,7 @@ const getButtonProperties: (options: ButtonOptions) => ButtonOptionsRequired = o
     font: '16px monospace',
     pushed: false,
     destructed: false,
-    onClickEffect: 'shrinkFadeText',
+    // onClickEffect: 'shrinkFadeText',
     ...options,
 });
 
@@ -62,51 +63,84 @@ const findAndDestroy = (id: string | number) => {
     buttons.splice(index, 1);
 };
 
+type HoverTransition = {
+    steps: number;
+    forward: () => void;
+    reverse: () => void;
+};
+
 export const createButton = (resourceID: string, options: ButtonOptions) => {
-    const {
-        context,
-        engine,
-        input: {mouse, touch},
-    } = resources[resourceID];
+    const {context, engine, input} = resources[resourceID];
     const props = getButtonProperties(options);
     const hoverTransition = getTransitions(props.color);
 
-    const show = {
-        id: props.id,
-        name: props.name,
-        fn: createButtonShow(props, context),
-    };
+    const update = createButtonUpdate(props, input, hoverTransition);
+    const show = createButtonShow(props, context);
 
-    const update = {
-        id: props.id,
-        name: props.name,
-        fn: () => {
-            if (mouse.insideRect(props) && !mouse.touchEnded) {
-                hoverTransition.forward();
+    const selfDestruct = eventHandler(props);
 
-                return;
-            }
+    engine.setShow(show);
+    engine.setUpdate(update);
 
-            hoverTransition.reverse();
-        },
-    };
+    buttons.push({id: props.id, selfDestruct});
+};
 
-    let mouseupEvent: ((event: MouseEvent) => void) | undefined;
-    let touchendEvent: ((event: TouchEvent) => void) | undefined;
+const createButtonUpdate = (
+    props: ButtonOptionsRequired,
+    {mouse}: Resources['input'],
+    transition: HoverTransition,
+) => ({
+    id: props.id,
+    name: props.name,
+    fn: () => {
+        if (mouse.insideRect(props) && !mouse.touchEnded) {
+            transition.forward();
 
-    if (props.click) {
+            return;
+        }
+
+        transition.reverse();
+    },
+});
+
+const createButtonShow = (props: ButtonOptionsRequired, ctx: CanvasRenderingContext2D) => ({
+    id: props.id,
+    name: props.name,
+    fn: () => () => {
+        const {fill, stroke, textFill} = props.color;
+
+        ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
+        ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
+        ctx.lineWidth = props.lw;
+
+        ctx.beginPath();
+        ctx.roundRect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h, props.r);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, 1)`;
+        ctx.font = props.font;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        ctx.beginPath();
+        ctx.fillText(props.text, props.x, props.y);
+    },
+});
+
+const eventHandler = (props: ButtonOptionsRequired) => {
+    {
         const {click} = props;
 
-        mouseupEvent = (evt: MouseEvent) => {
-            if (mouse.insideRect(props) && evt.button === 0)
-                click({evt, button: {id: props.id, update, show, selfDestruct}});
+        let mouseupEvent: ((event: MouseEvent) => void) | undefined;
+        let touchendEvent: ((event: TouchEvent) => void) | undefined;
 
-            // TODO:: Make this an option or theme
-            // resources.survival.engine.setUpdate();
+        mouseupEvent = (evt: MouseEvent) => {
+            if (mouse.insideRect(props) && evt.button === 0) click({evt, button: {selfDestruct}});
         };
 
         touchendEvent = (evt: TouchEvent) => {
-            if (touch.insideRect(props)) click({evt, button: {id: props.id, update, show, selfDestruct}});
+            if (touch.insideRect(props)) click({evt, button: {id: props.id, selfDestruct}});
         };
 
         addEventListener('mouseup', mouseupEvent);
@@ -172,112 +206,14 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
 
         props.destructed = true;
     };
-
-    engine.setShow(show);
-    engine.setUpdate(update);
-
-    buttons.push({id: props.id, update, show, selfDestruct});
 };
 
-const createFadeOutUpdate = (props: ButtonOptionsRequired) => {
-    const onTransitionFinished = () => {
-        console.log('transition finished');
-    };
+// const createFadeOutUpdate = (props: ButtonOptionsRequired) => {
+//     const onTransitionFinished = () => {
+//         console.log('transition finished');
+//     };
 
-    const transitionUpdate = createTransitionUpdate(props, onTransitionFinished);
+//     const transitionUpdate = createTransitionUpdate(props, onTransitionFinished);
 
-    return transitionUpdate;
-};
-
-const createButtonShow = (props: ButtonOptionsRequired, ctx: CanvasRenderingContext2D) => () => {
-    const {fill, stroke, textFill} = props.color;
-    ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
-    ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
-    ctx.lineWidth = props.lw;
-
-    ctx.beginPath();
-    ctx.roundRect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h, props.r);
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, 1)`;
-    ctx.font = props.font;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-
-    ctx.beginPath();
-    ctx.fillText(props.text, props.x, props.y);
-};
-
-// const createButtonShow: Record<
-//     ButtonType,
-//     (props: ButtonOptionsRequired, ctx: CanvasRenderingContext2D) => () => void
-// > = {
-//     fill: (props, ctx) => () => {
-//         // button
-//         ctx.beginPath();
-//         ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
-//         ctx.fill();
-
-//         // text
-//         ctx.fillStyle = `rgba(${props.textFill.r}, ${props.textFill.g}, ${props.textFill.b}, 1)`;
-//         ctx.font = props.font;
-//         ctx.textAlign = 'center';
-//         ctx.textBaseline = 'middle';
-
-//         ctx.beginPath();
-//         ctx.fillText(props.text, props.x, props.y);
-//     },
-//     stroke: (props, ctx) => () => {
-//         ctx.strokeStyle = props.stroke;
-//         ctx.lineWidth = props.lw;
-
-//         ctx.beginPath();
-//         ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
-//         ctx.stroke();
-
-//         ctx.fillStyle = `rgba(${props.textFill.r}, ${props.textFill.g}, ${props.textFill.b}, 1)`;
-//         ctx.font = props.font;
-//         ctx.textAlign = 'center';
-//         ctx.textBaseline = 'middle';
-
-//         ctx.beginPath();
-//         ctx.fillText(props.text, props.x, props.y);
-//     },
-//     fillStroke: (props, ctx) => () => {
-//         ctx.fillStyle = props.fill;
-//         ctx.strokeStyle = props.stroke;
-//         ctx.lineWidth = props.lw;
-
-//         ctx.beginPath();
-//         ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
-//         ctx.fill();
-//         ctx.stroke();
-
-//         ctx.fillStyle = `rgba(${props.textFill.r}, ${props.textFill.g}, ${props.textFill.b}, 1)`;
-//         ctx.font = props.font;
-//         ctx.textAlign = 'center';
-//         ctx.textBaseline = 'middle';
-
-//         ctx.beginPath();
-//         ctx.fillText(props.text, props.x, props.y);
-//     },
-//     fillStrokeRound: (props, ctx) => () => {
-//         ctx.fillStyle = props.fill;
-//         ctx.strokeStyle = props.stroke;
-//         ctx.lineWidth = props.lw;
-
-//         ctx.beginPath();
-//         ctx.roundRect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h, props.r);
-//         ctx.fill();
-//         ctx.stroke();
-
-//         ctx.fillStyle = `rgba(${props.textFill.r}, ${props.textFill.g}, ${props.textFill.b}, 1)`;
-//         ctx.font = props.font;
-//         ctx.textAlign = 'center';
-//         ctx.textBaseline = 'middle';
-
-//         ctx.beginPath();
-//         ctx.fillText(props.text, props.x, props.y);
-//     },
+//     return transitionUpdate;
 // };

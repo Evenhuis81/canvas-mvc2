@@ -134,3 +134,76 @@
 // 02. Fade out/in
 // 03. Active/inactive mode
 // 04. Make module that shows which button is currently active (or alive as you will)
+
+// const createButtonShow: Record<
+//     ButtonType,
+//     (props: ButtonOptionsRequired, ctx: CanvasRenderingContext2D) => () => void
+// > = {
+//     fill: (props, ctx) => () => {
+//         // button
+//         ctx.beginPath();
+//         ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
+//         ctx.fill();
+
+//         // text
+//         ctx.fillStyle = `rgba(${props.textFill.r}, ${props.textFill.g}, ${props.textFill.b}, 1)`;
+//         ctx.font = props.font;
+//         ctx.textAlign = 'center';
+//         ctx.textBaseline = 'middle';
+
+//         ctx.beginPath();
+//         ctx.fillText(props.text, props.x, props.y);
+//     },
+//     stroke: (props, ctx) => () => {
+//         ctx.strokeStyle = props.stroke;
+//         ctx.lineWidth = props.lw;
+
+//         ctx.beginPath();
+//         ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
+//         ctx.stroke();
+
+//         ctx.fillStyle = `rgba(${props.textFill.r}, ${props.textFill.g}, ${props.textFill.b}, 1)`;
+//         ctx.font = props.font;
+//         ctx.textAlign = 'center';
+//         ctx.textBaseline = 'middle';
+
+//         ctx.beginPath();
+//         ctx.fillText(props.text, props.x, props.y);
+//     },
+//     fillStroke: (props, ctx) => () => {
+//         ctx.fillStyle = props.fill;
+//         ctx.strokeStyle = props.stroke;
+//         ctx.lineWidth = props.lw;
+
+//         ctx.beginPath();
+//         ctx.rect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h);
+//         ctx.fill();
+//         ctx.stroke();
+
+//         ctx.fillStyle = `rgba(${props.textFill.r}, ${props.textFill.g}, ${props.textFill.b}, 1)`;
+//         ctx.font = props.font;
+//         ctx.textAlign = 'center';
+//         ctx.textBaseline = 'middle';
+
+//         ctx.beginPath();
+//         ctx.fillText(props.text, props.x, props.y);
+//     },
+//     fillStrokeRound: (props, ctx) => () => {
+//         ctx.fillStyle = props.fill;
+//         ctx.strokeStyle = props.stroke;
+//         ctx.lineWidth = props.lw;
+
+//         ctx.beginPath();
+//         ctx.roundRect(props.x - props.w / 2, props.y - props.h / 2, props.w, props.h, props.r);
+//         ctx.fill();
+//         ctx.stroke();
+
+//         ctx.fillStyle = `rgba(${props.textFill.r}, ${props.textFill.g}, ${props.textFill.b}, 1)`;
+//         ctx.font = props.font;
+//         ctx.textAlign = 'center';
+//         ctx.textBaseline = 'middle';
+
+//         ctx.beginPath();
+//         ctx.fillText(props.text, props.x, props.y);
+//     },
+// };
