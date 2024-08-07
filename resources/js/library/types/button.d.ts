@@ -46,7 +46,6 @@ type ButtonOptions = Partial<{
     r: number;
     font: string;
     text: string;
-    // onClickEffect: ClickEffects;
     click: {
         down?: (event: ClickEvent) => void;
         up?: (event: ClickEvent) => void;
@@ -60,7 +59,4 @@ type ButtonOptionsRequired = Required<Omit<ButtonOptions, 'click'>> & {
     pushed: boolean;
     destructed: boolean;
     color: ColorAndTransitionProperties;
-    transitionSteps: number;
 };
-
-// type ClickEffects = 'default';

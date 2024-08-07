@@ -5,6 +5,7 @@ import {getTransitions} from './transition';
 import {Resources} from 'library/types';
 
 const buttons: Button[] = [];
+let autoID = 0;
 
 export default {
     create: (resourceID: string, options: ButtonOptions = {}) => createButton(resourceID, options),
@@ -25,7 +26,7 @@ export default {
 };
 
 const getButtonProperties: (options: ButtonOptions) => ButtonOptionsRequired = options => ({
-    id: 'noID',
+    id: options.id ? 'noID' : autoID++,
     name: 'noName',
     type: 'fillStrokeRound',
     x: innerWidth * 0.5,
@@ -42,14 +43,12 @@ const getButtonProperties: (options: ButtonOptions) => ButtonOptionsRequired = o
             textFill: getColorRGBA(0, 255, 0, 1),
         },
     },
-    transitionSteps: 20, // convert to deltaTime
     text: 'NoText',
     lw: 2,
     r: 5,
     font: '16px monospace',
     pushed: false,
     destructed: false,
-    // onClickEffect: 'shrinkFadeText',
     ...options,
 });
 
@@ -69,6 +68,13 @@ type HoverTransition = {
     reverse: () => void;
 };
 
+type ButtonEvent = {
+    type: string;
+    handler: () => void;
+};
+
+const setEvents = (events: ButtonEvent[]) => {};
+
 export const createButton = (resourceID: string, options: ButtonOptions) => {
     const {context, engine, input} = resources[resourceID];
     const props = getButtonProperties(options);
@@ -77,7 +83,21 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
     const update = createButtonUpdate(props, input, hoverTransition);
     const show = createButtonShow(props, context);
 
-    const selfDestruct = eventHandler(props);
+    const events = getEvents(props, input);
+
+    setEvents(events);
+
+    const selfDestruct = () => {
+        if (props.destructed) throw new Error(`Button ${props.id} is already destroyed!`);
+
+        // use events and loop (array with eventtypes and handlers)
+        // removeEventListener('touchstart', touchstartEvent);
+        // removeEventListener('touchend', touchendEvent);
+        // removeEventListener('mouseup', mouseupEvent);
+        // removeEventListener('mousedown', mousedownEvent);
+
+        props.destructed = true;
+    };
 
     engine.setShow(show);
     engine.setUpdate(update);
@@ -128,34 +148,26 @@ const createButtonShow = (props: ButtonOptionsRequired, ctx: CanvasRenderingCont
     },
 });
 
-const eventHandler = (props: ButtonOptionsRequired) => {
-    {
-        const {click} = props;
+const getEvents = (props: ButtonOptionsRequired, input: Resources['input']) => {
+    const {click} = props;
+    const {mouse, touch} = input;
 
-        let mouseupEvent: ((event: MouseEvent) => void) | undefined;
-        let touchendEvent: ((event: TouchEvent) => void) | undefined;
+    const selfDestruct = () => {};
 
-        mouseupEvent = (evt: MouseEvent) => {
-            if (mouse.insideRect(props) && evt.button === 0) click({evt, button: {selfDestruct}});
-        };
-
-        touchendEvent = (evt: TouchEvent) => {
-            if (touch.insideRect(props)) click({evt, button: {id: props.id, selfDestruct}});
-        };
-
-        addEventListener('mouseup', mouseupEvent);
-        addEventListener('touchend', touchendEvent);
-    }
-
-    const internalMousedownEvent = ({button}: MouseEvent) => {
-        if (mouse.insideRect(props) && button === 0) {
+    const mousedownEvent = (evt: MouseEvent) => {
+        if (mouse.insideRect(props) && evt.button === 0) {
+            if (click?.down) click.down({evt, button: {id: props.id, selfDestruct}});
+            // Default transition (as example and to test functionality)
             props.pushed = true;
             props.w *= 0.9;
             props.h *= 0.9;
         }
     };
 
-    const internalMouseupEvent = () => {
+    const mouseupEvent = (evt: MouseEvent) => {
+        if (mouse.insideRect(props) && evt.button === 0 && click?.up)
+            click.up({evt, button: {id: props.id, selfDestruct}});
+
         if (props.pushed) {
             props.w *= 1.1;
             props.h *= 1.1;
@@ -164,7 +176,7 @@ const eventHandler = (props: ButtonOptionsRequired) => {
         }
     };
 
-    const internalTouchstartEvent = () => {
+    const touchstartEvent = () => {
         if (touch.insideRect(props)) {
             props.pushed = true;
             props.w *= 0.9;
@@ -172,7 +184,9 @@ const eventHandler = (props: ButtonOptionsRequired) => {
         }
     };
 
-    const internalTouchendEvent = () => {
+    const touchendEvent = () => {
+        // if (touch.insideRect(props) && click?.up) click.up({evt, button: {id: props.id, selfDestruct}});
+
         if (props.pushed) {
             props.w *= 1.1;
             props.h *= 1.1;
@@ -181,39 +195,27 @@ const eventHandler = (props: ButtonOptionsRequired) => {
         }
     };
 
-    addEventListener('touchstart', internalTouchstartEvent);
-    addEventListener('touchend', internalTouchendEvent);
-    addEventListener('mouseup', internalMouseupEvent);
-    addEventListener('mousedown', internalMousedownEvent);
-
-    const selfDestruct = () => {
-        if (props.destructed) {
-            console.log(`Button ${props.id} is already destroyed!`);
-        }
-
-        removeEventListener('touchstart', internalTouchstartEvent);
-        removeEventListener('touchend', internalTouchendEvent);
-        removeEventListener('mouseup', internalMouseupEvent);
-        removeEventListener('mousedown', internalMousedownEvent);
-
-        if (mouseupEvent && touchendEvent) {
-            removeEventListener('touchend', touchendEvent);
-            removeEventListener('mouseup', mouseupEvent);
-        }
-
-        engine.removeUpdate(props.id);
-        engine.removeShow(props.id);
-
-        props.destructed = true;
-    };
+    return [
+        {type: 'touchstart', handler: touchstartEvent},
+        {type: 'touchstart', handler: touchstartEvent},
+        {type: 'touchend', handler: touchendEvent},
+        {type: 'mouseup', handler: mouseupEvent},
+        {type: 'mousedown', handler: mousedownEvent},
+    ];
 };
 
-// const createFadeOutUpdate = (props: ButtonOptionsRequired) => {
-//     const onTransitionFinished = () => {
-//         console.log('transition finished');
-//     };
+// if (mouseupEvent && touchendEvent) {
+//     removeEventListener('touchend', touchendEvent);
+//     removeEventListener('mouseup', mouseupEvent);
+// }
 
-//     const transitionUpdate = createTransitionUpdate(props, onTransitionFinished);
+// let mouseupEvent: ((event: MouseEvent) => void) | undefined;
+// let touchendEvent: ((event: TouchEvent) => void) | undefined;
 
-//     return transitionUpdate;
+// mouseupEvent = (evt: MouseEvent) => {
+//     if (mouse.insideRect(props) && evt.button === 0) click({evt, button: {selfDestruct}});
+// };
+
+// touchendEvent = (evt: TouchEvent) => {
+//     if (touch.insideRect(props)) click({evt, button: {id: props.id, selfDestruct}});
 // };

@@ -207,3 +207,93 @@
 //         ctx.fillText(props.text, props.x, props.y);
 //     },
 // };
+
+// const eventHandler = (props: ButtonOptionsRequired) => {
+//     {
+//         const {click} = props;
+
+//         let mouseupEvent: ((event: MouseEvent) => void) | undefined;
+//         let touchendEvent: ((event: TouchEvent) => void) | undefined;
+
+//         mouseupEvent = (evt: MouseEvent) => {
+//             if (mouse.insideRect(props) && evt.button === 0) click({evt, button: {selfDestruct}});
+//         };
+
+//         touchendEvent = (evt: TouchEvent) => {
+//             if (touch.insideRect(props)) click({evt, button: {id: props.id, selfDestruct}});
+//         };
+
+//         addEventListener('mouseup', mouseupEvent);
+//         addEventListener('touchend', touchendEvent);
+//     }
+
+//     const internalMousedownEvent = ({button}: MouseEvent) => {
+//         if (mouse.insideRect(props) && button === 0) {
+//             props.pushed = true;
+//             props.w *= 0.9;
+//             props.h *= 0.9;
+//         }
+//     };
+
+//     const internalMouseupEvent = () => {
+//         if (props.pushed) {
+//             props.w *= 1.1;
+//             props.h *= 1.1;
+
+//             props.pushed = false;
+//         }
+//     };
+
+//     const internalTouchstartEvent = () => {
+//         if (touch.insideRect(props)) {
+//             props.pushed = true;
+//             props.w *= 0.9;
+//             props.h *= 0.9;
+//         }
+//     };
+
+//     const internalTouchendEvent = () => {
+//         if (props.pushed) {
+//             props.w *= 1.1;
+//             props.h *= 1.1;
+
+//             props.pushed = false;
+//         }
+//     };
+
+//     addEventListener('touchstart', internalTouchstartEvent);
+//     addEventListener('touchend', internalTouchendEvent);
+//     addEventListener('mouseup', internalMouseupEvent);
+//     addEventListener('mousedown', internalMousedownEvent);
+
+//     const selfDestruct = () => {
+//         if (props.destructed) {
+//             console.log(`Button ${props.id} is already destroyed!`);
+//         }
+
+//         removeEventListener('touchstart', internalTouchstartEvent);
+//         removeEventListener('touchend', internalTouchendEvent);
+//         removeEventListener('mouseup', internalMouseupEvent);
+//         removeEventListener('mousedown', internalMousedownEvent);
+
+//         if (mouseupEvent && touchendEvent) {
+//             removeEventListener('touchend', touchendEvent);
+//             removeEventListener('mouseup', mouseupEvent);
+//         }
+
+//         engine.removeUpdate(props.id);
+//         engine.removeShow(props.id);
+
+//         props.destructed = true;
+//     };
+// };
+
+// const createFadeOutUpdate = (props: ButtonOptionsRequired) => {
+//     const onTransitionFinished = () => {
+//         console.log('transition finished');
+//     };
+
+//     const transitionUpdate = createTransitionUpdate(props, onTransitionFinished);
+
+//     return transitionUpdate;
+// };
