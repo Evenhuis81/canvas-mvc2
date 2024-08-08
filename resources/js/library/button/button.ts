@@ -62,18 +62,25 @@ const findAndDestroy = (id: string | number) => {
     buttons.splice(index, 1);
 };
 
-type HoverTransition = {
+type Transition = {
     steps: number;
     forward: () => void;
     reverse: () => void;
 };
 
-type ButtonEvent = {
-    type: string;
-    handler: () => void;
-};
+// type ButtonEvent = {
+//     type: string;
+//     handler: () => void;
+// };
 
-const setEvents = (events: ButtonEvent[]) => {};
+// addEventListener('mousedown', () => {})
+
+// const setEvents = (events: ButtonEvent[]) => {};
+
+// declare function addEventListener<K extends keyof WindowEventMap>(type: K, listener: (this: Window, ev: WindowEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+// declare function addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+// declare function removeEventListener<K extends keyof WindowEventMap>(type: K, listener: (this: Window, ev: WindowEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+// declare function removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
 
 export const createButton = (resourceID: string, options: ButtonOptions) => {
     const {context, engine, input} = resources[resourceID];
@@ -83,18 +90,17 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
     const update = createButtonUpdate(props, input, hoverTransition);
     const show = createButtonShow(props, context);
 
-    const events = getEvents(props, input);
+    console.log(props);
 
-    setEvents(events);
+    getEvents(props, input);
+
+    // console.log(events);
+
+    // setEvents(events);
+    // events.forEach(event => addEventListener(event.type, event.handler));
 
     const selfDestruct = () => {
         if (props.destructed) throw new Error(`Button ${props.id} is already destroyed!`);
-
-        // use events and loop (array with eventtypes and handlers)
-        // removeEventListener('touchstart', touchstartEvent);
-        // removeEventListener('touchend', touchendEvent);
-        // removeEventListener('mouseup', mouseupEvent);
-        // removeEventListener('mousedown', mousedownEvent);
 
         props.destructed = true;
     };
@@ -105,11 +111,7 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
     buttons.push({id: props.id, selfDestruct});
 };
 
-const createButtonUpdate = (
-    props: ButtonOptionsRequired,
-    {mouse}: Resources['input'],
-    transition: HoverTransition,
-) => ({
+const createButtonUpdate = (props: ButtonOptionsRequired, {mouse}: Resources['input'], transition: Transition) => ({
     id: props.id,
     name: props.name,
     fn: () => {
@@ -126,7 +128,9 @@ const createButtonUpdate = (
 const createButtonShow = (props: ButtonOptionsRequired, ctx: CanvasRenderingContext2D) => ({
     id: props.id,
     name: props.name,
-    fn: () => () => {
+    fn: () => {
+        console.log('button show');
+
         const {fill, stroke, textFill} = props.color;
 
         ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
@@ -147,6 +151,16 @@ const createButtonShow = (props: ButtonOptionsRequired, ctx: CanvasRenderingCont
         ctx.fillText(props.text, props.x, props.y);
     },
 });
+
+// addEventListener;
+
+// interface ButtonType<T extends keyof WindowEventMap> {
+//     type: T;
+//     handler: (evt: WindowEventMap[T]) => void;
+// }
+// [];
+
+// type GetEvents = (props: ButtonOptionsRequired, input: Resources['input']) => ButtonType<keyof WindowEventMap>;
 
 const getEvents = (props: ButtonOptionsRequired, input: Resources['input']) => {
     const {click} = props;
@@ -195,13 +209,17 @@ const getEvents = (props: ButtonOptionsRequired, input: Resources['input']) => {
         }
     };
 
-    return [
-        {type: 'touchstart', handler: touchstartEvent},
-        {type: 'touchstart', handler: touchstartEvent},
-        {type: 'touchend', handler: touchendEvent},
-        {type: 'mouseup', handler: mouseupEvent},
-        {type: 'mousedown', handler: mousedownEvent},
-    ];
+    // return [
+    //     {type: 'touchstart', handler: touchstartEvent},
+    //     {type: 'touchend', handler: touchendEvent},
+    //     {type: 'mouseup', handler: mouseupEvent},
+    //     {type: 'mousedown', handler: mousedownEvent},
+    // ];
+
+    addEventListener('touchstart', touchstartEvent);
+    addEventListener('touchend', touchendEvent);
+    addEventListener('mouseup', mouseupEvent);
+    addEventListener('mousedown', mousedownEvent);
 };
 
 // if (mouseupEvent && touchendEvent) {
