@@ -68,20 +68,6 @@ type Transition = {
     reverse: () => void;
 };
 
-// type ButtonEvent = {
-//     type: string;
-//     handler: () => void;
-// };
-
-// addEventListener('mousedown', () => {})
-
-// const setEvents = (events: ButtonEvent[]) => {};
-
-// declare function addEventListener<K extends keyof WindowEventMap>(type: K, listener: (this: Window, ev: WindowEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
-// declare function addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-// declare function removeEventListener<K extends keyof WindowEventMap>(type: K, listener: (this: Window, ev: WindowEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
-// declare function removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
-
 export const createButton = (resourceID: string, options: ButtonOptions) => {
     const {context, engine, input} = resources[resourceID];
     const props = getButtonProperties(options);
@@ -90,23 +76,23 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
     const update = createButtonUpdate(props, input, hoverTransition);
     const show = createButtonShow(props, context);
 
-    console.log(props);
+    const events = getEvents(props, input);
 
-    getEvents(props, input);
-
-    // console.log(events);
-
-    // setEvents(events);
-    // events.forEach(event => addEventListener(event.type, event.handler));
+    events.forEach(event => addEventListener(event.type, event.handler));
 
     const selfDestruct = () => {
         if (props.destructed) throw new Error(`Button ${props.id} is already destroyed!`);
 
+        events.forEach(event => removeEventListener(event.type, event.handler));
+
+        engine.removeUpdate(props.id);
+        engine.removeShow(props.id);
+
         props.destructed = true;
     };
 
-    engine.setShow(show);
     engine.setUpdate(update);
+    engine.setShow(show);
 
     buttons.push({id: props.id, selfDestruct});
 };
@@ -129,8 +115,6 @@ const createButtonShow = (props: ButtonOptionsRequired, ctx: CanvasRenderingCont
     id: props.id,
     name: props.name,
     fn: () => {
-        console.log('button show');
-
         const {fill, stroke, textFill} = props.color;
 
         ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
@@ -209,17 +193,22 @@ const getEvents = (props: ButtonOptionsRequired, input: Resources['input']) => {
         }
     };
 
-    // return [
-    //     {type: 'touchstart', handler: touchstartEvent},
-    //     {type: 'touchend', handler: touchendEvent},
-    //     {type: 'mouseup', handler: mouseupEvent},
-    //     {type: 'mousedown', handler: mousedownEvent},
-    // ];
+    addEventListener;
 
-    addEventListener('touchstart', touchstartEvent);
-    addEventListener('touchend', touchendEvent);
-    addEventListener('mouseup', mouseupEvent);
-    addEventListener('mousedown', mousedownEvent);
+    type ButtonEvent = {
+        type: keyof WindowEventMap;
+        handler: (evt: MouseEvent | TouchEvent) => void;
+    };
+
+    // Fix this
+    const buttonEvents: Array<ButtonEvent> = [
+        {type: 'touchstart', handler: touchstartEvent},
+        {type: 'touchend', handler: touchendEvent},
+        {type: 'mouseup', handler: mouseupEvent},
+        {type: 'mousedown', handler: mousedownEvent},
+    ];
+
+    return buttonEvents;
 };
 
 // if (mouseupEvent && touchendEvent) {
