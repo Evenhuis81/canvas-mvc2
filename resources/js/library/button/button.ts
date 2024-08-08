@@ -1,7 +1,7 @@
-import type {Button, ButtonOptions, ButtonOptionsRequired} from 'library/types/button';
+import type {Button, ButtonOptions, InternalButtonOptions} from 'library/types/button';
 import {resources} from '..';
 import {getColorRGBA} from 'library/colors';
-import {getTransitions} from './transition';
+import {createEndTransition, getTransitions} from './transition';
 import {Resources} from 'library/types';
 
 const buttons: Button[] = [];
@@ -25,7 +25,7 @@ export default {
     },
 };
 
-const getButtonProperties: (options: ButtonOptions) => ButtonOptionsRequired = options => ({
+const getButtonProperties: (options: ButtonOptions) => InternalButtonOptions = options => ({
     id: options.id ? 'noID' : autoID++,
     name: 'noName',
     type: 'fillStrokeRound',
@@ -49,6 +49,7 @@ const getButtonProperties: (options: ButtonOptions) => ButtonOptionsRequired = o
     font: '16px monospace',
     pushed: false,
     destructed: false,
+    endTransition: {},
     ...options,
 });
 
@@ -72,11 +73,12 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
     const {context, engine, input} = resources[resourceID];
     const props = getButtonProperties(options);
     const hoverTransition = getTransitions(props.color);
+    const endTransition = createEndTransition(props, engine); // sets and removes update/show internally
 
     const update = createButtonUpdate(props, input, hoverTransition);
     const show = createButtonShow(props, context);
 
-    const events = getEvents(props, input);
+    const events = createEvents(props, input);
 
     events.forEach(event => addEventListener(event.type, event.handler));
 
@@ -97,7 +99,8 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
     buttons.push({id: props.id, selfDestruct});
 };
 
-const createButtonUpdate = (props: ButtonOptionsRequired, {mouse}: Resources['input'], transition: Transition) => ({
+// This is optional, for now it's a default on the button, but there should be themes and variety here
+const createButtonUpdate = (props: InternalButtonOptions, {mouse}: Resources['input'], transition: Transition) => ({
     id: props.id,
     name: props.name,
     fn: () => {
@@ -111,7 +114,7 @@ const createButtonUpdate = (props: ButtonOptionsRequired, {mouse}: Resources['in
     },
 });
 
-const createButtonShow = (props: ButtonOptionsRequired, ctx: CanvasRenderingContext2D) => ({
+const createButtonShow = (props: InternalButtonOptions, ctx: CanvasRenderingContext2D) => ({
     id: props.id,
     name: props.name,
     fn: () => {
@@ -136,17 +139,7 @@ const createButtonShow = (props: ButtonOptionsRequired, ctx: CanvasRenderingCont
     },
 });
 
-// addEventListener;
-
-// interface ButtonType<T extends keyof WindowEventMap> {
-//     type: T;
-//     handler: (evt: WindowEventMap[T]) => void;
-// }
-// [];
-
-// type GetEvents = (props: ButtonOptionsRequired, input: Resources['input']) => ButtonType<keyof WindowEventMap>;
-
-const getEvents = (props: ButtonOptionsRequired, input: Resources['input']) => {
+const createEvents = (props: InternalButtonOptions, input: Resources['input']) => {
     const {click} = props;
     const {mouse, touch} = input;
 
@@ -171,6 +164,9 @@ const getEvents = (props: ButtonOptionsRequired, input: Resources['input']) => {
             props.h *= 1.1;
 
             props.pushed = false;
+
+            // Transition event from clickup until the transition is finished
+            const endTransition = createEndTransition(props);
         }
     };
 

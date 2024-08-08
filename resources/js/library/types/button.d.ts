@@ -53,10 +53,10 @@ type ButtonOptions = Partial<{
     };
 }>;
 
-// Internal button properties
-type ButtonOptionsRequired = Required<Omit<ButtonOptions, 'click'>> & {
+type InternalButtonOptions = Required<Omit<ButtonOptions, 'click'>> & {
     click?: ButtonOptions['click'];
     pushed: boolean;
     destructed: boolean;
     color: ColorAndTransitionProperties;
+    endTransition: {};
 };

@@ -1,3 +1,13 @@
+// addEventListener;
+
+// interface ButtonType<T extends keyof WindowEventMap> {
+//     type: T;
+//     handler: (evt: WindowEventMap[T]) => void;
+// }
+// [];
+
+// type GetEvents = (props: ButtonOptionsRequired, input: Resources['input']) => ButtonType<keyof WindowEventMap>;
+
 // Menu, buttons:
 // 1. start
 // 2. settings

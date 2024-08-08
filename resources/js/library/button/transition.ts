@@ -1,10 +1,15 @@
 import {ButtonOptionsRequired, ColorRGBA, ColorValues, TransitionTypes} from 'library/types/button';
+import {Engine} from 'library/types/engine';
 import {Rect} from 'library/types/tv';
 
 const transitionTypes: TransitionTypes[] = ['fill', 'stroke', 'textFill'];
 const colorValues: ColorValues[] = ['r', 'g', 'b', 'a'];
 
 let id = 0;
+
+export const createEndTransition = (props: Rect, engine: Engine) => {
+    //
+};
 
 export const createTransitionUpdate = (
     props: Rect & {color: {textFill: ColorRGBA}},
