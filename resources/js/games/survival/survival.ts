@@ -27,10 +27,22 @@ const startButton: ButtonOptions = {
         },
         up: evt => {
             // console.log('up', evt);
+            evt.disable();
+            console.log('disabled');
+
+            setTimeout(() => {
+                evt.activate();
+                console.log('activated');
+            }, 1200);
         },
         end: evt => {
-            // console.log('end', evt);
             evt.selfDestruct();
+
+            startSurvival();
         },
     },
+};
+
+const startSurvival = () => {
+    console.log('start game');
 };

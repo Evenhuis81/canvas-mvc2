@@ -3,9 +3,11 @@ import type {Show, Update} from './engine';
 type Button = {
     id: number | string;
     selfDestruct: () => void;
+    disable: () => void;
+    activate: () => void;
 };
 
-type ButtonForEndClick = Button & {
+type ButtonForEndClick = Omit<Button, 'disable' | 'activate'> & {
     reactivate: () => void;
 };
 
