@@ -52,7 +52,7 @@ type ButtonOptions = Partial<{
     text: string;
     click: {
         down?: (event: ClickEvent) => void;
-        up?: (event: ClickEvent) => void;
+        up?: (event: Button) => void;
         end?: (event: ButtonForEndClick) => void;
     };
 }>;

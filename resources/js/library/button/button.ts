@@ -189,9 +189,7 @@ const handleEvents = (props: InternalButtonOptions, input: Resources['input'], e
         }
     };
 
-    const mouseupEvent = (evt: MouseEvent) => {
-        if (mouse.insideRect(props) && evt.button === 0 && click?.up) click.up({evt, button: {id, selfDestruct}});
-
+    const mouseTouchUp = () => {
         if (props.pushed) {
             props.w *= 1.1;
             props.h *= 1.1;
@@ -205,6 +203,12 @@ const handleEvents = (props: InternalButtonOptions, input: Resources['input'], e
         }
     };
 
+    const mouseupEvent = (evt: MouseEvent) => {
+        if (mouse.insideRect(props) && evt.button === 0 && click?.up) click.up({id, selfDestruct});
+
+        mouseTouchUp();
+    };
+
     const touchstartEvent = () => {
         if (touch.insideRect(props)) {
             props.pushed = true;
@@ -214,14 +218,9 @@ const handleEvents = (props: InternalButtonOptions, input: Resources['input'], e
     };
 
     const touchendEvent = () => {
-        // if (touch.insideRect(props) && click?.up) click.up({evt, button: {id: props.id, selfDestruct}});
+        if (touch.insideRect(props) && click?.up) click.up({id, selfDestruct});
 
-        if (props.pushed) {
-            props.w *= 1.1;
-            props.h *= 1.1;
-
-            props.pushed = false;
-        }
+        mouseTouchUp();
     };
 
     addEventListener('touchstart', touchstartEvent);
