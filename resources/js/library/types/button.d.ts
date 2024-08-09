@@ -5,6 +5,10 @@ type Button = {
     selfDestruct: () => void;
 };
 
+type ButtonForEndClick = Button & {
+    reactivate: () => void;
+};
+
 type ClickEvent = {
     evt: MouseEvent | TouchEvent;
     button: Button;
@@ -49,7 +53,7 @@ type ButtonOptions = Partial<{
     click: {
         down?: (event: ClickEvent) => void;
         up?: (event: ClickEvent) => void;
-        end?: (event: ClickEvent) => void;
+        end?: (event: ButtonForEndClick) => void;
     };
 }>;
 

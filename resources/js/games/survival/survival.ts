@@ -21,16 +21,16 @@ const startButton: ButtonOptions = {
     name: 'Start Button',
     w: innerWidth * 0.1,
     text: 'Start #',
-    // onClickEffect: 'shrinkFadeText',
     click: {
-        down: () => {
-            console.log('down');
+        down: evt => {
+            // console.log('down', evt);
         },
-        up: () => {
-            console.log('up');
+        up: evt => {
+            // console.log('up', evt);
         },
-        end: () => {
-            console.log('end');
+        end: evt => {
+            // console.log('end', evt);
+            evt.selfDestruct();
         },
     },
 };

@@ -1,8 +1,9 @@
 import type {Button, ButtonOptions, InternalButtonOptions} from 'library/types/button';
 import {resources} from '..';
 import {getColorRGBA} from 'library/colors';
-import {createEndTransition, getTransitions} from './transition';
+import {getTransitions} from './transition';
 import {Resources} from 'library/types';
+import {Engine} from 'library/types/engine';
 
 const buttons: Button[] = [];
 let autoID = 0;
@@ -73,29 +74,17 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
     const {context, engine, input} = resources[resourceID];
     const props = getButtonProperties(options);
     const hoverTransition = getTransitions(props.color);
-    const endTransition = createEndTransition(props, engine); // sets and removes update/show internally
 
     const update = createButtonUpdate(props, input, hoverTransition);
     const show = createButtonShow(props, context);
 
-    const events = createEvents(props, input);
-
-    events.forEach(event => addEventListener(event.type, event.handler));
-
-    const selfDestruct = () => {
-        if (props.destructed) throw new Error(`Button ${props.id} is already destroyed!`);
-
-        events.forEach(event => removeEventListener(event.type, event.handler));
-
-        engine.removeUpdate(props.id);
-        engine.removeShow(props.id);
-
-        props.destructed = true;
-    };
+    const selfDestruct = handleEvents(props, input, engine);
+    // const endTransition = createEndTransitionUpdate(props, engine, selfDestruct); // sets and removes update/show internally
 
     engine.setUpdate(update);
     engine.setShow(show);
 
+    // This selfDestruct won't remove the endtransition update if active
     buttons.push({id: props.id, selfDestruct});
 };
 
@@ -139,15 +128,60 @@ const createButtonShow = (props: InternalButtonOptions, ctx: CanvasRenderingCont
     },
 });
 
-const createEvents = (props: InternalButtonOptions, input: Resources['input']) => {
-    const {click} = props;
+const createEndTransitionUpdate = (props: InternalButtonOptions, engine: Engine, selfDestruct: () => void) => {
+    let count = 0;
+
+    const reactivate = () => {
+        props.color.stroke.a = 1;
+        props.color.fill.a = 1;
+        props.color.textFill.a = 1;
+    };
+
+    const update = {
+        id: `end transition.${props.id}`,
+        fn: () => {
+            if (count > 120 && props.click?.end) {
+                engine.removeUpdate(update.id);
+
+                props.color.stroke.a = 0.5;
+                props.color.fill.a = 0.5;
+                props.color.textFill.a = 0.5;
+
+                props.click.end({
+                    id: update.id,
+                    selfDestruct,
+                    reactivate,
+                });
+            }
+
+            count++;
+        },
+    };
+
+    return update;
+};
+
+const handleEvents = (props: InternalButtonOptions, input: Resources['input'], engine: Engine) => {
+    const {click, id} = props;
     const {mouse, touch} = input;
 
-    const selfDestruct = () => {};
+    const selfDestruct = () => {
+        if (props.destructed) throw new Error(`Button ${props.id} is already destroyed!`);
+
+        removeEvents();
+
+        engine.removeUpdate(props.id);
+        engine.removeShow(props.id);
+
+        props.destructed = true;
+    };
+
+    const endTransitionUpdate = createEndTransitionUpdate(props, engine, selfDestruct);
 
     const mousedownEvent = (evt: MouseEvent) => {
         if (mouse.insideRect(props) && evt.button === 0) {
-            if (click?.down) click.down({evt, button: {id: props.id, selfDestruct}});
+            if (click?.down) click.down({evt, button: {id, selfDestruct}});
+
             // Default transition (as example and to test functionality)
             props.pushed = true;
             props.w *= 0.9;
@@ -156,8 +190,7 @@ const createEvents = (props: InternalButtonOptions, input: Resources['input']) =
     };
 
     const mouseupEvent = (evt: MouseEvent) => {
-        if (mouse.insideRect(props) && evt.button === 0 && click?.up)
-            click.up({evt, button: {id: props.id, selfDestruct}});
+        if (mouse.insideRect(props) && evt.button === 0 && click?.up) click.up({evt, button: {id, selfDestruct}});
 
         if (props.pushed) {
             props.w *= 1.1;
@@ -166,7 +199,9 @@ const createEvents = (props: InternalButtonOptions, input: Resources['input']) =
             props.pushed = false;
 
             // Transition event from clickup until the transition is finished
-            const endTransition = createEndTransition(props);
+            engine.setUpdate(endTransitionUpdate);
+
+            console.log('end transition update set');
         }
     };
 
@@ -189,36 +224,17 @@ const createEvents = (props: InternalButtonOptions, input: Resources['input']) =
         }
     };
 
-    addEventListener;
+    addEventListener('touchstart', touchstartEvent);
+    addEventListener('touchend', touchendEvent);
+    addEventListener('mouseup', mouseupEvent);
+    addEventListener('mousedown', mousedownEvent);
 
-    type ButtonEvent = {
-        type: keyof WindowEventMap;
-        handler: (evt: MouseEvent | TouchEvent) => void;
+    const removeEvents = () => {
+        removeEventListener('touchstart', touchstartEvent);
+        removeEventListener('touchend', touchendEvent);
+        removeEventListener('mouseup', mouseupEvent);
+        removeEventListener('mousedown', mousedownEvent);
     };
 
-    // Fix this
-    const buttonEvents: Array<ButtonEvent> = [
-        {type: 'touchstart', handler: touchstartEvent},
-        {type: 'touchend', handler: touchendEvent},
-        {type: 'mouseup', handler: mouseupEvent},
-        {type: 'mousedown', handler: mousedownEvent},
-    ];
-
-    return buttonEvents;
+    return selfDestruct;
 };
-
-// if (mouseupEvent && touchendEvent) {
-//     removeEventListener('touchend', touchendEvent);
-//     removeEventListener('mouseup', mouseupEvent);
-// }
-
-// let mouseupEvent: ((event: MouseEvent) => void) | undefined;
-// let touchendEvent: ((event: TouchEvent) => void) | undefined;
-
-// mouseupEvent = (evt: MouseEvent) => {
-//     if (mouse.insideRect(props) && evt.button === 0) click({evt, button: {selfDestruct}});
-// };
-
-// touchendEvent = (evt: TouchEvent) => {
-//     if (touch.insideRect(props)) click({evt, button: {id: props.id, selfDestruct}});
-// };
