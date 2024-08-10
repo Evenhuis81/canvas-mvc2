@@ -8,6 +8,7 @@ import {Engine, Update} from 'library/types/engine';
 const buttons: Button[] = [];
 let autoID = 0;
 
+// TODO::Create a seperate module for all the global methods for these buttons
 export default {
     create: (resourceID: string, options: ButtonOptions = {}) => createButton(resourceID, options),
     destruct: (id: (string | number) | (string | string[])) => {
