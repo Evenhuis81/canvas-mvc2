@@ -5,9 +5,11 @@ type Button = {
     selfDestruct: () => void;
     disable: () => void;
     activate: () => void;
+    endAll: (buttons: Button[]) => void;
+    endButton: () => void;
 };
 
-type ButtonForEndClick = Omit<Button, 'disable' | 'activate'> & {
+type ButtonForEndClick = Omit<Button, 'disable' | 'activate' | 'endAll' | 'endButton'> & {
     reactivate: () => void;
 };
 

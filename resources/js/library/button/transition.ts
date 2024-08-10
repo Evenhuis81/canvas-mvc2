@@ -1,4 +1,4 @@
-import {ButtonOptionsRequired, ColorRGBA, ColorValues, TransitionTypes} from 'library/types/button';
+import {ColorRGBA, ColorValues, InternalButtonOptions, TransitionTypes} from 'library/types/button';
 import {Engine} from 'library/types/engine';
 import {Rect} from 'library/types/tv';
 
@@ -15,7 +15,6 @@ export const createTransitionUpdate = (
     props: Rect & {color: {textFill: ColorRGBA}},
     onTransitionFinished: () => void,
 ) => {
-    // Use onClickEffect type from button/other to determine kind of transition
     let widthShrink = true;
     let finished = false;
     const steps = 20;
@@ -59,7 +58,7 @@ export const createTransitionUpdate = (
     };
 };
 
-export const getTransitions = (color: ButtonOptionsRequired['color'], steps = 10) => {
+export const getTransitions = (color: InternalButtonOptions['color'], steps = 10) => {
     const colorChangePerStep = <Record<TransitionTypes, ReturnType<typeof calculateDifferencePerStep>>>{};
 
     transitionTypes.forEach(

@@ -24,6 +24,13 @@ export default {
 
         buttons.length = 0;
     },
+    endAll: (selfID?: string | number) => {
+        buttons.forEach(button => {
+            if (selfID && selfID === button.id) return;
+
+            button.endButton();
+        });
+    },
 };
 
 const getButtonProperties: (options: ButtonOptions) => InternalButtonOptions = options => ({
@@ -92,13 +99,13 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
     const update = createButtonUpdate(props, input, hoverTransition);
     const show = createButtonShow(props, context);
 
-    const {selfDestruct, activate, disable} = handleEvents(props, input, engine, update);
+    const {selfDestruct, activate, disable, endAll, endButton} = handleEvents(props, input, engine, update);
 
     engine.setUpdate(update);
     engine.setShow(show);
 
     // This selfDestruct won't remove the endtransition update if active or is it?
-    buttons.push({id: props.id, selfDestruct, disable, activate});
+    buttons.push({id: props.id, selfDestruct, disable, activate, endAll, endButton});
 };
 
 // This is optional, for now it's a default on the button, but there should be themes and variety here
@@ -137,37 +144,44 @@ const createButtonShow = (props: InternalButtonOptions, ctx: CanvasRenderingCont
         ctx.textBaseline = 'middle';
 
         ctx.beginPath();
-        ctx.fillText(props.text, props.x, props.y);
+        ctx.fillText(props.text, props.x, props.y + 2); // use textAscend / -descent
     },
 });
 
 const createEndTransitionUpdate = (props: InternalButtonOptions, engine: Engine, selfDestruct: () => void) => {
-    let count = 0;
-
     const reactivate = () => {
-        props.color.stroke.a = 1;
-        props.color.fill.a = 1;
-        props.color.textFill.a = 1;
+        // props.color.stroke.a = 1;
+        // props.color.fill.a = 1;
+        // props.color.textFill.a = 1;
+        // needed ?
     };
+
+    const steps = 30;
+
+    const widthStep = props.w / steps;
+    const heightStep = props.h / steps;
+    const textFadeStep = 1 / steps; // twice as fast
 
     const update = {
         id: `end transition.${props.id}`,
         fn: () => {
-            if (count > 120 && props.click?.end) {
+            // console.log(props.w, props.h, props.color.textFill.a);
+
+            props.w -= widthStep;
+            props.h -= heightStep;
+            props.color.textFill.a -= textFadeStep;
+
+            if (props.w <= 0) {
                 engine.removeUpdate(update.id);
 
-                props.color.stroke.a = 0.5;
-                props.color.fill.a = 0.5;
-                props.color.textFill.a = 0.5;
-
-                props.click.end({
-                    id: update.id,
-                    selfDestruct,
-                    reactivate, // make this generic evt that works for several click methods
-                });
+                if (props.click?.end) {
+                    props.click.end({
+                        id: update.id,
+                        selfDestruct,
+                        reactivate, // make this generic evt that works for several click methods
+                    });
+                }
             }
-
-            count++;
         },
     };
 
@@ -205,7 +219,7 @@ const handleEvents = (props: InternalButtonOptions, input: Resources['input'], e
 
     const mousedownEvent = (evt: MouseEvent) => {
         if (mouse.insideRect(props) && evt.button === 0) {
-            if (click?.down) click.down({evt, button: {id, selfDestruct, activate, disable}});
+            if (click?.down) click.down({evt, button: {id, selfDestruct, activate, disable, endAll, endButton}});
 
             // Default transition (as example and to test functionality)
             props.pushed = true;
@@ -228,8 +242,17 @@ const handleEvents = (props: InternalButtonOptions, input: Resources['input'], e
         }
     };
 
+    const endButton = () => {
+        engine.setUpdate(endTransitionUpdate);
+    };
+
+    const endAll = (buttons: Button[]) => {
+        buttons.forEach(b => b.endButton);
+    };
+
     const mouseupEvent = (evt: MouseEvent) => {
-        if (mouse.insideRect(props) && evt.button === 0 && click?.up) click.up({id, selfDestruct, activate, disable});
+        if (mouse.insideRect(props) && evt.button === 0 && click?.up)
+            click.up({id, selfDestruct, activate, disable, endAll, endButton});
 
         mouseTouchUp();
     };
@@ -243,7 +266,7 @@ const handleEvents = (props: InternalButtonOptions, input: Resources['input'], e
     };
 
     const touchendEvent = () => {
-        if (touch.insideRect(props) && click?.up) click.up({id, selfDestruct, activate, disable});
+        if (touch.insideRect(props) && click?.up) click.up({id, selfDestruct, activate, disable, endAll, endButton});
 
         mouseTouchUp();
     };
@@ -260,5 +283,5 @@ const handleEvents = (props: InternalButtonOptions, input: Resources['input'], e
         removeEventListener('mousedown', mousedownEvent);
     };
 
-    return {selfDestruct, activate, disable};
+    return {selfDestruct, activate, disable, endAll, endButton};
 };
