@@ -19,14 +19,15 @@ const startLevel = () => {
 const startButton: ButtonOptions = {
     id: 'start',
     name: 'Start Button',
-    w: innerWidth * 0.1,
+    w: innerWidth * 0.5,
+    // font: 'monospace', // default
+    // fontSize: 16,
     text: 'Start #',
     click: {
         down: evt => {
-            // console.log('down', evt);
+            //
         },
         up: evt => {
-            // console.log('up', evt);
             evt.disable();
             console.log('disabled');
 

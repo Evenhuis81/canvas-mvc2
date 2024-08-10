@@ -47,7 +47,8 @@ const getButtonProperties: (options: ButtonOptions) => InternalButtonOptions = o
     text: 'NoText',
     lw: 2,
     r: 5,
-    font: '16px monospace',
+    font: 'monospace',
+    fontSize: 10,
     pushed: false,
     destructed: false,
     endTransition: {},
@@ -81,6 +82,8 @@ const brighten = (props: InternalButtonOptions) => setColorForDisableAndActivate
 
 export const createButton = (resourceID: string, options: ButtonOptions) => {
     // create default hoverTransition and endTransition and give it a (if disabled) option
+
+    // TODO:: Add fontsize to internal button options
 
     const {context, engine, input} = resources[resourceID];
     const props = getButtonProperties(options);
@@ -128,8 +131,8 @@ const createButtonShow = (props: InternalButtonOptions, ctx: CanvasRenderingCont
         ctx.fill();
         ctx.stroke();
 
-        ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, 1)`;
-        ctx.font = props.font;
+        ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
+        ctx.font = `${props.fontSize}px ${props.font}`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 

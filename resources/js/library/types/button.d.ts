@@ -51,6 +51,7 @@ type ButtonOptions = Partial<{
     lw: number;
     r: number;
     font: string;
+    fontSize: number;
     text: string;
     click: {
         down?: (event: ClickEvent) => void;
