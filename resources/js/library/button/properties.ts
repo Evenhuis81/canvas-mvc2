@@ -1,10 +1,9 @@
 import {getColorRGBA} from 'library/colors';
-import {ButtonOptions, InternalButtonOptions} from 'library/types/button';
 
 // mediocre uid imho
 const uid = () => Date.now().toString(36) + Math.random().toString(36).substring(2);
 
-export const getButtonProperties: (options: ButtonOptions) => InternalButtonOptions = options => ({
+export const getButtonProperties: (options: ButtonOptions) => InternalButtonProperties = options => ({
     id: options.id ? 'noID' : uid(),
     name: 'noName',
     type: 'fillStrokeRound',
@@ -29,6 +28,7 @@ export const getButtonProperties: (options: ButtonOptions) => InternalButtonOpti
     fontSize: 10,
     pushed: false,
     destructed: false,
+    destruct: false,
     endTransition: {},
     ...options,
 });
