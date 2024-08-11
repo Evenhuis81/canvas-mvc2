@@ -4,13 +4,11 @@ import {getColorRGBA} from 'library/colors';
 import {getTransitions} from './transition';
 import {Resources} from 'library/types';
 import {Engine, Update} from 'library/types/engine';
+import {getButtonProperties} from './properties';
 
 const buttons: Button[] = [];
 let autoID = 0;
 
-// TODO::Create a seperate module for all the global methods for these buttons
-// 2. Create seperate method that triggers an internal function when transition has ended
-// 3. Restructure this shit
 export default {
     create: (resourceID: string, options: ButtonOptions = {}) => createButton(resourceID, options),
     destruct: (id: (string | number) | (string | string[])) => {
@@ -28,8 +26,6 @@ export default {
         buttons.length = 0;
     },
     endAll: (selfID?: string | number) => {
-        // TODO:: Make this an internal method also for auto-trigger on theme-like buttons (screen/menu)
-
         buttons.forEach(button => {
             if (selfID && selfID === button.id) return;
 
@@ -37,35 +33,6 @@ export default {
         });
     },
 };
-
-const getButtonProperties: (options: ButtonOptions) => InternalButtonOptions = options => ({
-    id: options.id ? 'noID' : autoID++,
-    name: 'noName',
-    type: 'fillStrokeRound',
-    x: innerWidth * 0.5,
-    y: innerHeight * 0.1,
-    w: innerWidth * 0.2,
-    h: innerHeight * 0.05,
-    color: {
-        fill: getColorRGBA(0, 0, 0, 1),
-        stroke: getColorRGBA(255, 0, 0, 1),
-        textFill: getColorRGBA(255, 255, 255, 1),
-        transition: {
-            fill: getColorRGBA(100, 100, 100, 1),
-            stroke: getColorRGBA(155, 0, 0, 1),
-            textFill: getColorRGBA(0, 255, 0, 1),
-        },
-    },
-    text: 'NoText',
-    lw: 2,
-    r: 5,
-    font: 'monospace',
-    fontSize: 10,
-    pushed: false,
-    destructed: false,
-    endTransition: {},
-    ...options,
-});
 
 const findAndDestroy = (id: string | number) => {
     const index = buttons.findIndex(button => button.id === id);
@@ -92,10 +59,8 @@ const setColorForDisableAndActivate = (color: InternalButtonOptions['color'], al
 const dim = (props: InternalButtonOptions) => setColorForDisableAndActivate(props.color, 0.5);
 const brighten = (props: InternalButtonOptions) => setColorForDisableAndActivate(props.color, 1);
 
+// Mind the end button or other callbacks (refactor if possible)
 export const createButton = (resourceID: string, options: ButtonOptions) => {
-    // TODO:: Add fontsize to internal button options
-    // 2. create default hoverTransition and endTransition and give it a (if disabled) option
-
     const {context, engine, input} = resources[resourceID];
     const props = getButtonProperties(options);
     const hoverTransition = getTransitions(props.color);
@@ -108,7 +73,6 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
     engine.setUpdate(update);
     engine.setShow(show);
 
-    // This selfDestruct won't remove the endtransition update if active or is it?
     buttons.push({id: props.id, selfDestruct, disable, activate, endButton});
 };
 
