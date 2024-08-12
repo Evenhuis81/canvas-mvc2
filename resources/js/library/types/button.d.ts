@@ -41,6 +41,12 @@ type Transition = {
 
 type ButtonType = 'fill' | 'stroke' | 'fillStroke' | 'fillStrokeRound';
 
+type ClickHandlers = {
+    down: (event: ClickEvent) => void;
+    up: (event: ClickEvent) => void;
+    end: (event: Button) => void;
+};
+
 type ButtonOptions = Partial<{
     id: number | string;
     name: string;
@@ -54,18 +60,16 @@ type ButtonOptions = Partial<{
     font: string;
     fontSize: number;
     text: string;
-    click: {
-        down?: (event: ClickEvent) => void;
-        up?: (event: ClickEvent) => void;
-        end?: (event: Button) => void;
-    };
+    click: Partial<ClickHandlers>;
+    color: Partial<ColorAndTransitionProperties>;
 }>;
 
-type InternalButtonProperties = Required<Omit<ButtonOptions, 'click'>> & {
-    click?: ButtonOptions['click'];
-    pushed: boolean;
-    destructed: boolean;
-    destruct: boolean;
-    color: ColorAndTransitionProperties;
-    endTransition: {};
-};
+type InternalButtonProperties = Required<ButtonOptions>;
+
+// & {
+//     pushed: boolean;
+//     destructed: boolean;
+//     destruct: boolean;
+//     // click: ClickHandlers;
+//     // color: ColorAndTransitionProperties;
+// };

@@ -1,6 +1,6 @@
 import {getColorRGBA} from 'library/colors';
 
-// mediocre uid imho
+// mediocre uid
 const uid = () => Date.now().toString(36) + Math.random().toString(36).substring(2);
 
 export const getButtonProperties: (options: ButtonOptions) => InternalButtonProperties = options => ({
@@ -29,6 +29,10 @@ export const getButtonProperties: (options: ButtonOptions) => InternalButtonProp
     pushed: false,
     destructed: false,
     destruct: false,
-    endTransition: {},
+    click: {
+        down: () => {},
+        up: () => {},
+        end: () => {},
+    },
     ...options,
 });

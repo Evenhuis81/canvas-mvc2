@@ -1,4 +1,3 @@
-import {ColorRGBA, ColorValues, InternalButtonOptions, TransitionTypes} from 'library/types/button';
 import {Engine} from 'library/types/engine';
 import {Rect} from 'library/types/tv';
 
@@ -58,7 +57,7 @@ export const createTransitionUpdate = (
     };
 };
 
-export const getTransitions = (color: InternalButtonOptions['color'], steps = 10) => {
+export const getTransitions = (color: InternalButtonProperties['color'], steps = 10) => {
     const colorChangePerStep = <Record<TransitionTypes, ReturnType<typeof calculateDifferencePerStep>>>{};
 
     transitionTypes.forEach(

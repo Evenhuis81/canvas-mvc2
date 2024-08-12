@@ -203,15 +203,17 @@ const handleEventsAndMore = (
             props.h *= 1.1;
 
             props.pushed = false;
-
-            setEndTransition();
         }
     };
 
     const mouseupEvent = (evt: MouseEvent) => {
         mouseTouchUp();
 
-        if (mouse.insideRect(props) && evt.button === 0 && click?.up) click.up({evt, button});
+        if (mouse.insideRect(props) && evt.button === 0) {
+            click.up({evt, button});
+
+            // setEndTransition?
+        }
     };
 
     const touchstartEvent = (evt: TouchEvent) => {
@@ -250,5 +252,5 @@ const handleEventsAndMore = (
         removeEventListener('mousedown', mousedownEvent);
     };
 
-    return {selfDestruct, activate, disable, setEndTransition};
+    return button;
 };
