@@ -61,6 +61,8 @@ type ButtonOptions = Partial<{
     font: string;
     fontSize: number;
     text: string;
+    endTransition: boolean;
+    autoDestruct: boolean;
     handlers: Partial<ButtonHandlers>;
     colors: Partial<ButtonColorAndTransitionProperties>;
 }>;

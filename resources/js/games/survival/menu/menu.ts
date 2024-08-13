@@ -14,9 +14,6 @@ const startButton: ButtonOptions = {
     fontSize: 20,
     text: 'Start Game',
     handlers: {
-        up: evt => {
-            evt.button.setEndTransition(true);
-        },
         end: evt => {
             startSurvival();
         },

@@ -183,6 +183,11 @@ const handleEventsAndMore = (
 
             props.pushed = false;
         }
+
+        if (props.endTransition) return setEndTransition(props.autoDestruct);
+
+        // This only runs when no endTransition is set, default = true (for both)
+        if (props.autoDestruct) selfDestruct();
     };
 
     const mouseupEvent = (evt: MouseEvent) => {
@@ -190,7 +195,6 @@ const handleEventsAndMore = (
 
         if (mouse.insideRect(props) && evt.button === 0) {
             handlers.up({evt, button});
-            // setEndTransition?
         }
     };
 

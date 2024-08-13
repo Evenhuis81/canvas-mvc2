@@ -31,6 +31,8 @@ const setProps: (props: ButtonProperties) => InternalButtonProperties = props =>
     pushed: false,
     destructed: false,
     destruct: false,
+    endTransition: true,
+    autoDestruct: true,
     ...props,
 });
 
