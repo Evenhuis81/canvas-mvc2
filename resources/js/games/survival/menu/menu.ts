@@ -13,13 +13,11 @@ const startButton: ButtonOptions = {
     w: innerWidth * 0.5,
     fontSize: 20,
     text: 'Start Game',
-    click: {
+    handlers: {
         up: evt => {
-            // evt.goToEnd();
+            evt.button.setEndTransition(true);
         },
         end: evt => {
-            evt.selfDestruct();
-
             startSurvival();
         },
     },

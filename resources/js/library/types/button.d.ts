@@ -3,7 +3,7 @@ type Button = {
     selfDestruct: () => void;
     disable: () => void;
     activate: () => void;
-    setEndTransition: (destruct: boolean) => void;
+    setEndTransition: (destruct?: boolean) => void;
 };
 
 type ClickEvent = {
@@ -17,16 +17,17 @@ type ColorRGB = {
     b: number;
 };
 
-type ColorAndTransitionProperties = Record<TransitionTypes, ColorRGBA> & {
-    transition: Record<TransitionTypes, ColorRGBA>;
+type ButtonColorAndTransitionProperties = Record<ButtonColorTypes, ColorRGBA> & {
+    transition: Record<ButtonColorTypes, ColorRGBA>;
 };
 
 type ColorValues = 'r' | 'g' | 'b' | 'a';
 
 type ColorRGBA = ColorRGB & {a: number};
 
-type TransitionTypes = 'fill' | 'stroke' | 'textFill';
+type ButtonColorTypes = 'fill' | 'stroke' | 'textFill';
 
+// These 2 = bad
 type Transitions = {
     steps: number;
     on: (id: string) => void;
@@ -41,7 +42,7 @@ type Transition = {
 
 type ButtonType = 'fill' | 'stroke' | 'fillStroke' | 'fillStrokeRound';
 
-type ClickHandlers = {
+type ButtonHandlers = {
     down: (event: ClickEvent) => void;
     up: (event: ClickEvent) => void;
     end: (event: Button) => void;
@@ -60,11 +61,13 @@ type ButtonOptions = Partial<{
     font: string;
     fontSize: number;
     text: string;
-    click: Partial<ClickHandlers>;
-    color: Partial<ColorAndTransitionProperties>;
+    handlers: Partial<ButtonHandlers>;
+    colors: Partial<ButtonColorAndTransitionProperties>;
 }>;
 
-type InternalButtonProperties = Required<Omit<ButtonOptions, 'click' | 'colors'>> & {
+type ButtonProperties = Omit<ButtonOptions, 'handlers' | 'colors'>;
+
+type InternalButtonProperties = Required<ButtonProperties> & {
     pushed: boolean;
     destructed: boolean;
     destruct: boolean;

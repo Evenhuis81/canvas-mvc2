@@ -3,8 +3,20 @@ import {getColorRGBA} from 'library/colors';
 // mediocre uid
 const uid = () => Date.now().toString(36) + Math.random().toString(36).substring(2);
 
-export const getButtonProperties: (options: ButtonOptions) => InternalButtonProperties = options => ({
-    id: options.id ? 'noID' : uid(),
+type GetButtonProperties = (options: ButtonOptions) => {
+    props: InternalButtonProperties;
+    handlers: ButtonHandlers;
+    colors: ButtonColorAndTransitionProperties;
+};
+
+export const getButtonProperties: GetButtonProperties = options => {
+    const {handlers, colors, ...properties} = options;
+
+    return {props: setProps(properties), handlers: setHandlers(handlers), colors: setColors(colors)};
+};
+
+const setProps: (props: ButtonProperties) => InternalButtonProperties = props => ({
+    id: props.id ? 'noID' : uid(),
     name: 'noName',
     type: 'fillStrokeRound',
     x: innerWidth * 0.5,
@@ -19,21 +31,23 @@ export const getButtonProperties: (options: ButtonOptions) => InternalButtonProp
     pushed: false,
     destructed: false,
     destruct: false,
-    ...options,
+    ...props,
 });
 
-// color: {
-//     fill: getColorRGBA(0, 0, 0, 1),
-//     stroke: getColorRGBA(255, 0, 0, 1),
-//     textFill: getColorRGBA(255, 255, 255, 1),
-//     transition: {
-//         fill: getColorRGBA(100, 100, 100, 1),
-//         stroke: getColorRGBA(155, 0, 0, 1),
-//         textFill: getColorRGBA(0, 255, 0, 1),
-//     },
-// },
-// click: {
-//     down: () => {},
-//     up: () => {},
-//     end: () => {},
-// },
+const setColors = (colors?: Partial<ButtonColorAndTransitionProperties>) => ({
+    fill: getColorRGBA(0, 0, 0, 1),
+    stroke: getColorRGBA(255, 0, 0, 1),
+    textFill: getColorRGBA(255, 255, 255, 1),
+    transition: {
+        fill: getColorRGBA(100, 100, 100, 1),
+        stroke: getColorRGBA(155, 0, 0, 1),
+        textFill: getColorRGBA(0, 255, 0, 1),
+    },
+    ...colors,
+});
+const setHandlers = (handlers?: Partial<ButtonHandlers>) => ({
+    up: () => {},
+    down: () => {},
+    end: () => {},
+    ...handlers,
+});
