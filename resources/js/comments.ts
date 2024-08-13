@@ -1,4 +1,5 @@
-// addEventListener;
+// Notes on 13-08-2024:
+// 1. QBuzz @ home ,wolkbreuk, asian neusophaal
 
 // interface ButtonType<T extends keyof WindowEventMap> {
 //     type: T;
