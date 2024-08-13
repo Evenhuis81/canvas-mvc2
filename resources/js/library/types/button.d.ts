@@ -64,12 +64,8 @@ type ButtonOptions = Partial<{
     color: Partial<ColorAndTransitionProperties>;
 }>;
 
-type InternalButtonProperties = Required<ButtonOptions>;
-
-// & {
-//     pushed: boolean;
-//     destructed: boolean;
-//     destruct: boolean;
-//     // click: ClickHandlers;
-//     // color: ColorAndTransitionProperties;
-// };
+type InternalButtonProperties = Required<Omit<ButtonOptions, 'click' | 'colors'>> & {
+    pushed: boolean;
+    destructed: boolean;
+    destruct: boolean;
+};

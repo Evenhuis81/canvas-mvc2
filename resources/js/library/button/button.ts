@@ -22,7 +22,7 @@ export default {
 
         buttons.length = 0;
     },
-    // also requires a namechange
+    // Namechange
     endAll: (selfID?: string | number) => {
         for (let i = 0; i < buttons.length; i++) {
             if (selfID && selfID === buttons[i].id) continue;
@@ -49,11 +49,13 @@ const findAndDestroy = (id: string | number) => {
 
 export const createButton = (resourceID: string, options: ButtonOptions) => {
     const {context, engine, input} = resources[resourceID];
-    const props = getButtonProperties(options);
+
+    const {props, click, colors} = getButtonProperties(options);
+
     const hoverTransition = getTransitions(props.color);
 
     const update = createButtonUpdate(props, input, hoverTransition);
-    const show = createButtonShow(props, context);
+    const show = createButtonShow(props, colors, context);
 
     const {selfDestruct, activate, disable, setEndTransition} = handleEventsAndMore(props, input, engine, update);
 
@@ -78,11 +80,15 @@ const createButtonUpdate = (props: InternalButtonProperties, {mouse}: Resources[
     },
 });
 
-const createButtonShow = (props: InternalButtonProperties, ctx: CanvasRenderingContext2D) => ({
+const createButtonShow = (
+    props: InternalButtonProperties,
+    colors: ColorAndTransitionProperties,
+    ctx: CanvasRenderingContext2D,
+) => ({
     id: props.id,
     name: props.name,
     fn: () => {
-        const {fill, stroke, textFill} = props.color;
+        const {fill, stroke, textFill} = colors;
 
         ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
         ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;

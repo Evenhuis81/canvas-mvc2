@@ -11,16 +11,6 @@ export const getButtonProperties: (options: ButtonOptions) => InternalButtonProp
     y: innerHeight * 0.1,
     w: innerWidth * 0.2,
     h: innerHeight * 0.05,
-    color: {
-        fill: getColorRGBA(0, 0, 0, 1),
-        stroke: getColorRGBA(255, 0, 0, 1),
-        textFill: getColorRGBA(255, 255, 255, 1),
-        transition: {
-            fill: getColorRGBA(100, 100, 100, 1),
-            stroke: getColorRGBA(155, 0, 0, 1),
-            textFill: getColorRGBA(0, 255, 0, 1),
-        },
-    },
     text: 'NoText',
     lw: 2,
     r: 5,
@@ -29,10 +19,21 @@ export const getButtonProperties: (options: ButtonOptions) => InternalButtonProp
     pushed: false,
     destructed: false,
     destruct: false,
-    click: {
-        down: () => {},
-        up: () => {},
-        end: () => {},
-    },
     ...options,
 });
+
+// color: {
+//     fill: getColorRGBA(0, 0, 0, 1),
+//     stroke: getColorRGBA(255, 0, 0, 1),
+//     textFill: getColorRGBA(255, 255, 255, 1),
+//     transition: {
+//         fill: getColorRGBA(100, 100, 100, 1),
+//         stroke: getColorRGBA(155, 0, 0, 1),
+//         textFill: getColorRGBA(0, 255, 0, 1),
+//     },
+// },
+// click: {
+//     down: () => {},
+//     up: () => {},
+//     end: () => {},
+// },
