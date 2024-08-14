@@ -1,3 +1,5 @@
+import {statisticsResource} from '.';
+
 export const getInput = (canvas: HTMLCanvasElement) => {
     const canvasRect = canvas.getBoundingClientRect();
     const buttonHeld: Record<number, boolean> = {};
@@ -74,6 +76,8 @@ export const getInput = (canvas: HTMLCanvasElement) => {
             inputDevice.x < rect.x + rect.w / 2 &&
             inputDevice.y >= rect.y - rect.h / 2 &&
             inputDevice.y < rect.y + rect.h / 2;
+
+    statisticsResource.survival.setFn(() => `mouseX: ${mouse.x}, mouseY: ${mouse.y}`);
 
     return {
         mouse: Object.assign(mouse, {insideRect: createInsideRect(mouse)}),

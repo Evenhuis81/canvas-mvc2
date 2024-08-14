@@ -12,7 +12,7 @@ const startButton: ButtonOptions = {
     y: innerHeight * 0.5,
     w: innerWidth * 0.5,
     fontSize: 20,
-    text: 'Start Game',
+    text: '',
     handlers: {
         end: evt => {
             startSurvival();
