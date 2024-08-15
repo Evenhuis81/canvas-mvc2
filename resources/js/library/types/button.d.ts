@@ -3,6 +3,7 @@ type Button = {
     selfDestruct: () => void;
     disable: () => void;
     activate: () => void;
+    setStartTransition: () => void;
     setEndTransition: (destruct?: boolean) => void;
 };
 
@@ -61,6 +62,8 @@ type ButtonOptions = Partial<{
     font: string;
     fontSize: number;
     text: string;
+    delayShow: number;
+    startTransition: boolean;
     endTransition: boolean;
     autoDestruct: boolean;
     handlers: Partial<ButtonHandlers>;

@@ -3,81 +3,31 @@ const startSurvival = () => {
 };
 
 const createStartMenuButtons = () => {
-    //
+    for (let i = 0; i < 5; i++) {
+        menu.main.buttons.push({
+            id: `example${i + 1}`,
+            name: `Example${i + 1}`,
+            y: innerHeight * (0.3 + i * 0.1),
+            w: innerWidth * 0.5,
+            fontSize: 20,
+            text: `Example #${i + 1}`,
+            delayShow: i * 150,
+        });
+
+        if (i === 0) menu.main.buttons[i].handlers = {end: () => startSurvival()};
+    }
 };
 
-const startButton: ButtonOptions = {
-    id: 'start',
-    name: 'Start',
-    y: innerHeight * 0.5,
-    w: innerWidth * 0.5,
-    fontSize: 20,
-    text: '',
-    handlers: {
-        end: evt => {
-            startSurvival();
-        },
-    },
-};
-
-// const startButton2: ButtonOptions = {
-//     id: 'start2',
-//     name: 'Start Button2',
-//     y: innerHeight * 0.4,
-//     w: innerWidth * 0.4,
-//     fontSize: 20,
-//     text: 'Start #2',
-//     click: {
-//         end: evt => {
-//             // evt.selfDestruct();
-//         },
-//     },
-// };
-
-// const startButton3: ButtonOptions = {
-//     id: 'start3',
-//     name: 'Start Button3',
-//     y: innerHeight * 0.5,
-//     w: innerWidth * 0.5,
-//     fontSize: 20,
-//     text: 'Start #3',
-//     click: {
-//         end: evt => {
-//             // evt.selfDestruct();
-//         },
-//     },
-// };
-
-// const startButton4: ButtonOptions = {
-//     id: 'start4',
-//     name: 'Start Button4',
-//     y: innerHeight * 0.6,
-//     w: innerWidth * 0.4,
-//     fontSize: 20,
-//     text: 'Start #4',
-//     click: {
-//         end: evt => {
-//             // evt.selfDestruct();
-//         },
-//     },
-// };
-
-// const startButton5: ButtonOptions = {
-//     id: 'start5',
-//     name: 'Start Button5',
-//     y: innerHeight * 0.7,
-//     w: innerWidth * 0.3,
-//     fontSize: 20,
-//     text: 'Start #5',
-//     click: {
-//         end: evt => {
-//             // evt.selfDestruct();
-//         },
-//     },
-// };
-
-export const menu = {
+interface MenuButtons {
     main: {
-        buttons: [startButton],
+        buttons: ButtonOptions[];
+    };
+}
+
+export const menu: MenuButtons = {
+    main: {
+        buttons: [],
     },
 };
+
+createStartMenuButtons();

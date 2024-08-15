@@ -31,6 +31,8 @@ const setProps: (props: ButtonProperties) => InternalButtonProperties = props =>
     pushed: false,
     destructed: false,
     destruct: false,
+    delayShow: 0, // ms
+    startTransition: true,
     endTransition: true,
     autoDestruct: true,
     ...props,
@@ -45,11 +47,11 @@ const setColors = (colors?: Partial<ButtonColorAndTransitionProperties>) => ({
         stroke: getColorRGBA(155, 0, 0, 1),
         textFill: getColorRGBA(0, 255, 0, 1),
     },
-    ...colors,
+    ...colors, // spread is not copying nested properties (transition in this case)
 });
 const setHandlers = (handlers?: Partial<ButtonHandlers>) => ({
     up: () => {},
     down: () => {},
     end: () => {},
-    ...handlers,
+    ...handlers, // could use a start handler eventually
 });

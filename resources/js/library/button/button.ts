@@ -18,7 +18,7 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
     const show = createButtonShow(props, colors, context);
 
     // simplify
-    const {selfDestruct, activate, disable, setEndTransition} = handleEventsAndMore(
+    const {selfDestruct, activate, disable, setStartTransition, setEndTransition} = handleEventsAndMore(
         props,
         colors,
         handlers,
@@ -27,10 +27,25 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
         update,
     );
 
-    engine.setUpdate(update);
-    engine.setShow(show);
+    // in case of a start transition that starts outside the window, only the update has to be delayed, so the property with the
+    // name 'delayShow' is incorrect, for now the example start transition is hardcoded, so these next setUpdates are just fine
+    const setEngine = () => {
+        engine.setShow(show);
+        engine.setUpdate(update);
+        if (props.startTransition) setStartTransition();
+    };
 
-    buttons.push({id: props.id, selfDestruct, disable, activate, setEndTransition});
+    const delayShow = () =>
+        setTimeout(() => {
+            console.log('check');
+
+            setEngine();
+        }, props.delayShow);
+
+    props.delayShow ? delayShow() : setEngine();
+
+    // Some of these should be optional depending on incoming button options on create
+    buttons.push({id: props.id, selfDestruct, disable, activate, setStartTransition, setEndTransition});
 };
 
 // This is optional, for now it's a default on the button, but there should be themes and variety here
@@ -86,6 +101,29 @@ const setColorForDisableAndActivate = (color: ButtonColorAndTransitionProperties
 const dim = (colors: ButtonColorAndTransitionProperties) => setColorForDisableAndActivate(colors, 0.5);
 const brighten = (colors: ButtonColorAndTransitionProperties) => setColorForDisableAndActivate(colors, 1);
 
+const createStartTransitionUpdate = (props: InternalButtonProperties, engine: Engine, steps = 30) => {
+    const originalPosX = props.x;
+    const xLeftOutside = -props.w / 2 - props.lw / 2;
+    const fadeInFromLeftDistance = props.x - xLeftOutside;
+    const velocityXPerStep = fadeInFromLeftDistance / steps;
+    props.x = xLeftOutside;
+
+    const startTransitionUpdate = {
+        id: `start transition ${props.id}`,
+        fn: () => {
+            props.x += velocityXPerStep;
+
+            if (props.x >= originalPosX) {
+                props.x = originalPosX;
+
+                engine.removeUpdate(startTransitionUpdate.id);
+            }
+        },
+    };
+
+    return startTransitionUpdate;
+};
+
 const createEndTransitionUpdate = (
     props: InternalButtonProperties,
     colors: ButtonColorAndTransitionProperties,
@@ -97,7 +135,7 @@ const createEndTransitionUpdate = (
     const heightStep = props.h / steps;
     const textFadeStep = 1 / steps;
 
-    const update = {
+    const endTransitionUpdate = {
         id: `end transition.${props.id}`,
         fn: () => {
             props.w -= widthStep;
@@ -105,14 +143,14 @@ const createEndTransitionUpdate = (
             colors.textFill.a -= textFadeStep;
 
             if (props.w <= 0) {
-                engine.removeUpdate(update.id); // abstract this?
+                engine.removeUpdate(endTransitionUpdate.id); // abstract this?
 
                 onFinished();
             }
         },
     };
 
-    return update;
+    return endTransitionUpdate;
 };
 
 // Namechange and possibly undeniably a seperate of concerns
@@ -127,13 +165,13 @@ const handleEventsAndMore = (
     const {id} = props;
     const {mouse, touch} = input;
 
-    console.log(handlers);
-
     const setEndTransition = (destruct = false) => {
         props.destruct = destruct;
 
         engine.setUpdate(endTransitionUpdate);
     };
+
+    const setStartTransition = () => engine.setUpdate(startTransitionUpdate);
 
     const selfDestruct = () => {
         if (props.destructed) throw new Error(`Button ${id} is already destroyed!`);
@@ -164,6 +202,8 @@ const handleEventsAndMore = (
         if (props.destruct) selfDestruct();
     };
 
+    // Make this optional
+    const startTransitionUpdate = createStartTransitionUpdate(props, engine);
     const endTransitionUpdate = createEndTransitionUpdate(props, colors, engine, onFinished);
 
     const mousedownEvent = (evt: MouseEvent) => {
@@ -227,6 +267,7 @@ const handleEventsAndMore = (
         activate,
         disable,
         setEndTransition,
+        setStartTransition,
     };
 
     addEventListener('touchstart', touchstartEvent);
@@ -267,7 +308,7 @@ export default {
 
             const timer = i * 100 + 100;
 
-            // TODO::Let this run on the deltatime of the engine
+            // TODO::Let this run on the deltatime of the engine once implemented
             setTimeout(() => {
                 buttons[i].setEndTransition(true);
             }, timer);

@@ -1,4 +1,4 @@
-import {statisticsResource} from '.';
+// import {statisticsResource} from '.';
 
 export const getInput = (canvas: HTMLCanvasElement) => {
     const canvasRect = canvas.getBoundingClientRect();
@@ -77,7 +77,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
             inputDevice.y >= rect.y - rect.h / 2 &&
             inputDevice.y < rect.y + rect.h / 2;
 
-    statisticsResource.survival.setFn(() => `mouseX: ${mouse.x}, mouseY: ${mouse.y}`);
+    // statisticsResource.survival.setFn(() => `mouseX: ${mouse.x}, mouseY: ${mouse.y}`);
 
     return {
         mouse: Object.assign(mouse, {insideRect: createInsideRect(mouse)}),

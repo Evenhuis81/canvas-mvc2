@@ -1,16 +1,16 @@
 import button from 'library/button/button';
-import {initialize, resources, statisticsResource} from 'library/index';
+import {initialize, resources} from 'library/index';
 import {menu} from './menu/menu';
 
 export default {
     setup: async () => {
-        const {engine} = initialize('survival', {
+        initialize('survival', {
             containerID: 'container',
             full: true,
             clear: true,
             bg: '#000',
-            statistics: true,
-            setShowStatistics: true,
+            // statistics: true,
+            // setShowStatistics: true,
         });
 
         startLevel();
