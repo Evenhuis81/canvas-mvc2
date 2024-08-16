@@ -11,6 +11,8 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
 
     const {props, handlers, colors} = getButtonProperties(options);
 
+    const cc = options.colors?.transition?.fill;
+
     // simplify
     const hoverTransition = getTransitions(colors);
 
@@ -65,7 +67,7 @@ const createButtonUpdate = (props: InternalButtonProperties, {mouse}: Resources[
 
 const createButtonShow = (
     props: InternalButtonProperties,
-    colors: ButtonColorAndTransitionProperties,
+    colors: InternalButtonColorAndTransitionProperties,
     ctx: CanvasRenderingContext2D,
 ) => ({
     id: props.id,
@@ -92,14 +94,14 @@ const createButtonShow = (
     },
 });
 
-const setColorForDisableAndActivate = (color: ButtonColorAndTransitionProperties, alpha: number) => {
+const setColorForDisableAndActivate = (color: InternalButtonColorAndTransitionProperties, alpha: number) => {
     color.fill.a = alpha;
     color.stroke.a = alpha;
     color.textFill.a = alpha;
 };
 
-const dim = (colors: ButtonColorAndTransitionProperties) => setColorForDisableAndActivate(colors, 0.5);
-const brighten = (colors: ButtonColorAndTransitionProperties) => setColorForDisableAndActivate(colors, 1);
+const dim = (colors: InternalButtonColorAndTransitionProperties) => setColorForDisableAndActivate(colors, 0.5);
+const brighten = (colors: InternalButtonColorAndTransitionProperties) => setColorForDisableAndActivate(colors, 1);
 
 const createStartTransitionUpdate = (props: InternalButtonProperties, engine: Engine, steps = 30) => {
     const originalPosX = props.x;
@@ -126,7 +128,7 @@ const createStartTransitionUpdate = (props: InternalButtonProperties, engine: En
 
 const createEndTransitionUpdate = (
     props: InternalButtonProperties,
-    colors: ButtonColorAndTransitionProperties,
+    colors: InternalButtonColorAndTransitionProperties,
     engine: Engine,
     onFinished: () => void,
     steps = 30,
@@ -156,8 +158,8 @@ const createEndTransitionUpdate = (
 // Namechange and possibly undeniably a seperate of concerns
 const handleEventsAndMore = (
     props: InternalButtonProperties,
-    colors: ButtonColorAndTransitionProperties,
-    handlers: ButtonHandlers,
+    colors: InternalButtonColorAndTransitionProperties,
+    handlers: InternalButtonHandlers,
     input: Resources['input'],
     engine: Engine,
     update: Update,

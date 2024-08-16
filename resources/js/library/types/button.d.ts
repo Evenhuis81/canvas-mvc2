@@ -18,15 +18,15 @@ type ColorRGB = {
     b: number;
 };
 
-type ButtonColorAndTransitionProperties = Record<ButtonColorTypes, ColorRGBA> & {
-    transition: Record<ButtonColorTypes, ColorRGBA>;
-};
-
 type ColorValues = 'r' | 'g' | 'b' | 'a';
 
 type ColorRGBA = ColorRGB & {a: number};
 
 type ButtonColorTypes = 'fill' | 'stroke' | 'textFill';
+
+type ButtonColorAndTransitionProperties = Partial<Record<ButtonColorTypes, ColorRGBA>> & {
+    transition: Record<ButtonColorTypes, ColorRGBA>;
+};
 
 // These 2 = bad
 type Transitions = {
@@ -44,9 +44,9 @@ type Transition = {
 type ButtonType = 'fill' | 'stroke' | 'fillStroke' | 'fillStrokeRound';
 
 type ButtonHandlers = {
-    down: (event: ClickEvent) => void;
-    up: (event: ClickEvent) => void;
-    end: (event: Button) => void;
+    down?: (event: ClickEvent) => void;
+    up?: (event: ClickEvent) => void;
+    end?: (event: Button) => void;
 };
 
 type ButtonOptions = Partial<{
@@ -66,8 +66,8 @@ type ButtonOptions = Partial<{
     startTransition: boolean;
     endTransition: boolean;
     autoDestruct: boolean;
-    handlers: Partial<ButtonHandlers>;
-    colors: Partial<ButtonColorAndTransitionProperties>;
+    handlers: ButtonHandlers;
+    colors: ButtonColorAndTransitionProperties;
 }>;
 
 type ButtonProperties = Omit<ButtonOptions, 'handlers' | 'colors'>;
@@ -77,3 +77,7 @@ type InternalButtonProperties = Required<ButtonProperties> & {
     destructed: boolean;
     destruct: boolean;
 };
+
+type InternalButtonHandlers = Required<ButtonHandlers>;
+
+type InternalButtonColorAndTransitionProperties = Required<ButtonColorAndTransitionProperties>;

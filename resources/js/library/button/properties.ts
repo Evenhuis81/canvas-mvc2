@@ -5,8 +5,8 @@ const uid = () => Date.now().toString(36) + Math.random().toString(36).substring
 
 type GetButtonProperties = (options: ButtonOptions) => {
     props: InternalButtonProperties;
-    handlers: ButtonHandlers;
-    colors: ButtonColorAndTransitionProperties;
+    handlers: InternalButtonHandlers;
+    colors: InternalButtonColorAndTransitionProperties;
 };
 
 export const getButtonProperties: GetButtonProperties = options => {
@@ -38,7 +38,7 @@ const setProps: (props: ButtonProperties) => InternalButtonProperties = props =>
     ...props,
 });
 
-const setColors = (colors?: Partial<ButtonColorAndTransitionProperties>) => ({
+const setColors = (colors?: ButtonColorAndTransitionProperties) => ({
     fill: getColorRGBA(0, 0, 0, 1),
     stroke: getColorRGBA(255, 0, 0, 1),
     textFill: getColorRGBA(255, 255, 255, 1),
@@ -49,7 +49,7 @@ const setColors = (colors?: Partial<ButtonColorAndTransitionProperties>) => ({
     },
     ...colors, // spread is not copying nested properties (transition in this case)
 });
-const setHandlers = (handlers?: Partial<ButtonHandlers>) => ({
+const setHandlers = (handlers?: ButtonHandlers) => ({
     up: () => {},
     down: () => {},
     end: () => {},

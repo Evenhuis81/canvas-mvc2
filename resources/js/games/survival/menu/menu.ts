@@ -13,21 +13,25 @@ const createStartMenuButtons = () => {
             text: `Example #${i + 1}`,
             delayShow: i * 150,
         });
-
-        if (i === 0) menu.main.buttons[i].handlers = {end: () => startSurvival()};
     }
 };
-
-interface MenuButtons {
-    main: {
-        buttons: ButtonOptions[];
-    };
-}
 
 export const menu: MenuButtons = {
     main: {
         buttons: [],
+        handlers: [],
     },
 };
 
+menu.main.handlers[4].up = () => {
+    startSurvival();
+};
+
 createStartMenuButtons();
+
+interface MenuButtons {
+    main: {
+        buttons: Omit<ButtonOptions, 'click' | 'colors'>[];
+        handlers: Required<ButtonHandlers>[];
+    };
+}
