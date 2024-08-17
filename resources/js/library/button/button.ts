@@ -11,8 +11,6 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
 
     const {props, handlers, colors} = getButtonProperties(options);
 
-    const cc = options.colors?.transition?.fill;
-
     // simplify
     const hoverTransition = getTransitions(colors);
 
