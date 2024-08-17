@@ -44,6 +44,8 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
 
     props.delayShow ? delayShow() : setEngine();
 
+    // resize function CB from input for button
+
     // Some of these should be optional depending on incoming button options on create
     buttons.push({id: props.id, selfDestruct, disable, activate, setStartTransition, setEndTransition});
 };
@@ -88,7 +90,7 @@ const createButtonShow = (
         ctx.textBaseline = 'middle';
 
         ctx.beginPath();
-        ctx.fillText(props.text, props.x, props.y + 1.5); // use textAscend / -descent
+        ctx.fillText(props.text, props.x, props.y + 1.5); // TODO::use textAscend / -descent
     },
 });
 

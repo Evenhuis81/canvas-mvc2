@@ -1,3 +1,5 @@
+const resizeCB: (() => void)[] = [];
+
 export const getInput = (canvas: HTMLCanvasElement) => {
     const canvasRect = canvas.getBoundingClientRect();
     const buttonHeld: Record<number, boolean> = {};
@@ -57,6 +59,10 @@ export const getInput = (canvas: HTMLCanvasElement) => {
     const resize = () => {
         canvas.width = innerWidth;
         canvas.height = innerHeight;
+
+        console.log('resize triggered');
+
+        for (let i = 0; i < resizeCB.length; i++) resizeCB[i]();
     };
 
     let timeout: ReturnType<typeof setTimeout>;
@@ -66,7 +72,10 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         timeout = setTimeout(resize, 250);
     };
 
-    onresize = () => resizeCanvas();
+    // resize events are only fired on the window object (mdn mozilla)
+    onresize = () => {
+        resizeCanvas();
+    };
 
     const createInsideRect =
         (inputDevice: {x: number; y: number}) => (rect: {x: number; y: number; w: number; h: number}) =>
@@ -82,3 +91,5 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         keyHeld,
     };
 };
+
+export const onResize = (cb: () => unknown) => resizeCB.push(cb);

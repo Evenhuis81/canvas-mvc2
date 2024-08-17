@@ -1,19 +1,18 @@
 import {getCanvas} from 'library/canvas';
 import {getContainer} from '.';
+import {onResize} from './input';
 
 const canvas2 = getCanvas();
 let canvas1: HTMLCanvasElement;
 let container: HTMLDivElement;
 let active = false;
-const resizeCB: (() => void)[] = [];
 
-// resize events are only fired on the window object (mdn mozilla)
-// let timeout: ReturnType<typeof setTimeout>;
-// const resizeDualView = () => {
-//     clearTimeout(timeout);
-//     timeout = setTimeout(resize, 250);
-// };
-// onresize = () => resizeDualView();
+let timeout: ReturnType<typeof setTimeout>;
+
+const resizeDualView = () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(resize, 250);
+};
 
 addEventListener('keydown', ({code}) => {
     if (code === 'KeyT') toggleDualView();
@@ -22,13 +21,6 @@ addEventListener('keydown', ({code}) => {
 addEventListener('keyup', ({code}) => {
     if (code === 'F11') resize();
 });
-
-// const resizeDualView = () => {
-//     clearTimeout(timeout);
-//     timeout = setTimeout(resize, 250);
-// };
-
-export const onResize = (cb: () => number) => resizeCB.push(cb);
 
 export const setDualView = (canvas: HTMLCanvasElement, containerID: string) => {
     canvas1 = canvas;
@@ -44,20 +36,19 @@ export const setDualView = (canvas: HTMLCanvasElement, containerID: string) => {
 
     resize();
 
+    onResize(resizeDualView);
+
     container.appendChild(canvas1);
 
     return canvas2;
 };
 
 const toggleDualView = () => {
-    // Make this a transition, with target and bezier curve laid out transition effect
     if (active) {
         container.removeChild(canvas2);
         canvas1.width = innerWidth;
 
         active = false;
-
-        for (let i = 0; i < resizeCB.length; i++) resizeCB[i]();
 
         return;
     }
@@ -68,9 +59,6 @@ const toggleDualView = () => {
     container.appendChild(canvas2);
 
     active = true;
-
-    // This is more like a manual resize, triggered by keyUp event
-    for (let i = 0; i < resizeCB.length; i++) resizeCB[i]();
 };
 
 const resize = () => {
@@ -81,13 +69,9 @@ const resize = () => {
         canvas1.width = innerWidth / 2;
         canvas2.width = innerWidth / 2;
 
-        for (let i = 0; i < resizeCB.length; i++) resizeCB[i]();
-
         return;
     }
 
     canvas1.width = innerWidth;
     canvas2.width = innerWidth;
-
-    for (let i = 0; i < resizeCB.length; i++) resizeCB[i]();
 };
