@@ -60,21 +60,17 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         canvas.width = innerWidth;
         canvas.height = innerHeight;
 
-        console.log('resize triggered');
+        console.log(resizeCB.length);
 
         for (let i = 0; i < resizeCB.length; i++) resizeCB[i]();
     };
 
     let timeout: ReturnType<typeof setTimeout>;
 
-    const resizeCanvas = () => {
-        clearTimeout(timeout);
-        timeout = setTimeout(resize, 250);
-    };
-
     // resize events are only fired on the window object (mdn mozilla)
     onresize = () => {
-        resizeCanvas();
+        clearTimeout(timeout);
+        timeout = setTimeout(resize, 250);
     };
 
     const createInsideRect =
@@ -92,4 +88,4 @@ export const getInput = (canvas: HTMLCanvasElement) => {
     };
 };
 
-export const onResize = (cb: () => unknown) => resizeCB.push(cb);
+export const setResize = (cb: () => unknown) => resizeCB.push(cb);

@@ -1,6 +1,5 @@
 import {getColorRGBA} from 'library/colors';
 
-// mediocre uid
 const uid = () => Date.now().toString(36) + Math.random().toString(36).substring(2);
 
 type GetButtonProperties = (options: ButtonOptions) => {
@@ -37,6 +36,14 @@ const setProps: (props: ButtonProperties) => InternalButtonProperties = props =>
     autoDestruct: true,
     ...props,
 });
+
+// Tho this is a static button, try set a scale value and adjust properties on resize with this scale value (scale according to innerWidth and innerHeight)
+// const calcProps = () => ({
+//     x: innerWidth * 0.5,
+//     y: innerHeight * 0.1,
+//     w: innerWidth * 0.2,
+//     h: innerHeight * 0.05,
+// })
 
 const setColors = (colors?: ButtonColorAndTransitionProperties) => ({
     fill: getColorRGBA(0, 0, 0, 1),

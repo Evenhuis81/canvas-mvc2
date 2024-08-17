@@ -1,6 +1,6 @@
 import {getCanvas} from 'library/canvas';
 import {getContainer} from '.';
-import {onResize} from './input';
+import {setResize} from './input';
 
 const canvas2 = getCanvas();
 let canvas1: HTMLCanvasElement;
@@ -36,7 +36,7 @@ export const setDualView = (canvas: HTMLCanvasElement, containerID: string) => {
 
     resize();
 
-    onResize(resizeDualView);
+    setResize(resizeDualView);
 
     container.appendChild(canvas1);
 

@@ -3,13 +3,17 @@ import {getTransitions} from './transition';
 import {getButtonProperties} from './properties';
 import type {Resources} from 'library/types';
 import type {Engine, Update} from 'library/types/engine';
+import {setResize} from 'library/input';
 
 const buttons: Button[] = [];
 
-export const createButton = (resourceID: string, options: ButtonOptions) => {
+// Is everything a button? Eventually make this method all seperate methods and make all update/show objects with this a sort
+// of a pre-initializer (?!!)
+export const createButton = (resourceID: string, options: ButtonOptions, calculatedButton?: () => ButtonOptions) => {
     const {context, engine, input} = resources[resourceID];
 
-    const {props, handlers, colors} = getButtonProperties(options);
+    const {props, handlers, colors} = getButtonProperties(calculatedButton ? calculatedButton() : options);
+    // const {props, handlers, colors} = getButtonProperties(calculatedButton());
 
     // simplify
     const hoverTransition = getTransitions(colors);
@@ -37,14 +41,24 @@ export const createButton = (resourceID: string, options: ButtonOptions) => {
 
     const delayShow = () =>
         setTimeout(() => {
-            console.log('check');
-
             setEngine();
         }, props.delayShow);
 
     props.delayShow ? delayShow() : setEngine();
 
-    // resize function CB from input for button
+    console.log(calculatedButton);
+
+    if (calculatedButton) {
+        console.log('calculate button triggered');
+
+        setResize(() => {
+            const calcB = calculatedButton();
+
+            console.log(props.w);
+            Object.assign(props, calcB);
+            console.log(props.w);
+        });
+    }
 
     // Some of these should be optional depending on incoming button options on create
     buttons.push({id: props.id, selfDestruct, disable, activate, setStartTransition, setEndTransition});
@@ -288,7 +302,8 @@ const handleEventsAndMore = (
 };
 
 export default {
-    create: (resourceID: string, options: ButtonOptions = {}) => createButton(resourceID, options),
+    create: (resourceID: string, options: ButtonOptions = {}, calculatedButton?: () => ButtonOptions) =>
+        createButton(resourceID, options, calculatedButton),
     destruct: (id: (string | number) | (string | string[])) => {
         if (Array.isArray(id)) {
             id.forEach(i => findAndDestroy(i));

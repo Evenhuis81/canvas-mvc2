@@ -3,14 +3,28 @@ const startSurvival = () => {
 };
 
 export const startButton = {
-    id: `tart${1}`,
-    name: `Start${1}`,
+    id: 'start',
+    name: 'Start',
     y: innerHeight * 0.5,
     w: innerWidth * 0.5,
     fontSize: 20,
-    text: `Start Game`,
-    delayShow: 0,
+    text: 'Start',
+    delayShow: 1000,
     click: {
         up: () => startSurvival(),
     },
 };
+
+export const calculatedButton = () => ({
+    id: 'start',
+    name: 'Start',
+    x: innerWidth * 0.5,
+    y: innerHeight * 0.5,
+    w: innerWidth * 0.5,
+    fontSize: 20,
+    text: 'Start',
+    delayShow: 1000,
+    click: {
+        up: () => startSurvival(),
+    },
+});
