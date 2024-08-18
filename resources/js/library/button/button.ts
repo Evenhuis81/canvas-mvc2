@@ -7,21 +7,17 @@ import {setResize} from 'library/input';
 
 const buttons: Button[] = [];
 
-// Is everything a button? Eventually make this method all seperate methods and make all update/show objects with this a sort
-// of a pre-initializer (?!!)
+// Eventually make this method all seperate methods and make all update/show objects with this a sort of pre-initializer (?!!)
 export const createButton = (resourceID: string, options: ButtonOptions, calculatedButton?: () => ButtonOptions) => {
     const {context, engine, input} = resources[resourceID];
 
     const {props, handlers, colors} = getButtonProperties(calculatedButton ? calculatedButton() : options);
-    // const {props, handlers, colors} = getButtonProperties(calculatedButton());
 
-    // simplify
     const hoverTransition = getTransitions(colors);
 
     const update = createButtonUpdate(props, input, hoverTransition);
     const show = createButtonShow(props, colors, context);
 
-    // simplify
     const {selfDestruct, activate, disable, setStartTransition, setEndTransition} = handleEventsAndMore(
         props,
         colors,

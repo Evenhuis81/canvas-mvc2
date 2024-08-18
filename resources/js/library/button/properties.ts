@@ -16,17 +16,27 @@ export const getButtonProperties: GetButtonProperties = options => {
 
 const setProps: (props: ButtonProperties) => InternalButtonProperties = props => ({
     id: props.id ? 'noID' : uid(),
-    name: 'noName',
-    type: 'fillStrokeRound',
+    ...calculatedProps(),
+    ...arbitraryProps,
+});
+
+const calculatedProps = () => ({
     x: innerWidth * 0.5,
     y: innerHeight * 0.1,
     w: innerWidth * 0.2,
     h: innerHeight * 0.05,
-    text: 'NoText',
     lw: 2,
     r: 5,
-    font: 'monospace',
     fontSize: 10,
+});
+
+
+
+const arbitraryProps: Record<[keyof InternalButtonProperties]: InternalButtonProperties[keyof InternalButtonProperties]> = {
+    name: 'noName',
+    type: 'fillStrokeRound',
+    text: 'NoText',
+    font: 'monospace',
     pushed: false,
     destructed: false,
     destruct: false,
@@ -34,16 +44,18 @@ const setProps: (props: ButtonProperties) => InternalButtonProperties = props =>
     startTransition: true,
     endTransition: true,
     autoDestruct: true,
-    ...props,
-});
+};
 
 // Tho this is a static button, try set a scale value and adjust properties on resize with this scale value (scale according to innerWidth and innerHeight)
-// const calcProps = () => ({
-//     x: innerWidth * 0.5,
-//     y: innerHeight * 0.1,
-//     w: innerWidth * 0.2,
-//     h: innerHeight * 0.05,
-// })
+const calcProps = () => ({
+    x: innerWidth * 0.5,
+    y: innerHeight * 0.1,
+    w: innerWidth * 0.2,
+    h: innerHeight * 0.05,
+    lw: 2,
+    r: 5,
+    fontSize: 10,
+});
 
 const setColors = (colors?: ButtonColorAndTransitionProperties) => ({
     fill: getColorRGBA(0, 0, 0, 1),

@@ -1,6 +1,12 @@
 // Notes on 13-08-2024:
 // 1. QBuzz @ home ,wolkbreuk, asian neusophaal
 
+// Notes on sun @forum, 18-08-2024:
+// 1. Generalize Types for all kinds of shapes and make shapes and methods for tv and static shows equal
+// 2. Seperate calculated and arbitrary properties on button and if possible abstract all the methods and apply them to all the shapes (see 1)
+// 3. Auto-update all objects that are given an (optional) calculated properties object in case of resize
+// 4. Set a sort of scale value for x and y-window , like 16:9 (think tiles), set this default and calculate all calculated objects with these values;
+
 // interface ButtonType<T extends keyof WindowEventMap> {
 //     type: T;
 //     handler: (evt: WindowEventMap[T]) => void;
