@@ -15,12 +15,35 @@ export const getButtonProperties: GetButtonProperties = options => {
 };
 
 const setProps: (props: ButtonProperties) => InternalButtonProperties = props => ({
-    id: props.id ? 'noID' : uid(),
-    ...calculatedProps(),
-    ...arbitraryProps,
+    ...calculatedDefaultProperties(),
+    ...staticDefaultProperties,
+    ...props,
+    id: props.id ?? uid(),
 });
 
-const calculatedProps = () => ({
+console.log(innerWidth, innerHeight);
+
+const canvasScale = {
+    x: innerWidth / 1690,
+    y: innerHeight / 1080,
+};
+
+console.log(canvasScale.x, canvasScale.y);
+
+// const calculatedProps = (unitWidth: number, unitHeight: number, props: ButtonProperties) => {}
+
+const calculatedDefaultProperties: () => Omit<
+    InternalButtonProperties,
+    keyof InternalStaticButtonProperties | 'id'
+> = () => ({
+    name: 'noName',
+    type: 'fillStrokeRound',
+    text: 'NoText',
+    font: 'monospace',
+    delayShow: 0, // ms
+    startTransition: true,
+    endTransition: true,
+    autoDestruct: true,
     x: innerWidth * 0.5,
     y: innerHeight * 0.1,
     w: innerWidth * 0.2,
@@ -30,20 +53,16 @@ const calculatedProps = () => ({
     fontSize: 10,
 });
 
+type InternalStaticButtonProperties = {
+    pushed: boolean;
+    destructed: boolean;
+    destruct: boolean;
+};
 
-
-const arbitraryProps: Record<[keyof InternalButtonProperties]: InternalButtonProperties[keyof InternalButtonProperties]> = {
-    name: 'noName',
-    type: 'fillStrokeRound',
-    text: 'NoText',
-    font: 'monospace',
+const staticDefaultProperties: InternalStaticButtonProperties = {
     pushed: false,
     destructed: false,
     destruct: false,
-    delayShow: 0, // ms
-    startTransition: true,
-    endTransition: true,
-    autoDestruct: true,
 };
 
 // Tho this is a static button, try set a scale value and adjust properties on resize with this scale value (scale according to innerWidth and innerHeight)
