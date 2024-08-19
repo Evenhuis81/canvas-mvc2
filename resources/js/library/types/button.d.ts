@@ -28,19 +28,6 @@ type ButtonColorAndTransitionProperties = Partial<Record<ButtonColorTypes, Color
     transition: Record<ButtonColorTypes, ColorRGBA>;
 };
 
-// These 2 = bad
-type Transitions = {
-    steps: number;
-    on: (id: string) => void;
-    off: (id: string) => void;
-}[];
-
-type Transition = {
-    steps: number;
-    forward: () => void;
-    reverse: () => void;
-};
-
 type ButtonType = 'fill' | 'stroke' | 'fillStroke' | 'fillStrokeRound';
 
 type ButtonHandlers = {
@@ -81,3 +68,23 @@ type InternalButtonProperties = Required<ButtonProperties> & {
 type InternalButtonHandlers = Required<ButtonHandlers>;
 
 type InternalButtonColorAndTransitionProperties = Required<ButtonColorAndTransitionProperties>;
+
+type GetButtonProperties = (options: ButtonOptions) => {
+    props: InternalButtonProperties;
+    handlers: InternalButtonHandlers;
+    colors: InternalButtonColorAndTransitionProperties;
+};
+
+type InternalStaticButtonProperties = {
+    pushed: boolean;
+    destructed: boolean;
+    destruct: boolean;
+    name: string;
+    type: ButtonType;
+    text: string;
+    font: string;
+    delayShow: number; // ms
+    startTransition: boolean;
+    endTransition: boolean;
+    autoDestruct: boolean;
+};
