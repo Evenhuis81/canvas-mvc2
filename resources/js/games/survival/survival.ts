@@ -1,6 +1,6 @@
 import button from 'library/button/button';
 import {initialize, resources} from 'library/index';
-import {calculatedButton, startButton} from './menu/menu';
+import {calculatedStartButton, startButton} from './menu/menu';
 
 export default {
     setup: async () => {
@@ -20,5 +20,6 @@ export default {
 };
 
 const startLevel = () => {
-    button.create('survival', startButton, calculatedButton);
+    // button.create('survival', startButton, calculatedStartButton);
+    button.create('survival');
 };

@@ -1,8 +1,10 @@
 import {getColorRGBA} from 'library/colors';
 import {uid} from 'library/helpers';
 
-export const getButtonProperties: GetButtonProperties = options => {
+export const getButtonProperties: GetButtonProperties = (options, calculatedOptions) => {
     const {handlers, colors, ...properties} = options;
+
+    if (calculatedOptions) Object.assign(properties, calculatedOptions());
 
     return {props: setProps(properties), handlers: setHandlers(handlers), colors: setColors(colors)};
 };
@@ -11,7 +13,7 @@ const setProps: (props: ButtonProperties) => InternalButtonProperties = props =>
     ...calculatedDefaultProperties(),
     ...staticDefaultProperties,
     ...props,
-    id: props.id ?? uid(),
+    id: props.id ?? `button ${uid()}`,
 });
 
 const calculatedDefaultProperties: () => Omit<
@@ -23,24 +25,25 @@ const calculatedDefaultProperties: () => Omit<
     w: innerWidth * 0.2,
     h: innerHeight * 0.05,
     lw: 2,
-    r: 5,
-    fontSize: 10,
+    fontSize: 16,
 });
 
 const staticDefaultProperties: InternalStaticButtonProperties = {
     pushed: false,
     destructed: false,
     destruct: false,
-    name: 'noName',
+    name: 'Example Button',
     type: 'fillStrokeRound',
-    text: 'NoText',
+    text: 'Example Button',
     font: 'monospace',
+    r: 5,
     delay: 0, // ms
     startTransition: true,
     endTransition: true,
     autoDestruct: true,
 };
 
+// This needs recursion
 const setColors = (colors?: ButtonColorAndTransitionProperties) => ({
     fill: getColorRGBA(0, 0, 0, 1),
     stroke: getColorRGBA(255, 0, 0, 1),
@@ -50,7 +53,7 @@ const setColors = (colors?: ButtonColorAndTransitionProperties) => ({
         stroke: getColorRGBA(155, 0, 0, 1),
         textFill: getColorRGBA(0, 255, 0, 1),
     },
-    ...colors, // spread is not copying nested properties
+    ...colors,
 });
 const setHandlers = (handlers?: ButtonHandlers) => ({
     up: () => {},

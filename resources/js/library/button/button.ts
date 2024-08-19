@@ -1,17 +1,21 @@
 import {resources} from '..';
 import {getTransitions} from './transition';
 import {getButtonProperties} from './properties';
+import {setResize} from 'library/input';
 import type {Resources} from 'library/types';
 import type {Engine, Update} from 'library/types/engine';
-import {setResize} from 'library/input';
 
 const buttons: Button[] = [];
 
-// Eventually make this method all seperate methods and make all update/show objects with this a sort of pre-initializer (?!!)
-export const createButton = (resourceID: string, options: ButtonOptions, calculatedButton?: () => ButtonOptions) => {
+// Make this method all seperate methods and make all update/show objects with this a sort of pre-initializer. (?)
+export const createButton = (
+    resourceID: string,
+    options: ButtonOptions = {},
+    calculatedOptions?: () => ButtonOptions,
+) => {
     const {context, engine, input} = resources[resourceID];
 
-    const {props, handlers, colors} = getButtonProperties(calculatedButton ? calculatedButton() : options);
+    const {props, handlers, colors} = getButtonProperties(options, calculatedOptions);
 
     const hoverTransition = getTransitions(colors);
 
@@ -40,17 +44,14 @@ export const createButton = (resourceID: string, options: ButtonOptions, calcula
 
     props.delay ? delayStart() : setEngine();
 
-    if (calculatedButton) {
-        console.log('calculate button triggered');
-
+    if (calculatedOptions)
         setResize(() => {
-            const calcB = calculatedButton();
+            const calcB = calculatedOptions();
 
             console.log(props.w);
             Object.assign(props, calcB);
             console.log(props.w);
         });
-    }
 
     // Some of these should be optional depending on incoming button options on create
     buttons.push({id: props.id, selfDestruct, disable, activate, setStartTransition, setEndTransition});

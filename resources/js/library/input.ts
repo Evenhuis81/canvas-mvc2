@@ -60,7 +60,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         canvas.width = innerWidth;
         canvas.height = innerHeight;
 
-        console.log(resizeCB.length);
+        console.log(`$resizeCB length: {resizeCB.length}`);
 
         for (let i = 0; i < resizeCB.length; i++) resizeCB[i]();
     };

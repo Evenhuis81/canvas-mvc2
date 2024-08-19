@@ -69,7 +69,10 @@ type InternalButtonHandlers = Required<ButtonHandlers>;
 
 type InternalButtonColorAndTransitionProperties = Required<ButtonColorAndTransitionProperties>;
 
-type GetButtonProperties = (options: ButtonOptions) => {
+type GetButtonProperties = (
+    options: ButtonOptions,
+    calculatedOptions?: () => ButtonOptions,
+) => {
     props: InternalButtonProperties;
     handlers: InternalButtonHandlers;
     colors: InternalButtonColorAndTransitionProperties;
@@ -83,6 +86,7 @@ type InternalStaticButtonProperties = {
     type: ButtonType;
     text: string;
     font: string;
+    r: number;
     delay: number; // ms
     startTransition: boolean;
     endTransition: boolean;
