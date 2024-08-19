@@ -1,27 +1,22 @@
+import {uid} from 'library/helpers';
 import {Engine} from 'library/types/engine';
 import {Rect} from 'library/types/tv';
 
 const transitionTypes: TransitionTypes[] = ['fill', 'stroke', 'textFill'];
 const colorValues: ColorValues[] = ['r', 'g', 'b', 'a'];
 
-let id = 0;
-
-export const createEndTransition = (props: Rect, engine: Engine) => {
-    //
-};
-
 export const createTransitionUpdate = (
     props: Rect & {color: {textFill: ColorRGBA}},
     onTransitionFinished: () => void,
+    steps: number = 20,
 ) => {
     let widthShrink = true;
     let finished = false;
-    const steps = 20;
     let count = 0;
 
     const changePerStep = {
-        w: calculateDifferencePerStep2(props.w, 0, steps),
-        h: calculateDifferencePerStep2(props.h, 0, steps),
+        w: calculateSingleStep(props.w, 0, steps),
+        h: calculateSingleStep(props.h, 0, steps),
     };
 
     const fn = () => {
@@ -52,12 +47,12 @@ export const createTransitionUpdate = (
     };
 
     return {
-        id: `transition ${id++}`,
+        id: `transition ${uid()}`,
         fn,
     };
 };
 
-export const getTransitions = (color: InternalButtonProperties['color'], steps = 10) => {
+export const getTransitions = (color: Required<ButtonColorAndTransitionProperties>, steps = 10) => {
     const colorChangePerStep = <Record<TransitionTypes, ReturnType<typeof calculateDifferencePerStep>>>{};
 
     transitionTypes.forEach(
@@ -69,7 +64,6 @@ export const getTransitions = (color: InternalButtonProperties['color'], steps =
         forward: () => {
             if (transition.steps <= 0) return;
 
-            // TODO:: Refactor
             for (let i = 0; i < transitionTypes.length; i++) {
                 color[transitionTypes[i]].r += colorChangePerStep[transitionTypes[i]].r;
                 color[transitionTypes[i]].g += colorChangePerStep[transitionTypes[i]].g;
@@ -107,9 +101,9 @@ const calculateDifferencePerStep = (source: ColorRGBA, target: ColorRGBA, steps:
     const diffPerStep = {r: 0, g: 0, b: 0, a: 0};
 
     for (let i = 0; i < colorValues.length; i++)
-        diffPerStep[colorValues[i]] = (target[colorValues[i]] - source[colorValues[i]]) / steps;
+        diffPerStep[colorValues[i]] = calculateSingleStep(source[colorValues[i]], target[colorValues[i]], steps);
 
     return diffPerStep;
 };
 
-const calculateDifferencePerStep2 = (source: number, target: number, steps: number) => (target - source) / steps;
+const calculateSingleStep = (source: number, target: number, steps: number) => (target - source) / steps;

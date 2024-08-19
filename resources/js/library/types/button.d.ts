@@ -49,7 +49,7 @@ type ButtonOptions = Partial<{
     font: string;
     fontSize: number;
     text: string;
-    delayShow: number;
+    delay: number;
     startTransition: boolean;
     endTransition: boolean;
     autoDestruct: boolean;
@@ -83,7 +83,7 @@ type InternalStaticButtonProperties = {
     type: ButtonType;
     text: string;
     font: string;
-    delayShow: number; // ms
+    delay: number; // ms
     startTransition: boolean;
     endTransition: boolean;
     autoDestruct: boolean;

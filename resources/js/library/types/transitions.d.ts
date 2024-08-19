@@ -9,3 +9,5 @@ type Transition = {
     forward: () => void;
     reverse: () => void;
 };
+
+type TransitionTypes = 'fill' | 'stroke' | 'textFill';

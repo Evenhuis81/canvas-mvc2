@@ -27,22 +27,18 @@ export const createButton = (resourceID: string, options: ButtonOptions, calcula
         update,
     );
 
-    // in case of a start transition that starts outside the window, only the update has to be delayed, so the property with the
-    // name 'delayShow' is incorrect, for now the example start transition is hardcoded, so these next setUpdates are just fine
     const setEngine = () => {
         engine.setShow(show);
         engine.setUpdate(update);
         if (props.startTransition) setStartTransition();
     };
 
-    const delayShow = () =>
+    const delayStart = () =>
         setTimeout(() => {
             setEngine();
-        }, props.delayShow);
+        }, props.delay);
 
-    props.delayShow ? delayShow() : setEngine();
-
-    console.log(calculatedButton);
+    props.delay ? delayStart() : setEngine();
 
     if (calculatedButton) {
         console.log('calculate button triggered');
