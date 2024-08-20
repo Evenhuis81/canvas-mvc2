@@ -52,7 +52,7 @@ export const createTransitionUpdate = (
     };
 };
 
-export const getTransitions = (color: Required<ButtonColorAndTransitionProperties>, steps = 10) => {
+export const getTransitions = (color: Required<ButtonColorAndTransitionProperties>, steps = 12) => {
     const colorChangePerStep = <Record<TransitionTypes, ReturnType<typeof calculateDifferencePerStep>>>{};
 
     transitionTypes.forEach(
@@ -107,3 +107,99 @@ const calculateDifferencePerStep = (source: ColorRGBA, target: ColorRGBA, steps:
 };
 
 const calculateSingleStep = (source: number, target: number, steps: number) => (target - source) / steps;
+
+export const createEndTransitionUpdate = (
+    props: InternalButtonProperties,
+    colors: InternalButtonColorAndTransitionProperties,
+    engine: Engine,
+    onFinished: () => void,
+    steps = 30,
+) => {
+    const widthStep = props.w / steps;
+    const heightStep = props.h / steps;
+    const textAndStrokeAndFillFadeStep = 1 / steps;
+    const fontSizeStep = props.fontSize / steps;
+    const lwStep = props.lw / steps;
+
+    const endTransitionUpdate = {
+        id: `end transition.${uid()}`,
+        fn: () => {
+            props.w -= widthStep;
+            props.h -= heightStep;
+            props.fontSize -= fontSizeStep;
+            colors.textFill.a -= textAndStrokeAndFillFadeStep;
+            colors.fill.a -= textAndStrokeAndFillFadeStep;
+            colors.stroke.a -= textAndStrokeAndFillFadeStep;
+            props.lw -= lwStep;
+
+            if (props.w <= 0) {
+                engine.removeUpdate(endTransitionUpdate.id); // abstract this?
+
+                onFinished();
+            }
+        },
+    };
+
+    return endTransitionUpdate;
+};
+
+export const createStartTransitionUpdate2 = (
+    props: InternalButtonProperties,
+    colors: InternalButtonColorAndTransitionProperties,
+    engine: Engine,
+    steps = 30,
+) => {
+    const originalCopy = {w: props.w, h: props.h, lw: props.lw};
+    const widthStep = props.w / steps;
+    const heightStep = props.h / steps;
+    const textAndStrokeFadeStep = 1 / steps;
+    const fontSizeStep = props.fontSize / steps;
+    const lwStep = props.lw / steps;
+
+    props.w = 0;
+    props.h = 0;
+    props.lw = 0;
+    colors.textFill.a = 0;
+    colors.stroke.a = 0;
+    props.fontSize = 0;
+
+    const startTransitionUpdate = {
+        id: `start transition.${uid()}`,
+        fn: () => {
+            props.w += widthStep;
+            props.h += heightStep;
+            props.fontSize += fontSizeStep;
+            colors.textFill.a += textAndStrokeFadeStep;
+            colors.stroke.a += textAndStrokeFadeStep;
+            props.lw += lwStep;
+
+            // Think of a better end trigger
+            if (props.w >= originalCopy.w) engine.removeUpdate(startTransitionUpdate.id);
+        },
+    };
+
+    return startTransitionUpdate;
+};
+
+export const createStartTransitionUpdate = (props: InternalButtonProperties, engine: Engine, steps = 30) => {
+    const originalPosX = props.x;
+    const xLeftOutside = -props.w / 2 - props.lw / 2;
+    const fadeInFromLeftDistance = props.x - xLeftOutside;
+    const velocityXPerStep = fadeInFromLeftDistance / steps;
+    props.x = xLeftOutside;
+
+    const startTransitionUpdate = {
+        id: `start transition ${props.id}`,
+        fn: () => {
+            props.x += velocityXPerStep;
+
+            if (props.x >= originalPosX) {
+                props.x = originalPosX;
+
+                engine.removeUpdate(startTransitionUpdate.id);
+            }
+        },
+    };
+
+    return startTransitionUpdate;
+};

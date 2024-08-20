@@ -5,6 +5,8 @@ const createProperties: () => EngineProperties = () => ({
     shows: [],
     requestID: 0,
     stop: false,
+    timePassed: 0,
+    lastTime: 0,
 });
 
 export const getEngine = () => {
@@ -12,12 +14,12 @@ export const getEngine = () => {
 
     const loop = createLoop(properties);
 
-    const run = () => loop();
+    const run = () => loop(0);
 
     const runOnce = () => {
         properties.stop = true;
 
-        loop();
+        loop(0);
     };
 
     const halt = () => {
@@ -35,8 +37,12 @@ export const getEngine = () => {
 };
 
 const createLoop = (properties: EngineProperties) => {
-    const loop = () => {
-        for (const update of properties.updates) update.fn();
+    const loop = (time: DOMHighResTimeStamp) => {
+        properties.timePassed = properties.lastTime - time;
+
+        properties.lastTime = time;
+
+        for (const update of properties.updates) update.fn(properties.timePassed);
 
         for (const show of properties.shows) show.fn();
 
@@ -84,5 +90,24 @@ const createSetAndRemoveUpdatesAndShows = (properties: EngineProperties) => {
         properties.shows.splice(index, 1);
     };
 
-    return {setUpdate, setShow, removeUpdate, removeShow};
+    return {
+        setUpdate,
+        setShow,
+        removeUpdate,
+        removeShow,
+        info: createInfo(properties),
+    };
+};
+
+const createInfo = (properties: EngineProperties) => () => {
+    return {
+        updates: {
+            length: () => properties.updates.length,
+            ids: () => properties.shows.map(show => show.id),
+        },
+        shows: {
+            length: () => properties.shows.length,
+            ids: () => properties.updates.map(update => update.id),
+        },
+    };
 };

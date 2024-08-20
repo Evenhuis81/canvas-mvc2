@@ -53,11 +53,11 @@ type ButtonOptions = Partial<{
     startTransition: boolean;
     endTransition: boolean;
     autoDestruct: boolean;
-    handlers: ButtonHandlers;
+    click: ButtonHandlers;
     colors: ButtonColorAndTransitionProperties;
 }>;
 
-type ButtonProperties = Omit<ButtonOptions, 'handlers' | 'colors'>;
+type ButtonProperties = Omit<ButtonOptions, 'click' | 'colors'>;
 
 type InternalButtonProperties = Required<ButtonProperties> & {
     pushed: boolean;

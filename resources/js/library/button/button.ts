@@ -1,5 +1,10 @@
 import {resources} from '..';
-import {getTransitions} from './transition';
+import {
+    createEndTransitionUpdate,
+    createStartTransitionUpdate,
+    createStartTransitionUpdate2,
+    getTransitions,
+} from './transition';
 import {getButtonProperties} from './properties';
 import {setResize} from 'library/input';
 import type {Resources} from 'library/types';
@@ -44,20 +49,11 @@ export const createButton = (
 
     props.delay ? delayStart() : setEngine();
 
-    if (calculatedOptions)
-        setResize(() => {
-            const calcB = calculatedOptions();
+    if (calculatedOptions) setResize(() => Object.assign(props, calculatedOptions()));
 
-            console.log(props.w);
-            Object.assign(props, calcB);
-            console.log(props.w);
-        });
-
-    // Some of these should be optional depending on incoming button options on create
     buttons.push({id: props.id, selfDestruct, disable, activate, setStartTransition, setEndTransition});
 };
 
-// This is optional, for now it's a default on the button, but there should be themes and variety here
 const createButtonUpdate = (props: InternalButtonProperties, {mouse}: Resources['input'], transition: Transition) => ({
     id: props.id,
     name: props.name,
@@ -110,58 +106,6 @@ const setColorForDisableAndActivate = (color: InternalButtonColorAndTransitionPr
 const dim = (colors: InternalButtonColorAndTransitionProperties) => setColorForDisableAndActivate(colors, 0.5);
 const brighten = (colors: InternalButtonColorAndTransitionProperties) => setColorForDisableAndActivate(colors, 1);
 
-const createStartTransitionUpdate = (props: InternalButtonProperties, engine: Engine, steps = 30) => {
-    const originalPosX = props.x;
-    const xLeftOutside = -props.w / 2 - props.lw / 2;
-    const fadeInFromLeftDistance = props.x - xLeftOutside;
-    const velocityXPerStep = fadeInFromLeftDistance / steps;
-    props.x = xLeftOutside;
-
-    const startTransitionUpdate = {
-        id: `start transition ${props.id}`,
-        fn: () => {
-            props.x += velocityXPerStep;
-
-            if (props.x >= originalPosX) {
-                props.x = originalPosX;
-
-                engine.removeUpdate(startTransitionUpdate.id);
-            }
-        },
-    };
-
-    return startTransitionUpdate;
-};
-
-const createEndTransitionUpdate = (
-    props: InternalButtonProperties,
-    colors: InternalButtonColorAndTransitionProperties,
-    engine: Engine,
-    onFinished: () => void,
-    steps = 30,
-) => {
-    const widthStep = props.w / steps;
-    const heightStep = props.h / steps;
-    const textFadeStep = 1 / steps;
-
-    const endTransitionUpdate = {
-        id: `end transition.${props.id}`,
-        fn: () => {
-            props.w -= widthStep;
-            props.h -= heightStep;
-            colors.textFill.a -= textFadeStep;
-
-            if (props.w <= 0) {
-                engine.removeUpdate(endTransitionUpdate.id); // abstract this?
-
-                onFinished();
-            }
-        },
-    };
-
-    return endTransitionUpdate;
-};
-
 // Namechange and possibly undeniably a seperate of concerns
 const handleEventsAndMore = (
     props: InternalButtonProperties,
@@ -212,8 +156,8 @@ const handleEventsAndMore = (
     };
 
     // Make this optional
-    const startTransitionUpdate = createStartTransitionUpdate(props, engine);
     const endTransitionUpdate = createEndTransitionUpdate(props, colors, engine, onFinished);
+    const startTransitionUpdate = createStartTransitionUpdate2(props, colors, engine);
 
     const mousedownEvent = (evt: MouseEvent) => {
         if (mouse.insideRect(props) && evt.button === 0) {

@@ -13,13 +13,12 @@ export default {
             // setShowStatistics: true,
         });
 
-        startLevel();
+        goToMenu();
     },
     run: () => resources.survival.engine.run(),
     runOnce: () => resources.survival.engine.runOnce(),
 };
 
-const startLevel = () => {
-    // button.create('survival', startButton, calculatedStartButton);
-    button.create('survival');
+const goToMenu = () => {
+    button.create('survival', startButton, calculatedStartButton);
 };

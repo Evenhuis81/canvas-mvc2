@@ -1,10 +1,12 @@
 export type Update = {
     id?: number | string;
     name?: string;
-    fn: () => void;
+    fn: (deltaTime: number) => void;
 };
 
-export type Show = Update;
+export type Show = Omit<Update, 'fn'> & {
+    fn: () => void;
+};
 
 export interface Engine {
     run: () => void;
@@ -14,6 +16,7 @@ export interface Engine {
     setShow: (show: Show) => void;
     removeUpdate: (id: number | string) => void;
     removeShow: (id: number | string) => void;
+    info: () => void;
 }
 
 type EngineProperties = {
@@ -21,4 +24,6 @@ type EngineProperties = {
     shows: Show[];
     requestID: number;
     stop: boolean;
+    timePassed: number;
+    lastTime: number;
 };

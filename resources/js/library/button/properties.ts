@@ -2,7 +2,7 @@ import {getColorRGBA} from 'library/colors';
 import {uid} from 'library/helpers';
 
 export const getButtonProperties: GetButtonProperties = (options, calculatedOptions) => {
-    const {handlers, colors, ...properties} = options;
+    const {click: handlers, colors, ...properties} = options;
 
     if (calculatedOptions) Object.assign(properties, calculatedOptions());
 
@@ -43,13 +43,12 @@ const staticDefaultProperties: InternalStaticButtonProperties = {
     autoDestruct: true,
 };
 
-// This needs recursion
 const setColors = (colors?: ButtonColorAndTransitionProperties) => ({
     fill: getColorRGBA(0, 0, 0, 1),
     stroke: getColorRGBA(255, 0, 0, 1),
     textFill: getColorRGBA(255, 255, 255, 1),
     transition: {
-        fill: getColorRGBA(100, 100, 100, 1),
+        fill: getColorRGBA(25, 25, 25, 1),
         stroke: getColorRGBA(155, 0, 0, 1),
         textFill: getColorRGBA(0, 255, 0, 1),
     },

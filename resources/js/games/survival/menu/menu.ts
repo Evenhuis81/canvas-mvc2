@@ -1,14 +1,12 @@
-const startSurvival = () => {
-    console.log('start game');
-};
+import {levelScreen} from '../level/level-select';
 
 export const startButton = {
     id: 'start',
     name: 'Start Button',
-    text: 'Start Here',
+    text: 'Select Level',
     delayShow: 1000,
     click: {
-        up: () => startSurvival(),
+        end: () => levelScreen(),
     },
 };
 
