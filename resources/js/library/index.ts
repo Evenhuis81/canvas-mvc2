@@ -4,41 +4,25 @@ import {getStaticView, getTV} from './transformedView/tv';
 import {getInput} from 'library/input';
 import type {CanvasOptions, Resources} from './types';
 import type {Engine} from './types/engine';
-import {StatisticsResource} from './types/statistics';
-import {getStatistics} from './statistics';
 
 export const resources: Record<string | number, Resources> = {};
-export const statisticsResource: Record<string | number, StatisticsResource> = {};
 
 export const initialize = (id: string | number, options?: CanvasOptions) => {
     const canvas = getCanvas();
     const context = getContext2D(canvas);
     const engine = getEngine();
 
-    if (options?.statistics) statisticsResource[id] = getStatistics(context, canvas);
-
-    setCanvas(canvas, options, options?.containerID ? getContainer(options.containerID) : undefined);
+    setCanvas(canvas, options);
 
     const input = getInput(canvas);
     const tv = getTV(context, input);
     const sv = getStaticView(context);
 
-    // This HAS to be the 1st show in the engine show array
     if (options?.clear) clearOn(engine, context);
-
-    if (options?.setShowStatistics) engine.setShow(statisticsResource.survival.show);
 
     resources[id] = {canvas, context, engine, sv, tv, input};
 
     return resources[id];
-};
-
-export const getContainer = (containerID: string) => {
-    const container = document.getElementById(containerID);
-
-    if (!(container instanceof HTMLDivElement)) throw new Error(`can't find div with id '${containerID}'`);
-
-    return container;
 };
 
 export const getLibraryOptions = (context: CanvasRenderingContext2D, engine: Engine) => {

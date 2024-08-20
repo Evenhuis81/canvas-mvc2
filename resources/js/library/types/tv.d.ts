@@ -1,5 +1,4 @@
-import {Show, Update} from './engine';
-import {Statistic} from './statistics';
+import {Update} from './engine';
 import {Vector, Vector2} from './vector';
 
 type Rect = {x: number; y: number; w: number; h: number};

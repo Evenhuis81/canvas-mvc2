@@ -1,16 +1,16 @@
-import button from 'library/button/button';
+// import button from 'library/button/button';
 import {initialize, resources} from 'library/index';
-import {calculatedStartButton, startButton} from './menu/menu';
+// import {calculatedStartButton, startButton} from './menu/menu';
+import {levelScreen} from './level/level-select';
 
 export default {
     setup: async () => {
         initialize('survival', {
-            containerID: 'container',
+            containerID: 'survival-container',
             full: true,
             clear: true,
             bg: '#000',
-            // statistics: true,
-            // setShowStatistics: true,
+            // dualView: true,
         });
 
         goToMenu();
@@ -20,5 +20,8 @@ export default {
 };
 
 const goToMenu = () => {
-    button.create('survival', startButton, calculatedStartButton);
+    // Go Straight To LevelScreen (temporary)
+    levelScreen();
+
+    // button.create('survival', startButton, calculatedStartButton);
 };

@@ -1,13 +1,16 @@
+import {uid} from './helpers';
+import {setDualView} from './menu';
 import {CanvasOptions} from './types';
 
-export const getCanvas = () => {
+export const getCanvas = (contextMenu: boolean = true) => {
     const canvas = document.createElement('canvas');
 
-    canvas.addEventListener('contextmenu', e => {
-        e.preventDefault();
+    if (contextMenu)
+        canvas.addEventListener('contextmenu', e => {
+            e.preventDefault();
 
-        return false;
-    });
+            return false;
+        });
 
     return canvas;
 };
@@ -32,7 +35,23 @@ const setCanvasOptions = (canvas: HTMLCanvasElement, options?: CanvasOptions) =>
     if (options.bg) canvas.style.backgroundColor = options.bg;
 };
 
-const setContainer = (canvas: HTMLCanvasElement, container: HTMLDivElement) => {
+export const createContainer = (id?: string) => {
+    const container = document.createElement('div');
+
+    container.setAttribute('id', id ?? `container ${uid()}`);
+
+    return container;
+};
+
+export const getContainer = (containerID: string) => {
+    const container = document.getElementById(containerID);
+
+    if (!(container instanceof HTMLDivElement)) throw new Error(`can't find div with id '${containerID}'`);
+
+    return container;
+};
+
+export const setContainer = (canvas: HTMLCanvasElement, container: HTMLDivElement) => {
     container.style.display = 'flex';
     container.style.width = '100vw';
     container.style.height = '100vh';
@@ -41,8 +60,12 @@ const setContainer = (canvas: HTMLCanvasElement, container: HTMLDivElement) => {
     container.appendChild(canvas);
 };
 
-export const setCanvas = (canvas: HTMLCanvasElement, options?: CanvasOptions, container?: HTMLDivElement): void => {
-    if (container) setContainer(canvas, container);
+export const setCanvas = (canvas: HTMLCanvasElement, options?: CanvasOptions): void => {
+    const container = options?.containerID ? getContainer(options.containerID) : createContainer();
+
+    setContainer(canvas, container);
 
     setCanvasOptions(canvas, options);
+
+    if (options?.dualView) setDualView(canvas, container);
 };

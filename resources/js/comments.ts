@@ -1,19 +1,10 @@
-// Notes on 13-08-2024:
-// 1. QBuzz @ home ,wolkbreuk, asian neusophaal
-
-// Notes on sun @forum, 18-08-2024:
+// Notes on sun @forum, 18-08-2024+:
 // 1. Generalize Types for all kinds of shapes and make shapes and methods for tv and static shows equal
 // 2. Seperate calculated and arbitrary properties on button and if possible abstract all the methods and apply them to all the shapes (see 1)
 // 3. Auto-update all objects that are given an (optional) calculated properties object in case of resize
 // 4. Set a sort of scale value for x and y-window , like 16:9 (think tiles), set this default and calculate all calculated objects with these values;
-
-// interface ButtonType<T extends keyof WindowEventMap> {
-//     type: T;
-//     handler: (evt: WindowEventMap[T]) => void;
-// }
-// [];
-
-// type GetEvents = (props: ButtonOptionsRequired, input: Resources['input']) => ButtonType<keyof WindowEventMap>;
+// 5. TV needs seperate objects for Methods, Paint and Properties (like in types)
+// 6. Give Statistics a permanent place in (1) TV;
 
 // Menu, buttons:
 // 1. start
@@ -26,13 +17,6 @@
 // 8. create account
 // 9. load game
 // 10. save game
-
-// const startButton = getStartButton(resources.state.context);
-// resources.state.engine.setShow(startButton.show);
-
-// addEventListener('mouseup', () => {
-//     if (startButton.inside()) startLevel(2);
-// });
 
 // 1. make all button properties optional
 // 2. onhover:  -color (fill / stroke)

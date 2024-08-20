@@ -66,25 +66,7 @@
 // Make this a hidden option inside the canvas
 // enableStatistics();
 
-// StartLevel
-
-// engine.showsOverview();
-// engine.updatesOverview();
-//     },
-//     run: () => gameStore.state.engine.run(),
-//     runOnce: () => gameStore.state.engine.runOnce(),
-// };
-
 // await loadFont('OpenS', 'OpenSans-VariableFont_wdth,wght.ttf');
-
-// const canvas2 = setDualView(canvas, 'container');
-// const context2 = getContext2D(canvas2);
-
-// const stats = getStatistics(context2, canvas2);
-
-// statistics.set(stats);
-
-// engine.setShow(statistics.state.show);
 
 // const startLevel = (
 //     levelNr: number,

@@ -12,7 +12,6 @@ import type {Engine, Update} from 'library/types/engine';
 
 const buttons: Button[] = [];
 
-// Make this method all seperate methods and make all update/show objects with this a sort of pre-initializer. (?)
 export const createButton = (
     resourceID: string,
     options: ButtonOptions = {},

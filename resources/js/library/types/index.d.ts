@@ -11,12 +11,6 @@ interface Resources {
     input: Input;
 }
 
-// interface ResourcesAndTV extends Resources {
-//     sv: StaticView;
-//     tv: TransformedView;
-//     input: Input;
-// }
-
 type CanvasOptions = Partial<{
     containerID: string;
     width: number;
@@ -25,6 +19,6 @@ type CanvasOptions = Partial<{
     center: boolean;
     full: boolean; // full tab (innerWidth, innerHeight)
     clear: boolean;
-    statistics: boolean;
-    setShowStatistics: boolean;
+    dualView: boolean;
+    ontextMenu: boolean;
 }>;
