@@ -1,46 +1,40 @@
 import {getCanvas} from 'library/canvas';
-import {setResize} from './input';
+import {setConsoleToggle, setResize} from './input';
+import {DualViewProperties} from './types';
 
 export const setDualView = (canvas: HTMLCanvasElement, container: HTMLDivElement) => {
-    let timeout: ReturnType<typeof setTimeout>;
-    let active = false;
+    const props = {
+        canvas1: canvas,
+        canvas2: getCanvas(),
+        container,
+        active: false,
+    };
+    props.canvas2.style.backgroundColor = '#111';
 
-    const canvas2 = getCanvas();
-    canvas2.style.backgroundColor = '#111';
+    // Unnecessary?
+    setConsoleToggle(() => resize(props));
 
-    keyup(canvas, canvas2, active);
+    // Initial resize
+    resize(props);
 
-    resize(canvas, canvas2, active);
+    // Set resize method to input module
+    setResize(() => resize(props));
 
-    setResize(resizeDualView);
-};
-
-const resizeDualView = () => {
-    clearTimeout(timeout);
-    timeout = setTimeout(resize, 250);
-};
-
-addEventListener('keydown', ({code}) => {
-    if (code === 'KeyT') toggleDualView();
-});
-
-const keyup = (canvas1: HTMLCanvasElement, canvas2: HTMLCanvasElement, active: boolean) => {
     addEventListener('keyup', ({code}) => {
-        if (code === 'F11') resize(canvas1, canvas2, active);
+        console.log(code);
+
+        if (code === 'KeyT') toggleDualView(props);
     });
 };
 
-type DualViewProperties = {
-    canvas1: HTMLCanvasElement;
-    canvas2: HTMLCanvasElement;
-};
-
 const toggleDualView = (props: DualViewProperties) => {
-    if (props) {
+    const {canvas1, canvas2, container} = props;
+
+    if (props.active) {
         container.removeChild(canvas2);
         canvas1.width = innerWidth;
 
-        props = false;
+        props.active = false;
 
         return;
     }
@@ -50,15 +44,17 @@ const toggleDualView = (props: DualViewProperties) => {
 
     container.appendChild(canvas2);
 
-    props = true;
+    props.active = true;
 };
 
 // This all applies to a 'fullscreen' canvas only
-const resize = (canvas1: HTMLCanvasElement, canvas2: HTMLCanvasElement, active: boolean) => {
+const resize = (props: DualViewProperties) => {
+    const {canvas1, canvas2} = props;
+
     canvas1.height = innerHeight;
     canvas2.height = innerHeight;
 
-    if (active) {
+    if (props.active) {
         canvas1.width = innerWidth / 2;
         canvas2.width = innerWidth / 2;
 

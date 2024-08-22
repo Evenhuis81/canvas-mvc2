@@ -22,3 +22,10 @@ type CanvasOptions = Partial<{
     dualView: boolean;
     ontextMenu: boolean;
 }>;
+
+type DualViewProperties = {
+    canvas1: HTMLCanvasElement;
+    canvas2: HTMLCanvasElement;
+    container: HTMLDivElement;
+    active: boolean;
+};

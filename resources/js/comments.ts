@@ -5,6 +5,8 @@
 // 4. Set a sort of scale value for x and y-window , like 16:9 (think tiles), set this default and calculate all calculated objects with these values;
 // 5. TV needs seperate objects for Methods, Paint and Properties (like in types)
 // 6. Give Statistics a permanent place in (1) TV;
+// 7. F11 functionality in input and dualView should be optional or not present at all (not really important);
+// 8. Dualview should work with a preset dynamic width and height and encapsulated;
 
 // Menu, buttons:
 // 1. start
@@ -66,20 +68,6 @@
 //     };
 
 //     return show;
-// };
-
-// const startButton = {
-//     txt: 'Start',
-//     x: 50,
-//     y: 450,
-//     w: 50,
-//     h: 20,
-//     r: 5,
-//     lw: 2,
-//     stroke: '#fff',
-//     fill: '#000',
-//     textFill: '#00f',
-//     font: '20px normal sans-serif',
 // };
 
 // export const getMenuButton = (ctx: CanvasRenderingContext2D) => {
@@ -207,86 +195,6 @@
 //         ctx.beginPath();
 //         ctx.fillText(props.text, props.x, props.y);
 //     },
-// };
-
-// const eventHandler = (props: ButtonOptionsRequired) => {
-//     {
-//         const {click} = props;
-
-//         let mouseupEvent: ((event: MouseEvent) => void) | undefined;
-//         let touchendEvent: ((event: TouchEvent) => void) | undefined;
-
-//         mouseupEvent = (evt: MouseEvent) => {
-//             if (mouse.insideRect(props) && evt.button === 0) click({evt, button: {selfDestruct}});
-//         };
-
-//         touchendEvent = (evt: TouchEvent) => {
-//             if (touch.insideRect(props)) click({evt, button: {id: props.id, selfDestruct}});
-//         };
-
-//         addEventListener('mouseup', mouseupEvent);
-//         addEventListener('touchend', touchendEvent);
-//     }
-
-//     const internalMousedownEvent = ({button}: MouseEvent) => {
-//         if (mouse.insideRect(props) && button === 0) {
-//             props.pushed = true;
-//             props.w *= 0.9;
-//             props.h *= 0.9;
-//         }
-//     };
-
-//     const internalMouseupEvent = () => {
-//         if (props.pushed) {
-//             props.w *= 1.1;
-//             props.h *= 1.1;
-
-//             props.pushed = false;
-//         }
-//     };
-
-//     const internalTouchstartEvent = () => {
-//         if (touch.insideRect(props)) {
-//             props.pushed = true;
-//             props.w *= 0.9;
-//             props.h *= 0.9;
-//         }
-//     };
-
-//     const internalTouchendEvent = () => {
-//         if (props.pushed) {
-//             props.w *= 1.1;
-//             props.h *= 1.1;
-
-//             props.pushed = false;
-//         }
-//     };
-
-//     addEventListener('touchstart', internalTouchstartEvent);
-//     addEventListener('touchend', internalTouchendEvent);
-//     addEventListener('mouseup', internalMouseupEvent);
-//     addEventListener('mousedown', internalMousedownEvent);
-
-//     const selfDestruct = () => {
-//         if (props.destructed) {
-//             console.log(`Button ${props.id} is already destroyed!`);
-//         }
-
-//         removeEventListener('touchstart', internalTouchstartEvent);
-//         removeEventListener('touchend', internalTouchendEvent);
-//         removeEventListener('mouseup', internalMouseupEvent);
-//         removeEventListener('mousedown', internalMousedownEvent);
-
-//         if (mouseupEvent && touchendEvent) {
-//             removeEventListener('touchend', touchendEvent);
-//             removeEventListener('mouseup', mouseupEvent);
-//         }
-
-//         engine.removeUpdate(props.id);
-//         engine.removeShow(props.id);
-
-//         props.destructed = true;
-//     };
 // };
 
 // const createFadeOutUpdate = (props: ButtonOptionsRequired) => {

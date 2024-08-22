@@ -10,7 +10,7 @@ export default {
             full: true,
             clear: true,
             bg: '#000',
-            // dualView: true,
+            dualView: true,
         });
 
         goToMenu();

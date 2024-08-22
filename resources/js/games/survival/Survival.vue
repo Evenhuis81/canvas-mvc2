@@ -1,5 +1,5 @@
 <template>
-    <div id="container" />
+    <div id="survival-container" />
 </template>
 
 <script setup lang="ts">

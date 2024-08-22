@@ -1,11 +1,14 @@
 const resizeCB: (() => void)[] = [];
+const consoleToggleCB: (() => void)[] = [];
 
-export const getInput = (canvas: HTMLCanvasElement) => {
+export const getInput = (canvas: HTMLCanvasElement, dualView: boolean = false) => {
     const canvasRect = canvas.getBoundingClientRect();
     const buttonHeld: Record<number, boolean> = {};
     const keyHeld: Record<string, boolean> = {};
     const mouse = {x: 0, y: 0, touchEnded: false};
     const touch = {x: 0, y: 0};
+
+    console.log(dualView);
 
     canvas.addEventListener('mousedown', evt => {
         mouse.touchEnded = false;
@@ -36,6 +39,10 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         mouse.touchEnded = false;
 
         delete keyHeld[evt.code];
+
+        if (evt.code === 'F11') {
+            for (let i = 0; i < resizeCB.length; i++) consoleToggleCB[i]();
+        }
     });
 
     canvas.addEventListener('touchstart', (evt: TouchEvent) => {
@@ -56,10 +63,13 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         mouse.touchEnded = true;
     });
 
-    const resize = () => {
-        canvas.width = innerWidth;
-        canvas.height = innerHeight;
+    if (!dualView)
+        resizeCB.push(() => {
+            canvas.width = innerWidth;
+            canvas.height = innerHeight;
+        });
 
+    const resize = () => {
         for (let i = 0; i < resizeCB.length; i++) resizeCB[i]();
     };
 
@@ -87,3 +97,5 @@ export const getInput = (canvas: HTMLCanvasElement) => {
 };
 
 export const setResize = (cb: () => unknown) => resizeCB.push(cb);
+
+export const setConsoleToggle = (cb: () => unknown) => consoleToggleCB.push(cb);

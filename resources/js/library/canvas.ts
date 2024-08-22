@@ -26,6 +26,7 @@ export const getContext2D = (canvas: HTMLCanvasElement) => {
 const setCanvasOptions = (canvas: HTMLCanvasElement, options?: CanvasOptions) => {
     if (!options) return;
 
+    // Refactor into switch and auto execute options
     if (options.full) {
         canvas.width = innerWidth;
         canvas.height = innerHeight;
@@ -38,7 +39,7 @@ const setCanvasOptions = (canvas: HTMLCanvasElement, options?: CanvasOptions) =>
 export const createContainer = (id?: string) => {
     const container = document.createElement('div');
 
-    container.setAttribute('id', id ?? `container ${uid()}`);
+    container.setAttribute('id', id ?? `container-${uid()}`);
 
     return container;
 };
@@ -63,6 +64,7 @@ export const setContainer = (canvas: HTMLCanvasElement, container: HTMLDivElemen
 export const setCanvas = (canvas: HTMLCanvasElement, options?: CanvasOptions): void => {
     const container = options?.containerID ? getContainer(options.containerID) : createContainer();
 
+    // Container should be optional
     setContainer(canvas, container);
 
     setCanvasOptions(canvas, options);

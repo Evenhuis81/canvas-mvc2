@@ -14,7 +14,7 @@ export const initialize = (id: string | number, options?: CanvasOptions) => {
 
     setCanvas(canvas, options);
 
-    const input = getInput(canvas);
+    const input = getInput(canvas, options?.dualView);
     const tv = getTV(context, input);
     const sv = getStaticView(context);
 
