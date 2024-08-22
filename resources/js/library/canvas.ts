@@ -1,6 +1,6 @@
 import {uid} from './helpers';
-import {setDualView} from './menu';
-import {CanvasOptions} from './types';
+import {setDualView} from './dualview';
+import type {CanvasOptions} from './types';
 
 export const getCanvas = (contextMenu: boolean = true) => {
     const canvas = document.createElement('canvas');

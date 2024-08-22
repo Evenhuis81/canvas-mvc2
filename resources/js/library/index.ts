@@ -1,14 +1,15 @@
 import {getCanvas, getContext2D, setCanvas} from './canvas';
 import {getEngine} from './engine';
-import {getStaticView, getTV} from './transformedView/tv';
+import {getSV, getTV} from './transformedView/tv';
 import {getInput} from 'library/input';
 import type {CanvasOptions, Resources} from './types';
 import type {Engine} from './types/engine';
+import {setStatistics} from '../statistics';
 
 export const resources: Record<string | number, Resources> = {};
 
 export const initialize = (id: string | number, options?: CanvasOptions) => {
-    const canvas = getCanvas();
+    const canvas = getCanvas(false);
     const context = getContext2D(canvas);
     const engine = getEngine();
 
@@ -16,9 +17,11 @@ export const initialize = (id: string | number, options?: CanvasOptions) => {
 
     const input = getInput(canvas, options?.dualView);
     const tv = getTV(context, input);
-    const sv = getStaticView(context);
+    const sv = getSV(context);
 
     if (options?.clear) clearOn(engine, context);
+
+    if (options?.statistics) setStatistics;
 
     resources[id] = {canvas, context, engine, sv, tv, input};
 

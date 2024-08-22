@@ -8,7 +8,7 @@ import type {Vector, Vector2} from 'library/types/vector';
 import type {Text, Zoom} from 'library/types/tv';
 import type {Input} from 'library/types/input';
 
-export const getStaticView = (ctx: CanvasRenderingContext2D) => {
+export const getSV = (ctx: CanvasRenderingContext2D) => {
     const text = (obj: Text) => {
         const font = `${obj.fontSize ? obj.fontSize : 24}px ${obj.font ?? 'monospace'}`;
 
@@ -19,11 +19,10 @@ export const getStaticView = (ctx: CanvasRenderingContext2D) => {
 
         ctx.fillText(obj.txt, obj.x, obj.y);
     };
-    //
+
     return {text};
 };
 
-// Use only vectors if possible
 export const getTV = (context: CanvasRenderingContext2D, input: Input) => {
     const paintMethods = getPaintMethods(properties, methods, context);
 

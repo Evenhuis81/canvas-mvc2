@@ -40,7 +40,7 @@ export const getInput = (canvas: HTMLCanvasElement, dualView: boolean = false) =
 
         delete keyHeld[evt.code];
 
-        if (evt.code === 'F11') {
+        if (evt.code === 'F12') {
             for (let i = 0; i < resizeCB.length; i++) consoleToggleCB[i]();
         }
     });

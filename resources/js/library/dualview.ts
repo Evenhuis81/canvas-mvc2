@@ -11,7 +11,6 @@ export const setDualView = (canvas: HTMLCanvasElement, container: HTMLDivElement
     };
     props.canvas2.style.backgroundColor = '#111';
 
-    // Unnecessary?
     setConsoleToggle(() => resize(props));
 
     // Initial resize
@@ -21,8 +20,6 @@ export const setDualView = (canvas: HTMLCanvasElement, container: HTMLDivElement
     setResize(() => resize(props));
 
     addEventListener('keyup', ({code}) => {
-        console.log(code);
-
         if (code === 'KeyT') toggleDualView(props);
     });
 };

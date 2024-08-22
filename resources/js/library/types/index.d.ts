@@ -19,8 +19,9 @@ type CanvasOptions = Partial<{
     center: boolean;
     full: boolean; // full tab (innerWidth, innerHeight)
     clear: boolean;
-    dualView: boolean;
     ontextMenu: boolean;
+    dualView: boolean;
+    statistics: boolean;
 }>;
 
 type DualViewProperties = {

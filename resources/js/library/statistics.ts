@@ -1,15 +1,17 @@
+import {uid} from './helpers';
 import {Statistic} from './types/statistics';
 import {vector} from './vector';
 
-const statistics: Statistic[] = [];
+export const statistics: Record<string | number, Statistic[]> = {};
 
-export const getStatistics = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
+export const setStatistics = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, id?: string | number) => {
+    const statID = id ?? uid();
     const txtPosDefault = vector(10, 10);
     let txtPos = vector(10, 10);
     const txtMargin = 5;
 
     const show = {
-        id: 8,
+        id: statID,
         name: 'enable statistics',
         fn: () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
