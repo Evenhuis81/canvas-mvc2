@@ -69,5 +69,10 @@ export const setCanvas = (canvas: HTMLCanvasElement, options?: CanvasOptions): v
 
     setCanvasOptions(canvas, options);
 
-    if (options?.dualView) setDualView(canvas, container);
+    // DualView and Statistics go hand in hand at the moment, till DualView gets multi purpose
+    if (options?.dualView) {
+        setDualView(canvas, container);
+
+        // setStatistics()
+    }
 };

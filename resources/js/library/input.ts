@@ -8,8 +8,6 @@ export const getInput = (canvas: HTMLCanvasElement, dualView: boolean = false) =
     const mouse = {x: 0, y: 0, touchEnded: false};
     const touch = {x: 0, y: 0};
 
-    console.log(dualView);
-
     canvas.addEventListener('mousedown', evt => {
         mouse.touchEnded = false;
 
