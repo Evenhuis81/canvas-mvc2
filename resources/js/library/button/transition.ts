@@ -203,3 +203,40 @@ export const createStartTransitionUpdate = (props: InternalButtonProperties, eng
 
     return startTransitionUpdate;
 };
+
+export const createDualViewTransitionUpdate = (
+    source: {width: number},
+    target: {width: number},
+    source2: {width: number},
+    target2: {width: number},
+    onFinished: (finished: boolean) => void,
+    steps = 60,
+) => {
+    const widthPerStep = calculateSingleStep(source.width, target.width, steps);
+
+    let accumulatedWidth = source.width;
+    const upwards = source.width < target.width;
+
+    return {
+        id: 'dualview-transition',
+        name: 'DualView transition update',
+        fn: () => {
+            accumulatedWidth += widthPerStep;
+
+            source.width = accumulatedWidth;
+            source2.width = target.width + target2.width - source.width;
+
+            if (upwards && source.width >= target.width) {
+                source.width = target.width;
+                source2.width = target2.width;
+
+                onFinished(true);
+            } else if (!upwards && source.width <= target.width) {
+                source.width = target.width;
+                source2.width = target2.width;
+
+                onFinished(true);
+            }
+        },
+    };
+};

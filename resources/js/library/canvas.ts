@@ -1,6 +1,7 @@
 import {uid} from './helpers';
 import {setDualView} from './dualview';
 import type {CanvasOptions} from './types';
+import {Engine} from './types/engine';
 
 export const getCanvas = (contextMenu: boolean = true) => {
     const canvas = document.createElement('canvas');
@@ -61,7 +62,7 @@ export const setContainer = (canvas: HTMLCanvasElement, container: HTMLDivElemen
     container.appendChild(canvas);
 };
 
-export const setCanvas = (canvas: HTMLCanvasElement, options?: CanvasOptions): void => {
+export const setCanvas = (canvas: HTMLCanvasElement, engine: Engine, options?: CanvasOptions): void => {
     const container = options?.containerID ? getContainer(options.containerID) : createContainer();
 
     // Container should be optional
@@ -71,7 +72,7 @@ export const setCanvas = (canvas: HTMLCanvasElement, options?: CanvasOptions): v
 
     // DualView and Statistics go hand in hand at the moment, till DualView gets multi purpose
     if (options?.dualView) {
-        setDualView(canvas, container);
+        setDualView(canvas, engine, container);
 
         // setStatistics()
     }

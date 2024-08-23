@@ -29,4 +29,5 @@ type DualViewProperties = {
     canvas2: HTMLCanvasElement;
     container: HTMLDivElement;
     active: boolean;
+    transitioning: boolean;
 };

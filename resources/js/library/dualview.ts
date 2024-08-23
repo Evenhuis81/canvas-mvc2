@@ -1,15 +1,19 @@
 import {getCanvas} from 'library/canvas';
 import {setConsoleToggle, setResize} from './input';
 import {DualViewProperties} from './types';
+import {Engine} from './types/engine';
+import {createDualViewTransitionUpdate} from './button/transition';
 
-export const setDualView = (canvas: HTMLCanvasElement, container: HTMLDivElement) => {
+export const setDualView = (canvas: HTMLCanvasElement, engine: Engine, container: HTMLDivElement) => {
     const props = {
         canvas1: canvas,
         canvas2: getCanvas(),
         container,
         active: false,
+        transitioning: false,
     };
-    props.canvas2.style.backgroundColor = '#111';
+    props.canvas2.style.backgroundColor = '#333';
+    props.canvas2.width = 0;
 
     setConsoleToggle(() => resize(props));
 
@@ -20,27 +24,39 @@ export const setDualView = (canvas: HTMLCanvasElement, container: HTMLDivElement
     setResize(() => resize(props));
 
     addEventListener('keyup', ({code}) => {
-        if (code === 'KeyT') toggleDualView(props);
+        if (code === 'KeyT') toggleDualView(props, engine);
     });
 };
 
-const toggleDualView = (props: DualViewProperties) => {
+const toggleDualView = (props: DualViewProperties, engine: Engine) => {
     const {canvas1, canvas2, container} = props;
 
-    if (props.active) {
-        container.removeChild(canvas2);
-        canvas1.width = innerWidth;
+    const onFinished = (finished = false) => {
+        engine.removeUpdate('dualview-transition');
 
+        props.transitioning = false;
+
+        if (finished && !props.active) container.removeChild(canvas2);
+    };
+
+    if (props.transitioning) onFinished();
+
+    if (props.active) {
+        engine.setUpdate(createDualViewTransitionUpdate(canvas1, {width: innerWidth}, canvas2, {width: 0}, onFinished));
+
+        props.transitioning = true;
         props.active = false;
 
         return;
     }
 
-    canvas1.width = innerWidth / 2;
-    canvas2.width = innerWidth / 2;
-
     container.appendChild(canvas2);
 
+    engine.setUpdate(
+        createDualViewTransitionUpdate(canvas1, {width: innerWidth / 2}, canvas2, {width: innerWidth / 2}, onFinished),
+    );
+
+    props.transitioning = true;
     props.active = true;
 };
 

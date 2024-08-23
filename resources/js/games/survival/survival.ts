@@ -11,7 +11,7 @@ export default {
             clear: true,
             bg: '#000',
             dualView: true,
-            statistics: true,
+            // statistics: true,
         });
 
         goToMenu();
