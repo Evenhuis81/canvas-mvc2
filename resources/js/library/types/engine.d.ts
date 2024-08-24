@@ -16,7 +16,16 @@ export interface Engine {
     setShow: (show: Show) => void;
     removeUpdate: (id: number | string) => void;
     removeShow: (id: number | string) => void;
-    info: () => void;
+    info: {
+        updates: {
+            length: () => number;
+            ids: () => (string | number | undefined)[];
+        };
+        shows: {
+            length: () => number;
+            ids: () => (string | number | undefined)[];
+        };
+    };
 }
 
 type EngineProperties = {

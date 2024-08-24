@@ -2,7 +2,6 @@
 import {initialize, resources} from 'library/index';
 // import {calculatedStartButton, startButton} from './menu/menu';
 import {levelScreen} from './level/level-select';
-import statistics from 'library/statistics';
 
 export default {
     setup: async () => {
@@ -13,8 +12,6 @@ export default {
             bg: '#000',
             dualView: true,
         });
-
-        statistics.setFn('survival', () => `mouseX: ${input.mouse.x}, mouseY: ${input.mouse.y}`);
 
         goToMenu();
     },

@@ -101,11 +101,11 @@ const createSetAndRemoveUpdatesAndShows = (properties: EngineProperties) => {
 
 const createInfo = (properties: EngineProperties) => ({
     updates: {
-        length: properties.updates.length,
-        ids: properties.shows.map(show => show.id),
+        length: () => properties.updates.length,
+        ids: () => properties.shows.map(show => show.id),
     },
     shows: {
-        length: properties.shows.length,
-        ids: properties.updates.map(update => update.id),
+        length: () => properties.shows.length,
+        ids: () => properties.updates.map(update => update.id),
     },
 });

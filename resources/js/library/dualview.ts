@@ -10,6 +10,8 @@ export const setDualView = (
     canvas: HTMLCanvasElement,
     engine: Engine,
     container: HTMLDivElement,
+    onActivation: () => void,
+    onDeactivation: () => void,
 ) => {
     const props = {
         id,
@@ -18,6 +20,8 @@ export const setDualView = (
         container,
         active: false,
         transitioning: false,
+        onActivation,
+        onDeactivation,
     };
 
     setConsoleToggle(() => resize(props));
@@ -47,15 +51,13 @@ const toggleDualView = (props: DualViewProperties, engine: Engine) => {
         if (finished && !props.active) {
             container.removeChild(canvas2);
 
-            statistics.destroy(props.id);
+            props.onDeactivation();
 
             return;
         }
 
         if (finished) {
-            statistics.run(props.id);
-
-            console.log(engine.info);
+            props.onActivation();
         }
     };
 

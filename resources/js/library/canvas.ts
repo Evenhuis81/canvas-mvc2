@@ -89,9 +89,20 @@ export const setCanvas = (
 
     // DualView and Statistics are together untill DualView gets multi purpose
     if (options?.dualView) {
-        const canvas2 = setDualView(id, canvas, engine, container);
-        const context = getContext2D(canvas2);
+        // Create hook for statistics called onActivation & onDeactivation
 
-        statistics.create(id, canvas2, context, engine);
+        // statistics.create(props.id, canvas2, context, engine);
+        // statistics.run(props.id);
+        // statistics.destroy(props.id);
+
+        const onActivation = () => {
+            console.log('activated');
+        };
+
+        const onDeactivation = () => {
+            console.log('de-activated');
+        };
+
+        setDualView(id, canvas, engine, container, onActivation, onDeactivation);
     }
 };

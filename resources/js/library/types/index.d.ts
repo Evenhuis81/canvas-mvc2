@@ -31,4 +31,6 @@ type DualViewProperties = {
     container: HTMLDivElement;
     active: boolean;
     transitioning: boolean;
+    onActivation: () => void;
+    onDeactivation: () => void;
 };
