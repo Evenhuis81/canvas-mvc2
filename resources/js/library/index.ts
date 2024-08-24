@@ -4,7 +4,7 @@ import {getSV, getTV} from './transformedView/tv';
 import {getInput} from 'library/input';
 import type {CanvasOptions, Resources} from './types';
 import type {Engine} from './types/engine';
-// import {setStatistics} from '../statistics';
+import statistics from './statistics';
 
 export const resources: Record<string | number, Resources> = {};
 

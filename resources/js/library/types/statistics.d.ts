@@ -1,3 +1,20 @@
+import {Engine, Show} from './engine';
+
+type Statistic = {
+    id: string | number;
+    name: string;
+    fn: () => string;
+};
+
+type StatisticResource = {
+    id: string | number;
+    statistics: Statistic[];
+    canvas: HTMLCanvasElement;
+    context: CanvasRenderingContext2D;
+    engine: Engine;
+    show: Show;
+};
+
 type StatProperties = {
     id: number;
     name: string;

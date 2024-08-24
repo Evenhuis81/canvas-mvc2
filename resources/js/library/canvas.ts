@@ -92,6 +92,6 @@ export const setCanvas = (
         const canvas2 = setDualView(id, canvas, engine, container);
         const context = getContext2D(canvas2);
 
-        statistics.create(id, canvas2, context);
+        statistics.create(id, canvas2, context, engine);
     }
 };

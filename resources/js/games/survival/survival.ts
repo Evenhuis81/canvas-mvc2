@@ -2,17 +2,19 @@
 import {initialize, resources} from 'library/index';
 // import {calculatedStartButton, startButton} from './menu/menu';
 import {levelScreen} from './level/level-select';
+import statistics from 'library/statistics';
 
 export default {
     setup: async () => {
-        initialize('survival', {
+        const {input} = initialize('survival', {
             containerID: 'survival-container',
             full: true,
             clear: true,
             bg: '#000',
             dualView: true,
-            // statistics: true,
         });
+
+        statistics.setFn('survival', () => `mouseX: ${input.mouse.x}, mouseY: ${input.mouse.y}`);
 
         goToMenu();
     },

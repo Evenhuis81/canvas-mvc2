@@ -47,10 +47,16 @@ const toggleDualView = (props: DualViewProperties, engine: Engine) => {
         if (finished && !props.active) {
             container.removeChild(canvas2);
 
+            statistics.destroy(props.id);
+
             return;
         }
 
-        if (finished) statistics.run(props.id);
+        if (finished) {
+            statistics.run(props.id);
+
+            console.log(engine.info);
+        }
     };
 
     if (props.transitioning) finish();
