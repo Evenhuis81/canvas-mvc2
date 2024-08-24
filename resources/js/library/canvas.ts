@@ -2,16 +2,28 @@ import {uid} from './helpers';
 import {setDualView} from './dualview';
 import type {CanvasOptions} from './types';
 import {Engine} from './types/engine';
+import statistics from './statistics';
 
-export const getCanvas = (contextMenu: boolean = true) => {
+// Give these all the canvasoptions that setCanvasOptions also has (make it into 1) and itterate over them to set
+const defaultCanvasOptions = {
+    bgColor: '#444',
+};
+
+export const getCanvas = (options?: {width?: number; height?: number; contextMenu?: boolean; bgColor?: string}) => {
+    const canvasOptions = {...options, ...defaultCanvasOptions};
+
     const canvas = document.createElement('canvas');
 
-    if (contextMenu)
+    if (canvasOptions.contextMenu)
         canvas.addEventListener('contextmenu', e => {
             e.preventDefault();
 
             return false;
         });
+
+    if (canvasOptions.width) canvas.width = canvasOptions.width;
+    if (canvasOptions.height) canvas.width = canvasOptions.height;
+    if (canvasOptions.bgColor) canvas.style.backgroundColor = canvasOptions.bgColor;
 
     return canvas;
 };
@@ -62,18 +74,24 @@ export const setContainer = (canvas: HTMLCanvasElement, container: HTMLDivElemen
     container.appendChild(canvas);
 };
 
-export const setCanvas = (canvas: HTMLCanvasElement, engine: Engine, options?: CanvasOptions): void => {
+export const setCanvas = (
+    id: number | string,
+    canvas: HTMLCanvasElement,
+    engine: Engine,
+    options?: CanvasOptions,
+): void => {
     const container = options?.containerID ? getContainer(options.containerID) : createContainer();
 
-    // Container should be optional
+    // Container could be optional
     setContainer(canvas, container);
 
     setCanvasOptions(canvas, options);
 
-    // DualView and Statistics go hand in hand at the moment, till DualView gets multi purpose
+    // DualView and Statistics are together untill DualView gets multi purpose
     if (options?.dualView) {
-        setDualView(canvas, engine, container);
+        const canvas2 = setDualView(id, canvas, engine, container);
+        const context = getContext2D(canvas2);
 
-        // setStatistics()
+        statistics.create(id, canvas2, context);
     }
 };

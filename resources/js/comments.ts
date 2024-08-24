@@ -28,6 +28,11 @@
 //              -dissapear / appear effects (slide / fade)
 // 4. make button object dynamic for property changes for button methods (point 2 and 3)
 
+// Statistics module:
+// This should become a reesource, but with different 'themes' or statistic variants. (for different kind of options)
+// Create text object according to StaticView, with calculated options (like button, possible to 'lend' those)
+// export const statistics: Record<string | number, Statistic[]> = {};
+
 // const tvUpdate = tv.moveTo(player.middlePos);
 // engine.setUpdate(tvUpdate);
 

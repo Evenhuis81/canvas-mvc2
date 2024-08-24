@@ -1,18 +1,23 @@
-import {uid} from './helpers';
-import type {Show} from './types/engine';
+// import {uid} from './helpers';
+// import type {Show} from './types/engine';
 import {vector} from './vector';
 
-// This should become a reesource, but with different 'themes' or statistic variants. (for different kind of options)
-// Create text object according to StaticView, with calculated options (like button, possible to 'lend' those)
-export const statistics: Record<string | number, Statistic[]> = {};
+type StatisticResource = Record<string | number, Statistic[]>;
 
-export const setStatistics = (id: string | number, context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
-    const set = (statistic: Statistic) => statistics[id].push(statistic);
+const statisticsResource: StatisticResource = {};
 
-    return {
-        set,
-        show: createShow(id, context, canvas),
-    };
+export default {
+    create: (id: number | string, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) => {
+        statisticsResource[id] = [];
+
+        //
+    },
+    set: () => {},
+    unset: () => {},
+    run: (id: number | string) => {
+        //
+    },
+    halt: () => {},
 };
 
 // const setFn = (fn: () => string) => {

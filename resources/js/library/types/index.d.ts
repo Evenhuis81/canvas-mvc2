@@ -25,6 +25,7 @@ type CanvasOptions = Partial<{
 }>;
 
 type DualViewProperties = {
+    id: number | string;
     canvas1: HTMLCanvasElement;
     canvas2: HTMLCanvasElement;
     container: HTMLDivElement;

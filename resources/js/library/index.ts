@@ -9,20 +9,17 @@ import type {Engine} from './types/engine';
 export const resources: Record<string | number, Resources> = {};
 
 export const initialize = (id: string | number, options?: CanvasOptions) => {
-    const canvas = getCanvas(false);
+    const canvas = getCanvas({contextMenu: true});
     const context = getContext2D(canvas);
     const engine = getEngine();
 
-    setCanvas(canvas, engine, options);
+    setCanvas(id, canvas, engine, options);
 
     const input = getInput(canvas, options?.dualView);
     const tv = getTV(context, input);
     const sv = getSV(context);
 
     if (options?.clear) clearOn(engine, context);
-
-    // dualview = statistics (temporary)
-    // if (options?.statistics) setStatistics;
 
     resources[id] = {canvas, context, engine, sv, tv, input};
 
