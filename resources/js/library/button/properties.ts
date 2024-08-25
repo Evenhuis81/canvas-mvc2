@@ -14,7 +14,7 @@ import {getProperties, uid} from 'library/helpers';
 export const getButtonProperties = (
     options: ButtonOptions,
     defaults: typeof staticDefaultButtonProperties,
-    calculatedOptions?: () => ButtonOptions,
+    calculatedOptions?: () => typeof calculatedDefaultButtonProperties,
 ) => {
     const {click: handlers, colors, ...restProperties} = options;
 

@@ -3,15 +3,12 @@ import {setConsoleToggle, setResize} from './input';
 import {DualViewProperties} from './types';
 import {Engine} from './types/engine';
 import {createDualViewTransitionUpdate} from './button/transition';
-import statistics from './statistics';
 
-export const setDualView = (
+export const createDualView = (
     id: number | string,
     canvas: HTMLCanvasElement,
     engine: Engine,
     container: HTMLDivElement,
-    onActivation: () => void,
-    onDeactivation: () => void,
 ) => {
     const props = {
         id,
@@ -20,8 +17,6 @@ export const setDualView = (
         container,
         active: false,
         transitioning: false,
-        onActivation,
-        onDeactivation,
     };
 
     setConsoleToggle(() => resize(props));

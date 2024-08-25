@@ -5,7 +5,7 @@ import {levelScreen} from './level/level-select';
 
 export default {
     setup: async () => {
-        const {input} = initialize('survival', {
+        initialize('survival', {
             containerID: 'survival-container',
             full: true,
             clear: true,
