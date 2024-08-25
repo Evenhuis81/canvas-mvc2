@@ -1,25 +1,42 @@
 import {getColorRGBA} from 'library/colors';
-import {uid} from 'library/helpers';
+import {getProperties, uid} from 'library/helpers';
 
-export const getButtonProperties: GetButtonProperties = (options, calculatedOptions) => {
-    const {click: handlers, colors, ...properties} = options;
+// const defaults = {
+//     id: 'defaultID',
+// };
 
-    if (calculatedOptions) Object.assign(properties, calculatedOptions());
+// const options = {
+//     id: 'newID',
+// };
+
+// const properties = getProperties(defaults, options);
+
+export const getButtonProperties = (
+    options: ButtonOptions,
+    defaults: typeof staticDefaultButtonProperties,
+    calculatedOptions?: () => ButtonOptions,
+) => {
+    const {click: handlers, colors, ...restProperties} = options;
+
+    const properties = getProperties(restProperties, defaults, calculatedOptions);
+
+    // if (calculatedOptions) Object.assign(properties, calculatedOptions());
 
     return {props: setProps(properties), handlers: setHandlers(handlers), colors: setColors(colors)};
 };
 
 const setProps: (props: ButtonProperties) => InternalButtonProperties = props => ({
-    ...calculatedDefaultProperties(),
-    ...staticDefaultProperties,
+    ...calculatedDefaultButtonProperties(),
+    ...staticDefaultButtonProperties,
     ...props,
     id: props.id ?? `button ${uid()}`,
 });
 
-const calculatedDefaultProperties: () => Omit<
-    InternalButtonProperties,
-    keyof InternalStaticButtonProperties | 'id'
-> = () => ({
+// export const calculatedDefaultProperties: () => Omit<
+//     InternalButtonProperties,
+//     keyof InternalStaticButtonProperties | 'id'
+// > = () => ({
+export const calculatedDefaultButtonProperties = () => ({
     x: innerWidth * 0.5,
     y: innerHeight * 0.1,
     w: innerWidth * 0.2,
@@ -28,17 +45,18 @@ const calculatedDefaultProperties: () => Omit<
     fontSize: 16,
 });
 
-const staticDefaultProperties: InternalStaticButtonProperties = {
-    pushed: false,
-    destructed: false,
-    destruct: false,
+// const staticDefaultProperties: InternalStaticButtonProperties = {
+export const staticDefaultButtonProperties = {
     name: 'Example Button',
     type: 'fillStrokeRound',
     text: 'Example Button',
     font: 'monospace',
     r: 5,
-    delay: 0, // ms
+    pushed: false,
+    destructed: false,
+    destruct: false,
     startTransition: true,
+    delay: 0, // ms
     endTransition: true,
     autoDestruct: true,
 };

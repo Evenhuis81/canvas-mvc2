@@ -5,7 +5,7 @@ import {
     createStartTransitionUpdate2,
     getTransitions,
 } from './transition';
-import {getButtonProperties} from './properties';
+import {getButtonProperties, staticDefaultButtonProperties} from './properties';
 import {setResize} from 'library/input';
 import type {Resources} from 'library/types';
 import type {Engine, Update} from 'library/types/engine';
@@ -19,7 +19,7 @@ export const createButton = (
 ) => {
     const {context, engine, input} = resources[resourceID];
 
-    const {props, handlers, colors} = getButtonProperties(options, calculatedOptions);
+    const {props, handlers, colors} = getButtonProperties(options, staticDefaultButtonProperties);
 
     const hoverTransition = getTransitions(colors);
 
