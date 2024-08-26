@@ -4,12 +4,17 @@ import type {Engine} from './types/engine';
 import type {Statistic, StatisticResource} from './types/statistics';
 
 const statisticsResource: Record<string | number, StatisticResource> = {};
+const toggleKey: Record<string|number, string> = {};
 
 export default {
     create: (id: number | string, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, engine: Engine) => {
         const statistics: Statistic[] = [];
 
         const show = createShow({id, context});
+
+        addEventListener('keyup', ({code}) => {
+            if ()
+        })
 
         statisticsResource[id] = {id, canvas, context, statistics, show, engine};
     },
@@ -43,6 +48,9 @@ export default {
 
         delete statisticsResource[id];
     },
+    setToggleKey: (id: string | number, key: string) => {
+        toggleKey[id] = key;
+    }
 };
 
 const createShow = (props: Omit<StatisticResource, 'show' | 'canvas' | 'engine' | 'statistics'>) => {
@@ -56,8 +64,6 @@ const createShow = (props: Omit<StatisticResource, 'show' | 'canvas' | 'engine' 
         id: `${id}-statistic-show`,
         name: `Statistic Show`,
         fn: () => {
-            // ctx.clearRect(0, 0, canvas.width, canvas.height);
-
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.font = '16px monospace';

@@ -1,8 +1,8 @@
 import {uid} from './helpers';
 import {createDualView} from './dualview';
-import type {CanvasOptions} from './types';
-import {Engine} from './types/engine';
 import statistics from './statistics';
+import type {CanvasOptions, Resources, StatisticCanvasOptions, StatisticInitializeResource} from './types';
+import type {Engine} from './types/engine';
 
 // Give these all the canvasoptions that setCanvasOptions also has (make it into 1) and itterate over them to set
 const defaultCanvasOptions = {
@@ -79,20 +79,31 @@ export const setCanvas = (
     canvas: HTMLCanvasElement,
     context: CanvasRenderingContext2D,
     engine: Engine,
+    container: HTMLDivElement,
     options?: CanvasOptions,
 ): void => {
-    const container = options?.containerID ? getContainer(options.containerID) : createContainer();
-
-    // Container could be optional
+    // Container could/should be optional
     setContainer(canvas, container);
 
     setCanvasOptions(canvas, options);
 
     // These belong to setCanvasOptions aswell offcourse
+    if (options?.statistics) {
+        const statResources = {id, engine, context, canvas, container, toggleKey: options.statistics.toggleKey};
+        let key: keyof StatisticCanvasOptions;
+
+        for (key in options.statistics) {
+            statSwitch[key](statResources);
+        }
+    }
+};
+
+const statSwitch: Record<keyof StatisticCanvasOptions, (resource: StatisticInitializeResource) => void> = {
     // DualView and Statistics are together untill DualView gets multi purpose
     // Beware deactivated firing even when it has not yet become activated
-    if (options?.dualView) {
+    dualView: ({id, canvas, engine, container}) => {
         // const {canvas2, context2, setListeners} = createDualView(id, canvas, engine, container);
+
         const {setListeners} = createDualView(id, canvas, engine, container);
 
         // statistics.run(id);
@@ -108,10 +119,9 @@ export const setCanvas = (
         };
 
         setListeners(onActivation, onDeactivation);
-    }
-
+    },
     // When dualView is true, this should not be true
-    if (options?.statisticsOverlay) {
+    overlay: ({id, canvas, context, engine}) => {
         statistics.create(id, canvas, context, engine);
 
         statistics.setFn(id, () => 'test stat');
@@ -119,5 +129,7 @@ export const setCanvas = (
         statistics.run(id);
 
         console.log('statistics overlay');
-    }
+    },
+    // Requires for the statisticResource to be available already
+    toggleKey: ({id}) => statistics.setToggleKey(),
 };

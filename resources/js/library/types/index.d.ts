@@ -3,13 +3,23 @@ import type {Input} from './input';
 import type {StaticView, TransformedView} from './tv';
 
 interface Resources {
+    id: string | number;
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
+    container: HTMLDivElement;
     engine: Engine;
     sv: StaticView;
     tv: TransformedView;
     input: Input;
 }
+
+type StatisticCanvasOptions = {
+    overlay: boolean;
+    dualView: boolean;
+    toggleKey: string;
+};
+
+type StatisticInitializeResource = Omit<Resources, 'sv' | 'tv' | 'input'>;
 
 type CanvasOptions = Partial<{
     containerID: string;
@@ -21,7 +31,7 @@ type CanvasOptions = Partial<{
     clear: boolean;
     ontextMenu: boolean;
     dualView: boolean;
-    statisticsOverlay: boolean;
+    statistics: Partial<StatisticCanvasOptions>;
 }>;
 
 type DualViewProperties = {

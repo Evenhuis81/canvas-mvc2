@@ -1,11 +1,13 @@
-import {getCanvas, getContext2D, setCanvas} from './canvas';
+import {createContainer, getCanvas, getContainer, getContext2D, setCanvas} from './canvas';
 import {getEngine} from './engine';
 import {getSV, getTV} from './transformedView/tv';
 import {getInput} from 'library/input';
 import type {CanvasOptions, Resources} from './types';
 import type {Engine} from './types/engine';
-import statistics from './statistics';
 
+// Create a dynamic resource repository, missing at the moment is:
+// 1. StatisticResources | Resource without TV or any other library module
+// 2. more
 export const resources: Record<string | number, Resources> = {};
 
 export const initialize = (id: string | number, options?: CanvasOptions) => {
@@ -15,13 +17,15 @@ export const initialize = (id: string | number, options?: CanvasOptions) => {
 
     if (options?.clear) clearOn(engine, context);
 
-    setCanvas(id, canvas, context, engine, options);
+    const container = options?.containerID ? getContainer(options.containerID) : createContainer();
+
+    setCanvas(id, canvas, context, engine, container, options);
 
     const input = getInput(canvas, options?.dualView);
     const tv = getTV(context, input);
     const sv = getSV(context);
 
-    resources[id] = {canvas, context, engine, sv, tv, input};
+    resources[id] = {id, canvas, context, engine, container, sv, tv, input};
 
     return resources[id];
 };

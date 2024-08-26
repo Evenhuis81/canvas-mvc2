@@ -66,4 +66,12 @@ export const routes: RouteRecordRaw[] = [
             shouldBeLoggedIn: false,
         },
     },
+    {
+        path: '/timedash',
+        component: () => import('./games/timedash/Timedash.vue'),
+        name: 'Time Dash',
+        meta: {
+            shouldBeLoggedIn: false,
+        },
+    },
 ];
