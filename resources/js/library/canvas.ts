@@ -1,5 +1,5 @@
 import {uid} from './helpers';
-import {setDualView} from './dualview';
+import {createDualView} from './dualview';
 import type {CanvasOptions} from './types';
 import {Engine} from './types/engine';
 import statistics from './statistics';
@@ -88,14 +88,15 @@ export const setCanvas = (
     setCanvasOptions(canvas, options);
 
     // DualView and Statistics are together untill DualView gets multi purpose
+    // Beware deactivated firing even when it has not yet become activated
     if (options?.dualView) {
-        // Create hook for statistics called onActivation & onDeactivation
+        const {canvas2, context2, setListeners} = createDualView(id, canvas, container, engine);
 
-        // statistics.create(props.id, canvas2, context, engine);
-        // statistics.run(props.id);
-        // statistics.destroy(props.id);
+        // statistics.run(id);
+        // statistics.destroy(id);
 
         const onActivation = () => {
+            // statistics.create(id, canvas2, engine);
             console.log('activated');
         };
 
@@ -103,6 +104,6 @@ export const setCanvas = (
             console.log('de-activated');
         };
 
-        setDualView(id, canvas, engine, container, onActivation, onDeactivation);
+        setListeners(onActivation, onDeactivation);
     }
 };
