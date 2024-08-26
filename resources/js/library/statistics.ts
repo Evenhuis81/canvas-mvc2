@@ -9,7 +9,7 @@ export default {
     create: (id: number | string, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, engine: Engine) => {
         const statistics: Statistic[] = [];
 
-        const show = createShow({id, canvas, context});
+        const show = createShow({id, context});
 
         statisticsResource[id] = {id, canvas, context, statistics, show, engine};
     },
@@ -45,8 +45,8 @@ export default {
     },
 };
 
-const createShow = (props: Omit<StatisticResource, 'show' | 'engine' | 'statistics'>) => {
-    const {id, canvas, context: ctx} = props;
+const createShow = (props: Omit<StatisticResource, 'show' | 'canvas' | 'engine' | 'statistics'>) => {
+    const {id, context: ctx} = props;
 
     const txtPosDefault = vector(10, 10);
     let txtPos = vector(10, 10);
@@ -56,7 +56,7 @@ const createShow = (props: Omit<StatisticResource, 'show' | 'engine' | 'statisti
         id: `${id}-statistic-show`,
         name: `Statistic Show`,
         fn: () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';

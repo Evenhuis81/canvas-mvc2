@@ -10,8 +10,8 @@ import type {Engine} from './types/engine';
 export const createDualView = (
     id: number | string,
     canvas: HTMLCanvasElement,
-    container: HTMLDivElement,
     engine: Engine,
+    container: HTMLDivElement,
 ) => {
     const canvas2 = getCanvas({width: 0, bgColor: '#333'});
     const context2 = getContext2D(canvas);

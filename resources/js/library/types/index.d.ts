@@ -21,7 +21,7 @@ type CanvasOptions = Partial<{
     clear: boolean;
     ontextMenu: boolean;
     dualView: boolean;
-    statistics: boolean;
+    statisticsOverlay: boolean;
 }>;
 
 type DualViewProperties = {

@@ -13,13 +13,13 @@ export const initialize = (id: string | number, options?: CanvasOptions) => {
     const context = getContext2D(canvas);
     const engine = getEngine();
 
-    setCanvas(id, canvas, engine, options);
+    if (options?.clear) clearOn(engine, context);
+
+    setCanvas(id, canvas, context, engine, options);
 
     const input = getInput(canvas, options?.dualView);
     const tv = getTV(context, input);
     const sv = getSV(context);
-
-    if (options?.clear) clearOn(engine, context);
 
     resources[id] = {canvas, context, engine, sv, tv, input};
 

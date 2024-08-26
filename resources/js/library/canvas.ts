@@ -77,6 +77,7 @@ export const setContainer = (canvas: HTMLCanvasElement, container: HTMLDivElemen
 export const setCanvas = (
     id: number | string,
     canvas: HTMLCanvasElement,
+    context: CanvasRenderingContext2D,
     engine: Engine,
     options?: CanvasOptions,
 ): void => {
@@ -87,10 +88,12 @@ export const setCanvas = (
 
     setCanvasOptions(canvas, options);
 
+    // These belong to setCanvasOptions aswell offcourse
     // DualView and Statistics are together untill DualView gets multi purpose
     // Beware deactivated firing even when it has not yet become activated
     if (options?.dualView) {
-        const {canvas2, context2, setListeners} = createDualView(id, canvas, container, engine);
+        // const {canvas2, context2, setListeners} = createDualView(id, canvas, engine, container);
+        const {setListeners} = createDualView(id, canvas, engine, container);
 
         // statistics.run(id);
         // statistics.destroy(id);
@@ -105,5 +108,16 @@ export const setCanvas = (
         };
 
         setListeners(onActivation, onDeactivation);
+    }
+
+    // When dualView is true, this should not be true
+    if (options?.statisticsOverlay) {
+        statistics.create(id, canvas, context, engine);
+
+        statistics.setFn(id, () => 'test stat');
+
+        statistics.run(id);
+
+        console.log('statistics overlay');
     }
 };
