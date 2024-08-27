@@ -4,7 +4,23 @@ import type {Engine} from './types/engine';
 import type {Statistic, StatisticResource} from './types/statistics';
 
 const statisticsResource: Record<string | number, StatisticResource> = {};
-const toggleKey: Record<string|number, string> = {};
+const toggleKey: Record<string | number, string> = {};
+
+const toggleView = (id: string | number) => {
+    const {engine, show, active} = statisticsResource[id];
+
+    if (active) {
+        statisticsResource[id].active = false;
+
+        engine.removeShow(`${id}-statistic-show`);
+
+        return;
+    }
+
+    statisticsResource[id].active = true;
+
+    engine.setShow(show);
+};
 
 export default {
     create: (id: number | string, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, engine: Engine) => {
@@ -12,11 +28,13 @@ export default {
 
         const show = createShow({id, context});
 
-        addEventListener('keyup', ({code}) => {
-            if ()
-        })
+        // These contain objects/modules from main resources, so they don't need to be set here aswell
+        statisticsResource[id] = {id, canvas, context, statistics, show, engine, active: false};
 
-        statisticsResource[id] = {id, canvas, context, statistics, show, engine};
+        toggleKey[id] = 'KeyT'; // default
+        addEventListener('keyup', ({code}) => {
+            if (code === toggleKey[id]) toggleView(id);
+        });
     },
     set: (id: number | string, stat: Statistic) => statisticsResource[id].statistics.push(stat),
     setFn: (id: number | string, fn: () => string) => {
@@ -38,6 +56,7 @@ export default {
         statisticsResource[id].statistics.splice(index, 1);
     },
     run: (id: number | string) => {
+        statisticsResource[id].active = true;
         statisticsResource[id].engine.setShow(statisticsResource[id].show);
     },
     halt: (id: string | number) => {
@@ -50,10 +69,10 @@ export default {
     },
     setToggleKey: (id: string | number, key: string) => {
         toggleKey[id] = key;
-    }
+    },
 };
 
-const createShow = (props: Omit<StatisticResource, 'show' | 'canvas' | 'engine' | 'statistics'>) => {
+const createShow = (props: Omit<StatisticResource, 'show' | 'canvas' | 'engine' | 'statistics' | 'active'>) => {
     const {id, context: ctx} = props;
 
     const txtPosDefault = vector(10, 10);

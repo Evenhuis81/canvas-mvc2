@@ -13,6 +13,7 @@ type StatisticResource = {
     context: CanvasRenderingContext2D;
     engine: Engine;
     show: Show;
+    active: boolean;
 };
 
 type StatProperties = {

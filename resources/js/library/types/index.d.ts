@@ -19,7 +19,9 @@ type StatisticCanvasOptions = {
     toggleKey: string;
 };
 
-type StatisticInitializeResource = Omit<Resources, 'sv' | 'tv' | 'input'>;
+type StatisticInitializeResource = Omit<Resources, 'sv' | 'tv' | 'input'> & {
+    toggleKey: string;
+};
 
 type CanvasOptions = Partial<{
     containerID: string;

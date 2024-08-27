@@ -89,7 +89,16 @@ export const setCanvas = (
 
     // These belong to setCanvasOptions aswell offcourse
     if (options?.statistics) {
-        const statResources = {id, engine, context, canvas, container, toggleKey: options.statistics.toggleKey};
+        // ToggleKey default set to KeyT here, but ideally this should be optional. (this is outside the statistics module and default
+        // should be set inside the module.)
+        const statResources = {
+            id,
+            engine,
+            context,
+            canvas,
+            container,
+            toggleKey: options.statistics.toggleKey ?? 'KeyT',
+        };
         let key: keyof StatisticCanvasOptions;
 
         for (key in options.statistics) {
@@ -102,15 +111,9 @@ const statSwitch: Record<keyof StatisticCanvasOptions, (resource: StatisticIniti
     // DualView and Statistics are together untill DualView gets multi purpose
     // Beware deactivated firing even when it has not yet become activated
     dualView: ({id, canvas, engine, container}) => {
-        // const {canvas2, context2, setListeners} = createDualView(id, canvas, engine, container);
-
         const {setListeners} = createDualView(id, canvas, engine, container);
 
-        // statistics.run(id);
-        // statistics.destroy(id);
-
         const onActivation = () => {
-            // statistics.create(id, canvas2, engine);
             console.log('activated');
         };
 
@@ -131,5 +134,5 @@ const statSwitch: Record<keyof StatisticCanvasOptions, (resource: StatisticIniti
         console.log('statistics overlay');
     },
     // Requires for the statisticResource to be available already
-    toggleKey: ({id}) => statistics.setToggleKey(),
+    toggleKey: ({id, toggleKey}) => statistics.setToggleKey(id, toggleKey),
 };
