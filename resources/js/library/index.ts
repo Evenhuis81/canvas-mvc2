@@ -1,9 +1,10 @@
 import {createContainer, getCanvas, getContainer, getContext2D, setCanvas} from './canvas';
 import {getEngine} from './engine';
-import {getSV, getTV} from './transformedView/tv';
+import {getTV} from './transformedView/tv';
 import {getInput} from 'library/input';
 import type {CanvasOptions, Resources} from './types';
 import type {Engine} from './types/engine';
+import {getSV} from './transformedView/sv';
 
 // Create a dynamic resource repository, missing at the moment is:
 // 1. StatisticResources | Resource without TV or any other library module

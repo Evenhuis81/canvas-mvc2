@@ -1,4 +1,5 @@
 import {initialize, resources} from 'library/index';
+import {startLevel} from './levels';
 
 export default {
     setup: async () => {
@@ -13,7 +14,7 @@ export default {
             },
         });
 
-        //
+        startLevel(1);
     },
     run: () => resources.timedash.engine.run(),
     runOnce: () => resources.timedash.engine.runOnce(),

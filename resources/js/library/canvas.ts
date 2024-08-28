@@ -130,9 +130,6 @@ const statSwitch: Record<keyof StatisticCanvasOptions, (resource: StatisticIniti
         statistics.setFn(id, () => 'test stat');
 
         statistics.run(id);
-
-        console.log('statistics overlay');
     },
-    // Requires for the statisticResource to be available already
     toggleKey: ({id, toggleKey}) => statistics.setToggleKey(id, toggleKey),
 };

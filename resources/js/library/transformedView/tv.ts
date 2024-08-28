@@ -5,23 +5,8 @@ import {getPaintMethods} from './paint';
 import {setTVEvents} from './input';
 import {vec, vector, vector2} from '../vector';
 import type {Vector, Vector2} from 'library/types/vector';
-import type {Text, Zoom} from 'library/types/tv';
+import type {Zoom} from 'library/types/tv';
 import type {Input} from 'library/types/input';
-
-export const getSV = (ctx: CanvasRenderingContext2D) => {
-    const text = (obj: Text) => {
-        const font = `${obj.fontSize ? obj.fontSize : 24}px ${obj.font ?? 'monospace'}`;
-
-        ctx.font = font;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = obj.fill;
-
-        ctx.fillText(obj.txt, obj.x, obj.y);
-    };
-
-    return {text};
-};
 
 export const getTV = (context: CanvasRenderingContext2D, input: Input) => {
     const paintMethods = getPaintMethods(properties, methods, context);
