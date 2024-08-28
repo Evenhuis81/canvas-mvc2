@@ -23,7 +23,9 @@ export const initialize = (id: string | number, options?: CanvasOptions) => {
     setCanvas(id, canvas, context, engine, container, options);
 
     const input = getInput(canvas, options?.dualView);
+
     const tv = getTV(context, input);
+
     const sv = getSV(context);
 
     resources[id] = {id, canvas, context, engine, container, sv, tv, input};
