@@ -3,7 +3,9 @@ type DoublePosition = {x1: number; y1: number; x2: number; y2: number};
 type Circle = Position & {r: number};
 type Rectangle = Position & {w: number; h: number};
 type Line = DoublePosition & {lw: number};
-type Txt = Position & {txt: string}; // First Shape with optional properties, need testing on generic methods
+type Txt = Position & {txt: string};
+
+// Create Shape with optional properties, need testing on generic methods
 
 // type FillRect = Rect & {fill: string};
 // type StrokeRect = Rect & {stroke: string; lw: number};

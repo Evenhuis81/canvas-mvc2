@@ -1,5 +1,5 @@
 import {initialize, resources} from 'library/index';
-import {startLevel} from './levels';
+// import {startLevel} from './levels';
 
 export default {
     setup: async () => {
@@ -16,35 +16,41 @@ export default {
 
         const {paint} = resources.timedash.sv;
 
-        // const testCircle = {
-        //     x: 50,
-        //     y: 50,
-        //     r: 50,
-        // };
-
-        const testCircle2 = {
-            x: 50,
-            y: 50,
-            r: 50,
-            fill: 'red',
-        };
-
         paint('circle', testCircle2);
-
-        // resources.timedash.engine.setShow({
-        //     id: 0,
-        //     name: '0',
-        //     fn: paintShowCircle,
-        // });
-
-        // paint('rectangle', testRectangle);
-
-        // paint('line', {x1: 0, x2: 0, y1: 10, y2: 10, lw: 2});
-
-        // paint('text', {x: 0, y: 0, txt: 'blah'});
+        paint('rectangle', testRectangle);
+        paint('line', testLine);
+        paint('text', testText);
 
         // startLevel(1);
     },
     run: () => resources.timedash.engine.run(),
     runOnce: () => resources.timedash.engine.runOnce(),
+};
+
+const testCircle2 = {
+    x: 50,
+    y: 50,
+    r: 50,
+    fill: 'red',
+};
+
+const testLine = {
+    x1: 400,
+    y1: 200,
+    x2: 200,
+    y2: 250,
+    lw: 5,
+};
+
+const testRectangle = {
+    x: 100,
+    y: 100,
+    w: 80,
+    h: 40,
+};
+
+const testText = {
+    x: 300,
+    y: 200,
+    txt: 'Test Text',
 };
