@@ -3,7 +3,6 @@ import {getEngine} from './engine';
 import {getTV} from './transformedView/tv';
 import {getInput} from 'library/input';
 import type {CanvasOptions, Resources} from './types';
-import type {Engine} from './types/engine';
 import {getSV} from './transformedView/sv';
 
 // Create a dynamic resource repository, missing at the moment is:
@@ -26,7 +25,7 @@ export const initialize = (id: string | number, options?: CanvasOptions) => {
 
     const tv = getTV(context, input);
 
-    const sv = getSV(context);
+    const sv = getSV(context, engine);
 
     resources[id] = {id, canvas, context, engine, container, sv, tv, input};
 

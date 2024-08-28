@@ -1,14 +1,14 @@
-export type Update = {
+type Update = {
     id?: number | string;
     name?: string;
     fn: (deltaTime: number) => void;
 };
 
-export type Show = Omit<Update, 'fn'> & {
+type Show = Omit<Update, 'fn'> & {
     fn: () => void;
 };
 
-export interface Engine {
+interface Engine {
     run: () => void;
     runOnce: () => void;
     halt: () => void;
