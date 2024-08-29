@@ -1,5 +1,4 @@
 import {initialize, resources} from 'library/index';
-// import {startLevel} from './levels';
 
 export default {
     setup: async () => {
@@ -16,41 +15,19 @@ export default {
 
         const {paint} = resources.timedash.sv;
 
-        paint('circle', testCircle2);
-        paint('rectangle', testRectangle);
-        paint('line', testLine);
-        paint('text', testText);
-
-        // startLevel(1);
+        // paint('textFillStroke', testTextFillStroke);
     },
     run: () => resources.timedash.engine.run(),
     runOnce: () => resources.timedash.engine.runOnce(),
 };
 
-const testCircle2 = {
-    x: 50,
-    y: 50,
-    r: 50,
+const testTextFillStroke = {
+    txt: 'test text',
+    x: innerWidth / 2,
+    y: innerHeight / 2,
     fill: 'red',
-};
-
-const testLine = {
-    x1: 400,
-    y1: 200,
-    x2: 200,
-    y2: 250,
-    lw: 5,
-};
-
-const testRectangle = {
-    x: 100,
-    y: 100,
-    w: 80,
-    h: 40,
-};
-
-const testText = {
-    x: 300,
-    y: 200,
-    txt: 'Test Text',
+    stroke: 'blue',
+    lw: 12,
+    font: 'monospace',
+    fontSize: 96,
 };

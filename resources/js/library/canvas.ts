@@ -2,7 +2,6 @@ import {uid} from './helpers';
 import {createDualView} from './dualview';
 import statistics from './statistics';
 import type {CanvasOptions, Resources, StatisticCanvasOptions, StatisticInitializeResource} from './types';
-import type {Engine} from './types/engine';
 
 // Give these all the canvasoptions that setCanvasOptions also has (make it into 1) and itterate over them to set
 const defaultCanvasOptions = {
@@ -129,7 +128,7 @@ const statSwitch: Record<keyof StatisticCanvasOptions, (resource: StatisticIniti
 
         statistics.setFn(id, () => 'test stat');
 
-        statistics.run(id);
+        // statistics.run(id);
     },
     toggleKey: ({id, toggleKey}) => statistics.setToggleKey(id, toggleKey),
 };

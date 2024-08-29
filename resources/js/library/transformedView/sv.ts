@@ -13,22 +13,67 @@ export const getSV = (context: CanvasRenderingContext2D, engine: Engine) => {
 const createPaintMethods: (context: CanvasRenderingContext2D) => {
     [K in keyof PaintShapes]: (obj: PaintShapes[K]) => () => void;
 } = ctx => ({
-    circle: (circle: Circle) => () => {
-        // Remove this and make Shapes more dynamic with fill or stroke properties and handle them accordingly
-        ctx.fillStyle = 'green';
+    circle: circle => () => {
+        ctx.beginPath();
+        ctx.arc(circle.x, circle.y, circle.r, 0, Math.PI * 2);
+        ctx.fill();
+    },
+    circleFill: circle => () => {
+        ctx.fillStyle = circle.fill;
 
         ctx.beginPath();
         ctx.arc(circle.x, circle.y, circle.r, 0, Math.PI * 2);
         ctx.fill();
     },
-    rectangle: (rectangle: Rectangle) => () => {
-        ctx.fillStyle = 'red';
+    circleStroke: circle => () => {
+        ctx.strokeStyle = circle.stroke;
+        ctx.lineWidth = circle.lw;
+
+        ctx.beginPath();
+        ctx.arc(circle.x, circle.y, circle.r, 0, Math.PI * 2);
+        ctx.stroke();
+    },
+    circleFillStroke: circle => () => {
+        ctx.fillStyle = circle.fill;
+        ctx.strokeStyle = circle.stroke;
+        ctx.lineWidth = circle.lw;
+
+        ctx.beginPath();
+        ctx.arc(circle.x, circle.y, circle.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+    },
+    rectangle: rectangle => () => {
+        ctx.beginPath();
+        ctx.rect(rectangle.x, rectangle.y, rectangle.w, rectangle.h);
+        ctx.fill();
+    },
+    rectangleFill: rectangle => () => {
+        ctx.fillStyle = rectangle.fill;
 
         ctx.beginPath();
         ctx.rect(rectangle.x, rectangle.y, rectangle.w, rectangle.h);
         ctx.fill();
     },
-    line: (line: Line) => () => {
+    rectangleStroke: rectangle => () => {
+        ctx.strokeStyle = rectangle.stroke;
+        ctx.lineWidth = rectangle.lw;
+
+        ctx.beginPath();
+        ctx.rect(rectangle.x, rectangle.y, rectangle.w, rectangle.h);
+        ctx.stroke();
+    },
+    rectangleFillStroke: rectangle => () => {
+        ctx.fillStyle = rectangle.fill;
+        ctx.strokeStyle = rectangle.stroke;
+        ctx.lineWidth = rectangle.lw;
+
+        ctx.beginPath();
+        ctx.rect(rectangle.x, rectangle.y, rectangle.w, rectangle.h);
+        ctx.fill();
+        ctx.stroke();
+    },
+    line: line => () => {
         ctx.strokeStyle = 'purple';
         ctx.lineWidth = line.lw;
 
@@ -37,9 +82,24 @@ const createPaintMethods: (context: CanvasRenderingContext2D) => {
         ctx.lineTo(line.x2, line.y2);
         ctx.stroke();
     },
-    text: (text: Txt) => () => {
+    text: text => () => {
         ctx.fillStyle = 'orange';
 
         ctx.fillText(text.txt, text.x, text.y);
+    },
+    textFill: text => () => {},
+    textStroke: text => () => {},
+    textFillStroke: text => () => {
+        const font = `${text.fontSize}px ${text.font}`;
+
+        ctx.font = font;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = text.fill;
+        ctx.strokeStyle = text.stroke;
+        ctx.lineWidth = text.lw;
+
+        ctx.fillText(text.txt, text.x, text.y);
+        ctx.strokeText(text.txt, text.x, text.y);
     },
 });
