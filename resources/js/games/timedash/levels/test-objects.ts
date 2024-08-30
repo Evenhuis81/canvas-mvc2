@@ -19,6 +19,7 @@ export const testRectangle = {
     w: 80,
     h: 40,
     fill: 'green',
+    stroke: 'red',
 };
 
 const testText = {

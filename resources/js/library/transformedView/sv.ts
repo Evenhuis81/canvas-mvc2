@@ -1,10 +1,9 @@
-import {PaintShapes} from 'library/types/paint';
+import {FullShape, Paint, PaintShapes} from 'library/types/paint';
 
 export const getSV = (context: CanvasRenderingContext2D, engine: Engine) => {
     const paintMethods = createPaintMethods(context);
 
-    const paint = <K extends keyof PaintShapes>(type: K, shape: PaintShapes[K]) => {
-        console.log(type);
+    const paint: Paint = (type, shape) => {
         const fn = paintMethods[type](shape);
 
         engine.setShow({fn});
@@ -14,22 +13,32 @@ export const getSV = (context: CanvasRenderingContext2D, engine: Engine) => {
 };
 
 const createPaintMethods: (context: CanvasRenderingContext2D) => {
-    [K in keyof PaintShapes]: (obj: PaintShapes[K]) => () => void;
+    [K in keyof PaintShapes]: (obj: FullShape<PaintShapes[K]>) => () => void;
 } = ctx => ({
-    // use all possible attributes for shapes, with conditional for stroke or fill
     circle: circle => () => {
         ctx.beginPath();
         ctx.arc(circle.x, circle.y, circle.r, 0, Math.PI * 2);
         ctx.fill();
+        if (circle.fill) {
+            ctx.fillStyle = circle.fill;
+            ctx.fill();
+        }
+        if (circle.stroke) {
+            ctx.strokeStyle = circle.stroke;
+            ctx.stroke();
+        }
     },
     rectangle: rectangle => () => {
-        ctx.fillStyle = rectangle.fill;
-
-        // console.log(rectangle.fillStyle);
-
         ctx.beginPath();
         ctx.rect(rectangle.x, rectangle.y, rectangle.w, rectangle.h);
-        ctx.fill();
+        if (rectangle.fill) {
+            ctx.fillStyle = rectangle.fill;
+            ctx.fill();
+        }
+        if (rectangle.stroke) {
+            ctx.strokeStyle = rectangle.stroke;
+            ctx.stroke();
+        }
     },
     line: line => () => {
         ctx.strokeStyle = 'purple';
@@ -41,8 +50,18 @@ const createPaintMethods: (context: CanvasRenderingContext2D) => {
         ctx.stroke();
     },
     text: text => () => {
-        ctx.fillStyle = 'orange';
+        if (text.font || text.fontSize) ctx.font = `${text.fontSize ?? 16}px ${text.font ?? 'monospace arial'}`;
 
-        ctx.fillText(text.txt, text.x, text.y);
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        if (text.fill) {
+            ctx.fillStyle = text.fill;
+            ctx.fillText(text.txt, text.x, text.y);
+        }
+        if (text.stroke) {
+            ctx.strokeStyle = text.stroke;
+            ctx.strokeText(text.txt, text.x, text.y);
+        }
     },
 });

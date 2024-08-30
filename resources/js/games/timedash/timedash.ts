@@ -14,11 +14,15 @@ export default {
             },
         });
 
-        const {paint} = resources.timedash.sv;
+        // const {paint} = resources.timedash.sv;
 
-        paint('rectangle', testRectangle);
+        // paint('rectangle', testRectangle);
 
-        //
+        addEventListener('keyup', ({code}) => {
+            if (code === 'KeyZ') {
+                window.open('/', '', 'popup');
+            }
+        });
     },
     run: () => resources.timedash.engine.run(),
     runOnce: () => resources.timedash.engine.runOnce(),
