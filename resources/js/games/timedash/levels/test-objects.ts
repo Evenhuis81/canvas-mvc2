@@ -13,11 +13,12 @@ const testLine = {
     lw: 5,
 };
 
-const testRectangle = {
+export const testRectangle = {
     x: 100,
     y: 100,
     w: 80,
     h: 40,
+    fill: 'green',
 };
 
 const testText = {
@@ -26,7 +27,7 @@ const testText = {
     txt: 'Test Text',
 };
 
-const testTextFillStroke = {
+export const testTextFillStroke = {
     txt: 'test text',
     x: innerWidth / 2,
     y: innerHeight / 2,

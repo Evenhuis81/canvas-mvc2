@@ -1,39 +1,9 @@
-import {Update} from './engine';
+import {PaintMethods} from './paint';
 import {Vector, Vector2} from './vector';
 
-type Rect = {x: number; y: number; w: number; h: number};
-type Circle = {x: number; y: number; r: number};
-type FillRect = Rect & {fill: string};
-type StrokeRect = Rect & {stroke: string; lw: number};
-type FillStrokeRect = FillRect & {stroke: string; lw: number};
-type RoundFillStrokeRect = FillStrokeRect & {r: number};
-type Line = Omit<Vector2, 'add' | 'set' | 'setManual'> & {stroke: string; lw: number};
-type Text = {x: number; y: number; txt: string; font?: string; fill: string; fontSize?: number}; // auto-centered for now
-type StrokeCircle = Circle & {stroke: string; lw: number; rS: number; rE: number}; // rS: arc start, rE: arc end
-type FillCircle = Circle & {fill: string};
-type FillStrokeCircle = StrokeCircle & {fill: string};
 type Zoom = 'in' | 'out';
 
-export interface TransformedView extends PropertiesTV, PaintTV, MethodsTV {
-    // setTVStatistics: () => Statistic[];
-}
-
-type StaticViewTypes = {
-    text: (obj: Text) => void;
-    voidfillCircle: (obj: FillCircle) => void;
-};
-
-export interface PaintTV {
-    fillRect: (obj: FillRect) => void;
-    strokeRect: (obj: StrokeRect) => void;
-    line: (obj: Line) => void;
-    text: (obj: Text) => void;
-    fillStrokeRect: (obj: FillStrokeRect) => void;
-    roundFillStrokeRect: (obj: RoundFillStrokeRect) => void;
-    fillCircle: (obj: FillCircle) => void;
-    strokeCircle: (obj: StrokeCircle) => void;
-    fillStrokeCircle: (obj: FillStrokeCircle) => void;
-}
+export interface TransformedView extends PropertiesTV, PaintMethods, MethodsTV {}
 
 export interface MethodsTV {
     screen2World: (x: number, y: number) => void;

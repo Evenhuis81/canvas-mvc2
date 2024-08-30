@@ -1,6 +1,6 @@
-import type {Engine} from './engine';
 import type {Input} from './input';
-import type {StaticView, TransformedView} from './tv';
+import {StaticView} from './paint';
+import type {TransformedView} from './tv';
 
 interface Resources {
     id: string | number;

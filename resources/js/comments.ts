@@ -19,6 +19,8 @@
 // 8. create account
 // 9. load game
 // 10. save game
+// 11. title tab change on routechange
+// 12.
 
 // 1. make all button properties optional
 // 2. onhover:  -color (fill / stroke)

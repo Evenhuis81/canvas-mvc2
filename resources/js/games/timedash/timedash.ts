@@ -1,4 +1,5 @@
 import {initialize, resources} from 'library/index';
+import {testRectangle} from './levels/test-objects';
 
 export default {
     setup: async () => {
@@ -15,19 +16,10 @@ export default {
 
         const {paint} = resources.timedash.sv;
 
-        // paint('textFillStroke', testTextFillStroke);
+        paint('rectangle', testRectangle);
+
+        //
     },
     run: () => resources.timedash.engine.run(),
     runOnce: () => resources.timedash.engine.runOnce(),
-};
-
-const testTextFillStroke = {
-    txt: 'test text',
-    x: innerWidth / 2,
-    y: innerHeight / 2,
-    fill: 'red',
-    stroke: 'blue',
-    lw: 12,
-    font: 'monospace',
-    fontSize: 96,
 };
