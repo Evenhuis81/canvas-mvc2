@@ -11,11 +11,15 @@
 import {reactive} from 'vue';
 import {routes} from '../routes';
 import {goToRoute} from 'services/router';
+import {RouteRecordRaw} from 'vue-router';
+
+const noLinkRoutes = ['Home', 'Demo', 'Stats'];
+const condition = ({name}: RouteRecordRaw) => noLinkRoutes.find(route => route === name);
 
 const createLinksFromRoutes = () => {
     const routeToLinks = [];
     for (const route of routes) {
-        if (route.name === 'Home' || route.name === 'Demo') continue;
+        if (condition(route)) continue;
 
         routeToLinks.push({
             title: route.name,
