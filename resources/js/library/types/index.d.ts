@@ -1,6 +1,5 @@
 import type {Input} from './input';
-import {StaticView} from './paint';
-import type {TransformedView} from './tv';
+import type {StaticView, TransformedView} from './views';
 
 interface Resources {
     id: string | number;
@@ -13,30 +12,31 @@ interface Resources {
     input: Input;
 }
 
-type StatisticCanvasOptions = {
+interface StatisticOptions {
+    popup: boolean;
     overlay: boolean;
+    tab: boolean;
     dualView: boolean;
     toggleKey: string;
-};
+}
 
-type StatisticInitializeResource = Omit<Resources, 'sv' | 'tv' | 'input'> & {
-    toggleKey: string;
-};
-
-type CanvasOptions = Partial<{
-    containerID: string;
+interface CanvasOptions {
     width: number;
     height: number;
-    bg: string;
+    backgroundColor: string;
+    contextMenu: boolean;
+}
+
+interface LibraryOptions extends CanvasOptions {
+    containerID: string;
     center: boolean;
     full: boolean; // full tab (innerWidth, innerHeight)
     clear: boolean;
-    ontextMenu: boolean;
     dualView: boolean;
-    statistics: Partial<StatisticCanvasOptions>;
-}>;
+    statistics: Partial<StatisticOptions>;
+}
 
-type DualViewProperties = {
+interface DualViewProperties {
     id: number | string;
     canvas1: HTMLCanvasElement;
     canvas2: HTMLCanvasElement;
@@ -46,4 +46,4 @@ type DualViewProperties = {
     transitioning: boolean;
     onActivation: () => void;
     onDeactivation: () => void;
-};
+}

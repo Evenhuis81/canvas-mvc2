@@ -1,15 +1,17 @@
 import {uid} from './helpers';
 import {createDualView} from './dualview';
 import statistics from './statistics';
-import type {CanvasOptions, Resources, StatisticCanvasOptions, StatisticInitializeResource} from './types';
+import type {CanvasOptions, LibraryOptions, StatisticOptions} from './types';
 
-// Give these all the canvasoptions that setCanvasOptions also has (make it into 1) and itterate over them to set
 const defaultCanvasOptions = {
-    bgColor: '#444',
+    backgroundColor: '#999',
+    width: 300,
+    height: 150,
+    contextmenu: false,
 };
 
-export const getCanvas = (options?: {width?: number; height?: number; contextMenu?: boolean; bgColor?: string}) => {
-    const canvasOptions = {...options, ...defaultCanvasOptions};
+export const getCanvas = (options?: Partial<CanvasOptions>) => {
+    const canvasOptions = {...defaultCanvasOptions, ...options};
 
     const canvas = document.createElement('canvas');
 
@@ -20,9 +22,9 @@ export const getCanvas = (options?: {width?: number; height?: number; contextMen
             return false;
         });
 
-    if (canvasOptions.width) canvas.width = canvasOptions.width;
-    if (canvasOptions.height) canvas.width = canvasOptions.height;
-    if (canvasOptions.bgColor) canvas.style.backgroundColor = canvasOptions.bgColor;
+    canvas.width = canvasOptions.width;
+    canvas.height = canvasOptions.height;
+    canvas.style.backgroundColor = canvasOptions.backgroundColor;
 
     return canvas;
 };
@@ -79,56 +81,10 @@ export const setCanvas = (
     context: CanvasRenderingContext2D,
     engine: Engine,
     container: HTMLDivElement,
-    options?: CanvasOptions,
+    options?: LibraryOptions,
 ): void => {
     // Container could/should be optional
     setContainer(canvas, container);
 
     setCanvasOptions(canvas, options);
-
-    // These belong to setCanvasOptions aswell offcourse
-    if (options?.statistics) {
-        // ToggleKey default set to KeyT here, but ideally this should be optional. (this is outside the statistics module and default
-        // should be set inside the module.)
-        const statResources = {
-            id,
-            engine,
-            context,
-            canvas,
-            container,
-            toggleKey: options.statistics.toggleKey ?? 'KeyT',
-        };
-        let key: keyof StatisticCanvasOptions;
-
-        for (key in options.statistics) {
-            statSwitch[key](statResources);
-        }
-    }
-};
-
-const statSwitch: Record<keyof StatisticCanvasOptions, (resource: StatisticInitializeResource) => void> = {
-    // DualView and Statistics are together untill DualView gets multi purpose
-    // Beware deactivated firing even when it has not yet become activated
-    dualView: ({id, canvas, engine, container}) => {
-        const {setListeners} = createDualView(id, canvas, engine, container);
-
-        const onActivation = () => {
-            console.log('activated');
-        };
-
-        const onDeactivation = () => {
-            console.log('de-activated');
-        };
-
-        setListeners(onActivation, onDeactivation);
-    },
-    // When dualView is true, this should not be true
-    overlay: ({id, canvas, context, engine}) => {
-        statistics.create(id, canvas, context, engine);
-
-        statistics.setFn(id, () => 'test stat');
-
-        // statistics.run(id);
-    },
-    toggleKey: ({id, toggleKey}) => statistics.setToggleKey(id, toggleKey),
 };

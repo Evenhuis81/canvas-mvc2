@@ -14,10 +14,6 @@ type FullFont<Type> = Type & Partial<Fnt>;
 
 type Paint = <K extends keyof PaintShapes>(type: K, shape: PaintShapes[K]) => void;
 
-export interface StaticView {
-    paint: Paint;
-}
-
 type PaintMethods = {[K in keyof PaintShapes]: () => (obj: PaintShapes[K]) => void};
 
 // type Rect = {x: number; y: number; w: number; h: number};

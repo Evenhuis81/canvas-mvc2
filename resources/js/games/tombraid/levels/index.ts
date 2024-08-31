@@ -1,7 +1,7 @@
 /* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
 /* eslint-disable no-param-reassign */
-import {TransformedView} from 'library/types/tv';
+import {TransformedView} from 'library/types/views';
 import {getCoinMap, getLevelMap} from './levels';
 import {vector} from 'library/vector';
 import type {CoinMap, LevelMap, MapElement} from 'games/tombraid/types/level';

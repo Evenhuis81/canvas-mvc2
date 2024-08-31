@@ -3,7 +3,7 @@
 import {levelStore, Resources} from '..';
 import {vec, vector} from 'library/vector';
 import type {Vector} from 'library/types/vector';
-import {TransformedView} from 'library/types/tv';
+import {TransformedView} from 'library/types/views';
 
 // TODO::Tasks for player module
 // 1. make separate modules getplayer methods / inputs / movement / collisions (whatever methods is getting too large);

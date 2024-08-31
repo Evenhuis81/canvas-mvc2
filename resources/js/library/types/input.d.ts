@@ -1,5 +1,4 @@
-import {Rect} from './tv';
-import {Vector} from './vector';
+import {Rectangle} from './paint';
 
 type MouseDown = 'mousedown';
 type MouseMove = 'mousemove';
@@ -17,7 +16,7 @@ interface Events {
     wheel: Wheel;
 }
 
-type InsideRect = (rect: Rect) => boolean;
+type InsideRect = (rect: Rectangle) => boolean;
 
 type Input = {
     mouse: {

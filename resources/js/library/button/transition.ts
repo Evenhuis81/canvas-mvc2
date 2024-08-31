@@ -1,6 +1,6 @@
 import {uid} from 'library/helpers';
 import {Engine} from 'library/types/engine';
-import {Rect} from 'library/types/tv';
+import {Rect} from 'library/types/views';
 
 const transitionTypes: TransitionTypes[] = ['fill', 'stroke', 'textFill'];
 const colorValues: ColorValues[] = ['r', 'g', 'b', 'a'];

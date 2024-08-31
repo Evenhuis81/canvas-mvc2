@@ -1,17 +1,17 @@
 import {createContainer, getCanvas, getContainer, getContext2D, setCanvas} from './canvas';
 import {getEngine} from './engine';
-import {getTV} from './transformedView/tv';
+import {getTV} from './views/tv';
 import {getInput} from 'library/input';
-import type {CanvasOptions, Resources} from './types';
-import {getSV} from './transformedView/sv';
+import {getSV} from './views/sv';
+import {uid} from './helpers';
+import {LibraryOptions, Resources} from './types';
 
-// Create a dynamic resource repository, missing at the moment is:
-// 1. StatisticResources | Resource without TV or any other library module
-// 2. more
 export const resources: Record<string | number, Resources> = {};
 
-export const initialize = (id: string | number, options?: CanvasOptions) => {
-    const canvas = getCanvas({contextMenu: true});
+export const initialize = (id?: string | number, options?: Partial<LibraryOptions>) => {
+    const libraryID = id ?? uid();
+
+    const canvas = getCanvas(options);
     const context = getContext2D(canvas);
     const engine = getEngine();
 
@@ -19,7 +19,9 @@ export const initialize = (id: string | number, options?: CanvasOptions) => {
 
     const container = options?.containerID ? getContainer(options.containerID) : createContainer();
 
-    setCanvas(id, canvas, context, engine, container, options);
+    setCanvas(libraryID, canvas, context, engine, container, options);
+
+    // setStatistics();
 
     const input = getInput(canvas, options?.dualView);
 
@@ -27,9 +29,9 @@ export const initialize = (id: string | number, options?: CanvasOptions) => {
 
     const sv = getSV(context, engine);
 
-    resources[id] = {id, canvas, context, engine, container, sv, tv, input};
+    resources[libraryID] = {id: libraryID, canvas, context, engine, container, sv, tv, input};
 
-    return resources[id];
+    return resources[libraryID];
 };
 
 export const getLibraryOptions = (context: CanvasRenderingContext2D, engine: Engine) => {
@@ -78,3 +80,50 @@ const clear = (context: CanvasRenderingContext2D) => ({
     name: 'clearRect',
     fn: () => context.clearRect(0, 0, context.canvas.width, context.canvas.height),
 });
+
+const setStatistics = (options: LibraryOptions) => {
+    if (options?.statistics) {
+        // ToggleKey default set to KeyT here, but ideally this should be optional. (this is outside the statistics module and default
+        // should be set inside the module.)
+        const statResources = {
+            id,
+            engine,
+            context,
+            canvas,
+            container,
+            toggleKey: options.statistics.toggleKey ?? 'KeyT',
+        };
+        let key: keyof StatisticOptions;
+
+        for (key in options.statistics) {
+            statSwitch[key](statResources);
+        }
+    }
+};
+
+const statSwitch: Record<keyof StatisticOptions, (resource: StatisticInitializeResource) => void> = {
+    // DualView and Statistics are together untill DualView gets multi purpose
+    // Beware deactivated firing even when it has not yet become activated
+    dualView: ({id, canvas, engine, container}) => {
+        const {setListeners} = createDualView(id, canvas, engine, container);
+
+        const onActivation = () => {
+            console.log('activated');
+        };
+
+        const onDeactivation = () => {
+            console.log('de-activated');
+        };
+
+        setListeners(onActivation, onDeactivation);
+    },
+    // When dualView is true, this should not be true
+    overlay: ({id, canvas, context, engine}) => {
+        statistics.create(id, canvas, context, engine);
+
+        statistics.setFn(id, () => 'test stat');
+
+        // statistics.run(id);
+    },
+    toggleKey: ({id, toggleKey}) => statistics.setToggleKey(id, toggleKey),
+};

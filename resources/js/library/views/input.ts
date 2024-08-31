@@ -1,5 +1,5 @@
 import type {Input} from 'library/types/input';
-import type {MethodsTV, PropertiesTV} from '../types/tv';
+import type {MethodsTV, PropertiesTV} from '../types/views';
 
 const mousedownHandler =
     ({startPan}: PropertiesTV, methods: MethodsTV) =>

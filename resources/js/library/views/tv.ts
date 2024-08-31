@@ -5,7 +5,7 @@ import {getPaintMethods} from './paint';
 import {setTVEvents} from './input';
 import {vec, vector, vector2} from '../vector';
 import type {Vector, Vector2} from 'library/types/vector';
-import type {Zoom} from 'library/types/tv';
+import type {Zoom} from 'library/types/views';
 import type {Input} from 'library/types/input';
 
 export const getTV = (context: CanvasRenderingContext2D, input: Input) => {

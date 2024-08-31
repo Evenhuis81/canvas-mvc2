@@ -1,5 +1,3 @@
-import {FullShape, Paint, PaintShapes} from 'library/types/paint';
-
 export const getSV = (context: CanvasRenderingContext2D, engine: Engine) => {
     const paintMethods = createPaintMethods(context);
 

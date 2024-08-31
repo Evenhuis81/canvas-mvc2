@@ -10,7 +10,7 @@ import type {
     StrokeCircle,
     StrokeRect,
     Text,
-} from '../types/tv';
+} from '../types/views';
 
 export const getPaintMethods = (props: PropertiesTV, methods: MethodsTV, ctx: CanvasRenderingContext2D) => ({
     fillRect: createFillRect(props, methods, ctx),

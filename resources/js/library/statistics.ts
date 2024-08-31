@@ -1,6 +1,5 @@
 import {uid} from './helpers';
 import {vector} from './vector';
-import type {Engine} from './types/engine';
 import type {Statistic, StatisticResource} from './types/statistics';
 
 const statisticsResource: Record<string | number, StatisticResource> = {};

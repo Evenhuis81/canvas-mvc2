@@ -1,5 +1,5 @@
 import {resources} from 'library/index';
-import type {TransformedView} from 'library/types/tv';
+import type {TransformedView} from 'library/types/views';
 
 export const levelScreen = () => {
     const {tv, engine} = resources.survival;

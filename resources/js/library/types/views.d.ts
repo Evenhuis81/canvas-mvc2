@@ -1,11 +1,14 @@
-import {PaintMethods} from './paint';
 import {Vector, Vector2} from './vector';
 
 type Zoom = 'in' | 'out';
 
-export interface TransformedView extends PropertiesTV, PaintMethods, MethodsTV {}
+interface StaticView {
+    paint: Paint;
+}
 
-export interface MethodsTV {
+interface TransformedView extends PropertiesTV, PaintMethods, MethodsTV {}
+
+interface MethodsTV {
     screen2World: (x: number, y: number) => void;
     world2Screen: (x: number, y: number) => void;
     world2Screen2: (x: number, y: number, x2: number, y2: number) => void;
@@ -28,7 +31,7 @@ export interface MethodsTV {
     setUnitWeight: (unitLw: Vector) => void;
 }
 
-export type PropertiesTV = {
+interface PropertiesTV {
     offset: Vector;
     scale: Vector;
     screen: Vector;
@@ -43,4 +46,4 @@ export type PropertiesTV = {
     scaleFactor: number;
     worldView: Vector2;
     unitWeight: Vector;
-};
+}

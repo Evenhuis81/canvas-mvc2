@@ -1,5 +1,4 @@
 import {initialize, resources} from 'library/index';
-import {testRectangle} from './levels/test-objects';
 
 export default {
     setup: async () => {
@@ -7,15 +6,15 @@ export default {
             containerID: 'timedash-container',
             full: true,
             clear: true,
-            bg: '#000',
+            contextMenu: true,
+            backgroundColor: '#000',
             statistics: {
-                overlay: true,
+                // overlay: true,
+                // window: true,
                 toggleKey: 'KeyH',
             },
         });
-
         // const {paint} = resources.timedash.sv;
-
         // paint('rectangle', testRectangle);
 
         addEventListener('keyup', ({code}) => {
