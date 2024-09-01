@@ -12,9 +12,9 @@ type Stroke = {stroke: string; lw: number};
 type FullShape<Type> = Type & Partial<Fill & Stroke>;
 type FullFont<Type> = Type & Partial<Fnt>;
 
-type Paint = <K extends keyof PaintShapes>(type: K, shape: PaintShapes[K]) => void;
+type Paint = <K extends keyof Shapes>(type: K, shape: Shapes[K]) => void;
 
-type PaintMethods = {[K in keyof PaintShapes]: () => (obj: PaintShapes[K]) => void};
+// type PaintMethods = {[K in keyof PaintShapes]: () => (obj: PaintShapes[K]) => void};
 
 // type Rect = {x: number; y: number; w: number; h: number};
 // type Circle = {x: number; y: number; r: number};
@@ -28,11 +28,21 @@ type PaintMethods = {[K in keyof PaintShapes]: () => (obj: PaintShapes[K]) => vo
 // type FillCircle = Circle & {fill: string};
 // type FillStrokeCircle = StrokeCircle & {fill: string};
 
-interface PaintShapes {
+// type NewPaintKey<T extends keyof PaintShapes> = `${T}fill`;
+
+// type Shape = <S extends PaintShapes[keyof PaintShapes] | (PaintShapes[keyof PaintShapes] & Fill)>(
+//     shape: S,
+// ) => S extends {fill: string} ? PaintShapes[keyof PaintShapes] & Fill : PaintShapes[keyof PaintShapes];
+
+interface Shapes {
     circle: Circle;
     rectangle: Rectangle;
     line: Line;
     text: FullFont<Txt>;
 }
 
-type PaintType = keyof PaintShapes;
+type ShapeKeys = Shapes[keyof Shapes];
+
+// type BaseOrFill<T extends {fill: string} | PaintShapes> = T extends {fill: string} ? PaintShapes & Fill : PaintShapes;
+
+// type PaintType = keyof PaintShapes;

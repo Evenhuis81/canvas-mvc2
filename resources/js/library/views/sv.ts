@@ -11,7 +11,7 @@ export const getSV = (context: CanvasRenderingContext2D, engine: Engine) => {
 };
 
 const createPaintMethods: (context: CanvasRenderingContext2D) => {
-    [K in keyof PaintShapes]: (obj: FullShape<PaintShapes[K]>) => () => void;
+    [K in keyof Shapes]: (obj: FullShape<Shapes[K]>) => () => void;
 } = ctx => ({
     circle: circle => () => {
         ctx.beginPath();
