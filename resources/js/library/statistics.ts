@@ -1,6 +1,8 @@
 import {uid} from './helpers';
 import {vector} from './vector';
 import type {Statistic, StatisticResource} from './types/statistics';
+import {createDualView} from './dualview';
+import {resources} from '.';
 
 const statisticsResource: Record<string | number, StatisticResource> = {};
 const toggleKey: Record<string | number, string> = {};
@@ -110,3 +112,58 @@ const createShow = (props: Omit<StatisticResource, 'show' | 'canvas' | 'engine' 
         },
     };
 };
+
+// Move this to statistics module
+const setStatistics = (options: Partial<StatisticOptions>) => {
+    if (!options) return;
+    // ToggleKey default set to KeyT here, but ideally this should be optional. (this is outside the statistics module and default
+    // should be set inside the module.)
+    // const statResources = {
+    //     id,
+    //     engine,
+    //     context,
+    //     canvas,
+    //     container,
+    //     toggleKey: options.statistics.toggleKey ?? 'KeyT',
+    // };
+    // let key: keyof StatisticOptions;
+
+    // for (key in options.statistics) {
+    //     statSwitch[key](statResources);
+    // }
+};
+
+// StatisticOptions (create interface)
+// popup: boolean;
+// overlay: boolean;
+// tab: boolean;
+// dualView: boolean;
+// toggleKey: string;
+
+// const statSwitch: Record<keyof StatisticOptions, (resource: Resources) => void> = {
+// DualView and Statistics are together untill DualView gets multi purpose
+// Beware deactivated firing even when it has not yet become activated
+const createStatSwitch = () => ({
+    dualView: () => {
+        // const {setListeners} = createDualView({statResource});
+
+        const onActivation = () => {
+            console.log('activated');
+        };
+
+        const onDeactivation = () => {
+            console.log('de-activated');
+        };
+
+        setListeners(onActivation, onDeactivation);
+    },
+    // When dualView is true, this should not be true
+    overlay: ({id, canvas, context, engine}) => {
+        statistics.create(id, canvas, context, engine);
+
+        statistics.setFn(id, () => 'test stat');
+
+        // statistics.run(id);
+    },
+    toggleKey: ({id, toggleKey}) => statistics.setToggleKey(id, toggleKey),
+});

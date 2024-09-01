@@ -6,7 +6,7 @@ interface StaticView {
     paint: Paint;
 }
 
-interface TransformedView extends PropertiesTV, PaintMethods, MethodsTV {}
+interface TransformedView extends PropertiesTV, MethodsTV {}
 
 interface MethodsTV {
     screen2World: (x: number, y: number) => void;

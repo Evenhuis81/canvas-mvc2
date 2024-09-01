@@ -1,19 +1,19 @@
 import {getCanvas, getContext2D} from 'library/canvas';
 import {setConsoleToggle, setResize} from './input';
 import {createDualViewTransitionUpdate} from './button/transition';
-import type {DualViewProperties} from './types';
-import type {Engine} from './types/engine';
+import type {DualViewProperties, Resources} from './types';
+
+// StatResource
+// id: number | string,
+//     canvas: HTMLCanvasElement,
+//     engine: Engine,
+//     container: HTMLDivElement,
 
 // 1. Make this creatDualView seperate from setConsoleToggle and all under that, so that onActivation and onDeactivation can be set;
 // 2. Check which method requirees which properties and sort them acoordingly;
 // 3. Make it so that you can switch to canvas2 active only fullwidth / screen
-export const createDualView = (
-    id: number | string,
-    canvas: HTMLCanvasElement,
-    engine: Engine,
-    container: HTMLDivElement,
-) => {
-    const canvas2 = getCanvas({width: 0, bgColor: '#333'});
+export const createDualView = ({id, canvas, container, engine}: Resources) => {
+    const canvas2 = getCanvas({width: 0, backgroundColor: '#333'});
     const context2 = getContext2D(canvas);
 
     const props = {

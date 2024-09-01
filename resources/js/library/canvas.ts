@@ -1,13 +1,23 @@
 import {uid} from './helpers';
-import {createDualView} from './dualview';
-import statistics from './statistics';
-import type {CanvasOptions, LibraryOptions, StatisticOptions} from './types';
+import type {CanvasOptions, LibraryOptions} from './types';
 
+// Make this a seperate module when enough default objects arrise
 const defaultCanvasOptions = {
     backgroundColor: '#999',
     width: 300,
     height: 150,
     contextmenu: false,
+};
+
+export const setCanvas = (
+    canvas: HTMLCanvasElement,
+    container: HTMLDivElement,
+    options?: Partial<LibraryOptions>,
+): void => {
+    // Container could/should be optional
+    setContainer(canvas, container);
+
+    setLibraryOptions(canvas, options);
 };
 
 export const getCanvas = (options?: Partial<CanvasOptions>) => {
@@ -37,23 +47,20 @@ export const getContext2D = (canvas: HTMLCanvasElement) => {
     return context;
 };
 
-const setCanvasOptions = (canvas: HTMLCanvasElement, options?: CanvasOptions) => {
+const setLibraryOptions = (canvas: HTMLCanvasElement, options?: Partial<LibraryOptions>) => {
     if (!options) return;
 
-    // Refactor into switch and auto execute options
+    // Refactor into switch and auto execute options, thus expand options
     if (options.full) {
         canvas.width = innerWidth;
         canvas.height = innerHeight;
     }
-    if (options.width && !options.full) canvas.width = options.width;
-    if (options.height && !options.full) canvas.height = options.height;
-    if (options.bg) canvas.style.backgroundColor = options.bg;
 };
 
-export const createContainer = (id?: string) => {
+export const createContainer = (id?: string | number) => {
     const container = document.createElement('div');
 
-    container.setAttribute('id', id ?? `container-${uid()}`);
+    container.setAttribute('id', id ? `${id}-container` : `${uid()}-container`);
 
     return container;
 };
@@ -73,18 +80,4 @@ export const setContainer = (canvas: HTMLCanvasElement, container: HTMLDivElemen
     container.style.justifyContent = 'center';
     container.style.alignItems = 'center';
     container.appendChild(canvas);
-};
-
-export const setCanvas = (
-    id: number | string,
-    canvas: HTMLCanvasElement,
-    context: CanvasRenderingContext2D,
-    engine: Engine,
-    container: HTMLDivElement,
-    options?: LibraryOptions,
-): void => {
-    // Container could/should be optional
-    setContainer(canvas, container);
-
-    setCanvasOptions(canvas, options);
 };
