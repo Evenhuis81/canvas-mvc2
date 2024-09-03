@@ -39,7 +39,6 @@ type ButtonHandlers = {
 type ButtonOptions = Partial<{
     id: number | string;
     name: string;
-    // type: string;
     x: number;
     y: number;
     w: number;
@@ -83,7 +82,6 @@ type InternalStaticButtonProperties = {
     destructed: boolean;
     destruct: boolean;
     name: string;
-    type: ButtonType;
     text: string;
     font: string;
     r: number;
