@@ -39,7 +39,7 @@ type ButtonHandlers = {
 type ButtonOptions = Partial<{
     id: number | string;
     name: string;
-    type: string;
+    // type: string;
     x: number;
     y: number;
     w: number;

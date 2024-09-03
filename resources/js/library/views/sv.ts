@@ -14,6 +14,8 @@ const createPaintMethods: (context: CanvasRenderingContext2D) => {
     [K in keyof Shapes]: (obj: FullShape<Shapes[K]>) => () => void;
 } = ctx => ({
     circle: circle => () => {
+        if (circle.lw) ctx.lineWidth = circle.lw;
+
         ctx.beginPath();
         ctx.arc(circle.x, circle.y, circle.r, 0, Math.PI * 2);
         ctx.fill();

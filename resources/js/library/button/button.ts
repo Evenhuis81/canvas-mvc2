@@ -8,7 +8,6 @@ import {
 import {getButtonProperties, staticDefaultButtonProperties} from './properties';
 import {setResize} from 'library/input';
 import type {Resources} from 'library/types';
-import type {Engine, Update} from 'library/types/engine';
 
 const buttons: Button[] = [];
 
