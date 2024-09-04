@@ -18,7 +18,7 @@ export const createButton = (
 ) => {
     const {context, engine, input} = resources[resourceID];
 
-    const {props, handlers, colors} = getButtonProperties(options, staticDefaultButtonProperties);
+    const {props, handlers, colors} = getButtonProperties(options);
 
     const hoverTransition = getTransitions(colors);
 

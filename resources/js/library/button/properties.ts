@@ -1,41 +1,27 @@
 import {getColorRGBA} from 'library/colors';
 import {getProperties, uid} from 'library/helpers';
 
-// const defaults = {
-//     id: 'defaultID',
-// };
+const setTransits = (transits?: Transitions) => ({});
 
-// const options = {
-//     id: 'newID',
-// };
+export const getButtonProperties = (options: Partial<ButtonOptions>) => {
+    const {click: handlers, colors, transitions, ...restProperties} = options;
 
-// const properties = getProperties(defaults, options);
+    const properties = getProperties(staticDefaultButtonProperties, restProperties, calculatedDefaultButtonProperties);
 
-export const getButtonProperties = (
-    options: ButtonOptions,
-    defaults: typeof staticDefaultButtonProperties,
-    calculatedOptions?: () => typeof calculatedDefaultButtonProperties,
-) => {
-    const {click: handlers, colors, ...restProperties} = options;
-
-    const properties = getProperties(restProperties, defaults, calculatedOptions);
-
-    // if (calculatedOptions) Object.assign(properties, calculatedOptions());
-
-    return {props: setProps(properties), handlers: setHandlers(handlers), colors: setColors(colors)};
+    return {
+        props: setProps(properties),
+        handlers: setHandlers(handlers),
+        colors: setColors(colors),
+        transits: setTransits(transitions),
+    };
 };
 
-const setProps: (props: ButtonProperties) => InternalButtonProperties = props => ({
-    ...calculatedDefaultButtonProperties(),
+const setProps: (props: ButtonProperties) => ButtonProperties = props => ({
     ...staticDefaultButtonProperties,
+    ...calculatedDefaultButtonProperties(),
     ...props,
-    id: props.id ?? `button ${uid()}`,
 });
 
-// export const calculatedDefaultProperties: () => Omit<
-//     InternalButtonProperties,
-//     keyof InternalStaticButtonProperties | 'id'
-// > = () => ({
 export const calculatedDefaultButtonProperties = () => ({
     x: innerWidth * 0.5,
     y: innerHeight * 0.1,
@@ -45,23 +31,26 @@ export const calculatedDefaultButtonProperties = () => ({
     fontSize: 16,
 });
 
-// const staticDefaultProperties: InternalStaticButtonProperties = {
 export const staticDefaultButtonProperties = {
-    name: 'Example Button',
-    type: 'fillStrokeRound',
-    text: 'Example Button',
+    id: `button ${uid()}`,
+    name: 'No Name',
+    text: 'Button',
     font: 'monospace',
     r: 5,
     pushed: false,
     destructed: false,
     destruct: false,
-    startTransition: true,
-    delay: 0, // ms
-    endTransition: true,
+    hover: false,
+    hoverTransition: 'none',
+    delay: 0,
+    start: false,
+    startTransition: 'none',
+    end: false,
+    endTransition: 'none',
     autoDestruct: true,
 };
 
-const setColors = (colors?: ButtonColorAndTransitionProperties) => ({
+const setColors = (colors?: ButtonColors) => ({
     fill: getColorRGBA(0, 0, 0, 1),
     stroke: getColorRGBA(255, 0, 0, 1),
     textFill: getColorRGBA(255, 255, 255, 1),
@@ -76,5 +65,5 @@ const setHandlers = (handlers?: ButtonHandlers) => ({
     up: () => {},
     down: () => {},
     end: () => {},
-    ...handlers, // could use a start handler eventually
+    ...handlers,
 });

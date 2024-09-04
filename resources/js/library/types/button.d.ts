@@ -3,8 +3,8 @@ type Button = {
     selfDestruct: () => void;
     disable: () => void;
     activate: () => void;
-    setStartTransition: () => void;
-    setEndTransition: (destruct?: boolean) => void;
+    // setStartTransition: () => void;
+    // setEndTransition: (destruct?: boolean) => void;
 };
 
 type ClickEvent = {
@@ -18,25 +18,23 @@ type ColorRGB = {
     b: number;
 };
 
-type ColorValues = 'r' | 'g' | 'b' | 'a';
-
 type ColorRGBA = ColorRGB & {a: number};
 
-type ButtonColorTypes = 'fill' | 'stroke' | 'textFill';
+type ButtonColors = Record<keyof ColorRGBA, ColorRGBA>;
 
-type ButtonColorAndTransitionProperties = Partial<Record<ButtonColorTypes, ColorRGBA>> & {
-    transition: Record<ButtonColorTypes, ColorRGBA>;
-};
+// type ButtonColors = Record<ButtonColorTypes, ColorRGBA>> & {
+//     transition: Record<ButtonColorTypes, ColorRGBA>;
+// };
 
-type ButtonType = 'fill' | 'stroke' | 'fillStroke' | 'fillStrokeRound';
+// type ButtonType = 'fill' | 'stroke' | 'fillStroke' | 'fillStrokeRound';
 
 type ButtonHandlers = {
-    down?: (event: ClickEvent) => void;
-    up?: (event: ClickEvent) => void;
-    end?: (event: Button) => void;
+    down: (event: ClickEvent) => void;
+    up: (event: ClickEvent) => void;
+    end: (event: Button) => void;
 };
 
-type ButtonOptions = Partial<{
+type ButtonOptions = {
     id: number | string;
     name: string;
     x: number;
@@ -48,45 +46,45 @@ type ButtonOptions = Partial<{
     font: string;
     fontSize: number;
     text: string;
-    delay: number;
-    startTransition: boolean;
-    endTransition: boolean;
     autoDestruct: boolean;
     click: ButtonHandlers;
-    colors: ButtonColorAndTransitionProperties;
-}>;
+    colors: ButtonColors;
+    transitions: Transitions;
+};
 
-type ButtonProperties = Omit<ButtonOptions, 'click' | 'colors'>;
-
-type InternalButtonProperties = Required<ButtonProperties> & {
+type ButtonProperties = Omit<ButtonOptions, 'click' | 'colors' | 'transitions'> & {
     pushed: boolean;
-    destructed: boolean;
     destruct: boolean;
-};
-
-type InternalButtonHandlers = Required<ButtonHandlers>;
-
-type InternalButtonColorAndTransitionProperties = Required<ButtonColorAndTransitionProperties>;
-
-type GetButtonProperties = (
-    options: ButtonOptions,
-    calculatedOptions?: () => ButtonOptions,
-) => {
-    props: InternalButtonProperties;
-    handlers: InternalButtonHandlers;
-    colors: InternalButtonColorAndTransitionProperties;
-};
-
-type InternalStaticButtonProperties = {
-    pushed: boolean;
     destructed: boolean;
-    destruct: boolean;
-    name: string;
-    text: string;
-    font: string;
-    r: number;
-    delay: number; // ms
-    startTransition: boolean;
-    endTransition: boolean;
-    autoDestruct: boolean;
 };
+
+// type InternalButtonProperties = ButtonProperties & {
+//     pushed: boolean;
+//     destruct: boolean;
+//     destructed: boolean;
+// };
+
+// type InternalButtonHandlers = Required<ButtonHandlers>;
+
+// type InternalButtonColors = Required<ButtonColors>;
+
+// type GetButtonProperties = (
+//     options: ButtonOptions,
+//     calculatedOptions?: () => ButtonOptions,
+// ) => {
+//     props: InternalButtonProperties;
+//     handlers: InternalButtonHandlers;
+//     colors: InternalButtonColors;
+// };
+
+// type InternalStaticButtonProperties = {
+//     name: string;
+//     pushed: boolean;
+//     destructed: boolean;
+//     destruct: boolean;
+//     autoDestruct: boolean;
+//     delay: number;
+//     r: number;
+//     font: string;
+//     text: string;
+// };
