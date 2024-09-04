@@ -14,6 +14,18 @@ export const getButtonProperties = (options: Partial<ButtonOptions>) => {
         colors: setColors(colors),
         transits: setTransits(transitions),
     };
+export const getButtonProperties = (
+    options: ButtonOptions,
+    defaults: typeof staticDefaultButtonProperties,
+    calculatedOptions?: () => ButtonProperties,
+) => {
+    const {click: handlers, colors, ...restProperties} = options;
+
+    const properties = getProperties(restProperties, defaults, calculatedOptions);
+
+    // if (calculatedOptions) Object.assign(properties, calculatedOptions());
+
+    return {props: setProps(properties), handlers: setHandlers(handlers), colors: setColors(colors)};
 };
 
 const setProps: (props: ButtonProperties) => ButtonProperties = props => ({
