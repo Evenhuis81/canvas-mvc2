@@ -47,3 +47,10 @@ interface DualViewProperties {
     onActivation: () => void;
     onDeactivation: () => void;
 }
+
+interface CRUD {
+    create: () => {};
+    read: () => {};
+    update: () => {};
+    delete: () => {};
+}
