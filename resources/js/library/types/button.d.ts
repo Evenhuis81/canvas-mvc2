@@ -7,20 +7,12 @@ type Button = {
     // setEndTransition: (destruct?: boolean) => void;
 };
 
-type ClickEvent = {
+type ButtonEvent = {
     evt: MouseEvent | TouchEvent;
     button: Button;
 };
 
-type ColorRGB = {
-    r: number;
-    g: number;
-    b: number;
-};
-
-type ColorRGBA = ColorRGB & {a: number};
-
-type ButtonColors = Record<keyof ColorRGBA, ColorRGBA>;
+// type ButtonColors = Record<keyof RGBA, RGBA>;
 
 // type ButtonColors = Record<ButtonColorTypes, ColorRGBA>> & {
 //     transition: Record<ButtonColorTypes, ColorRGBA>;
@@ -29,8 +21,8 @@ type ButtonColors = Record<keyof ColorRGBA, ColorRGBA>;
 // type ButtonType = 'fill' | 'stroke' | 'fillStroke' | 'fillStrokeRound';
 
 type ButtonHandlers = {
-    down: (event: ClickEvent) => void;
-    up: (event: ClickEvent) => void;
+    down: (event: ButtonEvent) => void;
+    up: (event: ButtonEvent) => void;
     end: (event: Button) => void;
 };
 
@@ -46,13 +38,15 @@ type ButtonOptions = {
     font: string;
     fontSize: number;
     text: string;
+    stroke: string;
+    fill: string;
     autoDestruct: boolean;
     click: ButtonHandlers;
-    colors: ButtonColors;
+    // colors: ButtonColors;
     transitions: Transitions;
 };
 
-type ButtonProperties = Omit<ButtonOptions, 'click' | 'colors' | 'transitions'> & {
+type ButtonProperties = Omit<ButtonOptions, 'click' | 'transitions'> & {
     pushed: boolean;
     destruct: boolean;
     destructed: boolean;

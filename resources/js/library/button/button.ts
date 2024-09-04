@@ -11,11 +11,7 @@ import type {Resources} from 'library/types';
 
 const buttons: Button[] = [];
 
-export const createButton = (
-    resourceID: string,
-    options: ButtonOptions = {},
-    calculatedOptions?: () => ButtonOptions,
-) => {
+const createButton = (resourceID: string, options?: ButtonOptions) => {
     const {context, engine, input} = resources[resourceID];
 
     const {props, handlers, colors} = getButtonProperties(options);

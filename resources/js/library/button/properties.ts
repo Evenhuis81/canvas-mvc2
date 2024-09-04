@@ -3,17 +3,17 @@ import {getProperties, uid} from 'library/helpers';
 
 const setTransits = (transits?: Transitions) => ({});
 
-export const getButtonProperties = (options: Partial<ButtonOptions>) => {
-    const {click: handlers, colors, transitions, ...restProperties} = options;
+// export const getButtonProperties = (options: Partial<ButtonOptions>) => {
+//     const {click: handlers, colors, transitions, ...restProperties} = options;
 
-    const properties = getProperties(staticDefaultButtonProperties, restProperties, calculatedDefaultButtonProperties);
+//     const properties = getProperties(staticDefaultButtonProperties, restProperties, calculatedDefaultButtonProperties);
 
-    return {
-        props: setProps(properties),
-        handlers: setHandlers(handlers),
-        colors: setColors(colors),
-        transits: setTransits(transitions),
-    };
+//     return {
+//         props: setProps(properties),
+//         handlers: setHandlers(handlers),
+//         colors: setColors(colors),
+//         transits: setTransits(transitions),
+//     };
 export const getButtonProperties = (
     options: ButtonOptions,
     defaults: typeof staticDefaultButtonProperties,
@@ -21,7 +21,7 @@ export const getButtonProperties = (
 ) => {
     const {click: handlers, colors, ...restProperties} = options;
 
-    const properties = getProperties(restProperties, defaults, calculatedOptions);
+    const properties = getProperties(restProperties, defaults);
 
     // if (calculatedOptions) Object.assign(properties, calculatedOptions());
 
