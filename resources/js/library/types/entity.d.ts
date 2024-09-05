@@ -1,5 +1,10 @@
 interface Entity {
-    //
+    id: string | number;
+    show: () => void;
+    hide: () => void;
+    destroy: () => void;
+    enable: () => void;
+    disable: () => void;
 }
 
 interface EntityOptions {
@@ -11,9 +16,12 @@ interface EntityOptions {
     h: number;
     lw: number;
     r: number;
-    font: string;
-    fontSize: number;
-    text: string;
     stroke: string;
     fill: string;
+    textFill: string;
+    text: string;
+    font: string;
+    fontSize: number;
+    disabled: boolean; // both internal property and option
+    show: boolean;
 }
