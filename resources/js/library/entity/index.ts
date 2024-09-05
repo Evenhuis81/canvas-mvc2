@@ -14,6 +14,8 @@ const createResource = (resources: Resources) => ({
 const create = (options: Partial<EntityOptions>, {context, engine}: Resources) => {
     const properties = {...getProperties(defaultProperties, options), id: options.id ?? `entity-${uid()}`};
 
+    // TODO::Hoverproperties (type + enabler)
+
     const draw = createDraw(properties, context);
 
     const update = createUpdate(properties, {xVel: 0.1, count: 0, max: 60});

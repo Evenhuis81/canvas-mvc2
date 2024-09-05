@@ -3,6 +3,7 @@ import {initialize, resources} from 'library/index';
 // import {getPlayer} from './player';
 // import button from 'library/button/button';
 import getEntity from 'library/entity';
+import {convertHexStringToRGBA} from 'library/colors';
 
 export default {
     setup: async () => {
@@ -26,6 +27,8 @@ export default {
         setTimeout(() => {
             example1.destroy();
         }, 5000);
+
+        convertHexStringToRGBA('#f00');
 
         // setTimeout(() => {
         //     example1.disable();
