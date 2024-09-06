@@ -22,6 +22,8 @@ interface EntityOptions {
     text: string;
     font: string;
     fontSize: number;
+    textAlign: CanvasTextAlign;
+    textBaseLine: CanvasTextBaseline;
     disabled: boolean; // both internal property and option
     show: boolean;
 }

@@ -28,7 +28,7 @@ export default {
             example1.destroy();
         }, 5000);
 
-        convertHexStringToRGBA('#f00');
+        convertHexStringToRGBA('#fa1');
 
         // setTimeout(() => {
         //     example1.disable();

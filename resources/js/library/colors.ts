@@ -6,11 +6,15 @@ export const convertHexStringToRGBA = (colorString: string) => {
     const indexC: Array<number> = [];
 
     if (colorString.length === 4) {
-        const int = parseInt(colorString[1], 16) + 1;
+        const hexValues: Array<number> = [];
+        const cParsed = colorString.split('#')[1];
 
-        console.log(int * 16 - 1);
-        // for (let i = 1; i < 5; i++) indexC.push(colorString[i-1].parseInt)
-    } else if (colorString.length === 7) {
+        for (let i = 0; i < 3; i++) hexValues.push(parseInt(`0x${cParsed[i]}`) * 17);
+
+        return;
+    }
+
+    if (colorString.length === 7) {
         // temp
         return colorString;
     }
