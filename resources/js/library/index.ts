@@ -4,8 +4,7 @@ import {getTV} from './views/tv';
 import {getInput} from 'library/input';
 import {getSV} from './views/sv';
 import {uid} from './helpers';
-import {LibraryOptions, Resources, StatisticOptions} from './types';
-import {createDualView} from './dualview';
+import type {LibraryOptions, Resources} from './types';
 
 export const resources: Record<string | number, Resources> = {};
 
@@ -22,8 +21,6 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
     const container = options?.containerID ? getContainer(options.containerID) : createContainer(libraryID);
 
     setCanvas(canvas, container, options);
-
-    // setStatistics();
 
     const input = getInput(canvas, options?.dualView);
 

@@ -1,25 +1,17 @@
-export const getColorRGBA = (r: number, g: number, b: number, a: number) => ({r, g, b, a});
+// https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+export const hexToRgb = (hex: string) => {
+    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
 
-export const convertHexStringToRGBA = (colorString: string) => {
-    if (colorString[0] !== '#') throw Error('color is not a HexString');
+    hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
 
-    const indexC: Array<number> = [];
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 
-    if (colorString.length === 4) {
-        const hexValues: Array<number> = [];
-        const cParsed = colorString.split('#')[1];
+    if (!result) throw Error(`No result from hexToRgb for ${hex}`);
 
-        for (let i = 0; i < 3; i++) hexValues.push(parseInt(`0x${cParsed[i]}`) * 17);
-
-        return;
-    }
-
-    if (colorString.length === 7) {
-        // temp
-        return colorString;
-    }
-
-    const rgba = getColorRGBA(indexC[0], indexC[1], indexC[2], 1);
-
-    return rgba;
+    return {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+    };
 };

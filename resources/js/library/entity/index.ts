@@ -11,7 +11,7 @@ const create = (options: Partial<EntityOptions>, {context, engine}: Resources) =
 
     const draw = createDraw(properties, context);
 
-    const update = createUpdate(properties, {xVel: 0.1, count: 0, max: 60});
+    const update = createUpdate(properties, {xVel: 0.2, count: 0, max: 90});
 
     const show = () => {
         if (properties.show) throwError(properties.id, 'show');
@@ -129,8 +129,8 @@ const defaultProperties = {
     text: 'Entity',
     font: 'monospace',
     fontSize: 16,
-    textAlign: 'center',
-    textBaseLine: 'middle',
+    textAlign: 'center', // internal property
+    textBaseLine: 'middle', // internal property
     disabled: false,
     show: true,
 };
