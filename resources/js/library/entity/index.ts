@@ -11,12 +11,12 @@ const create = (options: Partial<EntityOptions>, {context, engine}: Resources) =
 
     const draw = createDraw(properties, context);
 
-    const update = createUpdate(properties, {xVel: 0.2, count: 0, max: 90});
+    const update = createUpdate(properties);
 
     const show = () => {
         if (properties.show) throwError(properties.id, 'show');
 
-        properties.show = true; // internal property
+        properties.show = true;
 
         engine.setShow(draw);
     };
@@ -69,18 +69,45 @@ const throwError = (id: string | number = 'noID', action: string = "'noAction'")
     throw Error(`entity with id '${id}' already ${action}`);
 };
 
-const createUpdate = (properties: EntityOptions, transition: {xVel: number; count: number; max: number}) => ({
+// max property is default 60, need for deltaTime, adj is change in property
+// make this a createProperties that picks the needed properties for each update respectively
+// This could also serve as a originalProperties object
+const updateProperties = {
+    vel: {
+        x: 0,
+        y: 0,
+    },
+    adj: 0.05,
+    lw: 0,
+    count: 0,
+    max: 60,
+    angle: 0,
+};
+
+// Linewidth adjustments pixel sizes are wooden as hell. Use opacity
+const createUpdate2 = (properties: EntityOptions) => ({
     id: properties.id,
     name: `update-${properties.name}`,
     fn: () => {
-        properties.x += transition.xVel;
+        properties.lw += updateProperties.adj;
 
-        transition.count++;
+        if (properties.lw >= 4 || properties.lw <= 0) updateProperties.adj *= -1;
+    },
+});
 
-        if (transition.count > 60) {
-            transition.xVel *= -1;
+// Example transition moving left to right
+const createUpdate = (properties: EntityOptions) => ({
+    id: properties.id,
+    name: `update-${properties.name}`,
+    fn: () => {
+        properties.x += updateProperties.adj;
 
-            transition.count = 0;
+        updateProperties.count++;
+
+        if (updateProperties.count > 60) {
+            updateProperties.adj *= -1;
+
+            updateProperties.count = 0;
         }
     },
 });
