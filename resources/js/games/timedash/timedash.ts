@@ -1,14 +1,9 @@
 import {initialize, resources} from 'library/index';
-// import {getPlayer} from './player';
-// import {getPlayer} from './player';
-import button from 'library/button/button';
+import getEntity from 'library/entity';
 
 export default {
     setup: async () => {
-        const {
-            engine,
-            sv: {paint},
-        } = initialize('timedash', {
+        initialize('timedash', {
             containerID: 'timedash-container',
             full: true,
             clear: true,
@@ -19,18 +14,11 @@ export default {
             },
         });
 
-        // const player = getPlayer();
+        const entity = getEntity('timedash');
 
-        // engine.setUpdate({fn: player.transitionStart});
+        const example1 = entity.create({show: false});
 
-        // paint('circle', player.properties);
-        // const startButton = button.create('timedash');
-        // const player = getPlayer();
-
-        // setTimeout(() => {
-        // engine.setUpdate({fn: player.transitionStart});
-        // paint('circle', player.properties);
-        // }, 250);
+        example1.show();
     },
     run: () => resources.timedash.engine.run(),
     runOnce: () => resources.timedash.engine.runOnce(),
