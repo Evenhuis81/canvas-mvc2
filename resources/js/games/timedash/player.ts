@@ -3,6 +3,7 @@ const playerProperties = () => ({
     x: 200,
     y: 150,
     r: 25,
+    fill: '#000',
     stroke: '#fff',
     lw: 0,
     lwStep: 0.1,

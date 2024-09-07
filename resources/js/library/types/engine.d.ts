@@ -8,6 +8,8 @@ type Show = Omit<Update, 'fn'> & {
     fn: () => void;
 };
 
+type Draw = Show;
+
 interface Engine {
     run: () => void;
     runOnce: () => void;

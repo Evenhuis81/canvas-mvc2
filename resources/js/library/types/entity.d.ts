@@ -24,6 +24,16 @@ interface EntityOptions {
     fontSize: number;
     textAlign: CanvasTextAlign;
     textBaseLine: CanvasTextBaseline;
-    disabled: boolean; // both internal property and option
+    // becomes internal property:
+    disabled: boolean;
     show: boolean;
+}
+
+interface InternalEntityProperties {
+    entity: Omit<EntityOptions, 'disabled' | 'show'>;
+    events: Entity;
+    disabled: boolean;
+    show: boolean;
+    // draw: Draw;
+    // update: Update;
 }

@@ -1,5 +1,5 @@
 import {initialize, resources} from 'library/index';
-import getEntity from 'library/entity';
+import useEntity from 'library/entity';
 
 export default {
     setup: async () => {
@@ -14,11 +14,11 @@ export default {
             },
         });
 
-        const entity = getEntity('timedash');
+        const entity = useEntity('timedash');
 
         const example1 = entity.create({show: false});
 
-        example1.show();
+        // example1.show();
     },
     run: () => resources.timedash.engine.run(),
     runOnce: () => resources.timedash.engine.runOnce(),

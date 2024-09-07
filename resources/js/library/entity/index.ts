@@ -1,6 +1,7 @@
 import {getProperties, uid} from 'library/helpers';
-import type {Resources} from 'library/types';
 import {resources} from '..';
+import type {Resources} from 'library/types';
+import {getInternalProperties} from './properties';
 
 const createResource = (resources: Resources) => ({
     create: (options: Partial<EntityOptions> = {}) => create(options, resources),
@@ -10,63 +11,24 @@ const create = (options: Partial<EntityOptions>, {context, engine}: Resources) =
     const properties = {...getProperties(defaultProperties, options), id: options.id ?? `entity-${uid()}`};
 
     const draw = createDraw(properties, context);
-
     const update = createUpdate(properties);
 
-    const show = () => {
-        if (properties.show) throwError(properties.id, 'show');
+    // EntityOptions => InternalEntityProperties
+    const props = getInternalProperties(properties, engine, draw, update);
 
-        properties.show = true;
+    if (!props.disabled) {
+        props.disabled = true;
 
-        engine.setShow(draw);
-    };
-
-    const hide = () => {
-        if (!properties.show) throwError(properties.id, 'hiding');
-
-        engine.removeShow(draw.id);
-
-        properties.show = false;
-    };
-
-    const destroy = () => {
-        if (properties.show) hide();
-
-        if (!properties.disabled) disable();
-    };
-
-    const enable = () => {
-        if (!properties.disabled) throwError(properties.id, 'enabled');
-
-        properties.disabled = false;
-
-        engine.setUpdate(update);
-    };
-
-    const disable = () => {
-        if (properties.disabled) throwError(properties.id, 'disabled');
-
-        engine.removeUpdate(update.id);
-
-        properties.disabled = true;
-    };
-
-    if (!properties.disabled) {
-        properties.disabled = true;
-
-        enable();
-    }
-    if (properties.show) {
-        properties.show = false;
-
-        show();
+        props.events.enable();
     }
 
-    return {id: properties.id, show, hide, destroy, disable, enable};
-};
+    if (props.show) {
+        props.show = false;
 
-const throwError = (id: string | number = 'noID', action: string = "'noAction'") => {
-    throw Error(`entity with id '${id}' already ${action}`);
+        props.events.show();
+    }
+
+    return {id: properties.id, ...props.events};
 };
 
 // max property is default 60, need for deltaTime, adj is change in property
@@ -84,18 +46,6 @@ const updateProperties = {
     angle: 0,
 };
 
-// Linewidth adjustments pixel sizes are wooden as hell. Use opacity
-const createUpdate2 = (properties: EntityOptions) => ({
-    id: properties.id,
-    name: `update-${properties.name}`,
-    fn: () => {
-        properties.lw += updateProperties.adj;
-
-        if (properties.lw >= 4 || properties.lw <= 0) updateProperties.adj *= -1;
-    },
-});
-
-// Example transition moving left to right
 const createUpdate = (properties: EntityOptions) => ({
     id: properties.id,
     name: `update-${properties.name}`,
@@ -138,7 +88,7 @@ const createDraw = (properties: EntityOptions, ctx: CanvasRenderingContext2D) =>
         ctx.textBaseline = properties.textBaseLine;
 
         ctx.beginPath();
-        ctx.fillText(properties.text, properties.x, properties.y + 1.5); // TODO::use textAscend / -descent
+        ctx.fillText(properties.text, properties.x, properties.y + 1.5);
     },
 });
 
@@ -156,8 +106,8 @@ const defaultProperties = {
     text: 'Entity',
     font: 'monospace',
     fontSize: 16,
-    textAlign: 'center', // internal property
-    textBaseLine: 'middle', // internal property
+    textAlign: 'center',
+    textBaseLine: 'middle',
     disabled: false,
     show: true,
 };
