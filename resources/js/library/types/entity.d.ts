@@ -6,7 +6,8 @@ interface EntityEvents {
     disable: () => void;
 }
 
-interface EntityConfig {
+// all, except internal properties are part of the config object (incoming, user defined | undefined = all default entity properties)
+interface EntitySketch {
     id: number | string;
     name: string;
     x: number;
@@ -23,6 +24,14 @@ interface EntityConfig {
     fontSize: number;
     textAlign: CanvasTextAlign;
     textBaseLine: CanvasTextBaseline;
+}
+
+interface EntityStatic {
+    handlers: EntityHandlers;
+    events: EntityEvents;
+}
+
+interface EntityInstance {
     disabled: boolean;
     show: boolean;
     click: Partial<EntityHandlers>;
@@ -40,3 +49,13 @@ type EntityHandlers = {
     down: (event: EntityEvents) => void;
     up: (event: EntityEvents) => void;
 };
+
+// Good naming conventions for entity:
+// 1. Sketch
+// 2. Drawing Object
+// 3. Drawing List
+// 4. Illustration
+// 5. EntityInstance (for internal)
+// 6.config = options ?
+// 7.
+//

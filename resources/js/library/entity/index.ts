@@ -8,16 +8,17 @@ const createResource = (resources: Resources) => ({
 });
 
 const create = (options: Partial<EntityConfig>, {context, engine, input}: Resources) => {
-    const config = {...getProperties(defaultProperties, options), id: options.id ?? `entity-${uid()}`};
+    // TODO::Firstly seperate the entity properties from the internal properties (or mixed ones)
+    const {click, ...rest} = {...getProperties(defaultProperties, options), id: options.id ?? `entity-${uid()}`};
+
+    // EntityConfig => InternalEntity
+    const entity2 = getInternalEntity(config, engine, draw, update);
 
     // See note update
     const draw = createDraw(config, context);
 
     // Add update type and use update object to automatically call updatetype (see button)
     const update = updates.noise(config);
-
-    // EntityConfig => InternalEntity
-    const entity = getInternalEntity(config, engine, draw, update);
 
     // Events
     const mousedownEvent = (evt: MouseEvent) => {
@@ -117,7 +118,7 @@ const createDraw = (properties: EntityConfig, ctx: CanvasRenderingContext2D) => 
     },
 });
 
-const defaultProperties = {
+const defaultEntityProperties = {
     name: 'noName',
     x: 200,
     y: 299,
@@ -133,12 +134,8 @@ const defaultProperties = {
     fontSize: 16,
     textAlign: 'center',
     textBaseLine: 'middle',
-    disabled: false,
-    show: true,
-    click: {
-        up: () => {},
-        down: () => {},
-    },
 };
+
+// const defaultInternal
 
 export default (resourceID: string | number) => createResource(resources[resourceID]);
