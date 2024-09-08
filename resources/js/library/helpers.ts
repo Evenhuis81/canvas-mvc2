@@ -7,3 +7,12 @@ export const getProperties: GetProperties = (defaults, options, calculatedOption
     ...options,
     ...(calculatedOptions ?? {}),
 });
+
+// https://stackoverflow.com/questions/64297259/how-to-resolve-assertions-require-every-name-in-the-call-target-to-be-declared
+export function addProp<T extends object, K extends PropertyKey, V>(
+    obj: T,
+    key: K,
+    value: V,
+): asserts obj is T & {[P in K]: V} {
+    Object.assign(obj, {[key]: value});
+}

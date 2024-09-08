@@ -1,34 +1,41 @@
 import {getProperties, uid} from 'library/helpers';
 import {resources} from '..';
 import type {Resources} from 'library/types';
-import {getInternalProperties} from './properties';
+import {getInternalEntity} from './properties';
 
 const createResource = (resources: Resources) => ({
-    create: (options: Partial<EntityOptions> = {}) => create(options, resources),
+    create: (options: Partial<EntityConfig> = {}) => create(options, resources),
 });
 
-const create = (options: Partial<EntityOptions>, {context, engine}: Resources) => {
-    const properties = {...getProperties(defaultProperties, options), id: options.id ?? `entity-${uid()}`};
+const create = (options: Partial<EntityConfig>, {context, engine}: Resources) => {
+    const config = {...getProperties(defaultProperties, options), id: options.id ?? `entity-${uid()}`};
 
-    const draw = createDraw(properties, context);
-    const update = createUpdate(properties);
+    const draw = createDraw(config, context);
+    const update = createUpdate(config);
 
     // EntityOptions => InternalEntityProperties
-    const props = getInternalProperties(properties, engine, draw, update);
+    const entity = getInternalEntity(config, engine, draw, update);
 
-    if (!props.disabled) {
-        props.disabled = true;
+    // if (!props.disabled) {
+    //     props.disabled = true;
 
-        props.events.enable();
-    }
+    //     props.events.enable();
+    // }
 
-    if (props.show) {
-        props.show = false;
+    // if (props.show) {
+    //     props.show = false;
 
-        props.events.show();
-    }
+    //     props.events.show();
+    // }
 
-    return {id: properties.id, ...props.events};
+    // console.log(props.disabled, props.oldProps.disabled);
+
+    // props.disabled = true;
+
+    // console.log(props.disabled, props.oldProps.disabled);
+
+    // return {id: properties.id, ...props.events};
+    return entity;
 };
 
 // max property is default 60, need for deltaTime, adj is change in property
@@ -46,7 +53,7 @@ const updateProperties = {
     angle: 0,
 };
 
-const createUpdate = (properties: EntityOptions) => ({
+const createUpdate = (properties: EntityConfig) => ({
     id: properties.id,
     name: `update-${properties.name}`,
     fn: () => {
@@ -62,7 +69,7 @@ const createUpdate = (properties: EntityOptions) => ({
     },
 });
 
-const createDraw = (properties: EntityOptions, ctx: CanvasRenderingContext2D) => ({
+const createDraw = (properties: EntityConfig, ctx: CanvasRenderingContext2D) => ({
     id: properties.id, // entityID
     name: `draw-${properties.name}`,
     fn: () => {

@@ -1,65 +1,60 @@
-export const getInternalProperties = (
-    properties: EntityOptions,
+import {addProp} from 'library/helpers';
+
+export const getInternalEntity = (
+    config: EntityConfig,
     engine: Engine,
     draw: Required<Draw>,
     update: Required<Update>,
 ) => {
-    const {show, disabled, ...entity} = {...properties};
+    const {show, disabled, ...entity} = config;
 
-    const newProps = {entity, show, disabled}; // add Draw & Update?
+    const properties = {show, disabled, entity: {...entity}};
 
-    const events = createEntityEvents(newProps, engine, draw, update);
+    const events = createEntityEvents(properties, engine, draw, update);
 
-    const finalProps = {...newProps, events};
+    addProp(properties, 'events', events);
 
-    console.log(newProps.show);
-
-    finalProps.show = true;
-
-    console.log(newProps.show);
-
-    return finalProps;
+    return properties;
 };
 
-// Test if destructuring properties becomes pass by reference or value
 const createEntityEvents = (
-    p: Omit<InternalEntityProperties, 'events'>,
+    props: Omit<InternalEntity, 'events'>,
     engine: Engine,
     draw: Required<Draw>,
     update: Required<Update>,
 ) => {
     const show = () => {
-        if (p.show) throwError(p.entity.id, 'show');
+        if (props.show) throwError(props.entity.id, 'show');
 
-        p.show = true;
+        props.show = true;
 
         engine.setShow(draw);
     };
     const hide = () => {
-        if (!show) throwError(p.entity.id, 'hiding');
+        if (!show) throwError(props.entity.id, 'hiding');
 
         engine.removeShow(draw.id);
 
-        p.show = false;
+        props.show = false;
     };
     const destroy = () => {
-        if (p.show) hide();
+        if (props.show) hide();
 
-        if (!p.disabled) disable();
+        if (!props.disabled) disable();
     };
     const enable = () => {
-        if (!p.disabled) throwError(p.entity.id, 'enabled');
+        if (!props.disabled) throwError(props.entity.id, 'enabled');
 
-        p.disabled = false;
+        props.disabled = false;
 
         engine.setUpdate(update);
     };
     const disable = () => {
-        if (p.disabled) throwError(p.entity.id, 'disabled');
+        if (props.disabled) throwError(props.entity.id, 'disabled');
 
         engine.removeUpdate(update.id);
 
-        p.disabled = true;
+        props.disabled = true;
     };
 
     return {show, hide, destroy, enable, disable};

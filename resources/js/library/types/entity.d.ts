@@ -1,5 +1,4 @@
-interface Entity {
-    id: string | number;
+interface EntityEvents {
     show: () => void;
     hide: () => void;
     destroy: () => void;
@@ -7,7 +6,7 @@ interface Entity {
     disable: () => void;
 }
 
-interface EntityOptions {
+interface EntityConfig {
     id: number | string;
     name: string;
     x: number;
@@ -24,16 +23,17 @@ interface EntityOptions {
     fontSize: number;
     textAlign: CanvasTextAlign;
     textBaseLine: CanvasTextBaseline;
-    // becomes internal property:
     disabled: boolean;
     show: boolean;
 }
 
-interface InternalEntityProperties {
-    entity: Omit<EntityOptions, 'disabled' | 'show'>;
-    events: Entity;
+interface InternalEntity {
+    entity: Omit<EntityConfig, 'disabled' | 'show'>;
+    events: EntityEvents;
     disabled: boolean;
     show: boolean;
-    // draw: Draw;
-    // update: Update;
 }
+
+type MappedInternalEntity<Type> = {
+    [K in keyof Type]: Type[K];
+};

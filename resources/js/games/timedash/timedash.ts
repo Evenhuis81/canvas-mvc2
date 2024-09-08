@@ -1,5 +1,5 @@
 import {initialize, resources} from 'library/index';
-import useEntity from 'library/entity';
+import getEntity from 'library/entity';
 
 export default {
     setup: async () => {
@@ -14,9 +14,9 @@ export default {
             },
         });
 
-        const entity = useEntity('timedash');
+        const entity = getEntity('timedash');
 
-        const example1 = entity.create({show: false});
+        const example1 = entity.create();
 
         // example1.show();
     },
