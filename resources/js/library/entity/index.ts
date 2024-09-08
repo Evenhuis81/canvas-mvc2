@@ -1,34 +1,55 @@
 import {getProperties, uid} from 'library/helpers';
 import {resources} from '..';
 import type {Resources} from 'library/types';
-import {getInternalProperties} from './properties';
+import {getInternalEntity} from './properties';
 
 const createResource = (resources: Resources) => ({
-    create: (options: Partial<EntityOptions> = {}) => create(options, resources),
+    create: (options: Partial<EntityConfig> = {}) => create(options, resources),
 });
 
-const create = (options: Partial<EntityOptions>, {context, engine}: Resources) => {
-    const properties = {...getProperties(defaultProperties, options), id: options.id ?? `entity-${uid()}`};
+const create = (options: Partial<EntityConfig>, {context, engine, input}: Resources) => {
+    const config = {...getProperties(defaultProperties, options), id: options.id ?? `entity-${uid()}`};
 
-    const draw = createDraw(properties, context);
-    const update = createUpdate(properties);
+    // See note update
+    const draw = createDraw(config, context);
 
-    // EntityOptions => InternalEntityProperties
-    const props = getInternalProperties(properties, engine, draw, update);
+    // Add update type and use update object to automatically call updatetype (see button)
+    const update = updates.noise(config);
 
-    if (!props.disabled) {
-        props.disabled = true;
+    // EntityConfig => InternalEntity
+    const entity = getInternalEntity(config, engine, draw, update);
 
-        props.events.enable();
+    // Events
+    const mousedownEvent = (evt: MouseEvent) => {
+        if (input.mouse.insideRect(config) && evt.button === 0) {
+            // props.pushed = true;
+            config.w *= 0.9;
+            config.h *= 0.9;
+
+            entity.handlers.down(entity.events);
+        }
+    };
+
+    addEventListener('mousedown', mousedownEvent);
+
+    // Initializer
+    initialize(entity);
+
+    return entity.events;
+};
+
+const initialize = (entity: InternalEntity) => {
+    if (!entity.disabled) {
+        entity.disabled = true;
+
+        entity.events.enable();
     }
 
-    if (props.show) {
-        props.show = false;
+    if (entity.show) {
+        entity.show = false;
 
-        props.events.show();
+        entity.events.show();
     }
-
-    return {id: properties.id, ...props.events};
 };
 
 // max property is default 60, need for deltaTime, adj is change in property
@@ -46,7 +67,11 @@ const updateProperties = {
     angle: 0,
 };
 
-const createUpdate = (properties: EntityOptions) => ({
+const updates = {
+    noise: (properties: EntityConfig) => createNoiseUpdate(properties),
+};
+
+const createNoiseUpdate = (properties: EntityConfig) => ({
     id: properties.id,
     name: `update-${properties.name}`,
     fn: () => {
@@ -62,7 +87,7 @@ const createUpdate = (properties: EntityOptions) => ({
     },
 });
 
-const createDraw = (properties: EntityOptions, ctx: CanvasRenderingContext2D) => ({
+const createDraw = (properties: EntityConfig, ctx: CanvasRenderingContext2D) => ({
     id: properties.id, // entityID
     name: `draw-${properties.name}`,
     fn: () => {
@@ -110,6 +135,10 @@ const defaultProperties = {
     textBaseLine: 'middle',
     disabled: false,
     show: true,
+    click: {
+        up: () => {},
+        down: () => {},
+    },
 };
 
 export default (resourceID: string | number) => createResource(resources[resourceID]);

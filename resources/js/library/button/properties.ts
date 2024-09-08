@@ -73,6 +73,7 @@ const setColors = (colors?: ButtonColors) => ({
     },
     ...colors,
 });
+
 const setHandlers = (handlers?: ButtonHandlers) => ({
     up: () => {},
     down: () => {},

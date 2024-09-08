@@ -7,3 +7,12 @@ export const getProperties: GetProperties = (defaults, options, calculatedOption
     ...options,
     ...(calculatedOptions ?? {}),
 });
+
+// https://stackoverflow.com/questions/76018978/typing-for-progressively-adding-properties-to-an-object
+export function addProp<T extends object, K extends PropertyKey, V>(
+    obj: T,
+    key: K,
+    value: V,
+): asserts obj is T & {[P in K]: V} {
+    Object.assign(obj, {[key]: value});
+}
