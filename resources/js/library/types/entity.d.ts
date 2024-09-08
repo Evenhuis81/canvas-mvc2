@@ -25,15 +25,18 @@ interface EntityConfig {
     textBaseLine: CanvasTextBaseline;
     disabled: boolean;
     show: boolean;
+    click: Partial<EntityHandlers>;
 }
 
 interface InternalEntity {
-    entity: Omit<EntityConfig, 'disabled' | 'show'>;
+    entity: Omit<EntityConfig, 'disabled' | 'show' | 'click'>;
     events: EntityEvents;
     disabled: boolean;
     show: boolean;
+    handlers: EntityHandlers;
 }
 
-type MappedInternalEntity<Type> = {
-    [K in keyof Type]: Type[K];
+type EntityHandlers = {
+    down: (event: EntityEvents) => void;
+    up: (event: EntityEvents) => void;
 };

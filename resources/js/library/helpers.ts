@@ -8,7 +8,7 @@ export const getProperties: GetProperties = (defaults, options, calculatedOption
     ...(calculatedOptions ?? {}),
 });
 
-// https://stackoverflow.com/questions/64297259/how-to-resolve-assertions-require-every-name-in-the-call-target-to-be-declared
+// https://stackoverflow.com/questions/76018978/typing-for-progressively-adding-properties-to-an-object
 export function addProp<T extends object, K extends PropertyKey, V>(
     obj: T,
     key: K,

@@ -1,24 +1,34 @@
 import {addProp} from 'library/helpers';
 
-export const getInternalEntity = (
+const getHandlers = (handlers?: Partial<EntityHandlers>) => ({
+    up: () => {},
+    down: () => {},
+    ...handlers,
+});
+
+export const getInternalEntity: (
     config: EntityConfig,
     engine: Engine,
     draw: Required<Draw>,
     update: Required<Update>,
-) => {
-    const {show, disabled, ...entity} = config;
+) => InternalEntity = (config, engine, draw, update) => {
+    const {show, disabled, click, ...entity} = config;
 
-    const properties = {show, disabled, entity: {...entity}};
+    const properties = {show, disabled, entity};
 
     const events = createEntityEvents(properties, engine, draw, update);
 
     addProp(properties, 'events', events);
 
+    const handlers = getHandlers(click);
+
+    addProp(properties, 'handlers', handlers);
+
     return properties;
 };
 
 const createEntityEvents = (
-    props: Omit<InternalEntity, 'events'>,
+    props: Omit<InternalEntity, 'events' | 'handlers'>,
     engine: Engine,
     draw: Required<Draw>,
     update: Required<Update>,

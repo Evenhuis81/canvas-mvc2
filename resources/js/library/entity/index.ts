@@ -7,35 +7,49 @@ const createResource = (resources: Resources) => ({
     create: (options: Partial<EntityConfig> = {}) => create(options, resources),
 });
 
-const create = (options: Partial<EntityConfig>, {context, engine}: Resources) => {
+const create = (options: Partial<EntityConfig>, {context, engine, input}: Resources) => {
     const config = {...getProperties(defaultProperties, options), id: options.id ?? `entity-${uid()}`};
 
+    // See note update
     const draw = createDraw(config, context);
-    const update = createUpdate(config);
 
-    // EntityOptions => InternalEntityProperties
+    // Add update type and use update object to automatically call updatetype (see button)
+    const update = updates.noise(config);
+
+    // EntityConfig => InternalEntity
     const entity = getInternalEntity(config, engine, draw, update);
 
-    // if (!props.disabled) {
-    //     props.disabled = true;
+    // Events
+    const mousedownEvent = (evt: MouseEvent) => {
+        if (input.mouse.insideRect(config) && evt.button === 0) {
+            // props.pushed = true;
+            config.w *= 0.9;
+            config.h *= 0.9;
 
-    //     props.events.enable();
-    // }
+            entity.handlers.down(entity.events);
+        }
+    };
 
-    // if (props.show) {
-    //     props.show = false;
+    addEventListener('mousedown', mousedownEvent);
 
-    //     props.events.show();
-    // }
+    // Initializer
+    initialize(entity);
 
-    // console.log(props.disabled, props.oldProps.disabled);
+    return entity.events;
+};
 
-    // props.disabled = true;
+const initialize = (entity: InternalEntity) => {
+    if (!entity.disabled) {
+        entity.disabled = true;
 
-    // console.log(props.disabled, props.oldProps.disabled);
+        entity.events.enable();
+    }
 
-    // return {id: properties.id, ...props.events};
-    return entity;
+    if (entity.show) {
+        entity.show = false;
+
+        entity.events.show();
+    }
 };
 
 // max property is default 60, need for deltaTime, adj is change in property
@@ -53,7 +67,11 @@ const updateProperties = {
     angle: 0,
 };
 
-const createUpdate = (properties: EntityConfig) => ({
+const updates = {
+    noise: (properties: EntityConfig) => createNoiseUpdate(properties),
+};
+
+const createNoiseUpdate = (properties: EntityConfig) => ({
     id: properties.id,
     name: `update-${properties.name}`,
     fn: () => {
@@ -117,6 +135,10 @@ const defaultProperties = {
     textBaseLine: 'middle',
     disabled: false,
     show: true,
+    click: {
+        up: () => {},
+        down: () => {},
+    },
 };
 
 export default (resourceID: string | number) => createResource(resources[resourceID]);

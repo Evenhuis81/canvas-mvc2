@@ -16,9 +16,18 @@ export default {
 
         const entity = getEntity('timedash');
 
-        const example1 = entity.create();
+        const example1 = entity.create({
+            show: false,
+            click: {
+                down: () => {
+                    console.log('click down');
+                },
+            },
+        });
 
-        // example1.show();
+        setTimeout(() => {
+            example1.show();
+        }, 2000);
     },
     run: () => resources.timedash.engine.run(),
     runOnce: () => resources.timedash.engine.runOnce(),
