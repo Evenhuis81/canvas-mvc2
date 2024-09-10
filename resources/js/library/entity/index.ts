@@ -9,36 +9,28 @@ const createResource = (resources: Resources) => ({
 
 const create = (options: Partial<EntityConfig>, {context, engine, input}: Resources) => {
     // First seperate the entity properties from the internal properties
-    const {click, id, name, disabled, show, ...sketch} = {
+    const {[click, id, name, disabled, show], ...sketch} = {
         ...getProperties(defaultSketchProperties, options),
         id: options.id ?? `entity-${uid()}`,
     };
+
+    // const tempIntProps = {
+    //     //
+    // }
 
     const update = updates.noise(sketch, id, name);
 
     const draw = createDraw(sketch, context, id, name);
 
-    const entity = getInternalEntity(engine, draw, update, sketch, id, name, disabled, show);
-
-    // See note update
+    // If more internal properties are added, refactor this
+    const internalEntity = getInternalEntity(engine, draw, update, sketch, id, name, disabled, show, click);
 
     // Events
-    const mousedownEvent = (evt: MouseEvent) => {
-        if (input.mouse.insideRect(config) && evt.button === 0) {
-            // props.pushed = true;
-            config.w *= 0.9;
-            config.h *= 0.9;
-
-            entity.handlers.down(entity.events);
-        }
-    };
-
-    addEventListener('mousedown', mousedownEvent);
 
     // Initializer
-    initialize(entity);
+    initialize(internalEntity);
 
-    return entity.events;
+    return internalEntity.events;
 };
 
 const initialize = (entity: InternalEntity) => {
@@ -70,15 +62,31 @@ const updateProperties = {
     angle: 0,
 };
 
+// noise = just move left and right a little for now
 const updates = {
-    noise: (properties: EntitySketch, id: string | number, name: string) => createNoiseUpdate(properties, id, name),
+    noise: (sketch: EntitySketch, id: string | number, name: string) => createNoiseUpdate(sketch, id, name),
+    // bold: (sketch: EntitySketch, id: string | number, name: string, transition) => createBoldUpdate(sketch, hoverTransition, input, id, name),
 };
 
-const createNoiseUpdate = (properties: EntitySketch, id: string | number, name: string) => ({
+// const createBoldUpdate = (sketch: EntitySketch, transition: Transition, input: Input, id: string | number, name: string) => ({
+//     id: id,
+//     name: `bold-update-${name}`,
+//     fn: () => {
+//         if (mouse.insideRect(sketch) && !mouse.touchEnded) {
+//             transition.forward();
+
+//             return;
+//         }
+
+//         transition.reverse();
+//     }
+// })
+
+const createNoiseUpdate = (sketch: EntitySketch, id: string | number, name: string) => ({
     id: id,
     name: `noise-update-${name}`,
     fn: () => {
-        properties.x += updateProperties.adj;
+        sketch.x += updateProperties.adj;
 
         updateProperties.count++;
 
@@ -90,33 +98,27 @@ const createNoiseUpdate = (properties: EntitySketch, id: string | number, name: 
     },
 });
 
-const createDraw = (properties: EntitySketch, ctx: CanvasRenderingContext2D, id: string | number, name: string) => ({
+const createDraw = (sketch: EntitySketch, ctx: CanvasRenderingContext2D, id: string | number, name: string) => ({
     id,
     name: `draw-${name}`,
     fn: () => {
-        ctx.fillStyle = properties.fill;
-        ctx.strokeStyle = properties.stroke;
-        ctx.lineWidth = properties.lw;
+        ctx.fillStyle = sketch.fill;
+        ctx.strokeStyle = sketch.stroke;
+        ctx.lineWidth = sketch.lw;
 
         ctx.beginPath();
-        ctx.roundRect(
-            properties.x - properties.w / 2,
-            properties.y - properties.h / 2,
-            properties.w,
-            properties.h,
-            properties.r,
-        );
+        ctx.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.r);
         ctx.fill();
         ctx.stroke();
 
-        ctx.fillStyle = properties.textFill;
-        ctx.font = `${properties.fontSize}px ${properties.font}`;
+        ctx.fillStyle = sketch.textFill;
+        ctx.font = `${sketch.fontSize}px ${sketch.font}`;
 
-        ctx.textAlign = properties.textAlign;
-        ctx.textBaseline = properties.textBaseLine;
+        ctx.textAlign = sketch.textAlign;
+        ctx.textBaseline = sketch.textBaseLine;
 
         ctx.beginPath();
-        ctx.fillText(properties.text, properties.x, properties.y + 1.5);
+        ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5);
     },
 });
 
@@ -136,6 +138,9 @@ const defaultSketchProperties = {
     fontSize: 16,
     textAlign: 'center',
     textBaseLine: 'middle',
+    // Next are part of internal properties, could make a seperate object for this if it gets large
+    disabled: false,
+    show: true,
 };
 
 // TODO::Resource availability check

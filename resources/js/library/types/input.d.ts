@@ -1,5 +1,3 @@
-import {Rectangle} from './paint';
-
 type MouseDown = 'mousedown';
 type MouseMove = 'mousemove';
 type MouseUp = 'mouseup';

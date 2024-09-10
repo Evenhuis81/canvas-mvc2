@@ -2,6 +2,29 @@ import {uid} from 'library/helpers';
 import {Engine} from 'library/types/engine';
 import {Rect} from 'library/types/views';
 
+interface Transitions {
+    hover: boolean;
+    hoverTransition: string;
+    start: boolean;
+    startTransition: string;
+    end: boolean;
+    endTransition: string;
+}
+
+type TransitioExt = {
+    steps: number;
+    on: (id: string) => void;
+    off: (id: string) => void;
+}[];
+
+type Transition = {
+    steps: number;
+    forward: () => void;
+    reverse: () => void;
+};
+
+type TransitionTypes = 'fill' | 'stroke' | 'textFill';
+
 const transitionTypes: TransitionTypes[] = ['fill', 'stroke', 'textFill'];
 const colorValues: ColorValues[] = ['r', 'g', 'b', 'a'];
 
