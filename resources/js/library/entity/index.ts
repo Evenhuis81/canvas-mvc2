@@ -8,17 +8,19 @@ const createResource = (resources: Resources) => ({
 });
 
 const create = (options: Partial<EntityConfig>, {context, engine, input}: Resources) => {
-    // TODO::Firstly seperate the entity properties from the internal properties (or mixed ones)
-    const {click, ...rest} = {...getProperties(defaultProperties, options), id: options.id ?? `entity-${uid()}`};
+    // First seperate the entity properties from the internal properties
+    const {click, id, name, disabled, show, ...sketch} = {
+        ...getProperties(defaultSketchProperties, options),
+        id: options.id ?? `entity-${uid()}`,
+    };
 
-    // EntityConfig => InternalEntity
-    const entity2 = getInternalEntity(config, engine, draw, update);
+    const update = updates.noise(sketch, id, name);
+
+    const draw = createDraw(sketch, context, id, name);
+
+    const entity = getInternalEntity(engine, draw, update, sketch, id, name, disabled, show);
 
     // See note update
-    const draw = createDraw(config, context);
-
-    // Add update type and use update object to automatically call updatetype (see button)
-    const update = updates.noise(config);
 
     // Events
     const mousedownEvent = (evt: MouseEvent) => {
@@ -69,12 +71,12 @@ const updateProperties = {
 };
 
 const updates = {
-    noise: (properties: EntityConfig) => createNoiseUpdate(properties),
+    noise: (properties: EntitySketch, id: string | number, name: string) => createNoiseUpdate(properties, id, name),
 };
 
-const createNoiseUpdate = (properties: EntityConfig) => ({
-    id: properties.id,
-    name: `update-${properties.name}`,
+const createNoiseUpdate = (properties: EntitySketch, id: string | number, name: string) => ({
+    id: id,
+    name: `noise-update-${name}`,
     fn: () => {
         properties.x += updateProperties.adj;
 
@@ -88,9 +90,9 @@ const createNoiseUpdate = (properties: EntityConfig) => ({
     },
 });
 
-const createDraw = (properties: EntityConfig, ctx: CanvasRenderingContext2D) => ({
-    id: properties.id, // entityID
-    name: `draw-${properties.name}`,
+const createDraw = (properties: EntitySketch, ctx: CanvasRenderingContext2D, id: string | number, name: string) => ({
+    id,
+    name: `draw-${name}`,
     fn: () => {
         ctx.fillStyle = properties.fill;
         ctx.strokeStyle = properties.stroke;
@@ -118,8 +120,8 @@ const createDraw = (properties: EntityConfig, ctx: CanvasRenderingContext2D) => 
     },
 });
 
-const defaultEntityProperties = {
-    name: 'noName',
+const defaultSketchProperties = {
+    name: 'undefined',
     x: 200,
     y: 299,
     w: 150,
@@ -129,13 +131,12 @@ const defaultEntityProperties = {
     stroke: '#f00',
     fill: '#000',
     textFill: '#fff',
-    text: 'Entity',
+    text: 'undefined',
     font: 'monospace',
     fontSize: 16,
     textAlign: 'center',
     textBaseLine: 'middle',
 };
 
-// const defaultInternal
-
+// TODO::Resource availability check
 export default (resourceID: string | number) => createResource(resources[resourceID]);

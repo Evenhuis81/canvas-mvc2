@@ -1,15 +1,4 @@
-interface EntityEvents {
-    show: () => void;
-    hide: () => void;
-    destroy: () => void;
-    enable: () => void;
-    disable: () => void;
-}
-
-// all, except internal properties are part of the config object (incoming, user defined | undefined = all default entity properties)
 interface EntitySketch {
-    id: number | string;
-    name: string;
     x: number;
     y: number;
     w: number;
@@ -26,29 +15,33 @@ interface EntitySketch {
     textBaseLine: CanvasTextBaseline;
 }
 
-interface EntityStatic {
-    handlers: EntityHandlers;
-    events: EntityEvents;
-}
-
-interface EntityInstance {
-    disabled: boolean;
-    show: boolean;
-    click: Partial<EntityHandlers>;
+interface EntityEvents {
+    show: () => void;
+    hide: () => void;
+    destroy: () => void;
+    enable: () => void;
+    disable: () => void;
 }
 
 interface InternalEntity {
-    entity: Omit<EntityConfig, 'disabled' | 'show' | 'click'>;
-    events: EntityEvents;
+    id: number | string;
+    name: string;
     disabled: boolean;
     show: boolean;
+    entity: EntitySketch;
+    events: EntityEvents;
     handlers: EntityHandlers;
 }
 
-type EntityHandlers = {
+interface EntityHandlers {
     down: (event: EntityEvents) => void;
     up: (event: EntityEvents) => void;
-};
+}
+
+type EntityConfig = EntitySketch &
+    Omit<InternalEntity, 'entity' | 'events' | 'handlers'> & {
+        click: Partial<EntityHandlers>;
+    };
 
 // Good naming conventions for entity:
 // 1. Sketch

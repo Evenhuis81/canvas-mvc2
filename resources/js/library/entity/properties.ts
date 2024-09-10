@@ -12,6 +12,7 @@ export const getInternalEntity: (
     draw: Required<Draw>,
     update: Required<Update>,
 ) => InternalEntity = (config, engine, draw, update) => {
+    // engine, draw, update, sketch, id, name, disabled, show);
     const {show, disabled, click, ...entity} = config;
 
     const properties = {show, disabled, entity};

@@ -7,17 +7,18 @@ export default {
             containerID: 'timedash-container',
             full: true,
             clear: true,
-            contextMenu: true,
+            // contextMenu: true,
             backgroundColor: '#000',
-            statistics: {
-                toggleKey: 'KeyH',
-            },
+            // statistics: {
+            //     toggleKey: 'KeyH',
+            // },
         });
 
         const entity = getEntity('timedash');
 
         const example1 = entity.create({
             show: false,
+            // = touch- and mousedown
             click: {
                 down: () => {
                     console.log('click down');
