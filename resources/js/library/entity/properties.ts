@@ -14,7 +14,7 @@ export const createEntityEvents = (
 
         properties.show = true;
 
-        if (!properties.disabled) listeners.add();
+        listeners.add();
 
         engine.setUpdate(update);
         engine.setShow(draw);
@@ -22,7 +22,7 @@ export const createEntityEvents = (
     const hide = () => {
         if (!properties.show) throwError(properties.id, 'hiding');
 
-        if (!properties.disabled) listeners.remove();
+        listeners.remove(); // internal check if removed or not
 
         engine.removeUpdate(update.id);
         engine.removeShow(draw.id);
@@ -30,23 +30,26 @@ export const createEntityEvents = (
         properties.show = false;
     };
     const destroy = () => {
+        listeners.remove();
+
         if (properties.show) hide();
 
         if (!properties.disabled) disable();
-
-        // destroy browser events
     };
     const enable = () => {
         if (!properties.disabled) throwError(properties.id, 'enabled');
 
         properties.disabled = false;
 
+        listeners.add();
+
         engine.setUpdate(update);
     };
     const disable = () => {
         if (properties.disabled) throwError(properties.id, 'disabled');
 
-        // create disabled state
+        listeners.remove();
+
         engine.removeUpdate(update.id);
 
         properties.disabled = true;
@@ -62,6 +65,8 @@ export const getHandlers = (handlers?: Partial<EntityHandlers>) => ({
 });
 
 export const createListeners = (sketch: EntitySketch, handlers: EntityHandlers, {mouse}: Input) => {
+    let enabled = false;
+
     const mousedown = (evt: MouseEvent) => {
         if (mouse.insideRect(sketch) && evt.button === 0) {
             handlers.down(evt);
@@ -75,13 +80,21 @@ export const createListeners = (sketch: EntitySketch, handlers: EntityHandlers, 
     };
 
     const add = () => {
+        if (enabled) return;
+
+        enabled = true;
+
         addEventListener('mousedown', mousedown);
         addEventListener('mouseup', mouseup);
     };
 
     const remove = () => {
+        if (!enabled) return;
+
         removeEventListener('mousedown', mousedown);
         removeEventListener('mouseup', mouseup);
+
+        enabled = false;
     };
 
     return {add, remove, listening: false};
