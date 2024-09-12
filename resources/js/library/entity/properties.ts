@@ -1,6 +1,6 @@
 import {addProp} from 'library/helpers';
 
-// This method handles way too much, abstract and divide
+// This method handles way too much, abstract and`divide
 export const getInternalEntity: (
     engine: Engine,
     draw: Required<Draw>,
@@ -10,7 +10,6 @@ export const getInternalEntity: (
     name: string,
     disabled: boolean,
     show: boolean,
-    click?: Partial<EntityHandlers>,
 ) => InternalEntity = (engine, draw, update, sketch, id, name, disabled, show, click) => {
     const properties = {id, name, disabled, show, entity: sketch};
 
@@ -18,14 +17,10 @@ export const getInternalEntity: (
 
     addProp(properties, 'events', events);
 
-    const handlers = getHandlers(click);
-
-    addProp(properties, 'handlers', handlers);
-
     return properties;
 };
 
-const createEntityEvents = (
+export const createEntityEvents = (
     props: Omit<InternalEntity, 'events' | 'handlers'>,
     engine: Engine,
     draw: Required<Draw>,
@@ -68,7 +63,7 @@ const createEntityEvents = (
     return {show, hide, destroy, enable, disable};
 };
 
-const getHandlers = (handlers?: Partial<EntityHandlers>) => ({
+export const getHandlers = (handlers?: Partial<EntityHandlers>) => ({
     up: () => {},
     down: () => {},
     ...handlers,

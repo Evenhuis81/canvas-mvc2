@@ -28,7 +28,7 @@ interface InternalEntity {
     name: string;
     disabled: boolean;
     show: boolean;
-    entity: EntitySketch;
+    sketch: EntitySketch;
     events: EntityEvents;
     handlers: EntityHandlers;
 }
@@ -39,6 +39,12 @@ interface EntityHandlers {
 }
 
 type EntityConfig = EntitySketch &
-    Omit<InternalEntity, 'entity' | 'events' | 'handlers'> & {
+    Omit<InternalEntity, 'sketch' | 'events' | 'handlers'> & {
         click: Partial<EntityHandlers>;
     };
+
+type TempInternalEntity = Omit<InternalEntity, 'events' | 'handlers'> & {
+    engine: Engine;
+    context: CanvasRenderingContext2D;
+    input: Input;
+};
