@@ -1,4 +1,3 @@
-import type {Input} from './input';
 import type {StaticView, TransformedView} from './views';
 
 interface Resources {

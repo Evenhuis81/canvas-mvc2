@@ -1,46 +1,57 @@
 import {getProperties, uid} from 'library/helpers';
 import {resources} from '..';
+import {createEntityEvents, createListeners, getHandlers} from './properties';
 import type {Resources} from 'library/types';
-import {createEntityEvents, getHandlers, getInternalEntity} from './properties';
 
 const createResource = (resources: Resources) => ({
     create: (options: Partial<EntityConfig> = {}) => create(options, resources),
 });
 
 const create = (options: Partial<EntityConfig>, {context, engine, input}: Resources) => {
-    // First seperate the entity properties from the internal properties
+    // Seperate the entity properties from the internal properties
     const {click, id, name, disabled, show, ...sketch} = {
         ...getProperties(defaultSketchProperties, options),
         id: options.id ?? `entity-${uid()}`,
     };
 
-    const tempProps = {sketch, id, name, disabled, show, engine, context, input};
-
     const handlers = getHandlers(click);
 
-    const update = updates.noise(tempProps);
+    const listeners = createListeners(sketch, handlers, input);
 
-    const draw = createDraw(tempProps);
+    const internalEntity = {
+        properties: {
+            id,
+            name,
+            disabled,
+            show,
+        },
+        sketch,
+        handlers,
+        listeners,
+        engine,
+        context,
+    };
 
-    // const internalEntity = getInternalEntity(engine, draw, update, sketch, id, name, disabled, show, click);
+    const update = updates.noise(internalEntity);
 
-    const events = createEntityEvents(tempProps, draw, update);
+    const draw = createDraw(internalEntity);
 
-    // Initializer
-    initialize(tempProps);
+    const events = createEntityEvents(internalEntity, draw, update);
 
-    return {};
+    initialize(internalEntity, events);
+
+    return events;
 };
 
-const initialize = (props: TempInternalEntity, events: EntityEvents) => {
-    if (!props.disabled) {
-        props.disabled = true;
+const initialize = ({properties}: InternalEntity, events: EntityEvents) => {
+    if (!properties.disabled) {
+        properties.disabled = true;
 
         events.enable();
     }
 
-    if (props.show) {
-        props.show = false;
+    if (properties.show) {
+        properties.show = false;
 
         events.show();
     }
@@ -62,7 +73,7 @@ const updateProperties = {
 };
 
 const updates = {
-    noise: (props: TempInternalEntity) => createNoiseUpdate(props),
+    noise: (props: InternalEntity) => createNoiseUpdate(props),
     // bold: (sketch: EntitySketch, id: string | number, name: string, transition) => createBoldUpdate(sketch, hoverTransition, input, id, name),
 };
 
@@ -80,7 +91,7 @@ const updates = {
 //     }
 // })
 
-const createNoiseUpdate = ({id, name, sketch}: TempInternalEntity) => ({
+const createNoiseUpdate = ({properties: {id, name}, sketch}: InternalEntity) => ({
     id: id,
     name: `noise-update-${name}`,
     fn: () => {
@@ -96,7 +107,7 @@ const createNoiseUpdate = ({id, name, sketch}: TempInternalEntity) => ({
     },
 });
 
-const createDraw = ({id, name, sketch, context: ctx}: TempInternalEntity) => ({
+const createDraw = ({properties: {id, name}, sketch, context: ctx}: InternalEntity) => ({
     id,
     name: `draw-${name}`,
     fn: () => {
@@ -136,8 +147,7 @@ const defaultSketchProperties = {
     fontSize: 16,
     textAlign: 'center',
     textBaseLine: 'middle',
-    // Next are part of internal properties, could make a seperate object for this if it gets large
-    // id and name are also part of internal properties (mixed)
+    // Internal Properties
     disabled: false,
     show: true,
 };

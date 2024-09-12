@@ -23,28 +23,40 @@ interface EntityEvents {
     disable: () => void;
 }
 
-interface InternalEntity {
+interface EntityProperties {
     id: number | string;
     name: string;
     disabled: boolean;
     show: boolean;
+}
+
+interface EntityListeners {
+    add: () => void;
+    remove: () => void;
+    listening: boolean;
+}
+
+interface Entity {
+    properties: EntityProperties;
     sketch: EntitySketch;
     events: EntityEvents;
     handlers: EntityHandlers;
+    listeners: EntityListeners;
 }
 
 interface EntityHandlers {
-    down: (event: EntityEvents) => void;
-    up: (event: EntityEvents) => void;
+    // down: (event: EntityEvents) => void;
+    // up: (event: EntityEvents) => void;
+    down: (event: MouseEvent) => void;
+    up: (event: MouseEvent) => void;
 }
 
 type EntityConfig = EntitySketch &
-    Omit<InternalEntity, 'sketch' | 'events' | 'handlers'> & {
+    EntityProperties & {
         click: Partial<EntityHandlers>;
     };
 
-type TempInternalEntity = Omit<InternalEntity, 'events' | 'handlers'> & {
+type InternalEntity = Omit<Entity, 'events'> & {
     engine: Engine;
     context: CanvasRenderingContext2D;
-    input: Input;
 };

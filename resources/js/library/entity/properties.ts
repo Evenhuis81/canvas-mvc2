@@ -1,63 +1,55 @@
-import {addProp} from 'library/helpers';
-
-// This method handles way too much, abstract and`divide
-export const getInternalEntity: (
-    engine: Engine,
-    draw: Required<Draw>,
-    update: Required<Update>,
-    sketch: EntitySketch,
-    id: number | string,
-    name: string,
-    disabled: boolean,
-    show: boolean,
-) => InternalEntity = (engine, draw, update, sketch, id, name, disabled, show, click) => {
-    const properties = {id, name, disabled, show, entity: sketch};
-
-    const events = createEntityEvents(properties, engine, draw, update);
-
-    addProp(properties, 'events', events);
-
-    return properties;
-};
-
 export const createEntityEvents = (
-    props: Omit<InternalEntity, 'events' | 'handlers'>,
-    engine: Engine,
+    {properties, listeners, engine}: InternalEntity,
     draw: Required<Draw>,
     update: Required<Update>,
 ) => {
+    // possible combinations for listening:
+    // 1. show & enable = true
+    // 2. show & disable = false
+    // 2. hide & enable = false
+    // 3. hide & disable = false
+
     const show = () => {
-        if (props.show) throwError(props.id, 'show');
+        if (properties.show) throwError(properties.id, 'showing');
 
-        props.show = true;
+        properties.show = true;
 
+        if (!properties.disabled) listeners.add();
+
+        engine.setUpdate(update);
         engine.setShow(draw);
     };
     const hide = () => {
-        if (!show) throwError(props.id, 'hiding');
+        if (!properties.show) throwError(properties.id, 'hiding');
 
+        if (!properties.disabled) listeners.remove();
+
+        engine.removeUpdate(update.id);
         engine.removeShow(draw.id);
 
-        props.show = false;
+        properties.show = false;
     };
     const destroy = () => {
-        if (props.show) hide();
+        if (properties.show) hide();
 
-        if (!props.disabled) disable();
+        if (!properties.disabled) disable();
+
+        // destroy browser events
     };
     const enable = () => {
-        if (!props.disabled) throwError(props.id, 'enabled');
+        if (!properties.disabled) throwError(properties.id, 'enabled');
 
-        props.disabled = false;
+        properties.disabled = false;
 
         engine.setUpdate(update);
     };
     const disable = () => {
-        if (props.disabled) throwError(props.id, 'disabled');
+        if (properties.disabled) throwError(properties.id, 'disabled');
 
+        // create disabled state
         engine.removeUpdate(update.id);
 
-        props.disabled = true;
+        properties.disabled = true;
     };
 
     return {show, hide, destroy, enable, disable};
@@ -68,6 +60,32 @@ export const getHandlers = (handlers?: Partial<EntityHandlers>) => ({
     down: () => {},
     ...handlers,
 });
+
+export const createListeners = (sketch: EntitySketch, handlers: EntityHandlers, {mouse}: Input) => {
+    const mousedown = (evt: MouseEvent) => {
+        if (mouse.insideRect(sketch) && evt.button === 0) {
+            handlers.down(evt);
+        }
+    };
+
+    const mouseup = (evt: MouseEvent) => {
+        if (mouse.insideRect(sketch) && evt.button === 0) {
+            handlers.up(evt);
+        }
+    };
+
+    const add = () => {
+        addEventListener('mousedown', mousedown);
+        addEventListener('mouseup', mouseup);
+    };
+
+    const remove = () => {
+        removeEventListener('mousedown', mousedown);
+        removeEventListener('mouseup', mouseup);
+    };
+
+    return {add, remove, listening: false};
+};
 
 const throwError = (id: string | number = 'noID', subject: string = 'subject', action: string = "'noAction'") => {
     throw Error(`${subject} with id '${id}' already ${action}`);
