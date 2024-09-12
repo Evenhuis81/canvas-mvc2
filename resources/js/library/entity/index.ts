@@ -30,8 +30,17 @@ const create = (options: Partial<EntityConfig>, {context, engine, input}: Resour
         listeners,
         engine,
         context,
+        input,
     };
 
+    // Combine?
+    const hoverTransition = createHoverTransition(internalEntity);
+    const hoverUpdate = createTransitionUpdate(internalEntity, hoverTransition);
+
+    engine.setUpdate(hoverUpdate);
+
+    // create type and set dynamically, hover transition requires seperate update
+    // possible combinations for hover- and animate-update
     const update = updates.noise(internalEntity);
 
     const draw = createDraw(internalEntity);
@@ -42,6 +51,30 @@ const create = (options: Partial<EntityConfig>, {context, engine, input}: Resour
 
     return events;
 };
+
+const createHoverTransition = (properties: InternalEntity) => {
+    const forward = () => {};
+    const reverse = () => {};
+
+    return {forward, reverse};
+};
+
+const createTransitionUpdate = (
+    {properties: {id, name}, input: {mouse}, sketch}: InternalEntity,
+    transition: TransitionBase,
+) => ({
+    id,
+    name: `entity-hover-update${name}`,
+    fn: () => {
+        if (mouse.insideRect(sketch)) {
+            transition.forward();
+
+            return;
+        }
+
+        transition.reverse();
+    },
+});
 
 const initialize = ({properties}: InternalEntity, events: EntityEvents) => {
     if (!properties.disabled) {
@@ -74,7 +107,7 @@ const updateProperties = {
 
 const updates = {
     noise: (props: InternalEntity) => createNoiseUpdate(props),
-    // bold: (sketch: EntitySketch, id: string | number, name: string, transition) => createBoldUpdate(sketch, hoverTransition, input, id, name),
+    // bold: (props: InternalEntity, transition: Transition) => createBoldUpdate(sketch, hoverTransition, input, id, name),
 };
 
 // const createBoldUpdate = (sketch: EntitySketch, transition: Transition, input: Input, id: string | number, name: string) => ({
@@ -93,7 +126,7 @@ const updates = {
 
 const createNoiseUpdate = ({properties: {id, name}, sketch}: InternalEntity) => ({
     id: id,
-    name: `noise-update-${name}`,
+    name: `noise-animation-update-${name}`,
     fn: () => {
         sketch.x += updateProperties.adj;
 

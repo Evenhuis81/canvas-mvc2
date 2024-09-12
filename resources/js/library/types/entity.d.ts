@@ -59,4 +59,5 @@ type EntityConfig = EntitySketch &
 type InternalEntity = Omit<Entity, 'events'> & {
     engine: Engine;
     context: CanvasRenderingContext2D;
+    input: Input;
 };
