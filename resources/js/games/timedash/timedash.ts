@@ -19,12 +19,12 @@ export default {
         const example1 = entity.create({
             show: false,
             // = touch- and mousedown (not yet) / needs transition handlers
-            click: {
-                down: () => {
-                    console.log('click down');
+            mouse: {
+                mousedown: () => {
+                    console.log('mouse down');
                 },
-                up: () => {
-                    console.log('click up');
+                mouseup: () => {
+                    console.log('mouse up');
                 },
             },
         });

@@ -1,6 +1,6 @@
 import {getProperties, uid} from 'library/helpers';
 import {resources} from '..';
-import {createEntityEvents, createListeners, getHandlers} from './properties';
+import {createEntityEvents, createListeners, getMouseHandlers} from './properties';
 import type {Resources} from 'library/types';
 
 const createResource = (resources: Resources) => ({
@@ -9,12 +9,13 @@ const createResource = (resources: Resources) => ({
 
 const create = (options: Partial<EntityConfig>, {context, engine, input}: Resources) => {
     // Seperate the entity properties from the internal properties
-    const {click, id, name, disabled, show, ...sketch} = {
+    const {mouse, id, name, disabled, show, ...sketch} = {
         ...getProperties(defaultSketchProperties, options),
         id: options.id ?? `entity-${uid()}`,
     };
 
-    const handlers = getHandlers(click);
+    // expand into multiple handlers
+    const handlers = getMouseHandlers(mouse);
 
     const listeners = createListeners(sketch, handlers, input);
 

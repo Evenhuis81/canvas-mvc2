@@ -1,37 +1,3 @@
-// Notes on sun @forum, 18-08-2024+:
-// 1. Generalize Types for all kinds of shapes and make shapes and methods for tv and static shows equal
-// 2. Seperate calculated and arbitrary properties on button and if possible abstract all the methods and apply them to all the shapes (see 1)
-// 3. Auto-update all objects that are given an (optional) calculated properties object in case of resize
-// 4. Set a sort of scale value for x and y-window , like 16:9 (think tiles), set this default and calculate all calculated objects with these values;
-// 5. TV needs seperate objects for Methods, Paint and Properties (like in types)
-// 6. Give Statistics a permanent place in (1) TV;
-// 7. F11 functionality in input and dualView should be optional or not present at all (not really important);
-// 8. Dualview should work with a preset dynamic width and height and encapsulated;
-// 9. Cleanup local branches, make CL macro
-// 10. Cleanup comments ($this one aswell)
-
-// Menu, buttons:
-// 1. start
-// 2. settings
-// 3. exit
-// 4. admin options
-// 5. show statistics
-// 6. level editor
-// 7. login
-// 8. create account
-// 9. load game
-// 10. save game
-// 11. title tab change on routechange
-// 12.
-
-// 1. make all button properties optional
-// 2. onhover:  -color (fill / stroke)
-//              -size (scale out/in)
-//              -dropShadow
-// 3. onClick:  -loadAnimation
-//              -dissapear / appear effects (slide / fade)
-// 4. make button object dynamic for property changes for button methods (point 2 and 3)
-
 // Statistics module:
 // This should become a reesource, but with different 'themes' or statistic variants. (for different kind of options)
 // Create text object according to StaticView, with calculated options (like button, possible to 'lend' those)

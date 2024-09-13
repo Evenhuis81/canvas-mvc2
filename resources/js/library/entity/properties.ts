@@ -58,25 +58,23 @@ export const createEntityEvents = (
     return {show, hide, destroy, enable, disable};
 };
 
-export const getHandlers = (handlers?: Partial<EntityHandlers>) => ({
-    up: () => {},
-    down: () => {},
-    ...handlers,
+export const getMouseHandlers = (mouseHandlers?: Partial<MouseHandlers>) => ({
+    mousedown: () => {},
+    mouseup: () => {},
+    mousebutton: 0,
+    ...mouseHandlers,
 });
 
-export const createListeners = (sketch: EntitySketch, handlers: EntityHandlers, {mouse}: Input) => {
+export const createListeners = (sketch: EntitySketch, mouseHandlers: MouseHandlers, {mouse}: Input) => {
+    const {mousedown, mouseup, mousebutton} = mouseHandlers;
     let enabled = false;
 
-    const mousedown = (evt: MouseEvent) => {
-        if (mouse.insideRect(sketch) && evt.button === 0) {
-            handlers.down(evt);
-        }
+    const mousedownListener = (evt: MouseEvent) => {
+        if (mouse.insideRect(sketch) && evt.button === mousebutton) mouseHandlers.mousedown(evt);
     };
 
-    const mouseup = (evt: MouseEvent) => {
-        if (mouse.insideRect(sketch) && evt.button === 0) {
-            handlers.up(evt);
-        }
+    const mouseupListener = (evt: MouseEvent) => {
+        if (mouse.insideRect(sketch) && evt.button === mousebutton) mouseup(evt);
     };
 
     const add = () => {
@@ -84,15 +82,15 @@ export const createListeners = (sketch: EntitySketch, handlers: EntityHandlers, 
 
         enabled = true;
 
-        addEventListener('mousedown', mousedown);
-        addEventListener('mouseup', mouseup);
+        addEventListener('mousedown', mousedownListener);
+        addEventListener('mouseup', mouseupListener);
     };
 
     const remove = () => {
         if (!enabled) return;
 
-        removeEventListener('mousedown', mousedown);
-        removeEventListener('mouseup', mouseup);
+        removeEventListener('mousedown', mousedownListener);
+        removeEventListener('mouseup', mouseupListener);
 
         enabled = false;
     };

@@ -41,24 +41,21 @@ interface Entity {
     properties: EntityProperties;
     sketch: EntitySketch;
     events: EntityEvents;
-    handlers: EntityHandlers;
+    handlers: MouseHandlers;
     listeners: EntityListeners;
 }
 
-// click = mouse & touch (touch not yet implemented)
+// click = mouse & touch (touch not yet implemented): see comments.txt for notes (expand into instructions)
+// MouseEvent => ButtonEvent (see button.ts)
+
+interface MouseHandlers {
+    mouseup: (event: MouseEvent) => void;
+    mousedown: (event: MouseEvent) => void;
+    mousebutton: number;
+}
+
 interface EntityHandlers {
-    mouse: {
-        down: {
-            button: number;
-            handler: () => void;
-        };
-        up: {
-            button: number;
-            handler: () => void;
-        };
-    };
-    down: (event: MouseEvent) => void;
-    up: (event: MouseEvent) => void;
+    mouse: Partial<MouseHandlers>;
 }
 
 type EntityConfig = EntitySketch & EntityProperties & EntityHandlers;
