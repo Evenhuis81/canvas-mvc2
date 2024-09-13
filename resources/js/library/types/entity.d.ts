@@ -36,6 +36,7 @@ interface EntityListeners {
     listening: boolean;
 }
 
+// handlers = user input, listeners = browser implemented
 interface Entity {
     properties: EntityProperties;
     sketch: EntitySketch;
@@ -44,17 +45,23 @@ interface Entity {
     listeners: EntityListeners;
 }
 
+// click = mouse & touch (touch not yet implemented)
 interface EntityHandlers {
-    // down: (event: EntityEvents) => void;
-    // up: (event: EntityEvents) => void;
+    mouse: {
+        down: {
+            button: number;
+            handler: () => void;
+        };
+        up: {
+            button: number;
+            handler: () => void;
+        };
+    };
     down: (event: MouseEvent) => void;
     up: (event: MouseEvent) => void;
 }
 
-type EntityConfig = EntitySketch &
-    EntityProperties & {
-        click: Partial<EntityHandlers>;
-    };
+type EntityConfig = EntitySketch & EntityProperties & EntityHandlers;
 
 type InternalEntity = Omit<Entity, 'events'> & {
     engine: Engine;

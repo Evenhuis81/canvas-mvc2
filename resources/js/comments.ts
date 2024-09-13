@@ -7,6 +7,8 @@
 // 6. Give Statistics a permanent place in (1) TV;
 // 7. F11 functionality in input and dualView should be optional or not present at all (not really important);
 // 8. Dualview should work with a preset dynamic width and height and encapsulated;
+// 9. Cleanup local branches, make CL macro
+// 10. Cleanup comments ($this one aswell)
 
 // Menu, buttons:
 // 1. start
