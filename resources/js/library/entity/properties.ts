@@ -1,14 +1,8 @@
 export const createEntityEvents = (
     {properties, listeners, engine}: InternalEntity,
     draw: Required<Draw>,
-    update: Required<Update>,
+    updates: Required<Update>[],
 ) => {
-    // possible combinations for listening:
-    // 1. show & enable = true
-    // 2. show & disable = false
-    // 2. hide & enable = false
-    // 3. hide & disable = false
-
     const show = () => {
         if (properties.show) throwError(properties.id, 'showing');
 
@@ -16,7 +10,8 @@ export const createEntityEvents = (
 
         listeners.add();
 
-        engine.setUpdate(update);
+        for (let i = 0; i < updates.length; i++) engine.setUpdate(updates[i]);
+
         engine.setShow(draw);
     };
     const hide = () => {
@@ -24,7 +19,8 @@ export const createEntityEvents = (
 
         listeners.remove(); // internal check if removed or not
 
-        engine.removeUpdate(update.id);
+        for (let i = 0; i < updates.length; i++) engine.removeUpdate(updates[i].id);
+
         engine.removeShow(draw.id);
 
         properties.show = false;
@@ -43,14 +39,14 @@ export const createEntityEvents = (
 
         listeners.add();
 
-        engine.setUpdate(update);
+        for (let i = 0; i < updates.length; i++) engine.setUpdate(updates[i]);
     };
     const disable = () => {
         if (properties.disabled) throwError(properties.id, 'disabled');
 
         listeners.remove();
 
-        engine.removeUpdate(update.id);
+        for (let i = 0; i < updates.length; i++) engine.removeUpdate(updates[i].id);
 
         properties.disabled = true;
     };

@@ -34,28 +34,77 @@ const create = (options: Partial<EntityConfig>, {context, engine, input}: Resour
         input,
     };
 
-    // Combine?
     const hoverTransition = createHoverTransition(internalEntity);
     const hoverUpdate = createTransitionUpdate(internalEntity, hoverTransition);
 
-    engine.setUpdate(hoverUpdate);
-
     // create type and set dynamically, hover transition requires seperate update
     // possible combinations for hover- and animate-update
-    const update = updates.noise(internalEntity);
+    const updates: Required<Update>[] = [];
+
+    updates.push(animationUpdates.noise(internalEntity));
+    updates.push(hoverUpdate);
 
     const draw = createDraw(internalEntity);
 
-    const events = createEntityEvents(internalEntity, draw, update);
+    const events = createEntityEvents(internalEntity, draw, updates);
 
     initialize(internalEntity, events);
 
     return events;
 };
 
-const createHoverTransition = (properties: InternalEntity) => {
-    const forward = () => {};
-    const reverse = () => {};
+// max property is default 60, need for deltaTime, adj is change in property
+// make this a createProperties that picks the needed properties for each update respectively
+// This could also serve as a originalProperties object
+const upd = {
+    origin: {
+        lw: 0,
+    },
+    range: {
+        lw: 1,
+    },
+    vel: {
+        x: 0,
+        y: 0,
+    },
+    adj: 0.05,
+    lw: 0,
+    count: 0,
+    max: 60,
+    angle: 0,
+};
+
+// lw = not working cause of pixeldensity, better use opacity
+const createHoverTransition = ({sketch}: InternalEntity) => {
+    const origin = {
+        lw: sketch.lw,
+        f: sketch.fontSize,
+    };
+    const steps = 30;
+    const lwAdj = 0.1;
+    const fAdj = lwAdj / 2;
+    const lwRange = lwAdj * steps;
+    const fRange = lwRange / 2;
+
+    const forward = () => {
+        sketch.lw += lwAdj;
+        sketch.fontSize += fAdj;
+
+        if (sketch.lw > origin.lw + lwRange) {
+            sketch.lw = origin.lw + lwRange;
+            sketch.fontSize = origin.f + fRange;
+        }
+    };
+
+    const reverse = () => {
+        sketch.lw -= lwAdj;
+        sketch.fontSize -= fAdj;
+
+        if (sketch.lw < origin.lw) {
+            sketch.lw = origin.lw;
+            sketch.fontSize = origin.f;
+        }
+    };
 
     return {forward, reverse};
 };
@@ -91,22 +140,7 @@ const initialize = ({properties}: InternalEntity, events: EntityEvents) => {
     }
 };
 
-// max property is default 60, need for deltaTime, adj is change in property
-// make this a createProperties that picks the needed properties for each update respectively
-// This could also serve as a originalProperties object
-const updateProperties = {
-    vel: {
-        x: 0,
-        y: 0,
-    },
-    adj: 0.05,
-    lw: 0,
-    count: 0,
-    max: 60,
-    angle: 0,
-};
-
-const updates = {
+const animationUpdates = {
     noise: (props: InternalEntity) => createNoiseUpdate(props),
     // bold: (props: InternalEntity, transition: Transition) => createBoldUpdate(sketch, hoverTransition, input, id, name),
 };
@@ -129,14 +163,14 @@ const createNoiseUpdate = ({properties: {id, name}, sketch}: InternalEntity) => 
     id: id,
     name: `noise-animation-update-${name}`,
     fn: () => {
-        sketch.x += updateProperties.adj;
+        sketch.x += upd.adj;
 
-        updateProperties.count++;
+        upd.count++;
 
-        if (updateProperties.count > 60) {
-            updateProperties.adj *= -1;
+        if (upd.count > 60) {
+            upd.adj *= -1;
 
-            updateProperties.count = 0;
+            upd.count = 0;
         }
     },
 });
