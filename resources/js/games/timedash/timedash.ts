@@ -16,22 +16,27 @@ export default {
 
         const entity = getEntity('timedash');
 
-        const example1 = entity.create({
-            show: false,
+        entity.create({
+            text: 'Test Example #1',
+            show: true,
             // = touch- and mousedown (not yet) / needs transition handlers
             mouse: {
-                mousedown: () => {
+                down: () => {
                     console.log('mouse down');
                 },
-                mouseup: () => {
+                up: () => {
                     console.log('mouse up');
                 },
             },
+            startType: 'fadein',
+            endType: 'fadeout',
+            onStartEnd: () => {
+                console.log('start transition ended');
+            },
+            onEndEnd: () => {
+                console.log('end transition ended');
+            },
         });
-
-        setTimeout(() => {
-            example1.show();
-        }, 2000);
     },
     run: () => resources.timedash.engine.run(),
     runOnce: () => resources.timedash.engine.runOnce(),

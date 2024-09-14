@@ -54,23 +54,24 @@ export const createEntityEvents = (
     return {show, hide, destroy, enable, disable};
 };
 
-export const getMouseHandlers = (mouseHandlers?: Partial<MouseHandlers>) => ({
-    mousedown: () => {},
-    mouseup: () => {},
-    mousebutton: 0,
-    ...mouseHandlers,
+// Next step: return combined handlers with incoming options from EntityConfig
+export const getHandlers = (handlers?: Partial<MouseHandlers>) => ({
+    down: () => {},
+    up: () => {},
+    button: 0,
+    ...handlers,
 });
 
 export const createListeners = (sketch: EntitySketch, mouseHandlers: MouseHandlers, {mouse}: Input) => {
-    const {mousedown, mouseup, mousebutton} = mouseHandlers;
+    const {down, up, button} = mouseHandlers;
     let enabled = false;
 
     const mousedownListener = (evt: MouseEvent) => {
-        if (mouse.insideRect(sketch) && evt.button === mousebutton) mouseHandlers.mousedown(evt);
+        if (mouse.insideRect(sketch) && evt.button === button) mouseHandlers.down(evt);
     };
 
     const mouseupListener = (evt: MouseEvent) => {
-        if (mouse.insideRect(sketch) && evt.button === mousebutton) mouseup(evt);
+        if (mouse.insideRect(sketch) && evt.button === button) up(evt);
     };
 
     const add = () => {

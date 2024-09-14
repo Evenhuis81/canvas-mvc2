@@ -28,12 +28,20 @@ interface EntityProperties {
     name: string;
     disabled: boolean;
     show: boolean;
+    showDelay: number;
 }
 
 interface EntityListeners {
     add: () => void;
     remove: () => void;
     listening: boolean;
+}
+
+type EntityTransitionTypes = 'fadein' | 'fadeout' | 'none';
+
+interface EntityTransitions {
+    startType: EntityTransitionTypes;
+    endType: EntityTransitionTypes;
 }
 
 // handlers = user input, listeners = browser implemented
@@ -49,16 +57,21 @@ interface Entity {
 // MouseEvent => ButtonEvent (see button.ts)
 
 interface MouseHandlers {
-    mouseup: (event: MouseEvent) => void;
-    mousedown: (event: MouseEvent) => void;
-    mousebutton: number;
+    up: (event: MouseEvent) => void;
+    down: (event: MouseEvent) => void;
+    button: number;
 }
 
-interface EntityHandlers {
+interface TransitionHandlers {
+    onStartEnd: () => void;
+    onEndEnd: () => void;
+}
+
+interface EntityHandlers extends TransitionHandlers {
     mouse: Partial<MouseHandlers>;
 }
 
-type EntityConfig = EntitySketch & EntityProperties & EntityHandlers;
+type EntityConfig = EntitySketch & EntityProperties & EntityHandlers & EntityTransitions;
 
 type InternalEntity = Omit<Entity, 'events'> & {
     engine: Engine;

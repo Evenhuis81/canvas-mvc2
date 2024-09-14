@@ -9,22 +9,27 @@ const createResource = (resources: Resources) => ({
 
 const create = (options: Partial<EntityConfig>, {context, engine, input}: Resources) => {
     // Seperate the entity properties from the internal properties
-    const {mouse, id, name, disabled, show, ...sketch} = {
+    const {id, name, disabled, show, showDelay, ...sketch} = {
         ...getProperties(defaultSketchProperties, options),
         id: options.id ?? `entity-${uid()}`,
     };
 
-    // expand into multiple handlers
-    const handlers = getMouseHandlers(mouse);
+    // startType: 'fadein',
+    // endType: 'fadeout'
+    // onStartEnd: () => {}
+    // onEndEnd: () => {}
+
+    const handlers = getHandlers(options);
 
     const listeners = createListeners(sketch, handlers, input);
 
-    const internalEntity = {
+    const internalEntity: InternalEntity = {
         properties: {
             id,
             name,
             disabled,
             show,
+            showDelay,
         },
         sketch,
         handlers,
@@ -34,14 +39,12 @@ const create = (options: Partial<EntityConfig>, {context, engine, input}: Resour
         input,
     };
 
+    // Combine all this into 1 method
+    const updates: Required<Update>[] = [];
+    // const transitions = getTransitions()
     const hoverTransition = createHoverTransition(internalEntity);
     const hoverUpdate = createTransitionUpdate(internalEntity, hoverTransition);
-
-    // create type and set dynamically, hover transition requires seperate update
-    // possible combinations for hover- and animate-update
-    const updates: Required<Update>[] = [];
-
-    updates.push(animationUpdates.noise(internalEntity));
+    // updates.push(animationUpdates.noise(internalEntity));
     updates.push(hoverUpdate);
 
     const draw = createDraw(internalEntity);
@@ -200,7 +203,7 @@ const createDraw = ({properties: {id, name}, sketch, context: ctx}: InternalEnti
 });
 
 const defaultSketchProperties = {
-    name: 'undefined',
+    name: 'noName',
     x: 200,
     y: 299,
     w: 150,
@@ -210,14 +213,17 @@ const defaultSketchProperties = {
     stroke: '#f00',
     fill: '#000',
     textFill: '#fff',
-    text: 'undefined',
+    text: 'noText',
     font: 'monospace',
     fontSize: 16,
     textAlign: 'center',
     textBaseLine: 'middle',
-    // Internal Properties
+    // Mixed Internal Properties
     disabled: false,
     show: true,
+    showDelay: 0, // ms
+    startType: 'none',
+    endType: 'none',
 };
 
 // TODO::Resource availability check
