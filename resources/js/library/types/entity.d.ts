@@ -34,7 +34,9 @@ interface EntityProperties {
 interface EntityListeners {
     add: () => void;
     remove: () => void;
-    listening: boolean;
+    // listening: boolean; // not sure where this is used or where I was gonna use it
+    start: () => void;
+    end: () => void;
 }
 
 type EntityTransitionTypes = 'fadein1' | 'fadeout1' | 'none';

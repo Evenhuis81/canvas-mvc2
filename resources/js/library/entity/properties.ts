@@ -72,16 +72,24 @@ export const getHandlers = (config: Partial<EntityConfig>) => {
     return handlers;
 };
 
-export const createListeners = (sketch: EntitySketch, mouseHandlers: MouseHandlers, {mouse}: Input) => {
-    const {down, up, button} = mouseHandlers;
+export const createListeners = (sketch: EntitySketch, handlers: MouseHandlers & TransitionHandlers, {mouse}: Input) => {
+    // TODO:: Listeners/Handlers should only be active according to user input
+    const {down, up, button} = handlers; // Destructuring needed?
     let enabled = false;
 
     const mousedownListener = (evt: MouseEvent) => {
-        if (mouse.insideRect(sketch) && evt.button === button) mouseHandlers.down(evt);
+        if (mouse.insideRect(sketch) && evt.button === button) down(evt);
     };
 
     const mouseupListener = (evt: MouseEvent) => {
         if (mouse.insideRect(sketch) && evt.button === button) up(evt);
+    };
+
+    const transitionStartListener = () => {
+        console.log('transition start internally');
+    };
+    const transitionEndListener = () => {
+        console.log('transition end internally');
     };
 
     const add = () => {
@@ -102,7 +110,8 @@ export const createListeners = (sketch: EntitySketch, mouseHandlers: MouseHandle
         enabled = false;
     };
 
-    return {add, remove, listening: false};
+    // return {add, remove, listening: false};
+    return {add, remove, start: transitionStartListener, end: transitionEndListener};
 };
 
 const throwError = (id: string | number = 'noID', subject: string = 'subject', action: string = "'noAction'") => {
