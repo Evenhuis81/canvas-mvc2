@@ -41,9 +41,13 @@ interface EntityListeners {
 
 type EntityTransitionTypes = 'fadein1' | 'fadeout1' | 'none';
 
+type EntityHoverTransitionTypes = 'bold' | 'none';
+
 interface EntityTransitions {
     startType: EntityTransitionTypes;
     endType: EntityTransitionTypes;
+    hover: boolean;
+    hoverType: EntityHoverTransitionTypes;
 }
 
 // Does this need to be a seperate Handler interface?

@@ -18,6 +18,7 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     // mouse + transition handlers mixed
     const handlers = getHandlers(options);
 
+    // Optional?
     const listeners = createListeners(sketch, handlers, input);
 
     const internalEntity: InternalEntity = {
@@ -36,13 +37,7 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         input,
     };
 
-    // Combine all this into 1 method
-    const updates: Required<Update>[] = [];
-    // const transitions = getTransitions()
-    const hoverTransition = createHoverTransition(internalEntity);
-    const hoverUpdate = createTransitionUpdate(internalEntity, hoverTransition);
-    // updates.push(animationUpdates.noise(internalEntity));
-    updates.push(hoverUpdate);
+    const updates = createUpdates(internalEntity);
 
     const draw = createDraw(internalEntity);
 
@@ -53,7 +48,20 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     return events;
 };
 
-const createHoverTransition = ({sketch}: InternalEntity) => {
+const createUpdates = (entity: InternalEntity) => {
+    // const transitions = getTransitions()
+
+    // This is optional, see new InternalEntity properties (hover, hoverType)
+    const hoverTransitionUpdate = createHoverTransition(entity);
+    // const hoverUpdate = createTransitionUpdate(internalEntity, hoverTransition);
+    // updates.push(animationUpdates.noise(internalEntity));
+    // updates.push(hoverUpdate);
+    return [hoverTransitionUpdate];
+};
+
+const createHoverTransition = (entity: InternalEntity) => {
+    const {sketch} = entity;
+
     const origin = {
         lw: sketch.lw,
         f: sketch.fontSize,
@@ -84,7 +92,8 @@ const createHoverTransition = ({sketch}: InternalEntity) => {
         }
     };
 
-    return {forward, reverse};
+    // return {forward, reverse};
+    return createTransitionUpdate(entity, {forward, reverse});
 };
 
 const createTransitionUpdate = (
@@ -119,6 +128,7 @@ const initialize = ({properties}: InternalEntity, events: EntityEvents) => {
 };
 
 const defaultSketchProperties = {
+    // id created in spreadoperator (1st in line of create method)
     name: 'noName',
     x: 200,
     y: 299,
@@ -138,8 +148,11 @@ const defaultSketchProperties = {
     disabled: false,
     show: true,
     showDelay: 0, // ms
+    // TransitionProperties:
     startType: 'none',
     endType: 'none',
+    hover: false,
+    hoverType: 'none',
 };
 
 // TODO::Resource availability check

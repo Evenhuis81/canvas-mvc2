@@ -22,20 +22,22 @@ export default {
             // = touch- and mousedown (not yet) / needs transition handlers
             mouse: {
                 down: () => {
-                    console.log('mouse down');
+                    console.log('mouse down USER INPUT');
                 },
                 up: () => {
-                    console.log('mouse up');
+                    console.log('mouse up USER INPUT');
                 },
             },
             startType: 'fadein1',
             // endType: 'fadeout1',
             // onStartEnd: () => {
-            //     console.log('start transition ended');
+            //     console.log('start transition ended USER INPUT');
             // },
             onEndEnd: () => {
-                console.log('end transition ended');
+                console.log('end transition ended USER INPUT');
             },
+            // hover: false,
+            // hoverType: 'none',
         });
     },
     run: () => resources.timedash.engine.run(),
