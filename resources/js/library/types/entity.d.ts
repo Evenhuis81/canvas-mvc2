@@ -37,11 +37,17 @@ interface EntityListeners {
     listening: boolean;
 }
 
-type EntityTransitionTypes = 'fadein' | 'fadeout' | 'none';
+type EntityTransitionTypes = 'fadein1' | 'fadeout1' | 'none';
 
 interface EntityTransitions {
     startType: EntityTransitionTypes;
     endType: EntityTransitionTypes;
+}
+
+// Does this need to be a seperate Handler interface?
+interface TransitionHandlers {
+    onStartEnd: () => void;
+    onEndEnd: () => void;
 }
 
 // handlers = user input, listeners = browser implemented
@@ -49,22 +55,16 @@ interface Entity {
     properties: EntityProperties;
     sketch: EntitySketch;
     events: EntityEvents;
-    handlers: MouseHandlers;
+    handlers: MouseHandlers & TransitionHandlers;
     listeners: EntityListeners;
 }
 
 // click = mouse & touch (touch not yet implemented): see comments.txt for notes (expand into instructions)
 // MouseEvent => ButtonEvent (see button.ts)
-
 interface MouseHandlers {
     up: (event: MouseEvent) => void;
     down: (event: MouseEvent) => void;
     button: number;
-}
-
-interface TransitionHandlers {
-    onStartEnd: () => void;
-    onEndEnd: () => void;
 }
 
 interface EntityHandlers extends TransitionHandlers {

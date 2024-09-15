@@ -28,11 +28,11 @@ export default {
                     console.log('mouse up');
                 },
             },
-            startType: 'fadein',
-            endType: 'fadeout',
-            onStartEnd: () => {
-                console.log('start transition ended');
-            },
+            startType: 'fadein1',
+            // endType: 'fadeout1',
+            // onStartEnd: () => {
+            //     console.log('start transition ended');
+            // },
             onEndEnd: () => {
                 console.log('end transition ended');
             },

@@ -54,13 +54,23 @@ export const createEntityEvents = (
     return {show, hide, destroy, enable, disable};
 };
 
-// Next step: return combined handlers with incoming options from EntityConfig
-export const getHandlers = (handlers?: Partial<MouseHandlers>) => ({
+const setHandlers = (handlers: Partial<MouseHandlers> & Partial<TransitionHandlers>) => ({
     down: () => {},
     up: () => {},
+    onStartEnd: () => {},
+    onEndEnd: () => {},
     button: 0,
     ...handlers,
 });
+
+export const getHandlers = (config: Partial<EntityConfig>) => {
+    // Test
+    const {onStartEnd, onEndEnd} = config;
+
+    const handlers = setHandlers({...config.mouse, onStartEnd, onEndEnd});
+
+    return handlers;
+};
 
 export const createListeners = (sketch: EntitySketch, mouseHandlers: MouseHandlers, {mouse}: Input) => {
     const {down, up, button} = mouseHandlers;
