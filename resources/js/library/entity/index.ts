@@ -1,9 +1,9 @@
 import {getProperties, uid} from 'library/helpers';
 import {resources} from '..';
 import {createEntityEvents, createListeners, getHandlers} from './properties';
-import type {Resources} from 'library/types';
 import {createDraw, createUpdates} from './updates';
-import {hexToRgb} from 'library/colors';
+import {getSketchRGBAColorsFromHexString} from 'library/colors';
+import type {Resources} from 'library/types';
 
 const createResource = (resources: Resources) => ({
     create: (options?: Partial<EntityConfig>) => create(resources, options),
@@ -11,16 +11,16 @@ const createResource = (resources: Resources) => ({
 
 const create = ({context, engine, input}: Resources, options: Partial<EntityConfig> = {}) => {
     // Seperate the entity properties from the internal properties
-    const {id, name, disabled, show, showDelay, hoverType, startType, endType, mouse, ...sketch} = {
-        ...getProperties(options, defaultSketchProperties),
-        id: options.id ?? `entity-${uid()}`,
-    };
+    const {id, name, disabled, show, showDelay, hoverType, startType, startSpeed, endType, endSpeed, mouse, ...sketch} =
+        {
+            ...getProperties(options, defaultSketchProperties),
+            id: options.id ?? `entity-${uid()}`,
+        };
 
-    const rgba = {
-        fill: {a: 1, ...hexToRgb(sketch.fill)},
-        stroke: {a: 1, ...hexToRgb(sketch.stroke)},
-        textFill: {a: 1, ...hexToRgb(sketch.textFill)},
-    };
+    console.log(sketch);
+
+    // Make this more efficient, if no transitions or rgba color needed, make simple update/draw method, etc.
+    const colors = getSketchRGBAColorsFromHexString(sketch);
 
     // mouse + transition handlers mixed
     const handlers = getHandlers(options);
@@ -37,7 +37,9 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
             showDelay,
             hoverType,
             startType,
+            startSpeed,
             endType,
+            endSpeed,
         },
         sketch,
         handlers,
@@ -45,11 +47,7 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         engine,
         context,
         input,
-        colors: {
-            fill: rgba.fill,
-            stroke: rgba.stroke,
-            textFill: rgba.textFill,
-        },
+        colors,
     };
 
     const updates = createUpdates(internalEntity);
@@ -100,7 +98,9 @@ const defaultSketchProperties = {
     showDelay: 0, // ms
     // TransitionProperties:
     startType: 'none',
+    startSpeed: 2,
     endType: 'none',
+    endSpeed: 2,
     hoverType: 'none',
 };
 

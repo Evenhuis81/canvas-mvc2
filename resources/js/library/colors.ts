@@ -15,3 +15,9 @@ export const hexToRgb = (hex: string) => {
         b: parseInt(result[3], 16),
     };
 };
+
+export const getSketchRGBAColorsFromHexString = (sketch: EntitySketch) => ({
+    fill: {a: 1, ...hexToRgb(sketch.fill)},
+    stroke: {a: 1, ...hexToRgb(sketch.stroke)},
+    textFill: {a: 1, ...hexToRgb(sketch.textFill)},
+});

@@ -29,10 +29,11 @@ export default {
                 },
             },
             startType: 'fadein1',
+            // startSpeed: 3,
             // endType: 'fadeout1',
-            // onStartEnd: () => {
-            //     console.log('start transition ended USER INPUT');
-            // },
+            onStartEnd: () => {
+                console.log('start transition ended USER INPUT');
+            },
             // onEndEnd: () => {
             //     console.log('end transition ended USER INPUT');
             // },

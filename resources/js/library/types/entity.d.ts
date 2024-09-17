@@ -45,7 +45,9 @@ type EntityHoverTransitionTypes = 'bold' | 'none';
 
 interface EntityTransitions {
     startType: EntityTransitionTypes;
+    startSpeed: 1 | 2 | 3;
     endType: EntityTransitionTypes;
+    endSpeed: 1 | 2 | 3;
     hoverType: EntityHoverTransitionTypes;
 }
 
