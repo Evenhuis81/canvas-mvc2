@@ -2,7 +2,7 @@ export const uid = () => Date.now().toString(36) + Math.random().toString(36).su
 
 type GetProperties = <T extends {}, U extends {}>(defaults: T, options: U, calculatedOptions?: () => U) => T & U;
 
-export const getProperties: GetProperties = (defaults, options, calculatedOptions?) => ({
+export const getProperties: GetProperties = (options, defaults, calculatedOptions?) => ({
     ...defaults,
     ...options,
     ...(calculatedOptions ?? {}),

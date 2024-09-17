@@ -23,7 +23,7 @@ interface EntityEvents {
     disable: () => void;
 }
 
-interface EntityProperties {
+interface EntityProperties extends EntityTransitions {
     id: number | string;
     name: string;
     disabled: boolean;
@@ -34,7 +34,7 @@ interface EntityProperties {
 interface EntityListeners {
     add: () => void;
     remove: () => void;
-    // listening: boolean; // not sure where this is used or where I was gonna use it
+    // listening: boolean; // not sure where I was gonna use this
     start: () => void;
     end: () => void;
 }
@@ -46,11 +46,9 @@ type EntityHoverTransitionTypes = 'bold' | 'none';
 interface EntityTransitions {
     startType: EntityTransitionTypes;
     endType: EntityTransitionTypes;
-    hover: boolean;
     hoverType: EntityHoverTransitionTypes;
 }
 
-// Does this need to be a seperate Handler interface?
 interface TransitionHandlers {
     onStartEnd: () => void;
     onEndEnd: () => void;
@@ -63,6 +61,11 @@ interface Entity {
     events: EntityEvents;
     handlers: MouseHandlers & TransitionHandlers;
     listeners: EntityListeners;
+    colors: {
+        fill: RGBA;
+        stroke: RGBA;
+        textFill: RGBA;
+    };
 }
 
 // click = mouse & touch (touch not yet implemented): see comments.txt for notes (expand into instructions)

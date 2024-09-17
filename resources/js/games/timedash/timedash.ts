@@ -33,11 +33,10 @@ export default {
             // onStartEnd: () => {
             //     console.log('start transition ended USER INPUT');
             // },
-            onEndEnd: () => {
-                console.log('end transition ended USER INPUT');
-            },
-            // hover: false,
-            // hoverType: 'none',
+            // onEndEnd: () => {
+            //     console.log('end transition ended USER INPUT');
+            // },
+            hoverType: 'bold',
         });
     },
     run: () => resources.timedash.engine.run(),

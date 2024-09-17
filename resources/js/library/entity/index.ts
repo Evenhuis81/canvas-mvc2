@@ -2,7 +2,8 @@ import {getProperties, uid} from 'library/helpers';
 import {resources} from '..';
 import {createEntityEvents, createListeners, getHandlers} from './properties';
 import type {Resources} from 'library/types';
-import {createDraw} from './updates';
+import {createDraw, createUpdates} from './updates';
+import {hexToRgb} from 'library/colors';
 
 const createResource = (resources: Resources) => ({
     create: (options?: Partial<EntityConfig>) => create(resources, options),
@@ -10,9 +11,15 @@ const createResource = (resources: Resources) => ({
 
 const create = ({context, engine, input}: Resources, options: Partial<EntityConfig> = {}) => {
     // Seperate the entity properties from the internal properties
-    const {id, name, disabled, show, showDelay, ...sketch} = {
-        ...getProperties(defaultSketchProperties, options),
+    const {id, name, disabled, show, showDelay, hoverType, startType, endType, mouse, ...sketch} = {
+        ...getProperties(options, defaultSketchProperties),
         id: options.id ?? `entity-${uid()}`,
+    };
+
+    const rgba = {
+        fill: {a: 1, ...hexToRgb(sketch.fill)},
+        stroke: {a: 1, ...hexToRgb(sketch.stroke)},
+        textFill: {a: 1, ...hexToRgb(sketch.textFill)},
     };
 
     // mouse + transition handlers mixed
@@ -28,6 +35,9 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
             disabled,
             show,
             showDelay,
+            hoverType,
+            startType,
+            endType,
         },
         sketch,
         handlers,
@@ -35,83 +45,23 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         engine,
         context,
         input,
+        colors: {
+            fill: rgba.fill,
+            stroke: rgba.stroke,
+            textFill: rgba.textFill,
+        },
     };
 
     const updates = createUpdates(internalEntity);
 
     const draw = createDraw(internalEntity);
 
-    const events = createEntityEvents(internalEntity, draw, updates);
+    const events = createEntityEvents(internalEntity, updates, draw);
 
     initialize(internalEntity, events);
 
     return events;
 };
-
-const createUpdates = (entity: InternalEntity) => {
-    // const transitions = getTransitions()
-
-    // This is optional, see new InternalEntity properties (hover, hoverType)
-    const hoverTransitionUpdate = createHoverTransition(entity);
-    // const hoverUpdate = createTransitionUpdate(internalEntity, hoverTransition);
-    // updates.push(animationUpdates.noise(internalEntity));
-    // updates.push(hoverUpdate);
-    return [hoverTransitionUpdate];
-};
-
-const createHoverTransition = (entity: InternalEntity) => {
-    const {sketch} = entity;
-
-    const origin = {
-        lw: sketch.lw,
-        f: sketch.fontSize,
-    };
-    const steps = 30;
-    const lwAdj = 0.1;
-    const fAdj = lwAdj / 2;
-    const lwRange = lwAdj * steps;
-    const fRange = lwRange / 2;
-
-    const forward = () => {
-        sketch.lw += lwAdj;
-        sketch.fontSize += fAdj;
-
-        if (sketch.lw > origin.lw + lwRange) {
-            sketch.lw = origin.lw + lwRange;
-            sketch.fontSize = origin.f + fRange;
-        }
-    };
-
-    const reverse = () => {
-        sketch.lw -= lwAdj;
-        sketch.fontSize -= fAdj;
-
-        if (sketch.lw < origin.lw) {
-            sketch.lw = origin.lw;
-            sketch.fontSize = origin.f;
-        }
-    };
-
-    // return {forward, reverse};
-    return createTransitionUpdate(entity, {forward, reverse});
-};
-
-const createTransitionUpdate = (
-    {properties: {id, name}, input: {mouse}, sketch}: InternalEntity,
-    transition: TransitionBase,
-) => ({
-    id,
-    name: `entity-hover-update${name}`,
-    fn: () => {
-        if (mouse.insideRect(sketch)) {
-            transition.forward();
-
-            return;
-        }
-
-        transition.reverse();
-    },
-});
 
 const initialize = ({properties}: InternalEntity, events: EntityEvents) => {
     if (!properties.disabled) {
@@ -151,7 +101,6 @@ const defaultSketchProperties = {
     // TransitionProperties:
     startType: 'none',
     endType: 'none',
-    hover: false,
     hoverType: 'none',
 };
 

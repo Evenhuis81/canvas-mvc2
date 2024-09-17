@@ -1,7 +1,7 @@
 export const createEntityEvents = (
     {properties, listeners, engine}: InternalEntity,
-    draw: Required<Draw>,
     updates: Required<Update>[],
+    draw: Required<Draw>,
 ) => {
     const show = () => {
         if (properties.show) throwError(properties.id, 'showing');
@@ -64,12 +64,11 @@ const setHandlers = (handlers: Partial<MouseHandlers> & Partial<TransitionHandle
 });
 
 export const getHandlers = (config: Partial<EntityConfig>) => {
-    // Test
+    // Transition handlers
     const {onStartEnd, onEndEnd} = config;
 
-    const handlers = setHandlers({...config.mouse, onStartEnd, onEndEnd});
-
-    return handlers;
+    // Mouse and Transition handlers mixed
+    return setHandlers({...config.mouse, onStartEnd, onEndEnd});
 };
 
 export const createListeners = (sketch: EntitySketch, handlers: MouseHandlers & TransitionHandlers, {mouse}: Input) => {
