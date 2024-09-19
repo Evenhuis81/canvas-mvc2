@@ -6,6 +6,15 @@
 // const tvUpdate = tv.moveTo(player.middlePos);
 // engine.setUpdate(tvUpdate);
 
+// const setHandlers = <T extends {}>(handlers: T) => ({
+//     down: () => {},
+//     up: () => {},
+//     onStartEnd: () => {},
+//     onEndEnd: () => {},
+//     button: 0,
+//     ...handlers,
+// });
+
 // const getButtonLines = (x: number, y: number, w: number, h: number) => {
 //     const mTB = h / 3;
 //     const mLR = w / 5;

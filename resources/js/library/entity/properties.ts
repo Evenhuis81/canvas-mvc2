@@ -54,22 +54,16 @@ export const createEntityEvents = (
     return {show, hide, destroy, enable, disable};
 };
 
-const setHandlers = (handlers: Partial<MouseHandlers> & Partial<TransitionHandlers>) => ({
+// Mouse and Transition handlers mixed
+export const getHandlers = (mouse: Partial<MouseHandlers>, transition: Partial<TransitionHandlers>) => ({
     down: () => {},
     up: () => {},
     onStartEnd: () => {},
     onEndEnd: () => {},
     button: 0,
-    ...handlers,
+    ...mouse,
+    ...transition,
 });
-
-export const getHandlers = (config: Partial<EntityConfig>) => {
-    // Transition handlers
-    const {onStartEnd, onEndEnd} = config;
-
-    // Mouse and Transition handlers mixed
-    return setHandlers({...config.mouse, onStartEnd, onEndEnd});
-};
 
 export const createListeners = (sketch: EntitySketch, handlers: MouseHandlers & TransitionHandlers, {mouse}: Input) => {
     // TODO:: Listeners/Handlers should only be active according to user input
@@ -109,7 +103,6 @@ export const createListeners = (sketch: EntitySketch, handlers: MouseHandlers & 
         enabled = false;
     };
 
-    // return {add, remove, listening: false};
     return {add, remove, start: transitionStartListener, end: transitionEndListener};
 };
 

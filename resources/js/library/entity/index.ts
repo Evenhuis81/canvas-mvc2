@@ -11,19 +11,32 @@ const createResource = (resources: Resources) => ({
 
 const create = ({context, engine, input}: Resources, options: Partial<EntityConfig> = {}) => {
     // Seperate the entity properties from the internal properties
-    const {id, name, disabled, show, showDelay, hoverType, startType, startSpeed, endType, endSpeed, mouse, ...sketch} =
-        {
-            ...getProperties(options, defaultSketchProperties),
-            id: options.id ?? `entity-${uid()}`,
-        };
-
-    console.log(sketch);
+    const {
+        id,
+        name,
+        disabled,
+        show,
+        showDelay,
+        hoverType,
+        startType,
+        startSpeed,
+        endType,
+        endSpeed,
+        mouse,
+        onStartEnd,
+        onEndEnd,
+        animation,
+        ...sketch
+    } = {
+        ...getProperties(options, defaultSketchProperties),
+        id: options.id ?? `entity-${uid()}`,
+    };
 
     // Make this more efficient, if no transitions or rgba color needed, make simple update/draw method, etc.
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
     // mouse + transition handlers mixed
-    const handlers = getHandlers(options);
+    const handlers = getHandlers({...mouse}, {onStartEnd, onEndEnd});
 
     // Optional?
     const listeners = createListeners(sketch, handlers, input);
@@ -40,6 +53,7 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
             startSpeed,
             endType,
             endSpeed,
+            animation,
         },
         sketch,
         handlers,
@@ -96,6 +110,7 @@ const defaultSketchProperties = {
     disabled: false,
     show: true,
     showDelay: 0, // ms
+    animation: 'none',
     // TransitionProperties:
     startType: 'none',
     startSpeed: 2,

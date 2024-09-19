@@ -1,8 +1,7 @@
-import {hexToRgb} from 'library/colors';
-
 export const createUpdates = (entity: InternalEntity) => {
     const {hoverType, startType, endType} = entity.properties;
 
+    // const updates: Record<Required<Update>> = {};
     const updates: Required<Update>[] = [];
 
     if (hoverType !== 'none') updates.push(hoverTransitions[hoverType](entity));

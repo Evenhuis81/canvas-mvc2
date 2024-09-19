@@ -29,26 +29,30 @@ interface EntityProperties extends EntityTransitions {
     disabled: boolean;
     show: boolean;
     showDelay: number;
+    animation: EntityAnimationType | 'none';
 }
 
 interface EntityListeners {
     add: () => void;
     remove: () => void;
-    // listening: boolean; // not sure where I was gonna use this
     start: () => void;
     end: () => void;
 }
 
-type EntityTransitionTypes = 'fadein1' | 'fadeout1' | 'none';
+type EntityAnimationType = 'noise';
 
-type EntityHoverTransitionTypes = 'bold' | 'none';
+type EntityTransitionTypes = 'fadein1' | 'fadeout1';
+
+type EntityHoverTransitionTypes = 'bold';
+
+type EntityTypes = (EntityAnimationType & EntityTransitionTypes & EntityHoverTransitionTypes) | 'none';
 
 interface EntityTransitions {
-    startType: EntityTransitionTypes;
+    startType: EntityTransitionTypes | 'none';
     startSpeed: 1 | 2 | 3;
-    endType: EntityTransitionTypes;
+    endType: EntityTransitionTypes | 'none';
     endSpeed: 1 | 2 | 3;
-    hoverType: EntityHoverTransitionTypes;
+    hoverType: EntityHoverTransitionTypes | 'none';
 }
 
 interface TransitionHandlers {
