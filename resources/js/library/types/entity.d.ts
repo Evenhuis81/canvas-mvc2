@@ -23,7 +23,7 @@ interface EntityEvents {
     disable: () => void;
 }
 
-interface EntityProperties extends EntityTransitions {
+interface EntityProperties {
     id: number | string;
     name: string;
     disabled: boolean;
@@ -45,7 +45,7 @@ type EntityTransitionTypes = 'fadein1' | 'fadeout1';
 
 type EntityHoverTransitionTypes = 'bold';
 
-type EntityTypes = (EntityAnimationType & EntityTransitionTypes & EntityHoverTransitionTypes) | 'none';
+type EntityTypes = EntityAnimationType | EntityTransitionTypes | EntityHoverTransitionTypes | 'none';
 
 interface EntityTransitions {
     startType: EntityTransitionTypes | 'none';
@@ -67,6 +67,7 @@ interface Entity {
     events: EntityEvents;
     handlers: MouseHandlers & TransitionHandlers;
     listeners: EntityListeners;
+    transitions: EntityTransitions;
     colors: {
         fill: RGBA;
         stroke: RGBA;

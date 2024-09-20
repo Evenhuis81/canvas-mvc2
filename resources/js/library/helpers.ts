@@ -2,6 +2,7 @@ export const uid = () => Date.now().toString(36) + Math.random().toString(36).su
 
 type GetProperties = <T extends {}, U extends {}>(defaults: T, options: U, calculatedOptions?: () => U) => T & U;
 
+// Test calculatedOptions having the same Type as options (doesn't work probably)
 export const getProperties: GetProperties = (options, defaults, calculatedOptions?) => ({
     ...defaults,
     ...options,

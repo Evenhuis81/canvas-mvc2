@@ -11,26 +11,52 @@ const createResource = (resources: Resources) => ({
 
 const create = ({context, engine, input}: Resources, options: Partial<EntityConfig> = {}) => {
     // Seperate the entity properties from the internal properties
-    const {
-        id,
-        name,
-        disabled,
-        show,
-        showDelay,
-        hoverType,
-        startType,
-        startSpeed,
-        endType,
-        endSpeed,
-        mouse,
-        onStartEnd,
-        onEndEnd,
-        animation,
-        ...sketch
-    } = {
-        ...getProperties(options, defaultSketchProperties),
-        id: options.id ?? `entity-${uid()}`,
+    // const {
+    //     id,
+    //     name,
+    //     disabled,
+    //     show,
+    //     showDelay,
+    //     animation,
+    //     ...restoptions
+    // } = {
+    //     ...getProperties(options, defaultSketchProperties),
+    //     id: options.id ?? `entity-${uid()}`,
+    // };
+    const propertiesLength = [6, 5]; // [Mixed Internal Properties, Transition Properties]
+
+    const internal = {id: options.id ?? `entity-${uid()}`, ...getProperties(options, defaultSketchProperties)};
+
+    const splitObject = (obj: {}, ids: []) => {
+        const returnObj = {};
+
+        ids.forEach(idd => {
+            // const {idd: } = obj;
+            // returnObj[id] = idd;
+        });
     };
+
+    console.log(internal.id);
+
+    type Propp = {id: string | number};
+
+    const properties: Propp = {id: 0};
+
+    // const properties = splitObject(internal, Object.keys(internal).splice(0, propertiesLength[0]));
+
+    ({id: properties.id} = internal);
+
+    console.log(internal.animation);
+
+    const {animation} = internal;
+
+    console.log(internal.animation);
+
+    // const {id, name, disabled, show, showDelay, animation} = internal;
+
+    // const propertyKeys = ['id', 'name', 'disabled', 'show', 'showDelay', 'animation'];
+
+    // Object.keys(internal));
 
     // Make this more efficient, if no transitions or rgba color needed, make simple update/draw method, etc.
     const colors = getSketchRGBAColorsFromHexString(sketch);
@@ -48,12 +74,14 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
             disabled,
             show,
             showDelay,
+            animation,
+        },
+        transitions: {
             hoverType,
             startType,
             startSpeed,
             endType,
             endSpeed,
-            animation,
         },
         sketch,
         handlers,
@@ -90,8 +118,19 @@ const initialize = ({properties}: InternalEntity, events: EntityEvents) => {
 };
 
 const defaultSketchProperties = {
-    // id created in spreadoperator (1st in line of create method)
+    // Mixed Internal Properties (+id from creation)
     name: 'noName',
+    disabled: false,
+    show: true,
+    showDelay: 0,
+    animation: 'none',
+    // Transition Properties
+    startType: 'none',
+    startSpeed: 2,
+    endType: 'none',
+    endSpeed: 2,
+    hoverType: 'none',
+    // Sketch
     x: 200,
     y: 299,
     w: 150,
@@ -106,17 +145,6 @@ const defaultSketchProperties = {
     fontSize: 16,
     textAlign: 'center',
     textBaseLine: 'middle',
-    // Mixed Internal Properties
-    disabled: false,
-    show: true,
-    showDelay: 0, // ms
-    animation: 'none',
-    // TransitionProperties:
-    startType: 'none',
-    startSpeed: 2,
-    endType: 'none',
-    endSpeed: 2,
-    hoverType: 'none',
 };
 
 // TODO::Resource availability check
