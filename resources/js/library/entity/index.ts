@@ -58,16 +58,17 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 };
 
 const initialize = ({properties}: InternalEntity, events: EntityEvents) => {
-    if (!properties.disabled) {
-        properties.disabled = true;
-
-        events.enable();
-    }
-
+    // This gets called once, needed for ie. showDelay
     if (properties.show) {
         properties.show = false;
 
         events.show();
+    }
+
+    if (properties.disabled) {
+        properties.disabled = false;
+
+        events.disable();
     }
 };
 

@@ -16,8 +16,8 @@ interface EntitySketch {
 }
 
 interface EntityEvents {
-    show: () => void;
-    hide: () => void;
+    show: (transition?: boolean) => void;
+    hide: (transition?: boolean) => void;
     destroy: () => void;
     enable: () => void;
     disable: () => void;
@@ -94,10 +94,11 @@ type InternalEntity = Omit<Entity, 'events'> & {
     setEngine: (renders: EntityRenders) => void;
 };
 
-type EntityRenders = {
-    animation: Update | void;
-    hover: Update | void;
-    start: Update | void;
-    end: Update | void;
-    draw: Draw | void;
+type EntityRenderTypes = 'animation' | 'hover' | 'start' | 'end' | 'draw';
+
+type EntityRender = {
+    start: () => void;
+    stop: () => void;
 };
+
+type EntityRenders = Record<Exclude<EntityRenderTypes, 'draw'>, EntityRender | void> & {draw: EntityRender};

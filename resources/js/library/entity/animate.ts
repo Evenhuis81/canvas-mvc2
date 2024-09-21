@@ -13,21 +13,61 @@ export const createRenders = (entity: InternalEntity) => {
 };
 
 // Make a create hover/start/endTransitions object from it, so entity doesn't need to get passed for every method?
+// Make multiple wrappers: (1. combine for entity global object, 2. create update/start/stop dynamically, 1liner)
 const hoverTransitions = {
-    bold: (entity: InternalEntity) => createBoldHoverTransitionUpdate(entity),
+    bold: (entity: InternalEntity) => {
+        const update = createBoldHoverTransitionUpdate(entity);
+
+        const start = () => entity.engine.setUpdate(update);
+
+        const stop = () => entity.engine.removeUpdate(update.id);
+
+        return {start, stop};
+    },
     none: () => {},
 };
 
 const startEndTransitions = {
     fadein1: (entity: InternalEntity) => {
-        createFadeIn1TransitionUpdate(entity);
+        const update = createFadeIn1TransitionUpdate(entity);
+
+        const start = () => {
+            entity.colors.fill.a = 0;
+            entity.colors.stroke.a = 0;
+            entity.colors.textFill.a = 0;
+
+            entity.engine.setUpdate(update);
+        };
+
+        const stop = () => {
+            // Possible reset color alphas
+            entity.engine.removeUpdate(update.id);
+        };
+
+        return {start, stop};
     },
-    fadeout1: (entity: InternalEntity) => createFadeOut1TransitionUpdate(entity),
+    fadeout1: (entity: InternalEntity) => {
+        const update = createFadeOut1TransitionUpdate(entity);
+
+        const start = () => entity.engine.setUpdate(update);
+
+        const stop = () => entity.engine.removeUpdate(update.id);
+
+        return {start, stop};
+    },
     none: () => {},
 };
 
 const animationUpdates = {
-    noise: (entity: InternalEntity) => createNoiseUpdate(entity),
+    noise: (entity: InternalEntity) => {
+        const update = createNoiseUpdate(entity);
+
+        const start = () => entity.engine.setUpdate(update);
+
+        const stop = () => entity.engine.removeUpdate(update.id);
+
+        return {start, stop};
+    },
     none: () => {},
 };
 
@@ -44,7 +84,7 @@ const createFadeIn1TransitionUpdate = ({colors: {fill, stroke, textFill}, proper
             stroke.a = 1;
             textFill.a = 1;
 
-            // callBack function ()
+            // callBack function();
         }
     },
 });
@@ -59,6 +99,10 @@ const createFadeOut1TransitionUpdate = ({
         fill.a -= 0.001;
         stroke.a -= 0.001;
         textFill.a -= 0.001;
+
+        if (fill.a <= 0) {
+            // callBack function();
+        }
     },
 });
 

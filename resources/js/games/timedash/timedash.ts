@@ -18,7 +18,7 @@ export default {
 
         entity.create({
             text: 'Test Example #1',
-            show: true,
+            // show: true,
             // = touch- and mousedown (not yet) / needs transition handlers
             mouse: {
                 down: () => {
