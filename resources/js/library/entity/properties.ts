@@ -1,27 +1,20 @@
-export const createEntityEvents = (
-    {properties, listeners, engine}: InternalEntity,
-    updates: Required<Update>[],
-    draw: Required<Draw>,
-) => {
+export const createEntityEvents = ({properties, listeners, setEngine}: InternalEntity, renders: EntityRenders) => {
     const show = () => {
+        // show = restart entity (includes startTransition, but not showDelay)
         if (properties.show) throwError(properties.id, 'showing');
 
         properties.show = true;
 
         listeners.add();
 
-        for (let i = 0; i < updates.length; i++) engine.setUpdate(updates[i]);
-
-        engine.setShow(draw);
+        setEngine(renders);
     };
     const hide = () => {
         if (!properties.show) throwError(properties.id, 'hiding');
 
         listeners.remove(); // internal check if removed or not
 
-        for (let i = 0; i < updates.length; i++) engine.removeUpdate(updates[i].id);
-
-        engine.removeShow(draw.id);
+        setEngine(renders);
 
         properties.show = false;
     };
@@ -39,14 +32,14 @@ export const createEntityEvents = (
 
         listeners.add();
 
-        for (let i = 0; i < updates.length; i++) engine.setUpdate(updates[i]);
+        setEngine(renders); // update only
     };
     const disable = () => {
         if (properties.disabled) throwError(properties.id, 'disabled');
 
         listeners.remove();
 
-        for (let i = 0; i < updates.length; i++) engine.removeUpdate(updates[i].id);
+        setEngine(renders); // update only
 
         properties.disabled = true;
     };
@@ -55,19 +48,19 @@ export const createEntityEvents = (
 };
 
 // Mouse and Transition handlers mixed
-export const getHandlers = (mouse: Partial<MouseHandlers>, transition: Partial<TransitionHandlers>) => ({
+export const getHandlers = (mouse: Partial<MouseHandlers>, transitions: Partial<TransitionHandlers>) => ({
     down: () => {},
     up: () => {},
     onStartEnd: () => {},
     onEndEnd: () => {},
     button: 0,
     ...mouse,
-    ...transition,
+    ...transitions,
 });
 
 export const createListeners = (sketch: EntitySketch, handlers: MouseHandlers & TransitionHandlers, {mouse}: Input) => {
-    // TODO:: Listeners/Handlers should only be active according to user input
-    const {down, up, button} = handlers; // Destructuring needed?
+    // TODO:: activate listeners/Handlers according to user input
+    const {down, up, button} = handlers;
     let enabled = false;
 
     const mousedownListener = (evt: MouseEvent) => {
@@ -76,13 +69,6 @@ export const createListeners = (sketch: EntitySketch, handlers: MouseHandlers & 
 
     const mouseupListener = (evt: MouseEvent) => {
         if (mouse.insideRect(sketch) && evt.button === button) up(evt);
-    };
-
-    const transitionStartListener = () => {
-        console.log('transition start internally');
-    };
-    const transitionEndListener = () => {
-        console.log('transition end internally');
     };
 
     const add = () => {
@@ -103,7 +89,7 @@ export const createListeners = (sketch: EntitySketch, handlers: MouseHandlers & 
         enabled = false;
     };
 
-    return {add, remove, start: transitionStartListener, end: transitionEndListener};
+    return {add, remove};
 };
 
 const throwError = (id: string | number = 'noID', subject: string = 'subject', action: string = "'noAction'") => {

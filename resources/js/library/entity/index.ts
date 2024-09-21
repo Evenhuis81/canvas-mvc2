@@ -1,7 +1,7 @@
 import {getProperties, uid} from 'library/helpers';
 import {resources} from '..';
 import {createEntityEvents, createListeners, getHandlers} from './properties';
-import {createDraw, createUpdates} from './updates';
+import {createRenders} from './animate';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import type {Resources} from 'library/types';
 
@@ -10,93 +10,47 @@ const createResource = (resources: Resources) => ({
 });
 
 const create = ({context, engine, input}: Resources, options: Partial<EntityConfig> = {}) => {
-    // Seperate the entity properties from the internal properties
-    // const {
-    //     id,
-    //     name,
-    //     disabled,
-    //     show,
-    //     showDelay,
-    //     animation,
-    //     ...restoptions
-    // } = {
-    //     ...getProperties(options, defaultSketchProperties),
-    //     id: options.id ?? `entity-${uid()}`,
-    // };
-    const propertiesLength = [6, 5]; // [Mixed Internal Properties, Transition Properties]
-
-    const internal = {id: options.id ?? `entity-${uid()}`, ...getProperties(options, defaultSketchProperties)};
-
-    const splitObject = (obj: {}, ids: []) => {
-        const returnObj = {};
-
-        ids.forEach(idd => {
-            // const {idd: } = obj;
-            // returnObj[id] = idd;
-        });
+    // Extract internal properties from entity config options, TODO::Create methods, see comments for starters
+    const {id, name, disabled, show, showDelay, animationType, ...rest} = {
+        id: options.id ?? `entity-${uid()}`,
+        ...getProperties(options, defaultSketchProperties),
     };
 
-    console.log(internal.id);
+    const properties = {id, name, disabled, show, showDelay, animationType};
 
-    type Propp = {id: string | number};
+    const {startType, startSpeed, endType, endSpeed, hoverType, ...rest2} = rest;
 
-    const properties: Propp = {id: 0};
+    const transitions = {startType, startSpeed, endType, endSpeed, hoverType};
 
-    // const properties = splitObject(internal, Object.keys(internal).splice(0, propertiesLength[0]));
-
-    ({id: properties.id} = internal);
-
-    console.log(internal.animation);
-
-    const {animation} = internal;
-
-    console.log(internal.animation);
-
-    // const {id, name, disabled, show, showDelay, animation} = internal;
-
-    // const propertyKeys = ['id', 'name', 'disabled', 'show', 'showDelay', 'animation'];
-
-    // Object.keys(internal));
-
-    // Make this more efficient, if no transitions or rgba color needed, make simple update/draw method, etc.
-    const colors = getSketchRGBAColorsFromHexString(sketch);
+    const {mouse, onStartEnd, onEndEnd, ...sketch} = rest2;
 
     // mouse + transition handlers mixed
     const handlers = getHandlers({...mouse}, {onStartEnd, onEndEnd});
 
-    // Optional?
     const listeners = createListeners(sketch, handlers, input);
 
+    const colors = getSketchRGBAColorsFromHexString(sketch);
+
+    const setEngine = (renders: EntityRenders) => {
+        console.log('setting engine', renders);
+    };
+
     const internalEntity: InternalEntity = {
-        properties: {
-            id,
-            name,
-            disabled,
-            show,
-            showDelay,
-            animation,
-        },
-        transitions: {
-            hoverType,
-            startType,
-            startSpeed,
-            endType,
-            endSpeed,
-        },
+        properties,
+        transitions,
         sketch,
         handlers,
         listeners,
+        colors,
         engine,
         context,
         input,
-        colors,
+        setEngine,
     };
 
-    const updates = createUpdates(internalEntity);
+    const renders = createRenders(internalEntity);
 
-    const draw = createDraw(internalEntity);
-
-    const events = createEntityEvents(internalEntity, updates, draw);
+    const events = createEntityEvents(internalEntity, renders);
 
     initialize(internalEntity, events);
 
@@ -123,7 +77,7 @@ const defaultSketchProperties = {
     disabled: false,
     show: true,
     showDelay: 0,
-    animation: 'none',
+    animationType: 'none',
     // Transition Properties
     startType: 'none',
     startSpeed: 2,

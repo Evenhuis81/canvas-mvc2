@@ -1,6 +1,42 @@
 // Statistics module:
 // This should become a reesource, but with different 'themes' or statistic variants. (for different kind of options)
 // Create text object according to StaticView, with calculated options (like button, possible to 'lend' those)
+
+// const propertiesLength = [6, 5]; // [Mixed Internal Properties, Transition Properties]
+
+//     const internal = {id: options.id ?? `entity-${uid()}`, ...getProperties(options, defaultSketchProperties)};
+
+//     const splitObject = (obj: {}, ids: []) => {
+//         const returnObj = {};
+
+//         ids.forEach(idd => {
+//             // const {idd: } = obj;
+//             // returnObj[id] = idd;
+//         });
+//     };
+
+//     console.log(internal.id);
+
+//     type Propp = {id: string | number};
+
+//     const properties: Propp = {id: 0};
+
+// const properties = splitObject(internal, Object.keys(internal).splice(0, propertiesLength[0]));
+
+// ({id: properties.id} = internal);
+
+// console.log(internal.animation);
+
+// const {animation} = internal;
+
+// console.log(internal.animation);
+
+// const {id, name, disabled, show, showDelay, animation} = internal;
+
+// const propertyKeys = ['id', 'name', 'disabled', 'show', 'showDelay', 'animation'];
+
+// Object.keys(internal));
+
 // export const statistics: Record<string | number, Statistic[]> = {};
 
 // const tvUpdate = tv.moveTo(player.middlePos);

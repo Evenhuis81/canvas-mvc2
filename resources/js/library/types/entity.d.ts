@@ -29,14 +29,12 @@ interface EntityProperties {
     disabled: boolean;
     show: boolean;
     showDelay: number;
-    animation: EntityAnimationType | 'none';
+    animationType: EntityAnimationType | 'none';
 }
 
 interface EntityListeners {
     add: () => void;
     remove: () => void;
-    start: () => void;
-    end: () => void;
 }
 
 type EntityAnimationType = 'noise';
@@ -93,4 +91,13 @@ type InternalEntity = Omit<Entity, 'events'> & {
     engine: Engine;
     context: CanvasRenderingContext2D;
     input: Input;
+    setEngine: (renders: EntityRenders) => void;
+};
+
+type EntityRenders = {
+    animation: Update | void;
+    hover: Update | void;
+    start: Update | void;
+    end: Update | void;
+    draw: Draw | void;
 };

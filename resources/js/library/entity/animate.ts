@@ -1,39 +1,37 @@
-export const createUpdates = (entity: InternalEntity) => {
-    const {hoverType, startType, endType} = entity.properties;
+// Think of a better name?
+export const createRenders = (entity: InternalEntity) => {
+    const {hoverType, startType, endType} = entity.transitions;
+    const {animationType} = entity.properties;
 
-    // const updates: Record<Required<Update>> = {};
-    const updates: Required<Update>[] = [];
-
-    if (hoverType !== 'none') updates.push(hoverTransitions[hoverType](entity));
-    if (startType !== 'none') updates.push(startEndTransitions[startType](entity));
-    if (endType !== 'none') updates.push(startEndTransitions[endType](entity));
-
-    return updates;
+    return {
+        animation: animationUpdates[animationType](entity),
+        hover: hoverTransitions[hoverType](entity),
+        start: startEndTransitions[startType](entity),
+        end: startEndTransitions[endType](entity),
+        draw: createDraw(entity),
+    }; // void = undefined
 };
 
-// Could make a create hover/start/endTransitions object from it, so entity doesn't need to get passed for every method
+// Make a create hover/start/endTransitions object from it, so entity doesn't need to get passed for every method?
 const hoverTransitions = {
-    bold: (entity: InternalEntity) => createHoverTransitionUpdate(entity),
+    bold: (entity: InternalEntity) => createBoldHoverTransitionUpdate(entity),
+    none: () => {},
 };
 
 const startEndTransitions = {
     fadein1: (entity: InternalEntity) => {
-        const {colors} = entity;
-
-        colors.fill.a = 0;
-        colors.stroke.a = 0;
-        colors.textFill.a = 0;
-
-        return createFadeIn1TransitionUpdate(entity);
+        createFadeIn1TransitionUpdate(entity);
     },
     fadeout1: (entity: InternalEntity) => createFadeOut1TransitionUpdate(entity),
+    none: () => {},
 };
 
-const createFadeIn1TransitionUpdate = ({
-    colors: {fill, stroke, textFill},
-    properties: {id, name},
-    engine,
-}: InternalEntity) => ({
+const animationUpdates = {
+    noise: (entity: InternalEntity) => createNoiseUpdate(entity),
+    none: () => {},
+};
+
+const createFadeIn1TransitionUpdate = ({colors: {fill, stroke, textFill}, properties: {id, name}}: InternalEntity) => ({
     id,
     name: `entity-fadein1-update${name}`,
     fn: () => {
@@ -46,7 +44,7 @@ const createFadeIn1TransitionUpdate = ({
             stroke.a = 1;
             textFill.a = 1;
 
-            // engine.removeUpdate()
+            // callBack function ()
         }
     },
 });
@@ -64,8 +62,7 @@ const createFadeOut1TransitionUpdate = ({
     },
 });
 
-// Bold Transition Hover Update
-const createHoverTransitionUpdate = (entity: InternalEntity) => {
+const createBoldHoverTransitionUpdate = (entity: InternalEntity) => {
     const {sketch} = entity;
 
     const origin = {
@@ -118,25 +115,6 @@ const createTransitionUpdate = (
     },
 });
 
-const animationUpdates = {
-    noise: (props: InternalEntity) => createNoiseUpdate(props),
-    // bold: (props: InternalEntity, transition: Transition) => createBoldUpdate(sketch, hoverTransition, input, id, name),
-};
-
-// const createBoldUpdate = (sketch: EntitySketch, transition: Transition, input: Input, id: string | number, name: string) => ({
-//     id: id,
-//     name: `bold-update-${name}`,
-//     fn: () => {
-//         if (mouse.insideRect(sketch) && !mouse.touchEnded) {
-//             transition.forward();
-
-//             return;
-//         }
-
-//         transition.reverse();
-//     }
-// })
-
 const createNoiseUpdate = ({properties: {id, name}, sketch}: InternalEntity) => ({
     id: id,
     name: `noise-animation-update-${name}`,
@@ -184,7 +162,7 @@ export const createDraw = ({
 
 // max property is default 60, need for deltaTime, adj is change in property
 // make this a createProperties that picks the needed properties for each update respectively
-// This could also serve as a originalProperties object
+// This could also serve as an originalProperties object
 const upd = {
     origin: {
         lw: 0,
