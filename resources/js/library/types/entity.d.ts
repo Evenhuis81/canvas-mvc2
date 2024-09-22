@@ -16,8 +16,8 @@ interface EntitySketch {
 }
 
 interface EntityEvents {
-    show: (transition?: boolean) => void;
-    hide: (transition?: boolean) => void;
+    show: (startTransition?: boolean) => void;
+    hide: (endTransition?: boolean) => void;
     destroy: () => void;
     enable: () => void;
     disable: () => void;

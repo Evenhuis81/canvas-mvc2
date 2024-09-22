@@ -18,7 +18,8 @@ export default {
 
         entity.create({
             text: 'Test Example #1',
-            // show: true,
+            animationType: 'noise',
+            showDelay: 2000,
             // = touch- and mousedown (not yet) / needs transition handlers
             mouse: {
                 down: () => {
@@ -28,16 +29,17 @@ export default {
                     console.log('mouse up USER INPUT');
                 },
             },
-            startType: 'fadein1',
+            // startType: 'fadein1',
             // startSpeed: 3,
             // endType: 'fadeout1',
-            onStartEnd: () => {
-                console.log('start transition ended USER INPUT');
-            },
+            // onStartEnd: () => {
+            //     console.log('start transition ended USER INPUT');
+            // },
             // onEndEnd: () => {
             //     console.log('end transition ended USER INPUT');
             // },
-            hoverType: 'bold',
+            // hoverType: 'bold',
+            // show: true,
         });
     },
     run: () => resources.timedash.engine.run(),

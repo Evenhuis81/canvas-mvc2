@@ -57,12 +57,18 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     return events;
 };
 
+// This gets called once, needed for ie. showDelay
 const initialize = ({properties}: InternalEntity, events: EntityEvents) => {
-    // This gets called once, needed for ie. showDelay
     if (properties.show) {
-        properties.show = false;
+        // Optional setTimeOut needed? (mind the 'on top of stack')
+        setTimeout(() => {
+            properties.show = false;
 
-        events.show();
+            // one time calling show with showDelay
+            if (properties.showDelay) properties.showDelay = 0;
+
+            events.show();
+        }, properties.showDelay);
     }
 
     if (properties.disabled) {
