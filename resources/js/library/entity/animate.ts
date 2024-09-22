@@ -14,59 +14,16 @@ export const createRenders = (entity: InternalEntity) => {
 // Make a create hover/start/endTransitions object from it, so entity doesn't need to get passed for every method?
 // Make multiple wrappers: (1. combine for entity global object, 2. create update/start/stop dynamically, 1liner?)
 const hoverTransitions = {
-    bold: (entity: InternalEntity) => {
-        const update = createBoldHoverTransitionUpdate(entity);
-
-        const start = () => entity.engine.setUpdate(update);
-
-        const stop = () => entity.engine.removeUpdate(update.id);
-
-        return {start, stop};
-    },
+    bold: (entity: InternalEntity) => createBoldHoverTransitionUpdate(entity),
 };
 
 const startEndTransitions = {
-    fadein1: (entity: InternalEntity) => {
-        const update = createFadeIn1TransitionUpdate(entity);
-
-        const start = () => {
-            entity.colors.fill.a = 0;
-            entity.colors.stroke.a = 0;
-            entity.colors.textFill.a = 0;
-
-            entity.engine.setUpdate(update);
-        };
-
-        const stop = () => {
-            // Possible reset alpha values
-            entity.engine.removeUpdate(update.id);
-        };
-
-        return {start, stop};
-    },
-    fadeout1: (entity: InternalEntity) => {
-        const update = createFadeOut1TransitionUpdate(entity);
-
-        const start = () => entity.engine.setUpdate(update);
-
-        const stop = () => entity.engine.removeUpdate(update.id);
-
-        return {start, stop};
-    },
-    none: () => {},
+    fadein1: (entity: InternalEntity) => createFadeIn1TransitionUpdate(entity),
+    fadeout1: (entity: InternalEntity) => createFadeOut1TransitionUpdate(entity),
 };
 
 const animationUpdates = {
-    noise: (entity: InternalEntity) => {
-        const update = createNoiseUpdate(entity);
-
-        const start = () => entity.engine.setUpdate(update);
-
-        const stop = () => entity.engine.removeUpdate(update.id);
-
-        return {start, stop};
-    },
-    none: () => {},
+    noise: (entity: InternalEntity) => createNoiseUpdate(entity),
 };
 
 const createFadeIn1TransitionUpdate = ({colors: {fill, stroke, textFill}, properties: {id, name}}: InternalEntity) => ({
@@ -173,15 +130,7 @@ const createNoiseUpdate = ({properties: {id, name}, sketch}: InternalEntity) => 
     },
 });
 
-const createDraw = (entity: InternalEntity) => {
-    const show = createDrawShow(entity);
-
-    const start = () => entity.engine.setShow(show);
-
-    const stop = () => entity.engine.removeUpdate(show.id);
-
-    return {start, stop};
-};
+const createDraw = (entity: InternalEntity) => createDrawShow(entity);
 
 const createDrawShow = ({
     properties: {id, name},

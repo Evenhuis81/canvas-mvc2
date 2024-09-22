@@ -1,14 +1,21 @@
-export const createEntityEvents = ({properties, listeners}: InternalEntity, setEngine: SetEngine) => {
-    const show = (startTransition: EngineSwitch = 'off') => {
+export const createEntityEvents = ({properties, transitions, listeners}: InternalEntity, setEngine: SetEngine) => {
+    const show = () => {
         if (properties.show) throwError(properties.id, 'showing');
 
         properties.show = true;
 
         listeners.add();
 
-        setEngine({draw: 'on', start: startTransition});
+        const switches: any = {};
+
+        switches.draw = 'on';
+        if (properties.animationType) switches['animation'] = 'on';
+        if (transitions.hoverType) switches['hover'] = 'on';
+        if (transitions.startType) switches['start'] = 'on';
+
+        setEngine(switches);
     };
-    const hide = (endTransition: EngineSwitch = 'off') => {
+    const hide = (endTransition: EngineSwitch = undefined) => {
         if (!properties.show) throwError(properties.id, 'hiding');
 
         properties.show = false;

@@ -27,13 +27,23 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     const listeners = createListeners(sketch, handlers, input);
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
-    const createSetEngine = (renders: EntityRenderers) => (switches: Partial<EntityEngineSwitches>) => {
-        const switchCB = () => {
-            return '';
-        };
+    // const getSwitches = () => ({
+    //     draw: 'on',
+    //     hover: transitions.hoverType ? 'on' : undefined,
+    //     animation: properties.animationType ? 'on' : undefined,
+    //     start: transitions.startType ? 'on' : undefined,
+    //     end:
+    // });
+    // const switches = getSwitches();
+    // const startT = transitions.startType ? 'on' : undefined
 
-        // Object.keys(switches).forEach()
-        // renders.draw?.start();
+    const createSetEngine = (renders: EntityRenderers) => (switches: Partial<EntityEngineSwitches>) => {
+        // const cbf = () => {}
+
+        console.log(Object.entries(switches));
+        Object.entries(switches).forEach(zwitch => {
+            console.log(zwitch);
+        });
     };
 
     // Would like to have setEngine be part of internalEntity, but since it creates an unfinished loop, I have to
@@ -56,14 +66,12 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     const events = createEntityEvents(internalEntity, setEngine);
 
-    // console.log(renders);
-
     initialize(internalEntity, events);
 
     return events;
 };
 
-const initialize = ({properties, transitions}: InternalEntity, events: EntityEvents) => {
+const initialize = ({properties}: InternalEntity, events: EntityEvents) => {
     if (properties.show) {
         // Optional setTimeout needed? (mind the 'on top of stack')
         setTimeout(() => {
@@ -71,7 +79,8 @@ const initialize = ({properties, transitions}: InternalEntity, events: EntityEve
 
             properties.showDelay = 0; // one time calling show with showDelay
 
-            events.show(transitions.startType ? 'on' : 'off');
+            // Possible option to never or always show start- and endTransitions depending on user choice
+            events.show();
         }, properties.showDelay);
     }
 
@@ -90,11 +99,11 @@ const defaultSketchProperties = {
     showDelay: 0,
     animationType: undefined,
     // Transition Properties
+    hoverType: undefined,
     startType: undefined,
     startSpeed: 2,
     endType: undefined,
     endSpeed: 2,
-    hoverType: undefined,
     // Sketch
     x: 300,
     y: 200,

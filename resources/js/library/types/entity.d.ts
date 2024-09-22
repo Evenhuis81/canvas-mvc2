@@ -96,7 +96,7 @@ type InternalEntity = Omit<Entity, 'events'> & {
 
 type SetEngine = (switches: Partial<EntityEngineSwitches>) => void;
 
-type EngineSwitch = 'on' | 'off';
+type EngineSwitch = 'on' | 'off' | undefined;
 
 interface EntityEngineSwitches {
     animation: EngineSwitch;
@@ -106,9 +106,15 @@ interface EntityEngineSwitches {
     draw: EngineSwitch;
 }
 
-type EntityRender = {
-    start: () => void;
-    stop: () => void;
+// type EntityRender = {
+//     start: () => void;
+//     stop: () => void;
+// };
+
+type EntityRenderers = {
+    [P in keyof EntityEngineSwitches]: Required<Update>;
 };
 
-type EntityRenderers = Record<Exclude<keyof EntityEngineSwitches, 'draw'>, EntityRender | void> & {draw: EntityRender};
+// type EntityRenderers = Record<Exclude<keyof EntityEngineSwitches, 'draw'>, Required<Update> | void> & {
+//     draw: Required<Draw>;
+// };
