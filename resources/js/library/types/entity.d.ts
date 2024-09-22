@@ -91,8 +91,16 @@ type InternalEntity = Omit<Entity, 'events'> & {
     engine: Engine;
     context: CanvasRenderingContext2D;
     input: Input;
-    setEngine: (renders: EntityRenders) => void;
+    setEngine: (renders: EntityRenders, switches: Partial<EntityEngineSwitches>) => void;
 };
+
+interface EntityEngineSwitches {
+    animation: boolean;
+    hover: boolean;
+    start: boolean;
+    end: boolean;
+    draw: boolean;
+}
 
 type EntityRenderTypes = 'animation' | 'hover' | 'start' | 'end' | 'draw';
 

@@ -1,21 +1,23 @@
 export const createEntityEvents = ({properties, listeners, setEngine}: InternalEntity, renders: EntityRenders) => {
-    const show = (startTransition = false) => {
+    const show = (start = false) => {
+        // also set startTransition
         if (properties.show) throwError(properties.id, 'showing');
 
         properties.show = true;
 
         listeners.add();
 
-        setEngine(renders, {startTransition, draw: true});
+        setEngine(renders, {draw: true, start});
     };
-    const hide = (endTransition = false) => {
+    const hide = (end = false) => {
+        // also set startTransition
         if (!properties.show) throwError(properties.id, 'hiding');
 
         properties.show = false;
 
         listeners.remove();
 
-        setEngine(renders, {endTransition, draw: false});
+        setEngine(renders, {draw: false, end});
     };
     const destroy = () => {
         listeners.remove();

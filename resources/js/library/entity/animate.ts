@@ -4,7 +4,6 @@ export const createRenders = (entity: InternalEntity) => {
     const {animationType} = entity.properties;
 
     return {
-        activate: [],
         animation: animationUpdates[animationType](entity),
         hover: hoverTransitions[hoverType](entity),
         start: startEndTransitions[startType](entity),

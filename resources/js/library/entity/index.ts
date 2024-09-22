@@ -31,7 +31,7 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
-    const setEngine = (renders: EntityRenders) => {
+    const setEngine = (renders: EntityRenders, switches: Partial<EntityEngineSwitches>) => {
         console.log('setting engine', renders);
     };
 
