@@ -4,16 +4,17 @@ export const createRenders = (entity: InternalEntity) => {
     const {animationType} = entity.properties;
 
     return {
+        activate: [],
         animation: animationUpdates[animationType](entity),
         hover: hoverTransitions[hoverType](entity),
         start: startEndTransitions[startType](entity),
         end: startEndTransitions[endType](entity),
         draw: createDraw(entity),
-    }; // void = undefined
+    }; // void = undefined, works differently with lint-errors, typechecks work regularly
 };
 
 // Make a create hover/start/endTransitions object from it, so entity doesn't need to get passed for every method?
-// Make multiple wrappers: (1. combine for entity global object, 2. create update/start/stop dynamically, 1liner)
+// Make multiple wrappers: (1. combine for entity global object, 2. create update/start/stop dynamically, 1liner?)
 const hoverTransitions = {
     bold: (entity: InternalEntity) => {
         const update = createBoldHoverTransitionUpdate(entity);
@@ -175,7 +176,17 @@ const createNoiseUpdate = ({properties: {id, name}, sketch}: InternalEntity) => 
     },
 });
 
-export const createDraw = ({
+const createDraw = (entity: InternalEntity) => {
+    const update = createDrawUpdate(entity);
+
+    const start = () => entity.engine.setUpdate(update);
+
+    const stop = () => entity.engine.removeUpdate(update.id);
+
+    return {start, stop};
+};
+
+const createDrawUpdate = ({
     properties: {id, name},
     sketch,
     context: ctx,
