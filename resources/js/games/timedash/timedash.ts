@@ -16,19 +16,21 @@ export default {
 
         const entity = getEntity('timedash');
 
+        // entity.create();
+
         entity.create({
             text: 'Test Example #1',
             animationType: 'noise',
-            showDelay: 2000,
+            // showDelay: 2000,
             // = touch- and mousedown (not yet) / needs transition handlers
-            mouse: {
-                down: () => {
-                    console.log('mouse down USER INPUT');
-                },
-                up: () => {
-                    console.log('mouse up USER INPUT');
-                },
-            },
+            // mouse: {
+            //     down: () => {
+            //         console.log('mouse down USER INPUT');
+            //     },
+            //     up: () => {
+            //         console.log('mouse up USER INPUT');
+            //     },
+            // },
             // startType: 'fadein1',
             // startSpeed: 3,
             // endType: 'fadeout1',

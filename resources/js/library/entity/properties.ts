@@ -1,23 +1,21 @@
-export const createEntityEvents = ({properties, listeners, setEngine}: InternalEntity, renders: EntityRenders) => {
-    const show = (start = false) => {
-        // also set startTransition
+export const createEntityEvents = ({properties, listeners}: InternalEntity, setEngine: SetEngine) => {
+    const show = (startTransition: EngineSwitch = 'off') => {
         if (properties.show) throwError(properties.id, 'showing');
 
         properties.show = true;
 
         listeners.add();
 
-        setEngine(renders, {draw: true, start});
+        setEngine({draw: 'on', start: startTransition});
     };
-    const hide = (end = false) => {
-        // also set startTransition
+    const hide = (endTransition: EngineSwitch = 'off') => {
         if (!properties.show) throwError(properties.id, 'hiding');
 
         properties.show = false;
 
         listeners.remove();
 
-        setEngine(renders, {draw: false, end});
+        setEngine({draw: 'off', end: endTransition});
     };
     const destroy = () => {
         listeners.remove();
@@ -33,14 +31,14 @@ export const createEntityEvents = ({properties, listeners, setEngine}: InternalE
 
         listeners.add();
 
-        setEngine(renders); // update only
+        setEngine({}); // update only
     };
     const disable = () => {
         if (properties.disabled) throwError(properties.id, 'disabled');
 
         listeners.remove();
 
-        setEngine(renders); // update only
+        setEngine({}); // update only
 
         properties.disabled = true;
     };

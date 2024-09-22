@@ -15,26 +15,29 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         id: options.id ?? `entity-${uid()}`,
         ...getProperties(options, defaultSketchProperties),
     };
-
     const properties = {id, name, disabled, show, showDelay, animationType};
 
     const {startType, startSpeed, endType, endSpeed, hoverType, ...rest2} = rest;
-
     const transitions = {startType, startSpeed, endType, endSpeed, hoverType};
 
-    const {mouse, onStartEnd, onEndEnd, ...sketch} = rest2;
-
     // mouse + transition handlers mixed
+    const {mouse, onStartEnd, onEndEnd, ...sketch} = rest2;
     const handlers = getHandlers({...mouse}, {onStartEnd, onEndEnd});
 
     const listeners = createListeners(sketch, handlers, input);
-
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
-    const setEngine = (renders: EntityRenders, switches: Partial<EntityEngineSwitches>) => {
-        console.log('setting engine', renders);
+    const createSetEngine = (renders: EntityRenderers) => (switches: Partial<EntityEngineSwitches>) => {
+        const switchCB = () => {
+            return '';
+        };
+
+        // Object.keys(switches).forEach()
+        // renders.draw?.start();
     };
 
+    // Would like to have setEngine be part of internalEntity, but since it creates an unfinished loop, I have to
+    // keep track of where it is used and call for it individually. (just createEntityEvents for now or ever?)
     const internalEntity: InternalEntity = {
         properties,
         transitions,
@@ -45,29 +48,30 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         engine,
         context,
         input,
-        setEngine,
     };
 
     const renders = createRenders(internalEntity);
 
-    const events = createEntityEvents(internalEntity, renders);
+    const setEngine = createSetEngine(renders);
+
+    const events = createEntityEvents(internalEntity, setEngine);
+
+    // console.log(renders);
 
     initialize(internalEntity, events);
 
     return events;
 };
 
-// This gets called once, needed for ie. showDelay
-const initialize = ({properties}: InternalEntity, events: EntityEvents) => {
+const initialize = ({properties, transitions}: InternalEntity, events: EntityEvents) => {
     if (properties.show) {
-        // Optional setTimeOut needed? (mind the 'on top of stack')
+        // Optional setTimeout needed? (mind the 'on top of stack')
         setTimeout(() => {
             properties.show = false;
 
-            // one time calling show with showDelay
-            if (properties.showDelay) properties.showDelay = 0;
+            properties.showDelay = 0; // one time calling show with showDelay
 
-            events.show();
+            events.show(transitions.startType ? 'on' : 'off');
         }, properties.showDelay);
     }
 
@@ -84,24 +88,24 @@ const defaultSketchProperties = {
     disabled: false,
     show: true,
     showDelay: 0,
-    animationType: 'none',
+    animationType: undefined,
     // Transition Properties
-    startType: 'none',
+    startType: undefined,
     startSpeed: 2,
-    endType: 'none',
+    endType: undefined,
     endSpeed: 2,
-    hoverType: 'none',
+    hoverType: undefined,
     // Sketch
-    x: 200,
-    y: 299,
-    w: 150,
+    x: 300,
+    y: 200,
+    w: 100,
     h: 50,
     lw: 2,
     r: 5,
     stroke: '#f00',
     fill: '#000',
     textFill: '#fff',
-    text: 'noText',
+    text: 'Insert Text',
     font: 'monospace',
     fontSize: 16,
     textAlign: 'center',

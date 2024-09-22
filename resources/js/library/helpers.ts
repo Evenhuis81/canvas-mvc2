@@ -17,3 +17,9 @@ export function addProp<T extends object, K extends PropertyKey, V>(
 ): asserts obj is T & {[P in K]: V} {
     Object.assign(obj, {[key]: value});
 }
+
+export const counter = {
+    count: 0,
+    increase: () => counter.count++,
+    decrease: () => counter.count--,
+};

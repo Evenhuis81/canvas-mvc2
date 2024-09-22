@@ -1,15 +1,14 @@
-// Think of a better name?
 export const createRenders = (entity: InternalEntity) => {
-    const {hoverType, startType, endType} = entity.transitions;
     const {animationType} = entity.properties;
+    const {hoverType, startType, endType} = entity.transitions;
 
     return {
-        animation: animationUpdates[animationType](entity),
-        hover: hoverTransitions[hoverType](entity),
-        start: startEndTransitions[startType](entity),
-        end: startEndTransitions[endType](entity),
+        animation: animationType ? animationUpdates[animationType](entity) : undefined,
+        hover: hoverType ? hoverTransitions[hoverType](entity) : undefined,
+        start: startType ? startEndTransitions[startType](entity) : undefined,
+        end: endType ? startEndTransitions[endType](entity) : undefined,
         draw: createDraw(entity),
-    }; // void = undefined, works differently with lint-errors, typechecks work regularly
+    };
 };
 
 // Make a create hover/start/endTransitions object from it, so entity doesn't need to get passed for every method?
@@ -24,7 +23,6 @@ const hoverTransitions = {
 
         return {start, stop};
     },
-    none: () => {},
 };
 
 const startEndTransitions = {
@@ -40,7 +38,7 @@ const startEndTransitions = {
         };
 
         const stop = () => {
-            // Possible reset color alphas
+            // Possible reset alpha values
             entity.engine.removeUpdate(update.id);
         };
 
@@ -176,16 +174,16 @@ const createNoiseUpdate = ({properties: {id, name}, sketch}: InternalEntity) => 
 });
 
 const createDraw = (entity: InternalEntity) => {
-    const update = createDrawUpdate(entity);
+    const show = createDrawShow(entity);
 
-    const start = () => entity.engine.setUpdate(update);
+    const start = () => entity.engine.setShow(show);
 
-    const stop = () => entity.engine.removeUpdate(update.id);
+    const stop = () => entity.engine.removeUpdate(show.id);
 
     return {start, stop};
 };
 
-const createDrawUpdate = ({
+const createDrawShow = ({
     properties: {id, name},
     sketch,
     context: ctx,
