@@ -1,5 +1,5 @@
 /* eslint-disable max-lines-per-function */
-export const createEntityEvents = ({properties, transitions, listeners}: InternalEntity, setEngine: SetEngine) => {
+export const createEntityEvents = ({properties, animations, listeners}: InternalEntity, setEngine: SetEngine) => {
     const show = () => {
         if (properties.show) throwError(properties.id, 'showing');
 
@@ -7,43 +7,21 @@ export const createEntityEvents = ({properties, transitions, listeners}: Interna
 
         listeners.add();
 
-        const getSwitches = () => {
-            // const switches = {};
+        // possible future settings: 'pauze', 'continue'
+        // setEngine({type: 'draw', setting: 'on'});
 
-            // switches.draw = 'on';
-            // if (properties.animationType) switches['animation'] = 'on';
-            // if (transitions.hoverType) switches['hover'] = 'on';
-            // if (transitions.startType) switches['start'] = 'on';
-
-            return;
-        };
-
-        const swtitt = getSwitches();
-
-        // const zwitches = switches as const;
-
-        // setEngine(swtitt);
-        setEngine();
-        console.log(transitions);
-        // const switches: any = {};
-
-        const switchy = () => {};
-
-        // switches.draw = 'on';
-        // if (properties.animationType) switches['animation'] = 'on';
-        // if (transitions.hoverType) switches['hover'] = 'on';
-        // if (transitions.startType) switches['start'] = 'on';
-
-        // setEngine(switches);
+        console.log(animations);
     };
-    const hide = (endTransition: EngineSwitch = undefined) => {
+
+    const hide = () => {
         if (!properties.show) throwError(properties.id, 'hiding');
 
         properties.show = false;
 
         listeners.remove();
 
-        setEngine({draw: 'off', end: endTransition});
+        // {draw: 'off', end: endTransition}
+        // setEngine();
     };
     const destroy = () => {
         listeners.remove();
@@ -59,14 +37,14 @@ export const createEntityEvents = ({properties, transitions, listeners}: Interna
 
         listeners.add();
 
-        setEngine({}); // update only
+        setEngine(); // update only
     };
     const disable = () => {
         if (properties.disabled) throwError(properties.id, 'disabled');
 
         listeners.remove();
 
-        setEngine({}); // update only
+        setEngine(); // update only
 
         properties.disabled = true;
     };

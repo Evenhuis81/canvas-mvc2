@@ -11,15 +11,18 @@ const createResource = (res: Resources) => ({
 });
 
 const create = ({context, engine, input}: Resources, options: Partial<EntityConfig> = {}) => {
-    // Extract internal properties from entity config options, TODO::Create methods, see comments for starters
-    const {id, name, disabled, show, showDelay, animationType, ...rest} = {
+    // Extract internal properties from entity config options
+    const {id, name, disabled, show, showDelay, ...rest} = {
         id: options.id ?? `entity-${uid()}`,
-        ...getProperties(options, defaultSketchProperties),
+        ...getProperties(defaultSketchProperties, options),
     };
-    const properties = {id, name, disabled, show, showDelay, animationType};
 
-    const {startType, startSpeed, endType, endSpeed, hoverType, ...rest2} = rest;
-    const transitions = {startType, startSpeed, endType, endSpeed, hoverType};
+    options.
+
+    const properties = {id, name, disabled, show, showDelay};
+
+    const {startType, startSpeed, endType, endSpeed, hoverType, animationType, ...rest2} = rest;
+    const animations = {startType, startSpeed, endType, endSpeed, hoverType, animationType};
 
     // mouse + transition handlers mixed
     const {mouse, onStartEnd, onEndEnd, ...sketch} = rest2;
@@ -28,46 +31,19 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     const listeners = createListeners(sketch, handlers, input);
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
-    // const getSwitches = () => ({
-    //     draw: 'on',
-    //     hover: transitions.hoverType ? 'on' : undefined,
-    //     animation: properties.animationType ? 'on' : undefined,
-    //     start: transitions.startType ? 'on' : undefined,
-    //     end:
-    // });
-    // const switches = getSwitches();
-    // const startT = transitions.startType ? 'on' : undefined
+    // const setUpdate = {
+    //     on: (update: Required<Update>) => engine.setUpdate(update),
+    //     off: (update: Required<Update>) => engine.removeUpdate(update.id),
+    // };
 
-    const setUpdate = {
-        on: (update: Required<Update>) => engine.setUpdate(update),
-        off: (update: Required<Update>) => engine.removeUpdate(update.id),
-    };
+    const createSetEngine = (renders: EntityRenders) => () => {};
+    // const createSetEngine = (renders: Partial<EntityRenderers>) => (switches: Partial<EntityEngineSwitches>) => {
+    //     console.log(renders, switches);
+    // };
 
-    const createSetEngine = (renders: EntityRenderers) => (switches?: Partial<EntityEngineSwitches>) => {
-        // const cbf = () => {}
-
-        const zwitss = {draw: 'on', animation: 'on'} as const;
-
-        // console.log(Object.entries(switches));
-        Object.entries(zwitss).forEach(zwitch => {
-            setUpdate[zwitch[1]](renders[zwitch[0]]);
-        });
-    const createSetEngine = (renders: Partial<EntityRenderers>) => (switches: Partial<EntityEngineSwitches>) => {
-        // // const cbf = () => {}
-
-        console.log(renders, switches);
-
-        // console.log(Object.entries(switches));
-        // Object.entries(switches).forEach(zwitch => {
-        //     console.log(zwitch);
-        // });
-    };
-
-    // Would like to have setEngine be part of internalEntity, but since it creates an unfinished loop, I have to
-    // keep track of where it is used and call for it individually. (just createEntityEvents for now or ever?)
     const internalEntity: InternalEntity = {
         properties,
-        transitions,
+        animations,
         sketch,
         handlers,
         listeners,
@@ -114,12 +90,12 @@ const defaultSketchProperties = {
     disabled: false,
     show: true,
     showDelay: 0,
-    animationType: undefined,
-    // Transition Properties
-    hoverType: undefined,
-    startType: undefined,
+    // Animation Properties
+    // animationType: undefined,
+    // hoverType: undefined,
+    // startType: undefined,
     startSpeed: 2,
-    endType: undefined,
+    // endType: undefined,
     endSpeed: 2,
     // Sketch
     x: 300,

@@ -16,8 +16,8 @@ interface EntitySketch {
 }
 
 interface EntityEvents {
-    show: (startTransition?: EngineSwitch) => void;
-    hide: (endTransition?: EngineSwitch) => void;
+    show: () => void;
+    hide: () => void;
     destroy: () => void;
     enable: () => void;
     disable: () => void;
@@ -29,7 +29,6 @@ interface EntityProperties {
     disabled: boolean;
     show: boolean;
     showDelay: number;
-    animationType?: EntityAnimationType;
 }
 
 interface EntityListeners {
@@ -45,12 +44,13 @@ type EntityHoverTransitionTypes = 'bold';
 
 type EntityTypes = EntityAnimationType | EntityTransitionTypes | EntityHoverTransitionTypes;
 
-interface EntityTransitions {
-    startType?: EntityTransitionTypes;
+interface EntityAnimations {
+    animation: EntityAnimationType;
+    start: EntityTransitionTypes;
     startSpeed: 1 | 2 | 3;
-    endType?: EntityTransitionTypes;
+    end: EntityTransitionTypes;
     endSpeed: 1 | 2 | 3;
-    hoverType?: EntityHoverTransitionTypes;
+    hover: EntityHoverTransitionTypes;
 }
 
 interface TransitionHandlers {
@@ -65,8 +65,8 @@ interface Entity {
     events: EntityEvents;
     handlers: MouseHandlers & TransitionHandlers;
     listeners: EntityListeners;
-    transitions: EntityTransitions;
-    // This should be part of EntitySketch?
+    animations: EntityAnimations;
+    // part of EntitySketch?
     colors: {
         fill: RGBA;
         stroke: RGBA;
@@ -86,26 +86,31 @@ interface EntityHandlers extends TransitionHandlers {
     mouse: Partial<MouseHandlers>;
 }
 
-type EntityConfig = EntitySketch & EntityProperties & EntityHandlers & EntityTransitions;
+type Addition<Key extends string> = Key;
 
-type InternalEntity = Omit<Entity, 'events'> & {
+type EntityAnimationsConfig<Type> = {
+    // [Property in keyof Type as `get${Capitalize<string & Property>}`]
+    [Property in keyof Type as `${string & Property}Type`]: Type[Property];
+};
+
+// type Getters<Type> = {
+//     [Property in keyof Type as `get${Capitalize<string & Property>}`]: () => Type[Property]
+// };
+
+type EntityConfig = EntitySketch & EntityProperties & EntityHandlers & EntityAnimationsConfig<EntityAnimations>;
+
+type InternalEntity = Omit<Entity, 'events' | 'animations'> & {
+    animations: Partial<EntityAnimations>;
     engine: Engine;
     context: CanvasRenderingContext2D;
     input: Input;
 };
 
-type SetEngine = (switches: Partial<EntityEngineSwitches>) => void;
+type SetEngine = () => void;
 
-type EngineSwitch = 'on' | 'off' | undefined;
-
-interface EntityEngineSwitches {
-    animation: EngineSwitch;
-    hover: EngineSwitch;
-    start: EngineSwitch;
-    end: EngineSwitch;
-    draw: EngineSwitch;
-}
-
-type EntityRenderers = Record<Exclude<keyof EntityEngineSwitches, 'draw'>, Required<Update> | void> & {
+type EntityRenders = Record<
+    Exclude<keyof EntityAnimations, 'draw' | 'startSpeed' | 'endSpeed'>,
+    Required<Update> | void
+> & {
     draw: Required<Draw>;
 };

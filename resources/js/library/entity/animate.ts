@@ -1,12 +1,11 @@
 export const createRenders = (entity: InternalEntity) => {
-    const {animationType} = entity.properties;
-    const {hoverType, startType, endType} = entity.transitions;
+    const {animationType, hoverType, startType, endType} = entity.animations;
 
     return {
-        animation: animationType ? animationUpdates[animationType](entity) : undefined,
-        hover: hoverType ? hoverTransitions[hoverType](entity) : undefined,
-        start: startType ? startEndTransitions[startType](entity) : undefined,
-        end: endType ? startEndTransitions[endType](entity) : undefined,
+        animationType: animationType ? animationUpdates[animationType](entity) : undefined,
+        hoverType: hoverType ? hoverTransitions[hoverType](entity) : undefined,
+        startType: startType ? startEndTransitions[startType](entity) : undefined,
+        endType: endType ? startEndTransitions[endType](entity) : undefined,
         draw: createDraw(entity),
     };
 };
@@ -130,9 +129,7 @@ const createNoiseUpdate = ({properties: {id, name}, sketch}: InternalEntity) => 
     },
 });
 
-const createDraw = (entity: InternalEntity) => createDrawShow(entity);
-
-const createDrawShow = ({
+const createDraw = ({
     properties: {id, name},
     sketch,
     context: ctx,
