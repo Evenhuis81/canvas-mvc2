@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 export const createEntityEvents = ({properties, transitions, listeners}: InternalEntity, setEngine: SetEngine) => {
     const show = () => {
         if (properties.show) throwError(properties.id, 'showing');
@@ -23,6 +24,17 @@ export const createEntityEvents = ({properties, transitions, listeners}: Interna
 
         // setEngine(swtitt);
         setEngine();
+        console.log(transitions);
+        // const switches: any = {};
+
+        const switchy = () => {};
+
+        // switches.draw = 'on';
+        // if (properties.animationType) switches['animation'] = 'on';
+        // if (transitions.hoverType) switches['hover'] = 'on';
+        // if (transitions.startType) switches['start'] = 'on';
+
+        // setEngine(switches);
     };
     const hide = (endTransition: EngineSwitch = undefined) => {
         if (!properties.show) throwError(properties.id, 'hiding');

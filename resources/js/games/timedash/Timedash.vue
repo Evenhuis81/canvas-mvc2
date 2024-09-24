@@ -3,8 +3,8 @@
 </template>
 
 <script setup lang="ts">
-import timedash from './timedash';
 import {onMounted} from 'vue';
+import timedash from './timedash';
 
 onMounted(() => {
     timedash.setup();

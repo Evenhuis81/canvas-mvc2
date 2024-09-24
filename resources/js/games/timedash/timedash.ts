@@ -2,7 +2,7 @@ import {initialize, resources} from 'library/index';
 import getEntity from 'library/entity';
 
 export default {
-    setup: async () => {
+    setup: () => {
         initialize('timedash', {
             containerID: 'timedash-container',
             full: true,
