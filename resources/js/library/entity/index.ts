@@ -1,12 +1,13 @@
-import {getProperties, uid} from 'library/helpers';
-import {resources} from '..';
+/* eslint-disable max-lines-per-function */
 import {createEntityEvents, createListeners, getHandlers} from './properties';
 import {createRenders} from './animate';
+import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
+import {resources} from '..';
 import type {Resources} from 'library/types';
 
-const createResource = (resources: Resources) => ({
-    create: (options?: Partial<EntityConfig>) => create(resources, options),
+const createResource = (res: Resources) => ({
+    create: (options?: Partial<EntityConfig>) => create(res, options),
 });
 
 const create = ({context, engine, input}: Resources, options: Partial<EntityConfig> = {}) => {
@@ -37,13 +38,15 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     // const switches = getSwitches();
     // const startT = transitions.startType ? 'on' : undefined
 
-    const createSetEngine = (renders: EntityRenderers) => (switches: Partial<EntityEngineSwitches>) => {
-        // const cbf = () => {}
+    const createSetEngine = (renders: Partial<EntityRenderers>) => (switches: Partial<EntityEngineSwitches>) => {
+        // // const cbf = () => {}
 
-        console.log(Object.entries(switches));
-        Object.entries(switches).forEach(zwitch => {
-            console.log(zwitch);
-        });
+        console.log(renders, switches);
+
+        // console.log(Object.entries(switches));
+        // Object.entries(switches).forEach(zwitch => {
+        //     console.log(zwitch);
+        // });
     };
 
     // Would like to have setEngine be part of internalEntity, but since it creates an unfinished loop, I have to
