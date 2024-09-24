@@ -6,14 +6,23 @@ export const createEntityEvents = ({properties, transitions, listeners}: Interna
 
         listeners.add();
 
-        const switches: any = {};
+        const getSwitches = () => {
+            // const switches = {};
 
-        switches.draw = 'on';
-        if (properties.animationType) switches['animation'] = 'on';
-        if (transitions.hoverType) switches['hover'] = 'on';
-        if (transitions.startType) switches['start'] = 'on';
+            // switches.draw = 'on';
+            // if (properties.animationType) switches['animation'] = 'on';
+            // if (transitions.hoverType) switches['hover'] = 'on';
+            // if (transitions.startType) switches['start'] = 'on';
 
-        setEngine(switches);
+            return;
+        };
+
+        const swtitt = getSwitches();
+
+        // const zwitches = switches as const;
+
+        // setEngine(swtitt);
+        setEngine();
     };
     const hide = (endTransition: EngineSwitch = undefined) => {
         if (!properties.show) throwError(properties.id, 'hiding');

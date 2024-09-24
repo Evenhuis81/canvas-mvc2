@@ -37,12 +37,19 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     // const switches = getSwitches();
     // const startT = transitions.startType ? 'on' : undefined
 
-    const createSetEngine = (renders: EntityRenderers) => (switches: Partial<EntityEngineSwitches>) => {
+    const setUpdate = {
+        on: (update: Required<Update>) => engine.setUpdate(update),
+        off: (update: Required<Update>) => engine.removeUpdate(update.id),
+    };
+
+    const createSetEngine = (renders: EntityRenderers) => (switches?: Partial<EntityEngineSwitches>) => {
         // const cbf = () => {}
 
-        console.log(Object.entries(switches));
-        Object.entries(switches).forEach(zwitch => {
-            console.log(zwitch);
+        const zwitss = {draw: 'on', animation: 'on'} as const;
+
+        // console.log(Object.entries(switches));
+        Object.entries(zwitss).forEach(zwitch => {
+            setUpdate[zwitch[1]](renders[zwitch[0]]);
         });
     };
 

@@ -106,15 +106,6 @@ interface EntityEngineSwitches {
     draw: EngineSwitch;
 }
 
-// type EntityRender = {
-//     start: () => void;
-//     stop: () => void;
-// };
-
-type EntityRenderers = {
-    [P in keyof EntityEngineSwitches]: Required<Update>;
+type EntityRenderers = Record<Exclude<keyof EntityEngineSwitches, 'draw'>, Required<Update> | void> & {
+    draw: Required<Draw>;
 };
-
-// type EntityRenderers = Record<Exclude<keyof EntityEngineSwitches, 'draw'>, Required<Update> | void> & {
-//     draw: Required<Draw>;
-// };
