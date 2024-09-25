@@ -37,14 +37,14 @@ export const createEntityEvents = ({properties, animations, listeners}: Internal
 
         listeners.add();
 
-        setEngine(); // update only
+        setEngine({}); // update only
     };
     const disable = () => {
         if (properties.disabled) throwError(properties.id, 'disabled');
 
         listeners.remove();
 
-        setEngine(); // update only
+        setEngine({}); // update only
 
         properties.disabled = true;
     };

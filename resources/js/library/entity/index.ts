@@ -17,8 +17,6 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         ...getProperties(defaultSketchProperties, options),
     };
 
-    options.
-
     const properties = {id, name, disabled, show, showDelay};
 
     const {startType, startSpeed, endType, endSpeed, hoverType, animationType, ...rest2} = rest;
@@ -30,11 +28,6 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     const listeners = createListeners(sketch, handlers, input);
     const colors = getSketchRGBAColorsFromHexString(sketch);
-
-    // const setUpdate = {
-    //     on: (update: Required<Update>) => engine.setUpdate(update),
-    //     off: (update: Required<Update>) => engine.removeUpdate(update.id),
-    // };
 
     const createSetEngine = (renders: EntityRenders) => () => {};
     // const createSetEngine = (renders: Partial<EntityRenderers>) => (switches: Partial<EntityEngineSwitches>) => {
@@ -90,12 +83,12 @@ const defaultSketchProperties = {
     disabled: false,
     show: true,
     showDelay: 0,
-    // Animation Properties
+    // Animation Properties, undefined stays undefined
     // animationType: undefined,
     // hoverType: undefined,
     // startType: undefined,
-    startSpeed: 2,
     // endType: undefined,
+    startSpeed: 2,
     endSpeed: 2,
     // Sketch
     x: 300,
