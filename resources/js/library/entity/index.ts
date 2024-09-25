@@ -1,5 +1,5 @@
 /* eslint-disable max-lines-per-function */
-import {createEntityEvents, createListeners, getHandlers} from './properties';
+import {createEntityEvents, createListeners, createRender, getHandlers} from './properties';
 import {createRenders} from './animate';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
@@ -24,15 +24,22 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     // mouse + transition handlers mixed
     const {mouse, onStartEnd, onEndEnd, ...sketch} = rest2;
-    const handlers = getHandlers({...mouse}, {onStartEnd, onEndEnd});
+    const transits = {onStartEnd, onEndEnd};
+    const handlers = getHandlers({...mouse}, {...transits});
+
+    console.log(handlers.up);
 
     const listeners = createListeners(sketch, handlers, input);
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
-    const createSetEngine = (renders: EntityRenders) => () => {};
-    // const createSetEngine = (renders: Partial<EntityRenderers>) => (switches: Partial<EntityEngineSwitches>) => {
-    //     console.log(renders, switches);
-    // };
+    const startEnd = () => {
+        console.log('startEnd triggered');
+
+        engine.removeUpdate(renders.start.id);
+        if (internalEntity.animations.animationType) engine.setUpdate(renders.animation);
+        if (internalEntity.animations.hoverType) engine.setUpdate(renders.hover);
+        internalEntity.handlers.onStartEnd();
+    };
 
     const internalEntity: InternalEntity = {
         properties,
@@ -44,13 +51,16 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         engine,
         context,
         input,
+        callBacks: {
+            startEnd,
+        },
     };
 
     const renders = createRenders(internalEntity);
 
-    const setEngine = createSetEngine(renders);
+    const render = createRender(engine, renders);
 
-    const events = createEntityEvents(internalEntity, setEngine);
+    const events = createEntityEvents(internalEntity, render);
 
     initialize(internalEntity, events);
 

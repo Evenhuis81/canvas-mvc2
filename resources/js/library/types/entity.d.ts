@@ -57,12 +57,15 @@ interface Entity {
     listeners: EntityListeners;
     events: EntityEvents;
     animations: EntityAnimations;
-    // renders: EntityRenders;
     // part of EntitySketch?
     colors: {
         fill: RGBA;
         stroke: RGBA;
         textFill: RGBA;
+    };
+    // part of Handlers?
+    callBacks: {
+        startEnd: () => void;
     };
 }
 
@@ -90,7 +93,8 @@ type InternalEntity = Omit<Entity, 'events'> & {
     input: Input;
 };
 
-type SetEngine = (engineSwitch: Partial<Record<keyof EntityRenders, 'on' | 'off'>>) => void;
+// possible future states: 'pauze', 'continue'
+type Render = (type: keyof EntityRenders, state: boolean) => void;
 
 interface EntityAnimations {
     animationType?: EntityAnimationType;
@@ -102,8 +106,8 @@ interface EntityAnimations {
 }
 interface EntityRenders {
     draw: Required<Draw>;
-    animation?: Required<Update>;
-    hover?: Required<Update>;
-    start?: Required<Update>;
-    end?: Required<Update>;
+    animation: Required<Update>;
+    hover: Required<Update>;
+    start: Required<Update>;
+    end: Required<Update>;
 }

@@ -1,5 +1,5 @@
 /* eslint-disable max-lines-per-function */
-export const createEntityEvents = ({properties, animations, listeners}: InternalEntity, setEngine: SetEngine) => {
+export const createEntityEvents = ({properties, animations, listeners}: InternalEntity, render: Render) => {
     const show = () => {
         if (properties.show) throwError(properties.id, 'showing');
 
@@ -7,10 +7,8 @@ export const createEntityEvents = ({properties, animations, listeners}: Internal
 
         listeners.add();
 
-        // possible future settings: 'pauze', 'continue'
-        // setEngine({type: 'draw', setting: 'on'});
-
-        console.log(animations);
+        render('draw', true);
+        if (animations.startType) render('start', true);
     };
 
     const hide = () => {
@@ -19,9 +17,6 @@ export const createEntityEvents = ({properties, animations, listeners}: Internal
         properties.show = false;
 
         listeners.remove();
-
-        // {draw: 'off', end: endTransition}
-        // setEngine();
     };
     const destroy = () => {
         listeners.remove();
@@ -37,20 +32,36 @@ export const createEntityEvents = ({properties, animations, listeners}: Internal
 
         listeners.add();
 
-        setEngine({}); // update only
+        // setEngine(); // update only
     };
     const disable = () => {
         if (properties.disabled) throwError(properties.id, 'disabled');
 
         listeners.remove();
 
-        setEngine({}); // update only
+        // setEngine({}); // update only
 
         properties.disabled = true;
     };
 
     return {show, hide, destroy, enable, disable};
 };
+
+const setDraw = (engine: Engine, draw: Required<Draw>, state: boolean) =>
+    state ? engine.setShow(draw) : engine.removeShow(draw.id);
+
+const handleUpdate = {
+    set: (engine: Engine, update: Required<Update>) => engine.setUpdate(update),
+    remove: (engine: Engine, update: Required<Update>) => engine.removeUpdate(update.id),
+};
+
+export const createRender =
+    (engine: Engine, renders: EntityRenders): Render =>
+    (type, state) => {
+        if (type === 'draw') return setDraw(engine, renders.draw, state);
+
+        handleUpdate[state ? 'set' : 'remove'](engine, renders[type]);
+    };
 
 // Mouse and Transition handlers mixed
 export const getHandlers = (mouse: Partial<MouseHandlers>, transitions: Partial<TransitionHandlers>) => ({

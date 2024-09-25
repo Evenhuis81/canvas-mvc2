@@ -2,12 +2,18 @@ export const createRenders = (entity: InternalEntity) => {
     const {animationType, hoverType, startType, endType} = entity.animations;
 
     return {
-        animation: animationType ? animationUpdates[animationType](entity) : undefined,
-        hover: hoverType ? hoverTransitions[hoverType](entity) : undefined,
-        start: startType ? startEndTransitions[startType](entity) : undefined,
-        end: endType ? startEndTransitions[endType](entity) : undefined,
+        animation: animationType ? animationUpdates[animationType](entity) : emptyUpdate,
+        hover: hoverType ? hoverTransitions[hoverType](entity) : emptyUpdate,
+        start: startType ? startEndTransitions[startType](entity) : emptyUpdate,
+        end: endType ? startEndTransitions[endType](entity) : emptyUpdate,
         draw: createDraw(entity),
     };
+};
+
+const emptyUpdate = {
+    id: 'emptyUpdate',
+    name: 'Empty Update',
+    fn: () => {},
 };
 
 // Make a create hover/start/endTransitions object from it, so entity doesn't need to get passed for every method?
@@ -17,7 +23,13 @@ const hoverTransitions = {
 };
 
 const startEndTransitions = {
-    fadein1: (entity: InternalEntity) => createFadeIn1TransitionUpdate(entity),
+    fadein1: (entity: InternalEntity) => {
+        entity.colors.fill.a = 0;
+        entity.colors.stroke.a = 0;
+        entity.colors.textFill.a = 0;
+
+        return createFadeIn1TransitionUpdate(entity, 0.005 * entity.animations.startSpeed);
+    },
     fadeout1: (entity: InternalEntity) => createFadeOut1TransitionUpdate(entity),
 };
 
@@ -25,20 +37,23 @@ const animationUpdates = {
     noise: (entity: InternalEntity) => createNoiseUpdate(entity),
 };
 
-const createFadeIn1TransitionUpdate = ({colors: {fill, stroke, textFill}, properties: {id, name}}: InternalEntity) => ({
+const createFadeIn1TransitionUpdate = (
+    {callBacks: {startEnd}, colors: {fill, stroke, textFill}, properties: {id, name}}: InternalEntity,
+    alphaVelocity: number,
+) => ({
     id,
     name: `entity-fadein1-update${name}`,
     fn: () => {
-        fill.a += 0.001;
-        stroke.a += 0.001;
-        textFill.a += 0.001;
+        fill.a += alphaVelocity;
+        stroke.a += alphaVelocity;
+        textFill.a += alphaVelocity;
 
         if (fill.a >= 1) {
             fill.a = 1;
             stroke.a = 1;
             textFill.a = 1;
 
-            // callBack function();
+            startEnd();
         }
     },
 });
