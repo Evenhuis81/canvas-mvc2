@@ -7,7 +7,11 @@ export const createEntityEvents = ({properties, animations, listeners}: Internal
 
         listeners.add();
 
-        if (animations.startType) render('start', true);
+        // Figure out possible combinations and create methods accordingly. ie. start + animate same time ?
+        // Probably missing certain options, add to internal/external entity
+
+        // if (animations.startType) render('start', true);`
+        if (animations.animationType) render('animation', true);
         render('draw', true);
     };
 
@@ -57,6 +61,7 @@ const handleUpdate = {
     remove: (engine: Engine, update: Required<Update>) => engine.removeUpdate(update.id),
 };
 
+// Needs priority order
 export const createRender =
     (engine: Engine, renders: EntityRenders): Render =>
     (type, state) => {

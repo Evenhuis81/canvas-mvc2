@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import {createEntityEvents, createListeners, createRender, getHandlers} from './properties';
-import {createRenders} from './animate';
+import {createRendersAndCallBacks} from './animate';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {resources} from '..';
@@ -20,19 +20,17 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     const properties = {id, name, disabled, show, showDelay};
 
     const {startType, startSpeed, endType, endSpeed, hoverType, animationType, ...rest2} = rest;
+
     const animations = {startType, startSpeed, endType, endSpeed, hoverType, animationType};
 
     // mouse + transition handlers mixed
     const {mouse, onStartEnd, onEndEnd, ...sketch} = rest2;
 
-    // console.log(mouse?.button);
-
     const handlers = getHandlers({...mouse}, {...(onStartEnd && {onStartEnd}), ...(onEndEnd && {onEndEnd})});
 
     const listeners = createListeners(sketch, handlers, input);
-    const colors = getSketchRGBAColorsFromHexString(sketch);
 
-    // const callBacks = getCallBacks(engine, renders, animations, handlers);
+    const colors = getSketchRGBAColorsFromHexString(sketch);
 
     const internalEntity: InternalEntity = {
         properties,
@@ -46,7 +44,11 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         input,
     };
 
-    const renders = createRenders(internalEntity);
+    // const callBacks = getCallBacks(engine, renders, animations, handlers);
+
+    const {renders, callBacks} = createRendersAndCallBacks(internalEntity);
+
+    console.log(renders);
 
     const render = createRender(engine, renders);
 

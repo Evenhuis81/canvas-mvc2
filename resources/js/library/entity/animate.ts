@@ -1,12 +1,22 @@
-export const createRenders = (entity: InternalEntity) => {
+export const createRendersAndCallBacks = (entity: InternalEntity) => {
     const {animationType, hoverType, startType, endType} = entity.animations;
 
+    console.log(entity.animations);
+
+    const animates = createAnimates(entity);
+
     return {
-        animation: animationType ? animationUpdates[animationType](entity) : emptyUpdate,
-        hover: hoverType ? hoverTransitions[hoverType](entity) : emptyUpdate,
-        start: startType ? entityTransitions[startType](entity) : emptyUpdate,
-        end: endType ? entityTransitions[endType](entity) : emptyUpdate,
-        draw: createDraw(entity),
+        renders: {
+            animation: animationType ? animates.animationUpdates[animationType]() : emptyUpdate,
+            hover: hoverType ? animates.hoverTransitions[hoverType]() : emptyUpdate,
+            start: startType ? animates.entityTransitions[startType]() : emptyUpdate,
+            end: endType ? animates.entityTransitions[endType]() : emptyUpdate,
+            draw: createDraw(entity),
+        },
+        callBacks: {
+            startEnd: () => {},
+            endEnd: () => {},
+        },
     };
 };
 
@@ -16,31 +26,47 @@ const emptyUpdate = {
     fn: () => {},
 };
 
-// Make a create hover/start/endTransitions object from it, so entity doesn't need to get passed for every method?
-// Make multiple wrappers: (1. combine for entity global object, 2. create update/start/stop dynamically, 1liner?)
-const hoverTransitions = {
-    bold: (entity: InternalEntity) => createBoldHoverTransitionUpdate(entity),
-};
+const createAnimates = (entity: InternalEntity) => {
+    // Make a create hover/start/endTransitions object from it, so entity doesn't need to get passed for every method?
+    // Make multiple wrappers: (1. combine for entity global object, 2. create update/start/stop dynamically, 1liner?)
+    const hoverTransitions = {
+        bold: () => createBoldHoverTransitionUpdate(entity),
+    };
 
-const entityTransitions = {
-    fadein1: (entity: InternalEntity) => {
-        entity.colors.fill.a = 0;
-        entity.colors.stroke.a = 0;
-        entity.colors.textFill.a = 0;
+    const entityTransitions = {
+        fadein1: () => {
+            console.log('fadeIn1 creation'); // Make this a statistic log
+            // Handle differently
+            // entity.colors.fill.a = 0;
+            // entity.colors.stroke.a = 0;
+            // entity.colors.textFill.a = 0;
 
-        return createFadeIn1TransitionUpdate(entity, 0.005 * entity.animations.startSpeed);
-    },
-    fadeout1: (entity: InternalEntity) => {
-        entity.colors.fill.a = 1;
-        entity.colors.stroke.a = 1;
-        entity.colors.textFill.a = 1;
+            return createFadeIn1TransitionUpdate(entity, 0.005 * entity.animations.startSpeed);
+        },
+        fadeout1: () => {
+            console.log('fadeOut1 creation'); // Make this a statistic log
+            // Handle differently
+            // entity.colors.fill.a = 1;
+            // entity.colors.stroke.a = 1;
+            // entity.colors.textFill.a = 1;
 
-        return createFadeOut1TransitionUpdate(entity);
-    },
-};
+            return createFadeOut1TransitionUpdate(entity);
+        },
+    };
 
-const animationUpdates = {
-    noise: (entity: InternalEntity) => createNoiseUpdate(entity),
+    const animationUpdates = {
+        noise: () => {
+            console.log('noise creation'); // Make this a statistic log
+
+            return createNoiseUpdate(entity);
+        },
+    };
+
+    return {
+        hoverTransitions,
+        entityTransitions,
+        animationUpdates,
+    };
 };
 
 const createFadeIn1TransitionUpdate = (
@@ -143,12 +169,14 @@ const createNoiseUpdate = ({properties: {id, name}, sketch}: InternalEntity) => 
     id: id,
     name: `noise-animation-update-${name}`,
     fn: () => {
-        sketch.x += upd.adj;
+        sketch.x += upd.adj.x;
+        sketch.y += upd.adj.y;
 
         upd.count++;
 
         if (upd.count > 60) {
-            upd.adj *= -1;
+            upd.adj.x *= -1;
+            upd.adj.y *= -1;
 
             upd.count = 0;
         }
@@ -160,29 +188,33 @@ const createDraw = ({
     sketch,
     context: ctx,
     colors: {fill, stroke, textFill},
-}: InternalEntity) => ({
-    id,
-    name: `draw-${name}`,
-    fn: () => {
-        ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
-        ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
-        ctx.lineWidth = sketch.lw;
+}: InternalEntity) => {
+    console.log('draw creation'); // Make this a statistic log
 
-        ctx.beginPath();
-        ctx.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.r);
-        ctx.fill();
-        ctx.stroke();
+    return {
+        id,
+        name: `draw-${name}`,
+        fn: () => {
+            ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
+            ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
+            ctx.lineWidth = sketch.lw;
 
-        ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
-        ctx.font = `${sketch.fontSize}px ${sketch.font}`;
+            ctx.beginPath();
+            ctx.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.r);
+            ctx.fill();
+            ctx.stroke();
 
-        ctx.textAlign = sketch.textAlign;
-        ctx.textBaseline = sketch.textBaseLine;
+            ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
+            ctx.font = `${sketch.fontSize}px ${sketch.font}`;
 
-        ctx.beginPath();
-        ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5);
-    },
-});
+            ctx.textAlign = sketch.textAlign;
+            ctx.textBaseline = sketch.textBaseLine;
+
+            ctx.beginPath();
+            ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5);
+        },
+    };
+};
 
 // max property is default 60, need for deltaTime, adj is change in property
 // make this a createProperties that picks the needed properties for each update respectively
@@ -198,7 +230,10 @@ const upd = {
         x: 0,
         y: 0,
     },
-    adj: 0.05,
+    adj: {
+        x: 0.5,
+        y: 0.5,
+    },
     lw: 0,
     count: 0,
     max: 60,
