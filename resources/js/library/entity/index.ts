@@ -24,21 +24,27 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     // mouse + transition handlers mixed
     const {mouse, onStartEnd, onEndEnd, ...sketch} = rest2;
-    const transits = {onStartEnd, onEndEnd};
-    const handlers = getHandlers({...mouse}, {...transits});
-
-    console.log(handlers.up);
+    const handlers = getHandlers({...mouse}, {...(onStartEnd && {onStartEnd}), ...(onEndEnd && {onEndEnd})});
 
     const listeners = createListeners(sketch, handlers, input);
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
     const startEnd = () => {
-        console.log('startEnd triggered');
-
         engine.removeUpdate(renders.start.id);
+
         if (internalEntity.animations.animationType) engine.setUpdate(renders.animation);
         if (internalEntity.animations.hoverType) engine.setUpdate(renders.hover);
+
         internalEntity.handlers.onStartEnd();
+    };
+
+    const endEnd = () => {
+        engine.removeUpdate(renders.end.id);
+
+        if (internalEntity.animations.animationType) engine.removeUpdate(renders.animation.id);
+        if (internalEntity.animations.hoverType) engine.removeUpdate(renders.hover.id);
+
+        internalEntity.handlers.onEndEnd();
     };
 
     const internalEntity: InternalEntity = {
@@ -53,6 +59,7 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         input,
         callBacks: {
             startEnd,
+            endEnd,
         },
     };
 

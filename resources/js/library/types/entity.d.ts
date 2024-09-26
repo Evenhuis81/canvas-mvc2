@@ -66,6 +66,7 @@ interface Entity {
     // part of Handlers?
     callBacks: {
         startEnd: () => void;
+        endEnd: () => void;
     };
 }
 

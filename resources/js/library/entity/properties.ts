@@ -17,6 +17,8 @@ export const createEntityEvents = ({properties, animations, listeners}: Internal
         properties.show = false;
 
         listeners.remove();
+
+        render('draw', false);
     };
     const destroy = () => {
         listeners.remove();
@@ -67,8 +69,13 @@ export const createRender =
 export const getHandlers = (mouse: Partial<MouseHandlers>, transitions: Partial<TransitionHandlers>) => ({
     down: () => {},
     up: () => {},
-    onStartEnd: () => {},
-    onEndEnd: () => {},
+    onStartEnd: () => {
+        console.log('internal onStartEnd call');
+        console.log(transitions);
+    },
+    onEndEnd: () => {
+        console.log('internal onEndEnd call');
+    },
     button: 0,
     ...mouse,
     ...transitions,
