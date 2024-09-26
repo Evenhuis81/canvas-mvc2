@@ -20,7 +20,7 @@ const mouseupLoadfont = async (event: ClickEvent) => {
 
     await loadFont('OpenS', 'OpenSans-VariableFont_wdth,wght.ttf');
 
-    resources.tr.engine.setShow({
+    resources.tr.engine.setDraw({
         fn: () =>
             sv.text({
                 x: innerWidth * 0.5,
@@ -38,7 +38,7 @@ const mouseupLoadfont2 = async (event: ClickEvent) => {
 
     await loadFont('Harmond', 'Harmond-SemiBoldCondensed.otf');
 
-    resources.tr.engine.setShow({
+    resources.tr.engine.setDraw({
         fn: () =>
             sv.text({
                 x: innerWidth * 0.5,
@@ -56,7 +56,7 @@ const mouseupLoadfont3 = async (event: ClickEvent) => {
 
     await loadFont('Harmond2', 'Harmond-SemBdItaCond.otf');
 
-    resources.tr.engine.setShow({
+    resources.tr.engine.setDraw({
         fn: () =>
             sv.text({
                 x: innerWidth * 0.5,
@@ -74,7 +74,7 @@ const mouseupLoadfont4 = async (event: ClickEvent) => {
 
     await loadFont('Harmond3', 'Harmond-ExtraBoldExpanded.otf');
 
-    resources.tr.engine.setShow({
+    resources.tr.engine.setDraw({
         fn: () =>
             sv.text({
                 x: innerWidth * 0.5,
@@ -92,7 +92,7 @@ const mouseupLoadfont5 = async (event: ClickEvent) => {
 
     await loadFont('Harmond4', 'Harmond-ExtBdItaExp.otf');
 
-    resources.tr.engine.setShow({
+    resources.tr.engine.setDraw({
         fn: () =>
             sv.text({
                 x: innerWidth * 0.5,

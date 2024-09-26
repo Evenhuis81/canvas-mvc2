@@ -15,7 +15,7 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
     const context = getContext2D(canvas);
     const engine = getEngine();
 
-    // Always first show in engine setShow
+    // Always first draw in engine setDraw
     if (options?.clear) clearOn(engine, context);
 
     const container = options?.containerID ? getContainer(options.containerID) : createContainer(libraryID);
@@ -48,19 +48,19 @@ export const getLibraryOptions = (context: CanvasRenderingContext2D, engine: Eng
 };
 
 const clearOn = (engine: Engine, context: CanvasRenderingContext2D) => {
-    engine.setShow(clear(context));
+    engine.setDraw(clear(context));
 };
 
 const clearOff = (engine: Engine) => {
-    engine.removeShow(0); // clear show id = 0
+    engine.removeDraw(0); // clear show id = 0
 };
 
 const dotOn = (engine: Engine, context: CanvasRenderingContext2D) => {
-    engine.setShow(dotMiddle(context));
+    engine.setDraw(dotMiddle(context));
 };
 
 const dotOff = (engine: Engine) => {
-    engine.removeShow(99); // dot show id = 99
+    engine.removeDraw(99); // dot show id = 99
 };
 
 const dotMiddle = (context: CanvasRenderingContext2D) => ({

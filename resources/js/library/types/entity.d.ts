@@ -49,6 +49,12 @@ interface TransitionHandlers {
     onEndEnd: () => void;
 }
 
+// part of Handlers?
+interface EntityCallBacks {
+    startEnd: () => void;
+    endEnd: () => void;
+}
+
 // handlers = user input, listeners = browser implemented
 interface Entity {
     properties: EntityProperties;
@@ -62,11 +68,6 @@ interface Entity {
         fill: RGBA;
         stroke: RGBA;
         textFill: RGBA;
-    };
-    // part of Handlers?
-    callBacks: {
-        startEnd: () => void;
-        endEnd: () => void;
     };
 }
 

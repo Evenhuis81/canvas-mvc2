@@ -29,25 +29,10 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     const handlers = getHandlers({...mouse}, {...(onStartEnd && {onStartEnd}), ...(onEndEnd && {onEndEnd})});
 
-    console.log(handlers.up);
-
     const listeners = createListeners(sketch, handlers, input);
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
-    const endEnd = () => {
-        console.log('startEnd triggered');
-
-        engine.removeUpdate(renders.end.id);
-    };
-
-    const startEnd = () => {
-        console.log('startEnd triggered');
-
-        engine.removeUpdate(renders.start.id);
-        if (internalEntity.animations.animationType) engine.setUpdate(renders.animation);
-        if (internalEntity.animations.hoverType) engine.setUpdate(renders.hover);
-        internalEntity.handlers.onStartEnd();
-    };
+    // const callBacks = getCallBacks(engine, renders, animations, handlers);
 
     const internalEntity: InternalEntity = {
         properties,
@@ -59,10 +44,6 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         engine,
         context,
         input,
-        callBacks: {
-            startEnd,
-            endEnd,
-        },
     };
 
     const renders = createRenders(internalEntity);
@@ -74,6 +55,31 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     initialize(internalEntity, events);
 
     return events;
+};
+
+const getCallBacks = (
+    engine: Engine,
+    renders: EntityRenders,
+    animations: InternalEntity['animations'],
+    handlers: InternalEntity['handlers'],
+) => {
+    const startEnd = () => {
+        console.log('startEnd called');
+
+        engine.removeUpdate(renders.start.id);
+        if (animations.animationType) engine.setUpdate(renders.animation);
+        if (animations.hoverType) engine.setUpdate(renders.hover);
+        handlers.onStartEnd();
+    };
+
+    const endEnd = () => {
+        // Unfinished
+        console.log('startEnd called');
+
+        engine.removeUpdate(renders.end.id);
+    };
+
+    return {endEnd, startEnd};
 };
 
 const initialize = ({properties}: InternalEntity, events: EntityEvents) => {

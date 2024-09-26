@@ -69,7 +69,7 @@ export default {
 
         buttons.forEach(button => {
             resources.state.engine.setUpdate(button.update);
-            resources.state.engine.setShow(button.show);
+            resources.state.engine.setDraw(button.show);
         });
     },
 };

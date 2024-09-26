@@ -4,7 +4,7 @@
 // destroy: (entityID: string | number) => destroy(entityID),
 
 // TODO::Hoverproperties (type + enabler)
-// Engine, setShow => setDraw
+// Engine, setDraw => setDraw
 
 // Button disable: reset values to static mode and set colors to half brightness?
 // Initialize entity module/method

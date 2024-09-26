@@ -4,8 +4,8 @@ export const createRenders = (entity: InternalEntity) => {
     return {
         animation: animationType ? animationUpdates[animationType](entity) : emptyUpdate,
         hover: hoverType ? hoverTransitions[hoverType](entity) : emptyUpdate,
-        start: startType ? startEndTransitions[startType](entity) : emptyUpdate,
-        end: endType ? startEndTransitions[endType](entity) : emptyUpdate,
+        start: startType ? entityTransitions[startType](entity) : emptyUpdate,
+        end: endType ? entityTransitions[endType](entity) : emptyUpdate,
         draw: createDraw(entity),
     };
 };
@@ -22,7 +22,7 @@ const hoverTransitions = {
     bold: (entity: InternalEntity) => createBoldHoverTransitionUpdate(entity),
 };
 
-const startEndTransitions = {
+const entityTransitions = {
     fadein1: (entity: InternalEntity) => {
         entity.colors.fill.a = 0;
         entity.colors.stroke.a = 0;
@@ -44,7 +44,7 @@ const animationUpdates = {
 };
 
 const createFadeIn1TransitionUpdate = (
-    {callBacks: {startEnd}, colors: {fill, stroke, textFill}, properties: {id, name}}: InternalEntity,
+    {colors: {fill, stroke, textFill}, properties: {id, name}}: InternalEntity,
     alphaVelocity: number,
 ) => ({
     id,
@@ -59,14 +59,14 @@ const createFadeIn1TransitionUpdate = (
             stroke.a = 1;
             textFill.a = 1;
 
-            startEnd();
+            // startEnd();
         }
     },
 });
 
 const createFadeOut1TransitionUpdate = ({
     properties: {id, name},
-    callBacks: {endEnd},
+    // callBacks: {endEnd},
     colors: {fill, stroke, textFill},
 }: InternalEntity) => ({
     id,
@@ -81,7 +81,7 @@ const createFadeOut1TransitionUpdate = ({
             stroke.a = 0;
             textFill.a = 0;
 
-            endEnd();
+            // endEnd();
         }
     },
 });

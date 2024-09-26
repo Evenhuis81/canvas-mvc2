@@ -7,8 +7,8 @@ export const createEntityEvents = ({properties, animations, listeners}: Internal
 
         listeners.add();
 
-        render('draw', true);
         if (animations.startType) render('start', true);
+        render('draw', true);
     };
 
     const hide = () => {
@@ -47,8 +47,10 @@ export const createEntityEvents = ({properties, animations, listeners}: Internal
     return {show, hide, destroy, enable, disable};
 };
 
-const setDraw = (engine: Engine, draw: Required<Draw>, state: boolean) =>
-    state ? engine.setShow(draw) : engine.removeShow(draw.id);
+const handleDraw = {
+    set: (engine: Engine, update: Required<Draw>) => engine.setDraw(update),
+    remove: (engine: Engine, update: Required<Draw>) => engine.removeDraw(update.id),
+};
 
 const handleUpdate = {
     set: (engine: Engine, update: Required<Update>) => engine.setUpdate(update),
@@ -58,7 +60,7 @@ const handleUpdate = {
 export const createRender =
     (engine: Engine, renders: EntityRenders): Render =>
     (type, state) => {
-        if (type === 'draw') return setDraw(engine, renders.draw, state);
+        if (type === 'draw') return handleDraw[state ? 'set' : 'remove'](engine, renders[type]);
 
         handleUpdate[state ? 'set' : 'remove'](engine, renders[type]);
     };

@@ -6,7 +6,7 @@ export const levelScreen = () => {
 
     const show = createLevelScreenShow(tv);
 
-    engine.setShow(show);
+    engine.setDraw(show);
 };
 
 const levels = [];

@@ -13,14 +13,14 @@ const toggleView = (id: string | number) => {
     if (active) {
         statisticsResource[id].active = false;
 
-        engine.removeShow(`${id}-statistic-show`);
+        engine.removeDraw(`${id}-statistic-show`);
 
         return;
     }
 
     statisticsResource[id].active = true;
 
-    engine.setShow(show);
+    engine.setDraw(show);
 };
 
 export default {
@@ -58,13 +58,13 @@ export default {
     },
     run: (id: number | string) => {
         statisticsResource[id].active = true;
-        statisticsResource[id].engine.setShow(statisticsResource[id].show);
+        statisticsResource[id].engine.setDraw(statisticsResource[id].show);
     },
     halt: (id: string | number) => {
         // take screenshot and display as static image?
     },
     destroy: (id: string | number) => {
-        statisticsResource[id].engine.removeShow(`${id}-statistic-show`);
+        statisticsResource[id].engine.removeDraw(`${id}-statistic-show`);
 
         delete statisticsResource[id];
     },

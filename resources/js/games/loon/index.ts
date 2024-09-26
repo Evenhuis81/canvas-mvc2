@@ -14,7 +14,7 @@ export default {
         const player = getPlayer(tv);
 
         engine.setUpdate(player.update);
-        engine.setShow(player.show);
+        engine.setDraw(player.show);
     },
     run: () => resources.state.engine.run(),
     runOnce: () => resources.state.engine.runOnce(),

@@ -22,7 +22,7 @@ export default {
             text: 'Test Example #1',
             // show: true,
             animationType: 'noise',
-            // showDelay: 2000,
+            showDelay: 1500,
             // = touch- and mousedown (not yet) / needs transition handlers
             // mouse: {
             //     button: 2,
@@ -34,7 +34,7 @@ export default {
             //     },
             // },
             startType: 'fadein1',
-            startSpeed: 3,
+            startSpeed: 1,
             endType: 'fadeout1',
             endSpeed: 3,
             onStartEnd: () => {
