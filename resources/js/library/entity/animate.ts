@@ -30,7 +30,13 @@ const startEndTransitions = {
 
         return createFadeIn1TransitionUpdate(entity, 0.005 * entity.animations.startSpeed);
     },
-    fadeout1: (entity: InternalEntity) => createFadeOut1TransitionUpdate(entity),
+    fadeout1: (entity: InternalEntity) => {
+        entity.colors.fill.a = 1;
+        entity.colors.stroke.a = 1;
+        entity.colors.textFill.a = 1;
+
+        return createFadeOut1TransitionUpdate(entity);
+    },
 };
 
 const animationUpdates = {
@@ -60,6 +66,7 @@ const createFadeIn1TransitionUpdate = (
 
 const createFadeOut1TransitionUpdate = ({
     properties: {id, name},
+    callBacks: {endEnd},
     colors: {fill, stroke, textFill},
 }: InternalEntity) => ({
     id,
@@ -70,7 +77,11 @@ const createFadeOut1TransitionUpdate = ({
         textFill.a -= 0.001;
 
         if (fill.a <= 0) {
-            // callBack function();
+            fill.a = 0;
+            stroke.a = 0;
+            textFill.a = 0;
+
+            endEnd();
         }
     },
 });

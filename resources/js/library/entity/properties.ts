@@ -67,8 +67,12 @@ export const createRender =
 export const getHandlers = (mouse: Partial<MouseHandlers>, transitions: Partial<TransitionHandlers>) => ({
     down: () => {},
     up: () => {},
-    onStartEnd: () => {},
-    onEndEnd: () => {},
+    onStartEnd: () => {
+        console.log('default onStartEnd internally');
+    },
+    onEndEnd: () => {
+        console.log('default onEndEnd internally');
+    },
     button: 0,
     ...mouse,
     ...transitions,
