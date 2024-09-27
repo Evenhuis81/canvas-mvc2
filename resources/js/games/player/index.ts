@@ -32,11 +32,11 @@ export default {
         const playerShow = player.createShow(tv);
 
         engine.setUpdate(playerUpdate);
-        engine.setShow(playerShow);
+        engine.setDraw(playerShow);
 
         const testObject = test(tv);
 
-        engine.setShow(testObject.show);
+        engine.setDraw(testObject.show);
     },
     run: () => resources.state.engine.run(),
     runOnce: () => resources.state.engine.runOnce(),

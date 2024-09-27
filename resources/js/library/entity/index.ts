@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import {createEntityEvents, createListeners, createRender, getHandlers} from './properties';
-import {createRenders} from './animate';
+import {createRendersAndCallBacks} from './animate';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {resources} from '..';
@@ -20,13 +20,16 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     const properties = {id, name, disabled, show, showDelay};
 
     const {startType, startSpeed, endType, endSpeed, hoverType, animationType, ...rest2} = rest;
+
     const animations = {startType, startSpeed, endType, endSpeed, hoverType, animationType};
 
     // mouse + transition handlers mixed
     const {mouse, onStartEnd, onEndEnd, ...sketch} = rest2;
+
     const handlers = getHandlers({...mouse}, {...(onStartEnd && {onStartEnd}), ...(onEndEnd && {onEndEnd})});
 
     const listeners = createListeners(sketch, handlers, input);
+
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
     const startEnd = () => {
@@ -63,7 +66,11 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         },
     };
 
-    const renders = createRenders(internalEntity);
+    // const callBacks = getCallBacks(engine, renders, animations, handlers);
+
+    const {renders, callBacks} = createRendersAndCallBacks(internalEntity);
+
+    console.log(renders);
 
     const render = createRender(engine, renders);
 
@@ -72,6 +79,31 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     initialize(internalEntity, events);
 
     return events;
+};
+
+const getCallBacks = (
+    engine: Engine,
+    renders: EntityRenders,
+    animations: InternalEntity['animations'],
+    handlers: InternalEntity['handlers'],
+) => {
+    const startEnd = () => {
+        console.log('startEnd called');
+
+        engine.removeUpdate(renders.start.id);
+        if (animations.animationType) engine.setUpdate(renders.animation);
+        if (animations.hoverType) engine.setUpdate(renders.hover);
+        handlers.onStartEnd();
+    };
+
+    const endEnd = () => {
+        // Unfinished
+        console.log('startEnd called');
+
+        engine.removeUpdate(renders.end.id);
+    };
+
+    return {endEnd, startEnd};
 };
 
 const initialize = ({properties}: InternalEntity, events: EntityEvents) => {

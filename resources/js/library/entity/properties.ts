@@ -7,8 +7,12 @@ export const createEntityEvents = ({properties, animations, listeners}: Internal
 
         listeners.add();
 
+        // Figure out possible combinations and create methods accordingly. ie. start + animate same time ?
+        // Probably missing certain options, add to internal/external entity
+
+        // if (animations.startType) render('start', true);`
+        if (animations.animationType) render('animation', true);
         render('draw', true);
-        if (animations.startType) render('start', true);
     };
 
     const hide = () => {
@@ -49,18 +53,21 @@ export const createEntityEvents = ({properties, animations, listeners}: Internal
     return {show, hide, destroy, enable, disable};
 };
 
-const setDraw = (engine: Engine, draw: Required<Draw>, state: boolean) =>
-    state ? engine.setShow(draw) : engine.removeShow(draw.id);
+const handleDraw = {
+    set: (engine: Engine, update: Required<Draw>) => engine.setDraw(update),
+    remove: (engine: Engine, update: Required<Draw>) => engine.removeDraw(update.id),
+};
 
 const handleUpdate = {
     set: (engine: Engine, update: Required<Update>) => engine.setUpdate(update),
     remove: (engine: Engine, update: Required<Update>) => engine.removeUpdate(update.id),
 };
 
+// Needs priority order
 export const createRender =
     (engine: Engine, renders: EntityRenders): Render =>
     (type, state) => {
-        if (type === 'draw') return setDraw(engine, renders.draw, state);
+        if (type === 'draw') return handleDraw[state ? 'set' : 'remove'](engine, renders[type]);
 
         handleUpdate[state ? 'set' : 'remove'](engine, renders[type]);
     };
@@ -70,11 +77,10 @@ export const getHandlers = (mouse: Partial<MouseHandlers>, transitions: Partial<
     down: () => {},
     up: () => {},
     onStartEnd: () => {
-        console.log('internal onStartEnd call');
         console.log(transitions);
     },
     onEndEnd: () => {
-        console.log('internal onEndEnd call');
+        console.log('default onEndEnd internally');
     },
     button: 0,
     ...mouse,

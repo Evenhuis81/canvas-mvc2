@@ -31,7 +31,7 @@ const createButton = (resourceID: string, options?: ButtonOptions) => {
     );
 
     const setEngine = () => {
-        engine.setShow(show);
+        engine.setDraw(show);
         engine.setUpdate(update);
         if (props.startTransition) setStartTransition();
     };
@@ -126,7 +126,7 @@ const handleEventsAndMore = (
         removeEvents();
 
         engine.removeUpdate(id);
-        engine.removeShow(id);
+        engine.removeDraw(id);
 
         props.destructed = true;
     };

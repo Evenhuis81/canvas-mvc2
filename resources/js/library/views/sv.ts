@@ -4,7 +4,7 @@ export const getSV = (context: CanvasRenderingContext2D, engine: Engine) => {
     const paint: Paint = (type, shape) => {
         const fn = paintMethods[type](shape);
 
-        engine.setShow({fn});
+        engine.setDraw({fn});
     };
 
     return {paint};

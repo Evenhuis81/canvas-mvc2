@@ -20,29 +20,31 @@ export default {
 
         entity.create({
             text: 'Test Example #1',
+            w: 200,
+            // show: true,
             animationType: 'noise',
-            showDelay: 2000,
+            // showDelay: 1500,
             // = touch- and mousedown (not yet) / needs transition handlers
-            mouse: {
-                button: 2,
-                //     down: () => {
-                //         console.log('mouse down USER INPUT');
-                //     },
-                //     up: () => {
-                //         console.log('mouse up USER INPUT');
-                //     },
-            },
-            startType: 'fadein1',
-            startSpeed: 3,
+            // mouse: {
+            //     button: 2,
+            //     down: () => {
+            //         console.log('mouse down USER INPUT');
+            //     },
+            //     up: () => {
+            //         console.log('mouse up USER INPUT');
+            //     },
+            // },
+            // startType: 'fadein1',
+            // startSpeed: 1,
             // endType: 'fadeout1',
+            // endSpeed: 3,
             // onStartEnd: () => {
             //     console.log('start transition ended USER INPUT');
             // },
             // onEndEnd: () => {
             //     console.log('end transition ended USER INPUT');
             // },
-            hoverType: 'bold',
-            // show: true,
+            // hoverType: 'bold',
         });
     },
     run: () => resources.timedash.engine.run(),

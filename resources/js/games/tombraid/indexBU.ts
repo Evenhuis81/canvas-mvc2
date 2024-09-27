@@ -27,7 +27,7 @@
 // const button = getButton(buttonObj);
 
 // const startButton = getStartButton(context);
-// engine.setShow(startButton.show);
+// engine.setDraw(startButton.show);
 
 // addEventListener('mouseup', () => {
 //     if (startButton.inside()) startLevel(2, tv, context, canvas, engine);
@@ -61,7 +61,7 @@
 // goToMenu(context, engine, tv, canvas);
 
 // Engine Shows
-// engine.setShow(s);
+// engine.setDraw(s);
 
 // Make this a hidden option inside the canvas
 // enableStatistics();
@@ -88,8 +88,8 @@
 //     engine.setUpdate(player.update);
 //     // when a component use the gamestore, make create functions so they can be used at a later point
 //     const levelShow = level.createShow(level.map, level.coins, tv);
-//     engine.setShow(levelShow);
-//     engine.setShow(player.show);
+//     engine.setDraw(levelShow);
+//     engine.setDraw(player.show);
 
 //     engine.showsOverview();
 //     engine.updatesOverview();
@@ -116,13 +116,13 @@
 
 //     const levelShow = level.createShow(level.map, level.coins, tv, canvas.width, canvas.height);
 
-//     engine.setShow(levelShow);
-//     engine.setShow(player.show);
+//     engine.setDraw(levelShow);
+//     engine.setDraw(player.show);
 
 //     engine.setUpdate(player.update);
 
 // onResize(() => {
-//     engine.removeShow(4);
+//     engine.removeDraw(4);
 
 //     const scale = canvas.width / 24;
 
@@ -135,7 +135,7 @@
 
 //     const levelShow = level.createShow(level.map, level.coins, tv, canvas.width, canvas.height);
 
-//     engine.setShow(levelShow);
+//     engine.setDraw(levelShow);
 // });
 
 // statistics.state.set({

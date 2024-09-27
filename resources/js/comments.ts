@@ -132,7 +132,7 @@
 //     const inside = () => mouse.x >= x && mouse.x < x + w && mouse.y >= y && mouse.y < y + h;
 
 //     addEventListener('mouseup', ({button}) => {
-//         if (button === 0 && inside()) gameStore.state.engine.setShow({id: 0, name: 'open menu', fn: openMenu()});
+//         if (button === 0 && inside()) gameStore.state.engine.setDraw({id: 0, name: 'open menu', fn: openMenu()});
 //     });
 
 //     return {show, update};

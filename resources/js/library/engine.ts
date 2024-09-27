@@ -1,6 +1,6 @@
 const createProperties: () => EngineProperties = () => ({
     updates: [],
-    shows: [],
+    draws: [],
     requestID: 0,
     stop: false,
     timePassed: 0,
@@ -24,13 +24,13 @@ export const getEngine = () => {
         properties.stop = true;
     };
 
-    const showAndUpdateMethods = createSetAndRemoveUpdatesAndShows(properties);
+    const drawAndUpdateMethods = createSetAndRemoveUpdatesAndDraws(properties);
 
     return {
         run,
         runOnce,
         halt,
-        ...showAndUpdateMethods,
+        ...drawAndUpdateMethods,
     };
 };
 
@@ -42,7 +42,7 @@ const createLoop = (properties: EngineProperties) => {
 
         for (const update of properties.updates) update.fn(properties.timePassed);
 
-        for (const show of properties.shows) show.fn();
+        for (const draw of properties.draws) draw.fn();
 
         properties.requestID = requestAnimationFrame(loop);
 
@@ -56,8 +56,8 @@ const createLoop = (properties: EngineProperties) => {
     return loop;
 };
 
-// TODO::Create a set/remove update/show that orders according to id number (lower = first, higher = last)
-const createSetAndRemoveUpdatesAndShows = (properties: EngineProperties) => {
+// TODO::Create a set/remove update/draw that orders according to id number (lower = first, higher = last)
+const createSetAndRemoveUpdatesAndDraws = (properties: EngineProperties) => {
     const setUpdate = (update: Update) => {
         if (!update.id) update.id = 'noID';
         if (!update.name) update.name = 'noName';
@@ -65,11 +65,11 @@ const createSetAndRemoveUpdatesAndShows = (properties: EngineProperties) => {
         properties.updates.push(update);
     };
 
-    const setShow = (show: Show) => {
-        if (!show.id) show.id = 'noID';
-        if (!show.name) show.name = 'noName';
+    const setDraw = (draw: Draw) => {
+        if (!draw.id) draw.id = 'noID';
+        if (!draw.name) draw.name = 'noName';
 
-        properties.shows.push(show);
+        properties.draws.push(draw);
     };
 
     const removeUpdate = (id: number | string) => {
@@ -80,19 +80,19 @@ const createSetAndRemoveUpdatesAndShows = (properties: EngineProperties) => {
         properties.updates.splice(index, 1);
     };
 
-    const removeShow = (id: number | string) => {
-        const index = properties.shows.findIndex(show => show.id === id);
+    const removeDraw = (id: number | string) => {
+        const index = properties.draws.findIndex(draw => draw.id === id);
 
-        if (index === -1) throw Error(`show with id '${id}' not found, nothing to remove`);
+        if (index === -1) throw Error(`draw with id '${id}' not found, nothing to remove`);
 
-        properties.shows.splice(index, 1);
+        properties.draws.splice(index, 1);
     };
 
     return {
         setUpdate,
-        setShow,
+        setDraw,
         removeUpdate,
-        removeShow,
+        removeDraw,
         info: createInfo(properties),
     };
 };
@@ -100,10 +100,10 @@ const createSetAndRemoveUpdatesAndShows = (properties: EngineProperties) => {
 const createInfo = (properties: EngineProperties) => ({
     updates: {
         length: () => properties.updates.length,
-        ids: () => properties.shows.map(show => show.id),
+        ids: () => properties.draws.map(draw => draw.id),
     },
-    shows: {
-        length: () => properties.shows.length,
+    draws: {
+        length: () => properties.draws.length,
         ids: () => properties.updates.map(update => update.id),
     },
 });

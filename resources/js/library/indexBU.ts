@@ -71,7 +71,7 @@
 //     const show = demo.createDemoShow(context);
 
 //     engine.setUpdate(update);
-//     engine.setShow(show);
+//     engine.setDraw(show);
 
 //     // New option
 //     addEventListener('keydown', ({code}) => {
