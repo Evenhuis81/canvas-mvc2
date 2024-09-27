@@ -1,22 +1,14 @@
-export const createRendersAndCallBacks = (entity: InternalEntity) => {
+export const createRenders = (entity: InternalEntity) => {
     const {animationType, hoverType, startType, endType} = entity.animations;
-
-    console.log(entity.animations);
 
     const animates = createAnimates(entity);
 
     return {
-        renders: {
-            animation: animationType ? animates.animationUpdates[animationType]() : emptyUpdate,
-            hover: hoverType ? animates.hoverTransitions[hoverType]() : emptyUpdate,
-            start: startType ? animates.entityTransitions[startType]() : emptyUpdate,
-            end: endType ? animates.entityTransitions[endType]() : emptyUpdate,
-            draw: createDraw(entity),
-        },
-        callBacks: {
-            startEnd: () => {},
-            endEnd: () => {},
-        },
+        animation: animationType ? animates.animationUpdates[animationType]() : emptyUpdate,
+        hover: hoverType ? animates.hoverTransitions[hoverType]() : emptyUpdate,
+        start: startType ? animates.entityTransitions[startType]() : emptyUpdate,
+        end: endType ? animates.entityTransitions[endType]() : emptyUpdate,
+        draw: createDraw(entity),
     };
 };
 
@@ -215,6 +207,27 @@ const createDraw = ({
         },
     };
 };
+
+const handleDraw = {
+    set: (engine: Engine, update: Required<Draw>) => engine.setDraw(update),
+    remove: (engine: Engine, update: Required<Draw>) => engine.removeDraw(update.id),
+};
+
+const handleUpdate = {
+    set: (engine: Engine, update: Required<Update>) => engine.setUpdate(update),
+    remove: (engine: Engine, update: Required<Update>) => engine.removeUpdate(update.id),
+};
+
+// const callBacks = getCallBacks(engine, renders, animations, handlers);
+
+// Needs priority order
+export const createRender =
+    (engine: Engine, renders: EntityRenders): Render =>
+    (type, state) => {
+        if (type === 'draw') return handleDraw[state ? 'set' : 'remove'](engine, renders[type]);
+
+        handleUpdate[state ? 'set' : 'remove'](engine, renders[type]);
+    };
 
 // max property is default 60, need for deltaTime, adj is change in property
 // make this a createProperties that picks the needed properties for each update respectively

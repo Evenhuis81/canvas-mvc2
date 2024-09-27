@@ -44,10 +44,11 @@ type EntityHoverTransitionTypes = 'bold';
 
 type EntityTypes = EntityAnimationType | EntityTransitionTypes | EntityHoverTransitionTypes;
 
-interface TransitionHandlers {
+// TODO::Use type of CallBacks
+type TransitionHandlers = {
     onStartEnd: () => void;
     onEndEnd: () => void;
-}
+};
 
 // part of Handlers?
 interface EntityCallBacks {
@@ -70,10 +71,10 @@ interface Entity {
         textFill: RGBA;
     };
     // part of Handlers?
-    callBacks: {
-        startEnd: () => void;
-        endEnd: () => void;
-    };
+    // callBacks: {
+    //     startEnd: () => void;
+    //     endEnd: () => void;
+    // };
 }
 
 // click = mouse & touch (touch not yet implemented): see comments.txt for notes (expand into instructions)

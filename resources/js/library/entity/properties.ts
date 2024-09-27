@@ -53,25 +53,6 @@ export const createEntityEvents = ({properties, animations, listeners}: Internal
     return {show, hide, destroy, enable, disable};
 };
 
-const handleDraw = {
-    set: (engine: Engine, update: Required<Draw>) => engine.setDraw(update),
-    remove: (engine: Engine, update: Required<Draw>) => engine.removeDraw(update.id),
-};
-
-const handleUpdate = {
-    set: (engine: Engine, update: Required<Update>) => engine.setUpdate(update),
-    remove: (engine: Engine, update: Required<Update>) => engine.removeUpdate(update.id),
-};
-
-// Needs priority order
-export const createRender =
-    (engine: Engine, renders: EntityRenders): Render =>
-    (type, state) => {
-        if (type === 'draw') return handleDraw[state ? 'set' : 'remove'](engine, renders[type]);
-
-        handleUpdate[state ? 'set' : 'remove'](engine, renders[type]);
-    };
-
 // Mouse and Transition handlers mixed
 export const getHandlers = (mouse: Partial<MouseHandlers>, transitions: Partial<TransitionHandlers>) => ({
     down: () => {},

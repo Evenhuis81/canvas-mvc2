@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
-import {createEntityEvents, createListeners, createRender, getHandlers} from './properties';
-import {createRendersAndCallBacks} from './animate';
+import {createEntityEvents, createListeners, getHandlers} from './properties';
+import {createRender, createRenders} from './animate';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {resources} from '..';
@@ -32,24 +32,6 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
-    const startEnd = () => {
-        engine.removeUpdate(renders.start.id);
-
-        if (internalEntity.animations.animationType) engine.setUpdate(renders.animation);
-        if (internalEntity.animations.hoverType) engine.setUpdate(renders.hover);
-
-        internalEntity.handlers.onStartEnd();
-    };
-
-    const endEnd = () => {
-        engine.removeUpdate(renders.end.id);
-
-        if (internalEntity.animations.animationType) engine.removeUpdate(renders.animation.id);
-        if (internalEntity.animations.hoverType) engine.removeUpdate(renders.hover.id);
-
-        internalEntity.handlers.onEndEnd();
-    };
-
     const internalEntity: InternalEntity = {
         properties,
         animations,
@@ -60,17 +42,9 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         engine,
         context,
         input,
-        callBacks: {
-            startEnd,
-            endEnd,
-        },
     };
 
-    // const callBacks = getCallBacks(engine, renders, animations, handlers);
-
-    const {renders, callBacks} = createRendersAndCallBacks(internalEntity);
-
-    console.log(renders);
+    const renders = createRenders(internalEntity);
 
     const render = createRender(engine, renders);
 
@@ -88,8 +62,6 @@ const getCallBacks = (
     handlers: InternalEntity['handlers'],
 ) => {
     const startEnd = () => {
-        console.log('startEnd called');
-
         engine.removeUpdate(renders.start.id);
         if (animations.animationType) engine.setUpdate(renders.animation);
         if (animations.hoverType) engine.setUpdate(renders.hover);
@@ -97,10 +69,12 @@ const getCallBacks = (
     };
 
     const endEnd = () => {
-        // Unfinished
-        console.log('startEnd called');
-
         engine.removeUpdate(renders.end.id);
+
+        if (animations.animationType) engine.removeUpdate(renders.animation.id);
+        if (animations.hoverType) engine.removeUpdate(renders.hover.id);
+
+        handlers.onEndEnd();
     };
 
     return {endEnd, startEnd};
