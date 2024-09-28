@@ -1,7 +1,9 @@
 export const createCallBacks = (entity: InternalEntity) => {
     const {animationType, hoverType, startType, endType} = entity.animations;
 
-    const renderer = createRenderer(entity, emptyCallBacks);
+    const callBacks = createEmptyCallBacks();
+
+    const renderer = createRenderer(entity, callBacks);
 
     const updatesAndShow = {
         animation: animationType != 'none' ? renderer.animationUpdates[animationType]() : emptyUpdate,
@@ -12,10 +14,10 @@ export const createCallBacks = (entity: InternalEntity) => {
     };
 
     // transforms empty callBacks to filled callBacks
-    setCallBacks(entity, updatesAndShow, emptyCallBacks);
+    setCallBacks(entity, updatesAndShow, callBacks);
 
     // This probably needs to be a clone in case of multiple entities: test.
-    return emptyCallBacks; // = listeners and handlers mixed, seperate?
+    return callBacks; // = listeners and handlers mixed, seperate?
 };
 
 const setCallBacks = (
@@ -242,12 +244,12 @@ const createDraw = ({
     },
 });
 
-const emptyCallBacks = {
+const createEmptyCallBacks = () => ({
     start: () => {},
     startEnd: () => {},
     end: () => {},
     endEnd: () => {},
-};
+});
 
 const emptyUpdate = {
     id: 'emptyUpdate',
