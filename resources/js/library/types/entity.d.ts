@@ -64,17 +64,15 @@ interface Entity {
     listeners: EntityListeners;
     events: EntityEvents;
     animations: EntityAnimations;
-    // part of EntitySketch?
     colors: {
         fill: RGBA;
         stroke: RGBA;
         textFill: RGBA;
     };
-    // part of Handlers?
-    // callBacks: {
-    //     startEnd: () => void;
-    //     endEnd: () => void;
-    // };
+    callBacks: {
+        startEnd: () => void;
+        endEnd: () => void;
+    };
 }
 
 // click = mouse & touch (touch not yet implemented): see comments.txt for notes (expand into instructions)

@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import {createEntityEvents, createListeners, getHandlers} from './properties';
-import {createRender, createRenders} from './animate';
+import {createRenderer} from './animate';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {resources} from '..';
@@ -42,19 +42,24 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         engine,
         context,
         input,
+        callBacks: {
+            startEnd: () => {},
+            endEnd: () => {},
+        },
     };
 
-    const renders = createRenders(internalEntity);
+    const renderer = createRenderer(internalEntity);
 
-    const render = createRender(engine, renders);
+    // const render = createRender(engine, renders);
 
-    const events = createEntityEvents(internalEntity, render);
+    const events = createEntityEvents(internalEntity);
 
     initialize(internalEntity, events);
 
     return events;
 };
 
+// Abstract this to external module
 const getCallBacks = (
     engine: Engine,
     renders: EntityRenders,
@@ -63,8 +68,10 @@ const getCallBacks = (
 ) => {
     const startEnd = () => {
         engine.removeUpdate(renders.start.id);
+
         if (animations.animationType) engine.setUpdate(renders.animation);
         if (animations.hoverType) engine.setUpdate(renders.hover);
+
         handlers.onStartEnd();
     };
 

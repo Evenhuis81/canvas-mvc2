@@ -1,5 +1,5 @@
 /* eslint-disable max-lines-per-function */
-export const createEntityEvents = ({properties, animations, listeners}: InternalEntity, render: Render) => {
+export const createEntityEvents = ({properties, animations, listeners, callBacks}: InternalEntity) => {
     const show = () => {
         if (properties.show) throwError(properties.id, 'showing');
 
@@ -7,12 +7,8 @@ export const createEntityEvents = ({properties, animations, listeners}: Internal
 
         listeners.add();
 
-        // Figure out possible combinations and create methods accordingly. ie. start + animate same time ?
-        // Probably missing certain options, add to internal/external entity
-
-        // if (animations.startType) render('start', true);`
-        if (animations.animationType) render('animation', true);
-        render('draw', true);
+        // this could have the option to activate transition or not (ie. option for 1st time only)
+        // render()?
     };
 
     const hide = () => {
@@ -22,7 +18,7 @@ export const createEntityEvents = ({properties, animations, listeners}: Internal
 
         listeners.remove();
 
-        render('draw', false);
+        // render('draw', false);
     };
     const destroy = () => {
         listeners.remove();

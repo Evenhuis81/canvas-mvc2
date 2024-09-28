@@ -1,14 +1,18 @@
-export const createRenders = (entity: InternalEntity) => {
+export const createRenderer = (entity: InternalEntity) => {
     const {animationType, hoverType, startType, endType} = entity.animations;
 
-    const animates = createAnimates(entity);
+    const renderers = createRenderers(entity);
+
+    const engine = {
+        animation: animationType ? renderers.animationUpdates[animationType]() : emptyUpdate,
+        hover: hoverType ? renderers.hoverTransitions[hoverType]() : emptyUpdate,
+        start: startType ? renderers.entityTransitions[startType]() : emptyUpdate,
+        end: endType ? renderers.entityTransitions[endType]() : emptyUpdate,
+        draw: createDraw(entity), // part of createRenderers?
+    };
 
     return {
-        animation: animationType ? animates.animationUpdates[animationType]() : emptyUpdate,
-        hover: hoverType ? animates.hoverTransitions[hoverType]() : emptyUpdate,
-        start: startType ? animates.entityTransitions[startType]() : emptyUpdate,
-        end: endType ? animates.entityTransitions[endType]() : emptyUpdate,
-        draw: createDraw(entity),
+        engine,
     };
 };
 
@@ -18,9 +22,7 @@ const emptyUpdate = {
     fn: () => {},
 };
 
-const createAnimates = (entity: InternalEntity) => {
-    // Make a create hover/start/endTransitions object from it, so entity doesn't need to get passed for every method?
-    // Make multiple wrappers: (1. combine for entity global object, 2. create update/start/stop dynamically, 1liner?)
+const createRenderers = (entity: InternalEntity) => {
     const hoverTransitions = {
         bold: () => createBoldHoverTransitionUpdate(entity),
     };
@@ -62,7 +64,7 @@ const createAnimates = (entity: InternalEntity) => {
 };
 
 const createFadeIn1TransitionUpdate = (
-    {colors: {fill, stroke, textFill}, properties: {id, name}}: InternalEntity,
+    {colors: {fill, stroke, textFill}, properties: {id, name}, callBacks: {startEnd}}: InternalEntity,
     alphaVelocity: number,
 ) => ({
     id,
@@ -77,15 +79,15 @@ const createFadeIn1TransitionUpdate = (
             stroke.a = 1;
             textFill.a = 1;
 
-            // startEnd();
+            startEnd();
         }
     },
 });
 
 const createFadeOut1TransitionUpdate = ({
     properties: {id, name},
-    // callBacks: {endEnd},
     colors: {fill, stroke, textFill},
+    callBacks: {endEnd},
 }: InternalEntity) => ({
     id,
     name: `entity-fadeout1-update${name}`,
@@ -218,8 +220,6 @@ const handleUpdate = {
     remove: (engine: Engine, update: Required<Update>) => engine.removeUpdate(update.id),
 };
 
-// const callBacks = getCallBacks(engine, renders, animations, handlers);
-
 // Needs priority order
 export const createRender =
     (engine: Engine, renders: EntityRenders): Render =>
@@ -231,7 +231,6 @@ export const createRender =
 
 // max property is default 60, need for deltaTime, adj is change in property
 // make this a createProperties that picks the needed properties for each update respectively
-// This could also serve as an originalProperties object
 const upd = {
     origin: {
         lw: 0,
