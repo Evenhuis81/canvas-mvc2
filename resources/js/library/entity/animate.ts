@@ -1,89 +1,109 @@
-export const createRenderer = (entity: InternalEntity) => {
+export const createCallBacks = (entity: InternalEntity) => {
     const {animationType, hoverType, startType, endType} = entity.animations;
 
-    const renderers = createRenderers(entity);
+    const renderer = createRenderer(entity, emptyCallBacks);
 
-    const engine = {
-        animation: animationType ? renderers.animationUpdates[animationType]() : emptyUpdate,
-        hover: hoverType ? renderers.hoverTransitions[hoverType]() : emptyUpdate,
-        start: startType ? renderers.entityTransitions[startType]() : emptyUpdate,
-        end: endType ? renderers.entityTransitions[endType]() : emptyUpdate,
-        draw: createDraw(entity), // part of createRenderers?
+    const updatesAndShow = {
+        animation: animationType != 'none' ? renderer.animationUpdates[animationType]() : emptyUpdate,
+        hover: hoverType != 'none' ? renderer.hoverTransitions[hoverType]() : emptyUpdate,
+        start: startType != 'none' ? renderer.entityTransitions[startType]() : emptyUpdate,
+        end: endType != 'none' ? renderer.entityTransitions[endType]() : emptyUpdate,
+        draw: createDraw(entity),
     };
 
-    return {
-        engine,
-    };
+    // transforms empty callBacks to filled callBacks
+    setCallBacks(entity, updatesAndShow, emptyCallBacks);
+
+    // This probably needs to be a clone in case of multiple entities: test.
+    return emptyCallBacks; // = listeners and handlers mixed, seperate?
 };
 
-const emptyUpdate = {
-    id: 'emptyUpdate',
-    name: 'Empty Update',
-    fn: () => {},
-};
-
-const getCallBacks = (
-    engine: Engine,
-    renders: EntityRenders,
-    animations: InternalEntity['animations'],
-    handlers: InternalEntity['handlers'],
+const setCallBacks = (
+    {colors, animations, handlers, engine}: InternalEntity,
+    updatesAndDraw: UpdatesAndDraw,
+    callBacks: EntityCallBacks,
 ) => {
-    // const render = createRender(engine, renders);
+    callBacks.start = () => {
+        console.log('callBack start called');
 
-    const startEnd = () => {
-        engine.removeUpdate(renders.start.id);
+        // FadeIn1, this needs to be dynamic:
+        colors.fill.a = 0;
+        colors.stroke.a = 0;
+        colors.textFill.a = 0;
 
-        if (animations.animationType) engine.setUpdate(renders.animation);
-        if (animations.hoverType) engine.setUpdate(renders.hover);
-
-        handlers.onStartEnd();
+        engine.setDraw(updatesAndDraw.draw);
+        engine.setUpdate(updatesAndDraw.start);
     };
 
-    const endEnd = () => {
-        engine.removeUpdate(renders.end.id);
-
-        if (animations.animationType) engine.removeUpdate(renders.animation.id);
-        if (animations.hoverType) engine.removeUpdate(renders.hover.id);
-
-        handlers.onEndEnd();
+    callBacks.end = () => {
+        console.log('callBack end called');
+        // FadeOut1:
+        // entity.colors.fill.a = 1;
+        // entity.colors.stroke.a = 1;
+        // entity.colors.textFill.a = 1;
+        // const render = createRender(engine, renders);
     };
 
-    return {endEnd, startEnd};
+    callBacks.startEnd = () => {
+        console.log('callBack startEnd called');
+        //     engine.removeUpdate(renders.start.id);
+        //     if (animations.animationType) engine.setUpdate(renders.animation);
+        //     if (animations.hoverType) engine.setUpdate(renders.hover);
+        //     handlers.onStartEnd();
+    };
+
+    callBacks.endEnd = () => {
+        console.log('callBack endEnd called');
+        //     engine.removeUpdate(renders.end.id);
+        //     if (animations.animationType) engine.removeUpdate(renders.animation.id);
+        //     if (animations.hoverType) engine.removeUpdate(renders.hover.id);
+        //     handlers.onEndEnd();
+    };
 };
 
-const createRenderers = (entity: InternalEntity) => {
+const createRenderer = (entity: InternalEntity, emptyCallBacks: Pick<EntityCallBacks, 'startEnd' | 'endEnd'>) => {
+    const {id, name} = entity.properties;
+
     const hoverTransitions = {
         // Add statistics hoverTransitions view
-        bold: () => createBoldHoverTransitionUpdate(entity),
+        bold: () => {
+            const transition = createBoldHoverTransition(entity.sketch);
+
+            return createTransitionUpdate(entity, transition);
+        },
     };
 
     const entityTransitions = {
         fadein1: () => {
-            // Add statistics entityTransitions view
-
-            // Handle differently
-            // entity.colors.fill.a = 0;
-            // entity.colors.stroke.a = 0;
-            // entity.colors.textFill.a = 0;
-
-            return createFadeIn1TransitionUpdate(entity, 0.005 * entity.animations.startSpeed);
+            // Add statistics entityTransitions view, remove arbitrary speed
+            return {
+                id,
+                name: `entity-fadein1-update${name}`,
+                fn: createFadeIn1TransitionUpdateFn(
+                    entity.colors,
+                    0.005 * entity.animations.startSpeed,
+                    emptyCallBacks,
+                ),
+            };
         },
         fadeout1: () => {
             // Add statistics entityTransitions view
-
-            // Handle differently
-            // entity.colors.fill.a = 1;
-            // entity.colors.stroke.a = 1;
-            // entity.colors.textFill.a = 1;
-
-            return createFadeOut1TransitionUpdate(entity);
+            return {
+                id,
+                name: `entity-fadeout1-update${name}`,
+                fn: createFadeOut1TransitionUpdateFn(entity.colors, 0.005 * entity.animations.endSpeed, emptyCallBacks),
+            };
         },
     };
 
     const animationUpdates = {
         noise: () => {
             // Add statistics animationUpdates view
-            return createNoiseUpdate(entity);
+            return {
+                id,
+                name: `noise-animation-update-${name}`,
+                fn: createNoiseUpdate(entity.sketch),
+            };
         },
     };
 
@@ -94,55 +114,12 @@ const createRenderers = (entity: InternalEntity) => {
     };
 };
 
-const createFadeIn1TransitionUpdate = (
-    {colors: {fill, stroke, textFill}, properties: {id, name}}: InternalEntity,
-    alphaVelocity: number,
-) => ({
-    id,
-    name: `entity-fadein1-update${name}`,
-    fn: () => {
-        fill.a += alphaVelocity;
-        stroke.a += alphaVelocity;
-        textFill.a += alphaVelocity;
-
-        if (fill.a >= 1) {
-            fill.a = 1;
-            stroke.a = 1;
-            textFill.a = 1;
-
-            // startEnd();
-        }
-    },
-});
-
-const createFadeOut1TransitionUpdate = ({
-    properties: {id, name},
-    colors: {fill, stroke, textFill},
-}: InternalEntity) => ({
-    id,
-    name: `entity-fadeout1-update${name}`,
-    fn: () => {
-        fill.a -= 0.001;
-        stroke.a -= 0.001;
-        textFill.a -= 0.001;
-
-        if (fill.a <= 0) {
-            fill.a = 0;
-            stroke.a = 0;
-            textFill.a = 0;
-
-            // endEnd();
-        }
-    },
-});
-
-const createBoldHoverTransitionUpdate = (entity: InternalEntity) => {
-    const {sketch} = entity;
-
+const createBoldHoverTransition = (sketch: EntitySketch) => {
     const origin = {
         lw: sketch.lw,
         f: sketch.fontSize,
     };
+
     const steps = 30;
     const lwAdj = 0.1;
     const fAdj = lwAdj / 2;
@@ -169,8 +146,41 @@ const createBoldHoverTransitionUpdate = (entity: InternalEntity) => {
         }
     };
 
-    return createTransitionUpdate(entity, {forward, reverse});
+    return {forward, reverse};
 };
+
+const createFadeIn1TransitionUpdateFn =
+    ({fill, stroke, textFill}: EntityColors, alphaVelocity: number, callBacks: Pick<EntityCallBacks, 'startEnd'>) =>
+    () => {
+        console.log('fadein1 update running');
+        fill.a += alphaVelocity;
+        stroke.a += alphaVelocity;
+        textFill.a += alphaVelocity;
+
+        if (fill.a >= 1) {
+            fill.a = 1;
+            stroke.a = 1;
+            textFill.a = 1;
+
+            callBacks.startEnd();
+        }
+    };
+
+const createFadeOut1TransitionUpdateFn =
+    ({fill, stroke, textFill}: EntityColors, alphaVelocity: number, callBacks: Pick<EntityCallBacks, 'endEnd'>) =>
+    () => {
+        fill.a -= alphaVelocity;
+        stroke.a -= alphaVelocity;
+        textFill.a -= alphaVelocity;
+
+        if (fill.a <= 0) {
+            fill.a = 0;
+            stroke.a = 0;
+            textFill.a = 0;
+
+            callBacks.endEnd();
+        }
+    };
 
 const createTransitionUpdate = (
     {properties: {id, name}, input: {mouse}, sketch}: InternalEntity,
@@ -189,75 +199,61 @@ const createTransitionUpdate = (
     },
 });
 
-const createNoiseUpdate = ({properties: {id, name}, sketch}: InternalEntity) => ({
-    id: id,
-    name: `noise-animation-update-${name}`,
-    fn: () => {
-        sketch.x += upd.adj.x;
-        sketch.y += upd.adj.y;
+const createNoiseUpdate = (sketch: EntitySketch) => () => {
+    sketch.x += upd.adj.x;
+    sketch.y += upd.adj.y;
 
-        upd.count++;
+    upd.count++;
 
-        if (upd.count > 60) {
-            upd.adj.x *= -1;
-            upd.adj.y *= -1;
+    if (upd.count > 60) {
+        upd.adj.x *= -1;
+        upd.adj.y *= -1;
 
-            upd.count = 0;
-        }
-    },
-});
+        upd.count = 0;
+    }
+};
 
 const createDraw = ({
     properties: {id, name},
     sketch,
     context: ctx,
     colors: {fill, stroke, textFill},
-}: InternalEntity) => {
-    console.log('draw creation'); // Make this a statistic log
+}: InternalEntity) => ({
+    id,
+    name: `draw-${name}`,
+    fn: () => {
+        ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
+        ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
+        ctx.lineWidth = sketch.lw;
 
-    return {
-        id,
-        name: `draw-${name}`,
-        fn: () => {
-            ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
-            ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
-            ctx.lineWidth = sketch.lw;
+        ctx.beginPath();
+        ctx.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.r);
+        ctx.fill();
+        ctx.stroke();
 
-            ctx.beginPath();
-            ctx.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.r);
-            ctx.fill();
-            ctx.stroke();
+        ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
+        ctx.font = `${sketch.fontSize}px ${sketch.font}`;
 
-            ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
-            ctx.font = `${sketch.fontSize}px ${sketch.font}`;
+        ctx.textAlign = sketch.textAlign;
+        ctx.textBaseline = sketch.textBaseLine;
 
-            ctx.textAlign = sketch.textAlign;
-            ctx.textBaseline = sketch.textBaseLine;
+        ctx.beginPath();
+        ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5);
+    },
+});
 
-            ctx.beginPath();
-            ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5);
-        },
-    };
+const emptyCallBacks = {
+    start: () => {},
+    startEnd: () => {},
+    end: () => {},
+    endEnd: () => {},
 };
 
-const handleDraw = {
-    set: (engine: Engine, update: Required<Draw>) => engine.setDraw(update),
-    remove: (engine: Engine, update: Required<Draw>) => engine.removeDraw(update.id),
+const emptyUpdate = {
+    id: 'emptyUpdate',
+    name: 'Empty Update',
+    fn: () => {},
 };
-
-const handleUpdate = {
-    set: (engine: Engine, update: Required<Update>) => engine.setUpdate(update),
-    remove: (engine: Engine, update: Required<Update>) => engine.removeUpdate(update.id),
-};
-
-// Needs priority order
-export const createRender =
-    (engine: Engine, renders: EntityRenders): Render =>
-    (type, state) => {
-        if (type === 'draw') return handleDraw[state ? 'set' : 'remove'](engine, renders[type]);
-
-        handleUpdate[state ? 'set' : 'remove'](engine, renders[type]);
-    };
 
 // max property is default 60, need for deltaTime, adj is change in property
 // make this a createProperties that picks the needed properties for each update respectively

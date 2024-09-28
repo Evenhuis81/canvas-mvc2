@@ -4,6 +4,7 @@ import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {resources} from '..';
 import type {Resources} from 'library/types';
+import {createCallBacks} from './animate';
 
 const createResource = (res: Resources) => ({
     create: (options?: Partial<EntityConfig>) => create(res, options),
@@ -15,7 +16,6 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         id: options.id ?? `entity-${uid()}`,
         ...getProperties(defaultSketchProperties, options),
     };
-
     // Add statistics options -> internal options view
 
     const properties = {id, name, disabled, show, showDelay};
@@ -45,10 +45,12 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         input,
     };
 
-    // return callBacks?
-    // const renderer = createRenderer(internalEntity);
-    const events = createEntityEvents(internalEntity);
+    // returns callBacks... transform to something more generic (read comment on return of createRenders)
+    const callBacks = createCallBacks(internalEntity);
 
+    const events = createEntityEvents(internalEntity, callBacks);
+
+    // CallBacks and events are mixed up, combine and add them all into callbacks (internal and external)
     initialize(internalEntity, events);
 
     return events;

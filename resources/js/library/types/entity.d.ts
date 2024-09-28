@@ -51,6 +51,9 @@ type EntityColors = {
     textFill: RGBA;
 };
 
+// type EntityAnimationsConfig<Type> = {
+//     [Property in keyof Type as `${string & Property}Type`]: Type[Property];
+// };
 // TODO::Use type of EntityCallBacks
 type TransitionHandlers = {
     onStartEnd: () => void;
@@ -58,7 +61,9 @@ type TransitionHandlers = {
 };
 
 interface EntityCallBacks {
+    start: () => void;
     startEnd: () => void;
+    end: () => void;
     endEnd: () => void;
 }
 
@@ -85,20 +90,13 @@ interface EntityHandlers extends TransitionHandlers {
     mouse: Partial<MouseHandlers>;
 }
 
-type EntityConfig = EntitySketch & EntityProperties & EntityHandlers & EntityRenders & EntityAnimations;
+type EntityConfig = EntitySketch & EntityProperties & EntityHandlers & EntityAnimations;
 
 type InternalEntity = Omit<Entity, 'events'> & {
     engine: Engine;
     context: CanvasRenderingContext2D;
     input: Input;
 };
-
-// type EntityAnimationsConfig<Type> = {
-//     [Property in keyof Type as `${string & Property}Type`]: Type[Property];
-// };
-
-// possible future states: 'pauze', 'continue'
-// type Render = (type: Exclude<keyof EntityRenders, 'callBacks'>, state: boolean) => void;
 
 interface EntityAnimations {
     animationType: EntityAnimationType;
@@ -108,14 +106,13 @@ interface EntityAnimations {
     endType: EntityTransitionTypes;
     endSpeed: 1 | 2 | 3;
 }
-interface EntityRenders {
+interface UpdatesAndDraw {
     draw: Required<Draw>;
     animation: Required<Update>;
     hover: Required<Update>;
     start: Required<Update>;
     end: Required<Update>;
-    callBacks: {
-        startEnd: () => {};
-        endEnd: () => {};
-    };
 }
+
+// possible future states: 'pauze', 'continue'
+// type Render = (type: Exclude<keyof EntityRenders, 'callBacks'>, state: boolean) => void;

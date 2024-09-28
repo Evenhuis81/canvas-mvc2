@@ -1,5 +1,5 @@
 /* eslint-disable max-lines-per-function */
-export const createEntityEvents = ({properties, animations, listeners}: InternalEntity) => {
+export const createEntityEvents = ({properties, listeners}: InternalEntity, callBacks: EntityCallBacks) => {
     const show = () => {
         if (properties.show) throwError(properties.id, 'showing');
 
@@ -7,8 +7,7 @@ export const createEntityEvents = ({properties, animations, listeners}: Internal
 
         listeners.add();
 
-        // this could have the option to activate transition or not (ie. option for 1st time only)
-        // render()?
+        callBacks.start();
     };
 
     const hide = () => {
@@ -18,8 +17,9 @@ export const createEntityEvents = ({properties, animations, listeners}: Internal
 
         listeners.remove();
 
-        // render('draw', false);
+        callBacks.end(); // need an additional callBack -> stop (full stop)
     };
+
     const destroy = () => {
         listeners.remove();
 
@@ -27,6 +27,7 @@ export const createEntityEvents = ({properties, animations, listeners}: Internal
 
         if (!properties.disabled) disable();
     };
+
     const enable = () => {
         if (!properties.disabled) throwError(properties.id, 'enabled');
 
@@ -34,14 +35,15 @@ export const createEntityEvents = ({properties, animations, listeners}: Internal
 
         listeners.add();
 
-        // setEngine(); // update only
+        callBacks.start(); // might need an additional callBack -> small start (no transition, user input?)
     };
+
     const disable = () => {
         if (properties.disabled) throwError(properties.id, 'disabled');
 
         listeners.remove();
 
-        // setEngine({}); // update only
+        // callBacks.stop() see comment on hide()
 
         properties.disabled = true;
     };
