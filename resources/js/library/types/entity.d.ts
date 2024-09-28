@@ -87,7 +87,7 @@ interface MouseHandlers {
 }
 
 interface EntityHandlers extends TransitionHandlers {
-    mouse: Partial<MouseHandlers>;
+    mouse: MouseHandlers;
 }
 
 type EntityConfig = EntitySketch & EntityProperties & EntityHandlers & EntityAnimations;
@@ -99,6 +99,8 @@ type InternalEntity = Omit<Entity, 'events'> & {
 };
 
 interface EntityAnimations {
+    animateAtStart: boolean;
+    animateAtEnd: boolean;
     animationType: EntityAnimationType;
     hoverType: EntityHoverTransitionTypes;
     startType: EntityTransitionTypes;

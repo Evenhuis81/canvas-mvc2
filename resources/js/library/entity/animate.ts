@@ -16,7 +16,6 @@ export const createCallBacks = (entity: InternalEntity) => {
     // transforms empty callBacks to filled callBacks
     setCallBacks(entity, updatesAndShow, callBacks);
 
-    // This probably needs to be a clone in case of multiple entities: test.
     return callBacks; // = listeners and handlers mixed, seperate?
 };
 
@@ -28,13 +27,28 @@ const setCallBacks = (
     callBacks.start = () => {
         console.log('callBack start called');
 
-        // FadeIn1, this needs to be dynamic:
-        colors.fill.a = 0;
-        colors.stroke.a = 0;
-        colors.textFill.a = 0;
+        // Make dynamic
+        if (animations.startType === 'fadein1') {
+            colors.fill.a = 0;
+            colors.stroke.a = 0;
+            colors.textFill.a = 0;
+
+            engine.setUpdate(updatesAndDraw.start);
+        }
 
         engine.setDraw(updatesAndDraw.draw);
-        engine.setUpdate(updatesAndDraw.start);
+    };
+
+    callBacks.startEnd = () => {
+        console.log('callBack startEnd called');
+
+        engine.removeUpdate(updatesAndDraw.start.id);
+
+        // Make dynamic, make option for startTransition + animation
+        if (animations.animationType) engine.setUpdate(updatesAndDraw.animation);
+        //  if (animations.hoverType) engine.setUpdate(renders.hover);
+
+        handlers.onStartEnd();
     };
 
     callBacks.end = () => {
@@ -44,14 +58,6 @@ const setCallBacks = (
         // entity.colors.stroke.a = 1;
         // entity.colors.textFill.a = 1;
         // const render = createRender(engine, renders);
-    };
-
-    callBacks.startEnd = () => {
-        console.log('callBack startEnd called');
-        //     engine.removeUpdate(renders.start.id);
-        //     if (animations.animationType) engine.setUpdate(renders.animation);
-        //     if (animations.hoverType) engine.setUpdate(renders.hover);
-        //     handlers.onStartEnd();
     };
 
     callBacks.endEnd = () => {

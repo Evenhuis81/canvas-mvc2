@@ -18,11 +18,11 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     };
     // Add statistics options -> internal options view
 
+    // type RestOptions = typeof rest;
+
     const properties = {id, name, disabled, show, showDelay};
 
-    const {startType, startSpeed, endType, endSpeed, hoverType, animationType, ...rest2} = rest;
-
-    const animations = {startType, startSpeed, endType, endSpeed, hoverType, animationType};
+    const {rest2, animations} = getAnimations(rest);
 
     // mouse + transition handlers mixed
     const {mouse, onStartEnd, onEndEnd, ...sketch} = rest2;
@@ -83,6 +83,8 @@ const defaultSketchProperties = {
     show: true,
     showDelay: 0,
     // Animation Properties
+    animateAtStart: false,
+    animateAtEnd: false,
     animationType: 'none',
     hoverType: 'none',
     startType: 'none',
@@ -104,6 +106,25 @@ const defaultSketchProperties = {
     fontSize: 16,
     textAlign: 'center',
     textBaseLine: 'middle',
+};
+
+const getAnimations = (rest: Omit<EntityConfig, keyof EntityProperties>) => {
+    const {startType, startSpeed, endType, endSpeed, hoverType, animationType, animateAtStart, animateAtEnd, ...rest2} =
+        rest;
+
+    return {
+        animations: {
+            startType,
+            startSpeed,
+            endType,
+            endSpeed,
+            hoverType,
+            animationType,
+            animateAtStart,
+            animateAtEnd,
+        },
+        rest2,
+    };
 };
 
 // TODO::Resource availability check
