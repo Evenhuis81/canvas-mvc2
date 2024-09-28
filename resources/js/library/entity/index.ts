@@ -1,6 +1,5 @@
 /* eslint-disable max-lines-per-function */
 import {createEntityEvents, createListeners, getHandlers} from './properties';
-import {createRenderer} from './animate';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {resources} from '..';
@@ -17,6 +16,8 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         ...getProperties(defaultSketchProperties, options),
     };
 
+    // Add statistics options -> internal options view
+
     const properties = {id, name, disabled, show, showDelay};
 
     const {startType, startSpeed, endType, endSpeed, hoverType, animationType, ...rest2} = rest;
@@ -26,11 +27,11 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     // mouse + transition handlers mixed
     const {mouse, onStartEnd, onEndEnd, ...sketch} = rest2;
 
+    const colors = getSketchRGBAColorsFromHexString(sketch);
+
     const handlers = getHandlers({...mouse}, {...(onStartEnd && {onStartEnd}), ...(onEndEnd && {onEndEnd})});
 
     const listeners = createListeners(sketch, handlers, input);
-
-    const colors = getSketchRGBAColorsFromHexString(sketch);
 
     const internalEntity: InternalEntity = {
         properties,
@@ -42,16 +43,10 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         engine,
         context,
         input,
-        callBacks: {
-            startEnd: () => {},
-            endEnd: () => {},
-        },
     };
 
-    const renderer = createRenderer(internalEntity);
-
-    // const render = createRender(engine, renders);
-
+    // return callBacks?
+    // const renderer = createRenderer(internalEntity);
     const events = createEntityEvents(internalEntity);
 
     initialize(internalEntity, events);
@@ -59,37 +54,9 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     return events;
 };
 
-// Abstract this to external module
-const getCallBacks = (
-    engine: Engine,
-    renders: EntityRenders,
-    animations: InternalEntity['animations'],
-    handlers: InternalEntity['handlers'],
-) => {
-    const startEnd = () => {
-        engine.removeUpdate(renders.start.id);
-
-        if (animations.animationType) engine.setUpdate(renders.animation);
-        if (animations.hoverType) engine.setUpdate(renders.hover);
-
-        handlers.onStartEnd();
-    };
-
-    const endEnd = () => {
-        engine.removeUpdate(renders.end.id);
-
-        if (animations.animationType) engine.removeUpdate(renders.animation.id);
-        if (animations.hoverType) engine.removeUpdate(renders.hover.id);
-
-        handlers.onEndEnd();
-    };
-
-    return {endEnd, startEnd};
-};
-
 const initialize = ({properties}: InternalEntity, events: EntityEvents) => {
     if (properties.show) {
-        // Optional setTimeout needed? (mind the 'on top of stack')
+        // Test optional setTimeout (mind the 'on top of stack')
         setTimeout(() => {
             properties.show = false;
 
@@ -113,11 +80,11 @@ const defaultSketchProperties = {
     disabled: false,
     show: true,
     showDelay: 0,
-    // Animation Properties, undefined stays undefined
-    // animationType: undefined,
-    // hoverType: undefined,
-    // startType: undefined,
-    // endType: undefined,
+    // Animation Properties
+    animationType: 'none',
+    hoverType: 'none',
+    startType: 'none',
+    endType: 'none',
     startSpeed: 2,
     endSpeed: 2,
     // Sketch

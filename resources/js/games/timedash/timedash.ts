@@ -21,9 +21,11 @@ export default {
         entity.create({
             text: 'Test Example #1',
             w: 200,
-            // show: true,
-            animationType: 'noise',
+            r: 0,
             // showDelay: 1500,
+            // show: true,
+            // disable: false,
+            // animationType: 'noise',
             // = touch- and mousedown (not yet) / needs transition handlers
             // mouse: {
             //     button: 2,

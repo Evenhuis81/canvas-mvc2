@@ -36,21 +36,27 @@ interface EntityListeners {
     remove: () => void;
 }
 
-type EntityAnimationType = 'noise';
+// TODO::Dynamically add 'none' unionType
+type EntityAnimationType = 'noise' | 'none';
 
-type EntityTransitionTypes = 'fadein1' | 'fadeout1';
+type EntityTransitionTypes = 'fadein1' | 'fadeout1' | 'none';
 
-type EntityHoverTransitionTypes = 'bold';
+type EntityHoverTransitionTypes = 'bold' | 'none';
 
 type EntityTypes = EntityAnimationType | EntityTransitionTypes | EntityHoverTransitionTypes;
 
-// TODO::Use type of CallBacks
+type EntityColors = {
+    fill: RGBA;
+    stroke: RGBA;
+    textFill: RGBA;
+};
+
+// TODO::Use type of EntityCallBacks
 type TransitionHandlers = {
     onStartEnd: () => void;
     onEndEnd: () => void;
 };
 
-// part of Handlers?
 interface EntityCallBacks {
     startEnd: () => void;
     endEnd: () => void;
@@ -64,15 +70,7 @@ interface Entity {
     listeners: EntityListeners;
     events: EntityEvents;
     animations: EntityAnimations;
-    colors: {
-        fill: RGBA;
-        stroke: RGBA;
-        textFill: RGBA;
-    };
-    callBacks: {
-        startEnd: () => void;
-        endEnd: () => void;
-    };
+    colors: EntityColors;
 }
 
 // click = mouse & touch (touch not yet implemented): see comments.txt for notes (expand into instructions)
@@ -87,10 +85,6 @@ interface EntityHandlers extends TransitionHandlers {
     mouse: Partial<MouseHandlers>;
 }
 
-// type EntityAnimationsConfig<Type> = {
-//     [Property in keyof Type as `${string & Property}Type`]: Type[Property];
-// };
-
 type EntityConfig = EntitySketch & EntityProperties & EntityHandlers & EntityRenders & EntityAnimations;
 
 type InternalEntity = Omit<Entity, 'events'> & {
@@ -99,15 +93,19 @@ type InternalEntity = Omit<Entity, 'events'> & {
     input: Input;
 };
 
+// type EntityAnimationsConfig<Type> = {
+//     [Property in keyof Type as `${string & Property}Type`]: Type[Property];
+// };
+
 // possible future states: 'pauze', 'continue'
-type Render = (type: keyof EntityRenders, state: boolean) => void;
+// type Render = (type: Exclude<keyof EntityRenders, 'callBacks'>, state: boolean) => void;
 
 interface EntityAnimations {
-    animationType?: EntityAnimationType;
-    hoverType?: EntityHoverTransitionTypes;
-    startType?: EntityTransitionTypes;
+    animationType: EntityAnimationType;
+    hoverType: EntityHoverTransitionTypes;
+    startType: EntityTransitionTypes;
     startSpeed: 1 | 2 | 3;
-    endType?: EntityTransitionTypes;
+    endType: EntityTransitionTypes;
     endSpeed: 1 | 2 | 3;
 }
 interface EntityRenders {
@@ -116,4 +114,8 @@ interface EntityRenders {
     hover: Required<Update>;
     start: Required<Update>;
     end: Required<Update>;
+    callBacks: {
+        startEnd: () => {};
+        endEnd: () => {};
+    };
 }

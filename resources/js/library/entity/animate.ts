@@ -22,14 +22,45 @@ const emptyUpdate = {
     fn: () => {},
 };
 
+const getCallBacks = (
+    engine: Engine,
+    renders: EntityRenders,
+    animations: InternalEntity['animations'],
+    handlers: InternalEntity['handlers'],
+) => {
+    // const render = createRender(engine, renders);
+
+    const startEnd = () => {
+        engine.removeUpdate(renders.start.id);
+
+        if (animations.animationType) engine.setUpdate(renders.animation);
+        if (animations.hoverType) engine.setUpdate(renders.hover);
+
+        handlers.onStartEnd();
+    };
+
+    const endEnd = () => {
+        engine.removeUpdate(renders.end.id);
+
+        if (animations.animationType) engine.removeUpdate(renders.animation.id);
+        if (animations.hoverType) engine.removeUpdate(renders.hover.id);
+
+        handlers.onEndEnd();
+    };
+
+    return {endEnd, startEnd};
+};
+
 const createRenderers = (entity: InternalEntity) => {
     const hoverTransitions = {
+        // Add statistics hoverTransitions view
         bold: () => createBoldHoverTransitionUpdate(entity),
     };
 
     const entityTransitions = {
         fadein1: () => {
-            console.log('fadeIn1 creation'); // Make this a statistic log
+            // Add statistics entityTransitions view
+
             // Handle differently
             // entity.colors.fill.a = 0;
             // entity.colors.stroke.a = 0;
@@ -38,7 +69,8 @@ const createRenderers = (entity: InternalEntity) => {
             return createFadeIn1TransitionUpdate(entity, 0.005 * entity.animations.startSpeed);
         },
         fadeout1: () => {
-            console.log('fadeOut1 creation'); // Make this a statistic log
+            // Add statistics entityTransitions view
+
             // Handle differently
             // entity.colors.fill.a = 1;
             // entity.colors.stroke.a = 1;
@@ -50,8 +82,7 @@ const createRenderers = (entity: InternalEntity) => {
 
     const animationUpdates = {
         noise: () => {
-            console.log('noise creation'); // Make this a statistic log
-
+            // Add statistics animationUpdates view
             return createNoiseUpdate(entity);
         },
     };
@@ -64,7 +95,7 @@ const createRenderers = (entity: InternalEntity) => {
 };
 
 const createFadeIn1TransitionUpdate = (
-    {colors: {fill, stroke, textFill}, properties: {id, name}, callBacks: {startEnd}}: InternalEntity,
+    {colors: {fill, stroke, textFill}, properties: {id, name}}: InternalEntity,
     alphaVelocity: number,
 ) => ({
     id,
@@ -79,7 +110,7 @@ const createFadeIn1TransitionUpdate = (
             stroke.a = 1;
             textFill.a = 1;
 
-            startEnd();
+            // startEnd();
         }
     },
 });
@@ -87,7 +118,6 @@ const createFadeIn1TransitionUpdate = (
 const createFadeOut1TransitionUpdate = ({
     properties: {id, name},
     colors: {fill, stroke, textFill},
-    callBacks: {endEnd},
 }: InternalEntity) => ({
     id,
     name: `entity-fadeout1-update${name}`,

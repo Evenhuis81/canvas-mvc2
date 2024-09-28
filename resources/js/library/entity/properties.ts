@@ -1,5 +1,5 @@
 /* eslint-disable max-lines-per-function */
-export const createEntityEvents = ({properties, animations, listeners, callBacks}: InternalEntity) => {
+export const createEntityEvents = ({properties, animations, listeners}: InternalEntity) => {
     const show = () => {
         if (properties.show) throwError(properties.id, 'showing');
 
@@ -54,7 +54,7 @@ export const getHandlers = (mouse: Partial<MouseHandlers>, transitions: Partial<
     down: () => {},
     up: () => {},
     onStartEnd: () => {
-        console.log(transitions);
+        console.log('default onStartEnd internally');
     },
     onEndEnd: () => {
         console.log('default onEndEnd internally');
