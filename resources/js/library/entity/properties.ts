@@ -7,7 +7,7 @@ export const createEntityEvents = ({properties, listeners}: InternalEntity, call
 
         listeners.add();
 
-        callBacks.start();
+        callBacks.start(); // option for transition on show (user input)
     };
 
     const hide = () => {

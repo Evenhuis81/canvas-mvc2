@@ -26,6 +26,7 @@ export default {
             // show: true,
             // disable: false,
             animationType: 'noise',
+            animateAtStart: true,
             // = touch- and mousedown (not yet) / needs transition handlers
             // mouse: {
             //     button: 2,

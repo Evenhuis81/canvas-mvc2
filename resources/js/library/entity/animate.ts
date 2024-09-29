@@ -27,13 +27,15 @@ const setCallBacks = (
     callBacks.start = () => {
         console.log('callBack start called');
 
-        // Make dynamic
+        // Make dynamic and create statistic view for engine (amount of updates/draws and properties)
         if (animations.startType === 'fadein1') {
             colors.fill.a = 0;
             colors.stroke.a = 0;
             colors.textFill.a = 0;
 
             engine.setUpdate(updatesAndDraw.start);
+
+            if (animations.animateAtStart) engine.setUpdate(updatesAndDraw.animation);
         }
 
         engine.setDraw(updatesAndDraw.draw);
@@ -44,9 +46,8 @@ const setCallBacks = (
 
         engine.removeUpdate(updatesAndDraw.start.id);
 
-        // Make dynamic, make option for startTransition + animation
-        if (animations.animationType) engine.setUpdate(updatesAndDraw.animation);
-        //  if (animations.hoverType) engine.setUpdate(renders.hover);
+        if (animations.animationType && !animations.animateAtStart) engine.setUpdate(updatesAndDraw.animation);
+        if (animations.hoverType) engine.setUpdate(updatesAndDraw.hover);
 
         handlers.onStartEnd();
     };
