@@ -1,3 +1,5 @@
+import {uid} from 'library/helpers';
+
 export const createCallBacks = (entity: InternalEntity) => {
     const {animationType, hoverType, startType, endType} = entity.animations;
 
@@ -38,44 +40,78 @@ export const createCallBacks = (entity: InternalEntity) => {
                   },
     };
 
+    const setEngine = createSetEngine(updates, draw);
+
     // transforms empty callBacks to filled callBacks
-    setCallBacks(entity, updates, draw, callBacks);
+    setCallBacks(entity, setEngine, callBacks);
 
     return callBacks;
 };
 
+const statistics = {
+    set: (msg: string) => {
+        const id = uid();
+
+        return id;
+    },
+    remove: (id: string) => {
+        // handle id to remove statistic from pool
+    },
+};
+
+// const handleDraw = {
+//     set: (engine: Engine, update: Required<Draw>) => engine.setDraw(update),
+//     remove: (engine: Engine, update: Required<Draw>) => engine.removeDraw(update.id),
+// };
+
+// const handleUpdate = {
+//     set: (engine: Engine, update: Required<Update>) => engine.setUpdate(update),
+//     remove: (engine: Engine, update: Required<Update>) => engine.removeUpdate(update.id),
+// };
+
+// Needs priority order
+// export const createRender =
+//     (engine: Engine, renders: EntityRenders): Render =>
+//     (type, state) => {
+//         if (type === 'draw') return handleDraw[state ? 'set' : 'remove'](engine, renders[type]);
+
+//         handleUpdate[state ? 'set' : 'remove'](engine, renders[type]);
+//     };
+
+const createSetEngine = (updates: Partial<EntityUpdates>, draw: EntityDraw): EntitySetEngine => {
+    return () => {
+        //
+    };
+};
+
 const setCallBacks = (
     {colors, animations, handlers, engine}: InternalEntity,
-    updates: Partial<EntityUpdates>,
-    draw: EntityDraw,
+    setEngine: EntitySetEngine,
     callBacks: EntityCallBacks,
 ) => {
-    // This could be mandatory parameter
     callBacks.start = quickShow => {
-        console.log('callBack start');
+        // statistics.set('callBack start);
 
-        // Make dynamic and create statistic view for engine (amount of updates/draws and properties)
-        if (!quickShow) {
-            console.log('callBack start: FadeIn1');
-            if (updates.start) {
-                // Needs prepare function (usable for transitions that need preparations like this)
-                if (animations.startType === 'fadein1') {
-                    colors.fill.a = 0;
-                    colors.stroke.a = 0;
-                    colors.textFill.a = 0;
-                }
+        if (quickShow) return setEngine('draw', 'on');
 
-                engine.setUpdate(updates.start.update);
+        if (updates.start) {
+            // Needs prepare function (usable for transitions that need preparations like this)
+            if (animations.startType === 'fadein1') {
+                colors.fill.a = 0;
+                colors.stroke.a = 0;
+                colors.textFill.a = 0;
             }
 
-            // Could do with a propertyCheck -> !animateAtStart = !animations.animationType === 'none'
-            // Another option is to just overwrite the updates and ignore updates that are already set
-            if (animations.animateAtStart && updates.animation) {
-                console.log('callBack start: animateAtStart set');
+            engine.setUpdate(updates.start.update);
+        }
 
-                engine.setUpdate(updates.animation.update);
-                updates.animation.set = true;
-            }
+        // Could do with a propertyCheck -> !animateAtStart = !animations.animationType === 'none'
+        // Another option is to just overwrite the updates and ignore updates that are already set
+        if (animations.animateAtStart && updates.animation) {
+            console.log('callBack start: animateAtStart set');
+
+            engine.setUpdate(updates.animation.update);
+            updates.animation.set = true;
         }
 
         // set hover on startTransition?
@@ -361,12 +397,6 @@ const createEmptyCallBacks = () => ({
     end: () => {},
     endEnd: () => {},
 });
-
-const emptyUpdate = {
-    id: 'emptyUpdate',
-    name: 'Empty Update',
-    fn: () => {},
-};
 
 // max property is default 60, need for deltaTime, adj is change in property
 // make this a createProperties that picks the needed properties for each update respectively

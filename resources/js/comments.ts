@@ -2,6 +2,12 @@
 // This should become a reesource, but with different 'themes' or statistic variants. (for different kind of options)
 // Create text object according to StaticView, with calculated options (like button, possible to 'lend' those)
 
+// const emptyUpdate = {
+//     id: 'emptyUpdate',
+//     name: 'Empty Update',
+//     fn: () => {},
+// };
+
 // const propertiesLength = [6, 5]; // [Mixed Internal Properties, Transition Properties]
 
 //     const internal = {id: options.id ?? `entity-${uid()}`, ...getProperties(options, defaultSketchProperties)};

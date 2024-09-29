@@ -123,5 +123,9 @@ interface EntityDraw {
     draw: Required<Draw>;
 }
 
-// possible future states: 'pauze', 'continue'
+type EntityEngineState = 'on' | 'off' | 'pauze' | 'continue';
+
+type EntitySetEngine = (type: keyof EntityUpdates | 'draw', state: EntityEngineState) => void;
+
+// possible future states:
 // type Render = (type: Exclude<keyof EntityRenders, 'callBacks'>, state: boolean) => void;
