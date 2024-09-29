@@ -58,9 +58,9 @@ type TransitionHandlers = {
 };
 
 interface EntityCallBacks {
-    start: (startTransition?: boolean) => void;
+    start: (quickShow: boolean) => void;
     startEnd: () => void;
-    end: (endTransition?: boolean) => void;
+    end: (quickHide: boolean) => void;
     endEnd: () => void;
 }
 
@@ -118,10 +118,10 @@ interface EntityUpdates {
     end: EntityAnimationUpdate;
 }
 
-// interface EntityDraw {
-//     set: boolean;
-//     draw: Required<Draw>;
-// }
-// draw: Required<Draw>;
+interface EntityDraw {
+    set: boolean;
+    draw: Required<Draw>;
+}
+
 // possible future states: 'pauze', 'continue'
 // type Render = (type: Exclude<keyof EntityRenders, 'callBacks'>, state: boolean) => void;

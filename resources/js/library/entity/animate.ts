@@ -47,10 +47,11 @@ export const createCallBacks = (entity: InternalEntity) => {
 const setCallBacks = (
     {colors, animations, handlers, engine}: InternalEntity,
     updates: Partial<EntityUpdates>,
-    draw: Required<Draw>,
+    draw: EntityDraw,
     callBacks: EntityCallBacks,
 ) => {
-    callBacks.start = (quickShow = false) => {
+    // This could be mandatory parameter
+    callBacks.start = quickShow => {
         console.log('callBack start');
 
         // Make dynamic and create statistic view for engine (amount of updates/draws and properties)
@@ -77,7 +78,16 @@ const setCallBacks = (
             }
         }
 
-        engine.setDraw(draw);
+        // set hover on startTransition?
+        if (updates.hover && quickShow) {
+            console.log('callBack start: hover set');
+
+            engine.setUpdate(updates.hover.update);
+            updates.hover.set = true;
+        }
+
+        draw.set = true;
+        engine.setDraw(draw.draw);
     };
 
     callBacks.startEnd = () => {
@@ -89,18 +99,31 @@ const setCallBacks = (
         // To properly test and check, this needs an overview on running updates
         if (updates.animation && !updates.animation.set) engine.setUpdate(updates.animation.update);
 
-        // hoverType set here
+        if (updates.hover && !updates.hover.set) {
+            console.log('callBack startEnd: hover set');
+
+            engine.setUpdate(updates.hover.update);
+            updates.hover.set = true;
+        }
 
         handlers.onStartEnd();
     };
 
-    callBacks.end = (quickHide = false) => {
+    callBacks.end = quickHide => {
         console.log('callBack end');
 
         if (!quickHide) {
+            // TODO::Make this more efficient
+            if (!animations.animateAtEnd && updates.animation && updates.animation.set) {
+                console.log('callBack end: animateAtEnd removed');
+
+                updates.animation.set = false;
+                engine.removeUpdate(updates.animation.update.id);
+            }
+
             if (updates.end) {
                 // Needs prepare function (usable for transitions that need preparations like this)
-                if (animations.startType === 'fadeout1') {
+                if (animations.endType === 'fadeout1') {
                     console.log('callBack end: FadeOut1');
                     colors.fill.a = 1;
                     colors.stroke.a = 1;
@@ -109,19 +132,24 @@ const setCallBacks = (
 
                 engine.setUpdate(updates.end.update);
             }
-
-            // TODO::Make this more efficient
-            if (!animations.animateAtEnd && updates.animation && updates.animation.set) {
-                console.log('callBack end: animateAtEnd removed');
-
-                updates.animation.set = false;
-                engine.removeUpdate(updates.animation.update.id);
-            }
         }
+
+        // This oculd be optional
+        if (updates.hover && updates.hover.set) {
+            console.log('callBack end: hover removed');
+
+            updates.hover.set = false;
+            engine.removeUpdate(updates.hover.update.id);
+        }
+
+        // if (!updates.end && quickHide)
     };
 
     callBacks.endEnd = () => {
         console.log('callBack endEnd');
+
+        // TODO::Make this more efficient
+        if (updates.end) engine.removeUpdate(updates.end.update.id);
 
         if (updates.animation && updates.animation.set) {
             console.log('callBack endEnd: animation removed');
@@ -130,9 +158,14 @@ const setCallBacks = (
             engine.removeUpdate(updates.animation.update.id);
         }
 
-        if (animations.hoverType && updates.hoverType) engine.removeUpdate(renders.hover.id);
+        // See callBacks.end, this could be optiional
+        if (updates.hover && updates.hover.set) {
+            console.log('callBack endEnd: hover removed');
 
-        engine.removeDraw(draw.id);
+            engine.removeUpdate(updates.hover.update.id);
+
+            updates.hover.set = false;
+        }
 
         handlers.onEndEnd();
     };
@@ -296,26 +329,29 @@ const createDraw = ({
     context: ctx,
     colors: {fill, stroke, textFill},
 }: InternalEntity) => ({
-    id,
-    name: `draw-${name}`,
-    fn: () => {
-        ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
-        ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
-        ctx.lineWidth = sketch.lw;
+    set: false,
+    draw: {
+        id,
+        name: `draw-${name}`,
+        fn: () => {
+            ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
+            ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
+            ctx.lineWidth = sketch.lw;
 
-        ctx.beginPath();
-        ctx.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.r);
-        ctx.fill();
-        ctx.stroke();
+            ctx.beginPath();
+            ctx.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.r);
+            ctx.fill();
+            ctx.stroke();
 
-        ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
-        ctx.font = `${sketch.fontSize}px ${sketch.font}`;
+            ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
+            ctx.font = `${sketch.fontSize}px ${sketch.font}`;
 
-        ctx.textAlign = sketch.textAlign;
-        ctx.textBaseline = sketch.textBaseLine;
+            ctx.textAlign = sketch.textAlign;
+            ctx.textBaseline = sketch.textBaseLine;
 
-        ctx.beginPath();
-        ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5);
+            ctx.beginPath();
+            ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5);
+        },
     },
 });
 
