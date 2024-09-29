@@ -58,9 +58,9 @@ type TransitionHandlers = {
 };
 
 interface EntityCallBacks {
-    start: (quickShow?: boolean) => void;
+    start: (startTransition?: boolean) => void;
     startEnd: () => void;
-    end: (quickHide?: boolean) => void;
+    end: (endTransition?: boolean) => void;
     endEnd: () => void;
 }
 
@@ -71,7 +71,7 @@ interface Entity {
     handlers: MouseHandlers & TransitionHandlers;
     listeners: EntityListeners;
     events: EntityEvents;
-    animations: EntityAnimations;
+    animations: EntityAnimationProperties;
     colors: EntityColors;
 }
 
@@ -87,7 +87,7 @@ interface EntityHandlers extends TransitionHandlers {
     mouse: MouseHandlers;
 }
 
-type EntityConfig = EntitySketch & EntityProperties & EntityHandlers & EntityAnimations;
+type EntityConfig = EntitySketch & EntityProperties & EntityHandlers & EntityAnimationProperties;
 
 type InternalEntity = Omit<Entity, 'events'> & {
     engine: Engine;
@@ -95,7 +95,8 @@ type InternalEntity = Omit<Entity, 'events'> & {
     input: Input;
 };
 
-interface EntityAnimations {
+// Preferably animation types can be undefined, but this needs proper defaults on typescript (previously stuck)
+interface EntityAnimationProperties {
     animateAtStart: boolean;
     animateAtEnd: boolean;
     animationType: EntityAnimationType;
@@ -105,13 +106,22 @@ interface EntityAnimations {
     endType: EntityTransitionTypes;
     endSpeed: 1 | 2 | 3;
 }
-interface UpdatesAndDraw {
-    draw: Required<Draw>;
-    animation: Required<Update>;
-    hover: Required<Update>;
-    start: Required<Update>;
-    end: Required<Update>;
+
+type EntityAnimationUpdate = {
+    set: boolean;
+    update: Required<Update>;
+};
+interface EntityUpdates {
+    animation: EntityAnimationUpdate;
+    hover: EntityAnimationUpdate;
+    start: EntityAnimationUpdate;
+    end: EntityAnimationUpdate;
 }
 
+// interface EntityDraw {
+//     set: boolean;
+//     draw: Required<Draw>;
+// }
+// draw: Required<Draw>;
 // possible future states: 'pauze', 'continue'
 // type Render = (type: Exclude<keyof EntityRenders, 'callBacks'>, state: boolean) => void;

@@ -3,82 +3,142 @@ export const createCallBacks = (entity: InternalEntity) => {
 
     const callBacks = createEmptyCallBacks();
 
-    const renderer = createRenderer(entity, callBacks);
+    const renders = createRenderUpdates(entity, callBacks);
 
-    const updatesAndShow = {
-        animation: animationType === 'none' ? emptyUpdate : renderer.animationUpdates[animationType](),
-        hover: hoverType === 'none' ? emptyUpdate : renderer.hoverTransitions[hoverType](),
-        start: startType === 'none' ? emptyUpdate : renderer.entityTransitions[startType](),
-        end: endType === 'none' ? emptyUpdate : renderer.entityTransitions[endType](),
-        draw: createDraw(entity),
+    const draw = createDraw(entity);
+
+    const updates = {
+        animation:
+            animationType === 'none'
+                ? undefined
+                : {
+                      set: false,
+                      update: renders.animationUpdates[animationType](),
+                  },
+        hover:
+            hoverType === 'none'
+                ? undefined
+                : {
+                      set: false,
+                      update: renders.hoverTransitions[hoverType](),
+                  },
+        start:
+            startType === 'none'
+                ? undefined
+                : {
+                      set: false,
+                      update: renders.entityTransitions[startType](),
+                  },
+        end:
+            endType === 'none'
+                ? undefined
+                : {
+                      set: false,
+                      update: renders.entityTransitions[endType](),
+                  },
     };
 
     // transforms empty callBacks to filled callBacks
-    setCallBacks(entity, updatesAndShow, callBacks);
+    setCallBacks(entity, updates, draw, callBacks);
 
-    return callBacks; // = listeners and handlers mixed, seperate?
+    return callBacks;
 };
 
 const setCallBacks = (
     {colors, animations, handlers, engine}: InternalEntity,
-    updatesAndDraw: UpdatesAndDraw,
+    updates: Partial<EntityUpdates>,
+    draw: Required<Draw>,
     callBacks: EntityCallBacks,
 ) => {
     callBacks.start = (quickShow = false) => {
         console.log('callBack start');
 
         // Make dynamic and create statistic view for engine (amount of updates/draws and properties)
-        // Prepare function in renders? (usable for transitions that need preparations like this)
         if (!quickShow) {
             console.log('callBack start: FadeIn1');
-            if (animations.startType === 'fadein1') {
-                colors.fill.a = 0;
-                colors.stroke.a = 0;
-                colors.textFill.a = 0;
-
-                engine.setUpdate(updatesAndDraw.start);
-
-                if (animations.animateAtStart) {
-                    console.log('callBack start: FadeIn1 -> animateAtStart');
-
-                    engine.setUpdate(updatesAndDraw.animation);
+            if (updates.start) {
+                // Needs prepare function (usable for transitions that need preparations like this)
+                if (animations.startType === 'fadein1') {
+                    colors.fill.a = 0;
+                    colors.stroke.a = 0;
+                    colors.textFill.a = 0;
                 }
+
+                engine.setUpdate(updates.start.update);
+            }
+
+            // Could do with a propertyCheck -> !animateAtStart = !animations.animationType === 'none'
+            // Another option is to just overwrite the updates and ignore updates that are already set
+            if (animations.animateAtStart && updates.animation) {
+                console.log('callBack start: animateAtStart set');
+
+                engine.setUpdate(updates.animation.update);
+                updates.animation.set = true;
             }
         }
 
-        engine.setDraw(updatesAndDraw.draw);
+        engine.setDraw(draw);
     };
 
     callBacks.startEnd = () => {
         console.log('callBack startEnd');
 
-        engine.removeUpdate(updatesAndDraw.start.id);
+        // TODO::Make this more efficient
+        if (updates.start) engine.removeUpdate(updates.start.update.id);
 
-        if (animations.animationType && !animations.animateAtStart) engine.setUpdate(updatesAndDraw.animation);
-        if (animations.hoverType) engine.setUpdate(updatesAndDraw.hover);
+        // To properly test and check, this needs an overview on running updates
+        if (updates.animation && !updates.animation.set) engine.setUpdate(updates.animation.update);
+
+        // hoverType set here
 
         handlers.onStartEnd();
     };
 
     callBacks.end = (quickHide = false) => {
         console.log('callBack end');
-        // FadeOut1:
-        // entity.colors.fill.a = 1;
-        // entity.colors.stroke.a = 1;
-        // entity.colors.textFill.a = 1;
-        // const render = createRender(engine, renders);
+
+        if (!quickHide) {
+            if (updates.end) {
+                // Needs prepare function (usable for transitions that need preparations like this)
+                if (animations.startType === 'fadeout1') {
+                    console.log('callBack end: FadeOut1');
+                    colors.fill.a = 1;
+                    colors.stroke.a = 1;
+                    colors.textFill.a = 1;
+                }
+
+                engine.setUpdate(updates.end.update);
+            }
+
+            // TODO::Make this more efficient
+            if (!animations.animateAtEnd && updates.animation && updates.animation.set) {
+                console.log('callBack end: animateAtEnd removed');
+
+                updates.animation.set = false;
+                engine.removeUpdate(updates.animation.update.id);
+            }
+        }
     };
 
     callBacks.endEnd = () => {
         console.log('callBack endEnd');
-        //     engine.removeUpdate(renders.end.id);
-        //     if (animations.animationType) engine.removeUpdate(renders.animation.id);
-        //     if (animations.hoverType) engine.removeUpdate(renders.hover.id);
-        //     handlers.onEndEnd();
+
+        if (updates.animation && updates.animation.set) {
+            console.log('callBack endEnd: animation removed');
+
+            updates.animation.set = false;
+            engine.removeUpdate(updates.animation.update.id);
+        }
+
+        if (animations.hoverType && updates.hoverType) engine.removeUpdate(renders.hover.id);
+
+        engine.removeDraw(draw.id);
+
+        handlers.onEndEnd();
     };
 };
 
-const createRenderer = (entity: InternalEntity, emptyCallBacks: Pick<EntityCallBacks, 'startEnd' | 'endEnd'>) => {
+const createRenderUpdates = (entity: InternalEntity, emptyCallBacks: Pick<EntityCallBacks, 'startEnd' | 'endEnd'>) => {
     const {id, name} = entity.properties;
 
     const hoverTransitions = {
