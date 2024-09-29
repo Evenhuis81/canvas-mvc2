@@ -6,10 +6,10 @@ export const createCallBacks = (entity: InternalEntity) => {
     const renderer = createRenderer(entity, callBacks);
 
     const updatesAndShow = {
-        animation: animationType != 'none' ? renderer.animationUpdates[animationType]() : emptyUpdate,
-        hover: hoverType != 'none' ? renderer.hoverTransitions[hoverType]() : emptyUpdate,
-        start: startType != 'none' ? renderer.entityTransitions[startType]() : emptyUpdate,
-        end: endType != 'none' ? renderer.entityTransitions[endType]() : emptyUpdate,
+        animation: animationType === 'none' ? emptyUpdate : renderer.animationUpdates[animationType](),
+        hover: hoverType === 'none' ? emptyUpdate : renderer.hoverTransitions[hoverType](),
+        start: startType === 'none' ? emptyUpdate : renderer.entityTransitions[startType](),
+        end: endType === 'none' ? emptyUpdate : renderer.entityTransitions[endType](),
         draw: createDraw(entity),
     };
 
@@ -24,25 +24,33 @@ const setCallBacks = (
     updatesAndDraw: UpdatesAndDraw,
     callBacks: EntityCallBacks,
 ) => {
-    callBacks.start = () => {
-        console.log('callBack start called');
+    callBacks.start = (quickShow = false) => {
+        console.log('callBack start');
 
         // Make dynamic and create statistic view for engine (amount of updates/draws and properties)
-        if (animations.startType === 'fadein1') {
-            colors.fill.a = 0;
-            colors.stroke.a = 0;
-            colors.textFill.a = 0;
+        // Prepare function in renders? (usable for transitions that need preparations like this)
+        if (!quickShow) {
+            console.log('callBack start: FadeIn1');
+            if (animations.startType === 'fadein1') {
+                colors.fill.a = 0;
+                colors.stroke.a = 0;
+                colors.textFill.a = 0;
 
-            engine.setUpdate(updatesAndDraw.start);
+                engine.setUpdate(updatesAndDraw.start);
 
-            if (animations.animateAtStart) engine.setUpdate(updatesAndDraw.animation);
+                if (animations.animateAtStart) {
+                    console.log('callBack start: FadeIn1 -> animateAtStart');
+
+                    engine.setUpdate(updatesAndDraw.animation);
+                }
+            }
         }
 
         engine.setDraw(updatesAndDraw.draw);
     };
 
     callBacks.startEnd = () => {
-        console.log('callBack startEnd called');
+        console.log('callBack startEnd');
 
         engine.removeUpdate(updatesAndDraw.start.id);
 
@@ -52,8 +60,8 @@ const setCallBacks = (
         handlers.onStartEnd();
     };
 
-    callBacks.end = () => {
-        console.log('callBack end called');
+    callBacks.end = (quickHide = false) => {
+        console.log('callBack end');
         // FadeOut1:
         // entity.colors.fill.a = 1;
         // entity.colors.stroke.a = 1;
@@ -62,7 +70,7 @@ const setCallBacks = (
     };
 
     callBacks.endEnd = () => {
-        console.log('callBack endEnd called');
+        console.log('callBack endEnd');
         //     engine.removeUpdate(renders.end.id);
         //     if (animations.animationType) engine.removeUpdate(renders.animation.id);
         //     if (animations.hoverType) engine.removeUpdate(renders.hover.id);

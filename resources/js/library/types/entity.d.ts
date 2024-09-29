@@ -16,8 +16,8 @@ interface EntitySketch {
 }
 
 interface EntityEvents {
-    show: () => void;
-    hide: () => void;
+    show: (quickShow?: boolean) => void;
+    hide: (quickHide?: boolean) => void;
     destroy: () => void;
     enable: () => void;
     disable: () => void;
@@ -38,11 +38,8 @@ interface EntityListeners {
 
 // TODO::Dynamically add 'none' unionType
 type EntityAnimationType = 'noise' | 'none';
-
 type EntityTransitionTypes = 'fadein1' | 'fadeout1' | 'none';
-
 type EntityHoverTransitionTypes = 'bold' | 'none';
-
 type EntityTypes = EntityAnimationType | EntityTransitionTypes | EntityHoverTransitionTypes;
 
 type EntityColors = {
@@ -61,9 +58,9 @@ type TransitionHandlers = {
 };
 
 interface EntityCallBacks {
-    start: () => void;
+    start: (quickShow?: boolean) => void;
     startEnd: () => void;
-    end: () => void;
+    end: (quickHide?: boolean) => void;
     endEnd: () => void;
 }
 

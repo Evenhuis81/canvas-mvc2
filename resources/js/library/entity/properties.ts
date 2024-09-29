@@ -1,29 +1,29 @@
 /* eslint-disable max-lines-per-function */
-export const createEntityEvents = ({properties, listeners}: InternalEntity, callBacks: EntityCallBacks) => {
-    const show = () => {
+export const createEntityEvents = ({animations, properties, listeners}: InternalEntity, callBacks: EntityCallBacks) => {
+    const show = (startTransition = animations.startType !== 'none') => {
         if (properties.show) throwError(properties.id, 'showing');
 
         properties.show = true;
 
         listeners.add();
 
-        callBacks.start(); // option for transition on show (user input)
+        callBacks.start(startTransition); // option for transition on show (user input)
     };
 
-    const hide = () => {
+    const hide = (endTransition = animations.endType !== 'none') => {
         if (!properties.show) throwError(properties.id, 'hiding');
 
         properties.show = false;
 
         listeners.remove();
 
-        callBacks.end(); // need an additional callBack -> stop (full stop)
+        callBacks.end(endTransition); // need an additional callBack -> stop (full stop)
     };
 
     const destroy = () => {
         listeners.remove();
 
-        if (properties.show) hide();
+        if (properties.show) hide(false);
 
         if (!properties.disabled) disable();
     };

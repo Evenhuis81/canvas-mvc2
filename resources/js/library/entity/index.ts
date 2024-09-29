@@ -93,7 +93,6 @@ const initialize = ({properties}: InternalEntity, events: EntityEvents) => {
 
             properties.showDelay = 0; // one time calling show with showDelay
 
-            // Possible option to never or always show start- and endTransitions depending on user choice
             events.show();
         }, properties.showDelay);
     }
