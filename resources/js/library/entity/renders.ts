@@ -9,7 +9,7 @@ export const createCreateRenders = (
             const transition = createBoldHoverTransition(entity.sketch);
 
             return {
-                id,
+                id: id + '-hover',
                 name: `entity-hover-update${name}`,
                 fn: createTransitionUpdate(entity, transition),
             };
@@ -19,12 +19,12 @@ export const createCreateRenders = (
     // See animate, callBacks start/end comment (prepare function)
     const entityTransitions = {
         fadein1: () => ({
-            id,
+            id: id + '-fadein1',
             name: `entity-fadein1-update${name}`,
             fn: createFadeIn1TransitionUpdate(entity.colors, 0.005 * entity.animations.startSpeed, emptyCallBacks),
         }),
         fadeout1: () => ({
-            id,
+            id: id + '-fadeout1',
             name: `entity-fadeout1-update${name}`,
             fn: createFadeOut1TransitionUpdate(entity.colors, 0.005 * entity.animations.endSpeed, emptyCallBacks),
         }),
@@ -32,14 +32,14 @@ export const createCreateRenders = (
 
     const animationUpdates = {
         noise: () => ({
-            id,
+            id: id + '-animation',
             name: `noise-animation-update-${name}`,
             fn: createNoiseUpdate(entity.sketch),
         }),
     };
 
     const draw = {
-        id,
+        id: id + '-draw',
         name: `draw-${name}`,
         fn: createDraw(entity),
     };
