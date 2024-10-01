@@ -17,13 +17,13 @@ export default {
         const entity = getEntity('timedash');
 
         const example1 = entity.create({
-            text: 'Test Example #1',
+            text: '##$$$$ggfg*&&&1',
             w: 200,
             r: 0,
             // showDelay: 1500,
             // show: true,
             // disable: false,
-            animationType: 'noise',
+            // animationType: 'noise',
             // animateAtStart: false,
             // = touch- and mousedown (not yet) / needs transition handlers
             // mouse: {
@@ -35,18 +35,18 @@ export default {
             //         console.log('mouse up USER INPUT');
             //     },
             // },
-            startType: 'fadein1',
-            startSpeed: 3,
-            endType: 'fadeout1',
-            endSpeed: 1,
-            onStartEnd: () => {
-                console.log('start transition ended USER INPUT');
-                setTimeout(() => {
-                    console.log('timeout trigger');
+            // startType: 'fadein1',
+            // startSpeed: 3,
+            // endType: 'fadeout1',
+            // endSpeed: 1,
+            // onStartEnd: () => {
+            //     console.log('start transition ended USER INPUT');
+            //     setTimeout(() => {
+            //         console.log('timeout trigger');
 
-                    example1.hide();
-                }, 1000);
-            },
+            //         example1.hide();
+            //     }, 1000);
+            // },
             // onEndEnd: () => {
             //     console.log('end transition ended USER INPUT');
             // },

@@ -107,15 +107,12 @@ interface EntityAnimationProperties {
     endSpeed: 1 | 2 | 3;
 }
 
-type EntityAnimationUpdate = {
-    set: boolean;
-    update: Required<Update>;
-};
-interface EntityUpdates {
-    animation: EntityAnimationUpdate;
-    hover: EntityAnimationUpdate;
-    start: EntityAnimationUpdate;
-    end: EntityAnimationUpdate;
+interface EntityRenders {
+    animation: Required<Update>;
+    hover: Required<Update>;
+    start: Required<Update>;
+    end: Required<Update>;
+    draw: Required<Draw>;
 }
 
 interface EntityDraw {
@@ -123,9 +120,15 @@ interface EntityDraw {
     draw: Required<Draw>;
 }
 
-type EntityEngineState = 'on' | 'off' | 'pauze' | 'continue';
+// Future states: 'pauze' | 'continue';
+type EntityEngineState = 'on' | 'off';
 
-type EntitySetEngine = (type: keyof EntityUpdates | 'draw', state: EntityEngineState) => void;
+type EntitySetEngine = (type: keyof EntityRenders | 'draw', state: EntityEngineState) => void;
 
 // possible future states:
 // type Render = (type: Exclude<keyof EntityRenders, 'callBacks'>, state: boolean) => void;
+
+// type EntityAnimationUpdate = {
+//     set: boolean;
+//     update: Required<Update>;
+// };
