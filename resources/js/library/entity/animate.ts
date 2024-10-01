@@ -40,7 +40,7 @@ export const createCallBacks = (entity: InternalEntity) => {
                   },
     };
 
-    const setEngine = createSetEngine(updates, draw);
+    const setEngine = createSetEngine(entity.engine, draw, updates);
 
     // transforms empty callBacks to filled callBacks
     setCallBacks(entity, setEngine, callBacks);
@@ -78,20 +78,19 @@ const statistics = {
 //         handleUpdate[state ? 'set' : 'remove'](engine, renders[type]);
 //     };
 
-const createSetEngine = (updates: Partial<EntityUpdates>, draw: EntityDraw): EntitySetEngine => {
-    return () => {
+const createSetEngine = (engine: Engine, draw: EntityDraw, updates: Partial<EntityUpdates>): EntitySetEngine => {
+    return (type, state) => {
         //
     };
 };
 
 const setCallBacks = (
-    {colors, animations, handlers, engine}: InternalEntity,
+    {colors, animations, handlers}: InternalEntity,
     setEngine: EntitySetEngine,
     callBacks: EntityCallBacks,
 ) => {
     callBacks.start = quickShow => {
         // statistics.set('callBack start);
-
         if (quickShow) return setEngine('draw', 'on');
 
         if (updates.start) {

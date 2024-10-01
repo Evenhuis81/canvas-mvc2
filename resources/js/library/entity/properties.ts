@@ -1,5 +1,6 @@
 /* eslint-disable max-lines-per-function */
 export const createEntityEvents = ({animations, properties, listeners}: InternalEntity, callBacks: EntityCallBacks) => {
+    // parameter default gives auto start (and end) transitions if type !'none', manually able to set by user input
     const show = (quickShow = animations.startType === 'none') => {
         if (properties.show) throwError(properties.id, 'showing');
 
@@ -21,21 +22,17 @@ export const createEntityEvents = ({animations, properties, listeners}: Internal
     };
 
     const destroy = () => {
-        // Optional end transition on destroy?
-        listeners.remove();
-
-        if (properties.show) hide(false);
-
-        if (!properties.disabled) disable();
+        // = hide ? test and fix later (possibly have user input parameters)
+        // listeners.remove();
+        // if (properties.show) hide(false);
+        // if (!properties.disabled) disable();
     };
 
     const enable = () => {
-        if (!properties.disabled) throwError(properties.id, 'enabled');
-
-        properties.disabled = false;
-
-        listeners.add();
-
+        // =show ? test and fix later (possibly have user input parameters)
+        // if (!properties.disabled) throwError(properties.id, 'enabled');
+        // properties.disabled = false;
+        // listeners.add();
         // enable handlers / animations / create enable properties (sketch, colors or such)
     };
 

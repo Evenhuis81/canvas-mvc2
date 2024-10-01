@@ -15,43 +15,12 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     const {id, name, disabled, show, showDelay, ...rest} = {
         id: options.id ?? `entity-${uid()}`,
         ...getProperties(defaultSketchProperties, options),
-    };
-    // Add statistics options -> internal options view
-
-    // type RestOptions = typeof rest;
+    }; // Add statistics options -> internal options view
 
     const properties = {id, name, disabled, show, showDelay};
 
-    // rest: Omit<EntityConfig, keyof EntityProperties>
-    const getAnimations = () => {
-        const {
-            startType,
-            startSpeed,
-            endType,
-            endSpeed,
-            hoverType,
-            animationType,
-            animateAtStart,
-            animateAtEnd,
-            ...rest2
-        } = rest;
-
-        return {
-            animations: {
-                startType,
-                startSpeed,
-                endType,
-                endSpeed,
-                hoverType,
-                animationType,
-                animateAtStart,
-                animateAtEnd,
-            },
-            rest2,
-        };
-    };
-
-    const {rest2, animations} = getAnimations();
+    // Solve ts 'any' on return objects
+    const {rest2, animations} = getAnimations(rest);
 
     // mouse + transition handlers mixed
     const {mouse, onStartEnd, onEndEnd, ...sketch} = rest2;
@@ -134,6 +103,25 @@ const defaultSketchProperties = {
     fontSize: 16,
     textAlign: 'center',
     textBaseLine: 'middle',
+};
+
+const getAnimations = (rest: any) => {
+    const {startType, startSpeed, endType, endSpeed, hoverType, animationType, animateAtStart, animateAtEnd, ...rest2} =
+        rest;
+
+    return {
+        animations: {
+            startType,
+            startSpeed,
+            endType,
+            endSpeed,
+            hoverType,
+            animationType,
+            animateAtStart,
+            animateAtEnd,
+        },
+        rest2,
+    };
 };
 
 // TODO::Resource availability check
