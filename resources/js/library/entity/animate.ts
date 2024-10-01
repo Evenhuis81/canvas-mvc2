@@ -24,88 +24,52 @@ export const createCallBacks = (entity: InternalEntity) => {
     return callBacks;
 };
 
-// const handleDraw = {
-//     set: (engine: Engine, update: Required<Draw>) => engine.setDraw(update),
-//     remove: (engine: Engine, update: Required<Draw>) => engine.removeDraw(update.id),
-// };
-
-// const handleUpdate = {
-//     set: (engine: Engine, update: Required<Update>) => engine.setUpdate(update),
-//     remove: (engine: Engine, update: Required<Update>) => engine.removeUpdate(update.id),
-// };
-
-// Needs priority order
-// export const createRender =
-//     (engine: Engine, renders: EntityRenders): Render =>
-//     (type, state) => {
-//         if (type === 'draw') return handleDraw[state ? 'set' : 'remove'](engine, renders[type]);
-
-//         handleUpdate[state ? 'set' : 'remove'](engine, renders[type]);
-//     };
-
-//
+// TODO::remove duplications and if statements, see comments in createCallBacks -> renders object
 const createEngineRenders = (engine: Engine, renders: Partial<EntityRenders>) => ({
     animation: {
         on: () => {
-            console.log('animation set in engineRender');
-
             if (renders.animation) engine.setUpdate(renders.animation);
         },
         off: () => {
-            console.log('animation removed in engineRender');
-
             if (renders.animation) engine.removeUpdate(renders.animation.id);
         },
         set: false,
     },
     hover: {
         on: () => {
-            console.log('hover set in engineRender');
-
             if (renders.hover) engine.setUpdate(renders.hover);
         },
         off: () => {
-            console.log('hover removed in engineRender');
-
             if (renders.hover) engine.removeUpdate(renders.hover.id);
         },
         set: false,
     },
     start: {
         on: () => {
-            console.log('startTransition set in engineRender');
-
-            if (renders.start) engine.setUpdate(renders.start);
+            if (renders.start) {
+                renders.start.prepare();
+                engine.setUpdate(renders.start.update);
+            }
         },
         off: () => {
-            console.log('startTransition removed in engineRender');
-
             if (renders.start) engine.removeUpdate(renders.start.id);
         },
         set: false,
     },
     end: {
         on: () => {
-            console.log('endTransition set in engineRender');
-
             if (renders.end) engine.setUpdate(renders.end);
         },
         off: () => {
-            console.log('endTransition removed in engineRender');
-
             if (renders.end) engine.removeUpdate(renders.end.id);
         },
         set: false,
     },
     draw: {
         on: () => {
-            console.log('draw set in engineRender');
-
             if (renders.draw) engine.setDraw(renders.draw);
         },
         off: () => {
-            console.log('draw removed in engineRender');
-
             if (renders.draw) engine.removeDraw(renders.draw.id);
         },
         set: false,
@@ -145,14 +109,7 @@ const setCallBacks = (
             return;
         }
 
-        // Needs prepare function (usable for transitions that need preparations like this)
-        if (animations.startType === 'fadein1') {
-            colors.fill.a = 0;
-            colors.stroke.a = 0;
-            colors.textFill.a = 0;
-
-            setEngine('start', 'on');
-        }
+        setEngine('start', 'on');
 
         if (animations.animateAtStart && animations.startType !== 'none') setEngine('animation', 'on');
 

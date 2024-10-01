@@ -38,7 +38,7 @@ interface EntityListeners {
 
 // TODO::Dynamically add 'none' unionType
 type EntityAnimationType = 'noise' | 'none';
-type EntityTransitionTypes = 'fadein1' | 'fadeout1' | 'none';
+type EntityTransitionTypes = 'fadein1' | 'fadeout1' | 'slideInLeft' | 'none';
 type EntityHoverTransitionTypes = 'bold' | 'none';
 type EntityTypes = EntityAnimationType | EntityTransitionTypes | EntityHoverTransitionTypes;
 
@@ -51,6 +51,7 @@ type EntityColors = {
 // type EntityAnimationsConfig<Type> = {
 //     [Property in keyof Type as `${string & Property}Type`]: Type[Property];
 // };
+
 // TODO::Use type of EntityCallBacks
 type TransitionHandlers = {
     onStartEnd: () => void;
@@ -58,9 +59,9 @@ type TransitionHandlers = {
 };
 
 interface EntityCallBacks {
-    start: (quickShow: boolean) => void;
+    start: (quickShow: boolean, prepare?: () => void) => void;
     startEnd: () => void;
-    end: (quickHide: boolean) => void;
+    end: (quickHide: boolean, prepare?: () => void) => void;
     endEnd: () => void;
 }
 
@@ -84,7 +85,7 @@ interface MouseHandlers {
 }
 
 interface EntityHandlers extends TransitionHandlers {
-    mouse: MouseHandlers;
+    mouse: Partial<MouseHandlers>;
 }
 
 type EntityConfig = EntitySketch & EntityProperties & EntityHandlers & EntityAnimationProperties;
@@ -110,13 +111,14 @@ interface EntityAnimationProperties {
 interface EntityRenders {
     animation: Required<Update>;
     hover: Required<Update>;
-    start: Required<Update>;
-    end: Required<Update>;
-    draw: Required<Draw>;
-}
-
-interface EntityDraw {
-    set: boolean;
+    start: {
+        update: Required<Update>;
+        prepare?: () => void;
+    };
+    end: {
+        update: Required<Update>;
+        prepare?: () => void;
+    };
     draw: Required<Draw>;
 }
 
@@ -124,11 +126,3 @@ interface EntityDraw {
 type EntityEngineState = 'on' | 'off';
 
 type EntitySetEngine = (type: keyof EntityRenders | 'draw', state: EntityEngineState) => void;
-
-// possible future states:
-// type Render = (type: Exclude<keyof EntityRenders, 'callBacks'>, state: boolean) => void;
-
-// type EntityAnimationUpdate = {
-//     set: boolean;
-//     update: Required<Update>;
-// };

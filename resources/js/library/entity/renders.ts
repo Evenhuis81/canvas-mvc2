@@ -1,6 +1,6 @@
 export const createCreateRenders = (
     entity: InternalEntity,
-    emptyCallBacks: Pick<EntityCallBacks, 'startEnd' | 'endEnd'>,
+    callBacks: Pick<EntityCallBacks, 'startEnd' | 'endEnd'>,
 ) => {
     const {id, name} = entity.properties;
 
@@ -16,17 +16,30 @@ export const createCreateRenders = (
         },
     };
 
-    // See animate, callBacks start/end comment (prepare function)
     const entityTransitions = {
-        fadein1: () => ({
-            id: id + '-fadein1',
-            name: `entity-fadein1-update${name}`,
-            fn: createFadeIn1TransitionUpdate(entity.colors, 0.005 * entity.animations.startSpeed, emptyCallBacks),
-        }),
+        fadein1: () => {
+            const {update: fn, prepare} = createFadeIn1Transition(
+                entity.colors,
+                0.005 * entity.animations.startSpeed,
+                callBacks,
+            );
+
+            return {
+                id: id + '-fadein1',
+                name: `entity-fadein1-update${name}`,
+                fn,
+                prepare,
+            };
+        },
         fadeout1: () => ({
             id: id + '-fadeout1',
             name: `entity-fadeout1-update${name}`,
-            fn: createFadeOut1TransitionUpdate(entity.colors, 0.005 * entity.animations.endSpeed, emptyCallBacks),
+            fn: createFadeOut1Transition(entity.colors, 0.005 * entity.animations.endSpeed, callBacks),
+        }),
+        slideInLeft: () => ({
+            id: id + '-slideInLeft',
+            name: `entity-slideinleft-update${name}`,
+            fn: createSlideInLeftTransitionUpdate(),
         }),
     };
 
@@ -87,23 +100,35 @@ const createBoldHoverTransition = (sketch: EntitySketch) => {
     return {forward, reverse};
 };
 
-const createFadeIn1TransitionUpdate =
-    ({fill, stroke, textFill}: EntityColors, alphaVelocity: number, callBacks: Pick<EntityCallBacks, 'startEnd'>) =>
-    () => {
-        console.log('fadein1 update running');
+const createFadeIn1TransitionPreparation = () => {
+    //
+};
+
+const createFadeIn1Transition = (
+    {fill, stroke, textFill}: EntityColors,
+    alphaVelocity: number,
+    callBacks: Pick<EntityCallBacks, 'startEnd'>,
+) => ({
+    update: () => {
         fill.a += alphaVelocity;
         stroke.a += alphaVelocity;
         textFill.a += alphaVelocity;
 
         if (fill.a >= 1) {
-            // create endPrepare method for this and put in animate.ts
+            // create endPrepare (=finish) method for this and put in animate.ts
             fill.a = 1;
             stroke.a = 1;
             textFill.a = 1;
 
             callBacks.startEnd();
         }
-    };
+    },
+    prepare: () => {
+        fill.a = 0;
+        stroke.a - 0;
+        textFill.a = 0;
+    },
+});
 
 const createFadeOut1TransitionUpdate =
     ({fill, stroke, textFill}: EntityColors, alphaVelocity: number, callBacks: Pick<EntityCallBacks, 'endEnd'>) =>
@@ -121,6 +146,10 @@ const createFadeOut1TransitionUpdate =
             callBacks.endEnd();
         }
     };
+
+const createSlideInLeftTransitionUpdate = () => () => {
+    //
+};
 
 const createTransitionUpdate =
     ({input: {mouse}, sketch}: InternalEntity, transition: TransitionBase) =>

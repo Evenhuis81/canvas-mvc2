@@ -1,3 +1,4 @@
+// called synchronously, this will not be an unique id
 export const uid = () => Date.now().toString(36) + Math.random().toString(36).substring(2);
 
 // type GetProperties = <T extends {}, U extends {}>(defaults: T, options: U, calculatedOptions?: () => U) => T & U;

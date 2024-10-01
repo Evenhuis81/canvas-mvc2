@@ -43,12 +43,10 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         input,
     };
 
-    // returns callBacks... transform to something more generic (read comment on return of createRenders)
     const callBacks = createCallBacks(internalEntity);
 
     const events = createEntityEvents(internalEntity, callBacks);
 
-    // CallBacks and events are mixed up, combine and add them all into callbacks (internal and external)
     initialize(internalEntity, events);
 
     return events;
@@ -75,11 +73,11 @@ const initialize = ({properties}: InternalEntity, events: EntityEvents) => {
 
 const defaultSketchProperties = {
     // Mixed Internal Properties (+id from creation)
-    name: 'noName',
+    name: 'noName', // + Counter?
     disabled: false,
     show: true,
     showDelay: 0,
-    // Animation Properties
+    // Animation Properties ('none' -> undefined?)
     animateAtStart: false,
     animateAtEnd: false,
     animationType: 'none',
