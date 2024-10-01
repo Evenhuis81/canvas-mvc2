@@ -47,37 +47,53 @@ export const createCallBacks = (entity: InternalEntity) => {
 const createEngineRenders = (engine: Engine, renders: Partial<EntityRenders>) => ({
     animation: {
         on: () => {
-            //
+            console.log('animation set in engineRender');
+
+            if (renders.animation) engine.setUpdate(renders.animation);
         },
         off: () => {
-            //
+            console.log('animation removed in engineRender');
+
+            if (renders.animation) engine.removeUpdate(renders.animation.id);
         },
         set: false,
     },
     hover: {
         on: () => {
-            //
+            console.log('hover set in engineRender');
+
+            if (renders.hover) engine.setUpdate(renders.hover);
         },
         off: () => {
-            //
+            console.log('hover removed in engineRender');
+
+            if (renders.hover) engine.removeUpdate(renders.hover.id);
         },
         set: false,
     },
     start: {
         on: () => {
-            //
+            console.log('startTransition set in engineRender');
+
+            if (renders.start) engine.setUpdate(renders.start);
         },
         off: () => {
-            //
+            console.log('startTransition removed in engineRender');
+
+            if (renders.start) engine.removeUpdate(renders.start.id);
         },
         set: false,
     },
     end: {
         on: () => {
-            //
+            console.log('endTransition set in engineRender');
+
+            if (renders.end) engine.setUpdate(renders.end);
         },
         off: () => {
-            //
+            console.log('endTransition removed in engineRender');
+
+            if (renders.end) engine.removeUpdate(renders.end.id);
         },
         set: false,
     },
@@ -88,7 +104,9 @@ const createEngineRenders = (engine: Engine, renders: Partial<EntityRenders>) =>
             if (renders.draw) engine.setDraw(renders.draw);
         },
         off: () => {
-            //
+            console.log('draw removed in engineRender');
+
+            if (renders.draw) engine.removeDraw(renders.draw.id);
         },
         set: false,
     },
@@ -118,7 +136,14 @@ const setCallBacks = (
 ) => {
     callBacks.start = quickShow => {
         console.log('callBack start', `quickShow: ${quickShow}`);
-        if (quickShow) return setEngine('draw', 'on');
+
+        if (quickShow) {
+            setEngine('draw', 'on');
+            setEngine('animation', 'on');
+            setEngine('hover', 'on');
+
+            return;
+        }
 
         // Needs prepare function (usable for transitions that need preparations like this)
         if (animations.startType === 'fadein1') {
@@ -129,18 +154,9 @@ const setCallBacks = (
             setEngine('start', 'on');
         }
 
-        if (animations.animateAtStart && animations.startType !== 'none') {
-            console.log('callBack start: animateAtStart set');
+        if (animations.animateAtStart && animations.startType !== 'none') setEngine('animation', 'on');
 
-            setEngine('animation', 'on');
-        }
-
-        // set hover on startTransition?
-        if (animations.hoverType !== 'none') {
-            console.log('callBack start: hover set');
-
-            setEngine('hover', 'on');
-        }
+        // set hover on startTransition? This requires proper checking on sketch properties change
 
         setEngine('draw', 'on');
     };
@@ -148,79 +164,46 @@ const setCallBacks = (
     callBacks.startEnd = () => {
         console.log('callBack startEnd');
 
-        // just remove all from setEngine (even if not set)
-        // if (updates.start) engine.removeUpdate(updates.start.update.id);
-
-        // To properly test and check, this needs an overview on running updates
-        // if (updates.animation && !updates.animation.set) engine.setUpdate(updates.animation.update);
-
-        // if (updates.hover && !updates.hover.set) {
-        //     console.log('callBack startEnd: hover set');
-
-        //     engine.setUpdate(updates.hover.update);
-        //     updates.hover.set = true;
-        // }
+        setEngine('start', 'off');
+        setEngine('animation', 'on'); // This could have a (double) check
+        setEngine('hover', 'on');
 
         handlers.onStartEnd();
     };
 
     callBacks.end = quickHide => {
-        console.log('callBack end');
+        console.log('callBack end', `quickHide: ${quickHide}`);
 
-        if (quickHide) return setEngine('draw', 'off');
+        if (quickHide) {
+            setEngine('draw', 'off');
+            setEngine('animation', 'off');
+            setEngine('hover', 'off');
 
-        // if (!quickHide) {
-        //     if (!animations.animateAtEnd && updates.animation && updates.animation.set) {
-        //         console.log('callBack end: animateAtEnd removed');
+            return;
+        }
 
-        //         updates.animation.set = false;
-        //         engine.removeUpdate(updates.animation.update.id);
-        //     }
+        // Needs prepare function (usable for transitions that need preparations like this)
+        if (animations.endType === 'fadeout1') {
+            colors.fill.a = 1;
+            colors.stroke.a = 1;
+            colors.textFill.a = 1;
 
-        //     if (updates.end) {
-        //         // Needs prepare function (usable for transitions that need preparations like this)
-        //         if (animations.endType === 'fadeout1') {
-        //             console.log('callBack end: FadeOut1');
-        //             colors.fill.a = 1;
-        //             colors.stroke.a = 1;
-        //             colors.textFill.a = 1;
-        //         }
+            setEngine('end', 'on');
+        }
 
-        //         engine.setUpdate(updates.end.update);
-        //     }
-        // }
+        // Useless check? if animation is !'none', animation is already running
+        if (animations.animateAtEnd && animations.endType !== 'none') setEngine('animation', 'on');
 
-        // This oculd be optional
-        // if (updates.hover && updates.hover.set) {
-        //     console.log('callBack end: hover removed');
-
-        //     updates.hover.set = false;
-        //     engine.removeUpdate(updates.hover.update.id);
-        // }
-
-        // if (!updates.end && quickHide)
+        // See comments on this in callBack.start()
+        setEngine('hover', 'off');
     };
 
     callBacks.endEnd = () => {
         console.log('callBack endEnd');
 
-        // if (updates.end) engine.removeUpdate(updates.end.update.id);
-
-        // if (updates.animation && updates.animation.set) {
-        //     console.log('callBack endEnd: animation removed');
-
-        //     updates.animation.set = false;
-        //     engine.removeUpdate(updates.animation.update.id);
-        // }
-
-        // // See callBacks.end, this could be optional
-        // if (updates.hover && updates.hover.set) {
-        //     console.log('callBack endEnd: hover removed');
-
-        //     engine.removeUpdate(updates.hover.update.id);
-
-        //     updates.hover.set = false;
-        // }
+        setEngine('end', 'off');
+        setEngine('animation', 'off'); // This could have a (double) check
+        setEngine('hover', 'off');
 
         handlers.onEndEnd();
     };

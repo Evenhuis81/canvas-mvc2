@@ -23,8 +23,8 @@ export default {
             // showDelay: 1500,
             // show: true,
             // disable: false,
-            // animationType: 'noise',
-            // animateAtStart: false,
+            animationType: 'noise',
+            animateAtStart: true,
             // = touch- and mousedown (not yet) / needs transition handlers
             // mouse: {
             //     button: 2,
@@ -35,22 +35,23 @@ export default {
             //         console.log('mouse up USER INPUT');
             //     },
             // },
-            // startType: 'fadein1',
-            // startSpeed: 3,
-            // endType: 'fadeout1',
-            // endSpeed: 1,
-            // onStartEnd: () => {
-            //     console.log('start transition ended USER INPUT');
-            //     setTimeout(() => {
-            //         console.log('timeout trigger');
+            startType: 'fadein1',
+            startSpeed: 1,
+            endType: 'fadeout1',
+            endSpeed: 1,
+            animateAtEnd: true,
+            onStartEnd: () => {
+                console.log('start transition ended USER INPUT');
+                setTimeout(() => {
+                    console.log('timeout trigger (hide()');
 
-            //         example1.hide();
-            //     }, 1000);
-            // },
-            // onEndEnd: () => {
-            //     console.log('end transition ended USER INPUT');
-            // },
-            // hoverType: 'bold',
+                    example1.hide();
+                }, 1500);
+            },
+            onEndEnd: () => {
+                console.log('end transition ended USER INPUT');
+            },
+            hoverType: 'bold',
         });
     },
     run: () => resources.timedash.engine.run(),
