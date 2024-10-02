@@ -9,9 +9,11 @@ export const createCreateRenders = (
             const transition = createBoldHoverTransition(entity.sketch);
 
             return {
-                id: id + '-hover',
-                name: `entity-hover-update${name}`,
-                fn: createTransitionUpdate(entity, transition),
+                update: {
+                    id: id + '-hover',
+                    name: `entity-hover-update${name}`,
+                    fn: createTransitionUpdate(entity, transition),
+                },
             };
         },
     };
@@ -25,29 +27,46 @@ export const createCreateRenders = (
             );
 
             return {
-                id: id + '-fadein1',
-                name: `entity-fadein1-update${name}`,
-                fn,
+                update: {
+                    id: id + '-fadein1',
+                    name: `entity-fadein1-update${name}`,
+                    fn,
+                },
                 prepare,
             };
         },
-        fadeout1: () => ({
-            id: id + '-fadeout1',
-            name: `entity-fadeout1-update${name}`,
-            fn: createFadeOut1Transition(entity.colors, 0.005 * entity.animations.endSpeed, callBacks),
-        }),
-        slideInLeft: () => ({
-            id: id + '-slideInLeft',
-            name: `entity-slideinleft-update${name}`,
-            fn: createSlideInLeftTransitionUpdate(),
+        fadeout1: () => {
+            const {update: fn, prepare} = createFadeOut1Transition(
+                entity.colors,
+                0.005 * entity.animations.endSpeed,
+                callBacks,
+            );
+
+            return {
+                update: {
+                    id: id + '-fadeout1',
+                    name: `entity-fadeout1-update${name}`,
+                    fn,
+                },
+                prepare,
+            };
+        },
+        slideinleft: () => ({
+            update: {
+                id: id + '-slideInLeft',
+                name: `entity-slideinleft-update${name}`,
+                fn: createSlideInLeftTransitionUpdate(),
+            },
         }),
     };
 
     const animationUpdates = {
         noise: () => ({
-            id: id + '-animation',
-            name: `noise-animation-update-${name}`,
-            fn: createNoiseUpdate(entity.sketch),
+            update: {
+                id: id + '-animation',
+                name: `noise-animation-update-${name}`,
+                fn: createNoiseUpdate(entity.sketch),
+            },
         }),
     };
 
@@ -100,10 +119,6 @@ const createBoldHoverTransition = (sketch: EntitySketch) => {
     return {forward, reverse};
 };
 
-const createFadeIn1TransitionPreparation = () => {
-    //
-};
-
 const createFadeIn1Transition = (
     {fill, stroke, textFill}: EntityColors,
     alphaVelocity: number,
@@ -130,9 +145,12 @@ const createFadeIn1Transition = (
     },
 });
 
-const createFadeOut1TransitionUpdate =
-    ({fill, stroke, textFill}: EntityColors, alphaVelocity: number, callBacks: Pick<EntityCallBacks, 'endEnd'>) =>
-    () => {
+const createFadeOut1Transition = (
+    {fill, stroke, textFill}: EntityColors,
+    alphaVelocity: number,
+    callBacks: Pick<EntityCallBacks, 'endEnd'>,
+) => ({
+    update: () => {
         fill.a -= alphaVelocity;
         stroke.a -= alphaVelocity;
         textFill.a -= alphaVelocity;
@@ -145,7 +163,13 @@ const createFadeOut1TransitionUpdate =
 
             callBacks.endEnd();
         }
-    };
+    },
+    prepare: () => {
+        fill.a = 1;
+        stroke.a = 1;
+        textFill.a = 1;
+    },
+});
 
 const createSlideInLeftTransitionUpdate = () => () => {
     //

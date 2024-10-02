@@ -38,7 +38,7 @@ interface EntityListeners {
 
 // TODO::Dynamically add 'none' unionType
 type EntityAnimationType = 'noise' | 'none';
-type EntityTransitionTypes = 'fadein1' | 'fadeout1' | 'slideInLeft' | 'none';
+type EntityTransitionTypes = 'fadein1' | 'fadeout1' | 'slideinleft' | 'none';
 type EntityHoverTransitionTypes = 'bold' | 'none';
 type EntityTypes = EntityAnimationType | EntityTransitionTypes | EntityHoverTransitionTypes;
 
@@ -108,17 +108,16 @@ interface EntityAnimationProperties {
     endSpeed: 1 | 2 | 3;
 }
 
+type RenderFunctions = {
+    update: Required<Update>;
+    prepare?: () => void;
+};
+
 interface EntityRenders {
-    animation: Required<Update>;
-    hover: Required<Update>;
-    start: {
-        update: Required<Update>;
-        prepare?: () => void;
-    };
-    end: {
-        update: Required<Update>;
-        prepare?: () => void;
-    };
+    animation: RenderFunctions;
+    hover: RenderFunctions;
+    start: RenderFunctions;
+    end: RenderFunctions;
     draw: Required<Draw>;
 }
 

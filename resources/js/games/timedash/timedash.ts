@@ -33,7 +33,7 @@ export default {
             //     example1.hide();
             // },
             // },
-            startType: 'slideInLeft',
+            // startType: 'slideInLeft',
             // startSpeed: 3,
             // endType: 'fadeout1',
             // endSpeed: 1,

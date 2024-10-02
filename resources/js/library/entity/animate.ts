@@ -18,7 +18,7 @@ export const createCallBacks = (entity: InternalEntity) => {
 
     const setEngine = createSetEngine(entity.engine, renders);
 
-    // transforms empty callBacks to filled callBacks
+    // transforms empty callBacks to usable callBacks
     setCallBacks(entity, setEngine, callBacks);
 
     return callBacks;
@@ -139,14 +139,7 @@ const setCallBacks = (
             return;
         }
 
-        // Needs prepare function (usable for transitions that need preparations like this)
-        if (animations.endType === 'fadeout1') {
-            colors.fill.a = 1;
-            colors.stroke.a = 1;
-            colors.textFill.a = 1;
-
-            setEngine('end', 'on');
-        }
+        setEngine('end', 'on');
 
         // Useless check? if animation is !'none', animation is already running
         if (animations.animateAtEnd && animations.endType !== 'none') setEngine('animation', 'on');
