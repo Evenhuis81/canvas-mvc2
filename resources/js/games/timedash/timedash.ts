@@ -24,22 +24,22 @@ export default {
             // show: false,
             // disable: false,
             // = touch- and mousedown (not yet) / needs transition handlers
-            // mouse: {
-            //     button: 2,
-            // down: () => {
-            //     console.log('mouse down USER INPUT');
-            // },
-            // up: () => {
-            //     example1.hide();
-            // },
-            // },
-            // startType: 'slideInLeft',
-            // startSpeed: 3,
-            // endType: 'fadeout1',
-            // endSpeed: 1,
-            // hoverType: 'bold',
-            // animationType: 'noise',
-            // animateAtStart: true,
+            mouse: {
+                // button: 2,
+                // down: () => {
+                //     console.log('mouse down USER INPUT');
+                // },
+                up: () => {
+                    example1.hide();
+                },
+            },
+            startType: 'fadein1',
+            startSpeed: 3,
+            endType: 'fadeout1',
+            endSpeed: 3,
+            hoverType: 'bold',
+            animationType: 'noise',
+            animateAtStart: true,
             // animateAtEnd: true,
             // onStartEnd: () => {
             //     console.log('start transition ended USER INPUT');

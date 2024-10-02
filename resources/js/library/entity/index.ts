@@ -10,6 +10,27 @@ const createResource = (res: Resources) => ({
     create: (options?: Partial<EntityConfig>) => create(res, options),
 });
 
+const getInternalEntity = () => {
+    // : InternalEntity = {
+    //     properties,
+    //     animations,
+    //     sketch,
+    //     handlers,
+    //     listeners,
+    //     colors,
+    //     engine,
+    //     context,
+    //     input,
+    // };
+};
+
+const getShape = (shape: EntityShape) => {
+    if (shape.type === 'circle') return shape.type;
+    if (shape.type === 'default') return shape.type;
+
+    return;
+};
+
 const create = ({context, engine, input}: Resources, options: Partial<EntityConfig> = {}) => {
     // Extract internal properties from entity config options
     const {id, name, disabled, show, showDelay, ...rest} = {
@@ -19,11 +40,12 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     const properties = {id, name, disabled, show, showDelay};
 
-    // Solve ts 'any' on return objects
-    const {rest2, animations} = getAnimations(rest);
-
     // mouse + transition handlers mixed
-    const {mouse, onStartEnd, onEndEnd, ...sketch} = rest2;
+    const {mouse, onStartEnd, onEndEnd, ...rest2} = rest;
+
+    const {shape, animations} = getAnimations(rest2);
+
+    const entityType = getShape(shape);
 
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
@@ -31,23 +53,13 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     const listeners = createListeners(sketch, handlers, input);
 
-    const internalEntity: InternalEntity = {
-        properties,
-        animations,
-        sketch,
-        handlers,
-        listeners,
-        colors,
-        engine,
-        context,
-        input,
-    };
+    const entity = getInternalEntity();
 
-    const callBacks = createCallBacks(internalEntity);
+    const callBacks = createCallBacks(entity);
 
-    const events = createEntityEvents(internalEntity, callBacks);
+    const events = createEntityEvents(entity, callBacks);
 
-    initialize(internalEntity, events);
+    initialize(entity, events);
 
     return events;
 };
@@ -74,6 +86,7 @@ const initialize = ({properties}: InternalEntity, events: EntityEvents) => {
 const defaultSketchProperties = {
     // Mixed Internal Properties (+id from creation)
     name: 'noName', // + Counter?
+    type: 'default',
     disabled: false,
     show: true,
     showDelay: 0,
@@ -103,8 +116,8 @@ const defaultSketchProperties = {
     textBaseLine: 'middle',
 };
 
-const getAnimations = (rest: any) => {
-    const {startType, startSpeed, endType, endSpeed, hoverType, animationType, animateAtStart, animateAtEnd, ...rest2} =
+const getAnimations = (rest: Omit<EntityConfig, keyof EntityProperties | keyof EntityHandlers>) => {
+    const {startType, startSpeed, endType, endSpeed, hoverType, animationType, animateAtStart, animateAtEnd, ...shape} =
         rest;
 
     return {
@@ -118,7 +131,7 @@ const getAnimations = (rest: any) => {
             animateAtStart,
             animateAtEnd,
         },
-        rest2,
+        shape,
     };
 };
 

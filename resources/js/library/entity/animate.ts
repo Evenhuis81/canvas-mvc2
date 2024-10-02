@@ -28,40 +28,44 @@ export const createCallBacks = (entity: InternalEntity) => {
 const createEngineRenders = (engine: Engine, renders: Partial<EntityRenders>) => ({
     animation: {
         on: () => {
-            if (renders.animation) engine.setUpdate(renders.animation);
+            if (renders.animation) engine.setUpdate(renders.animation.update);
         },
         off: () => {
-            if (renders.animation) engine.removeUpdate(renders.animation.id);
+            if (renders.animation) engine.removeUpdate(renders.animation.update.id);
         },
         set: false,
     },
     hover: {
         on: () => {
-            if (renders.hover) engine.setUpdate(renders.hover);
+            if (renders.hover) engine.setUpdate(renders.hover.update);
         },
         off: () => {
-            if (renders.hover) engine.removeUpdate(renders.hover.id);
+            if (renders.hover) engine.removeUpdate(renders.hover.update.id);
         },
         set: false,
     },
     start: {
         on: () => {
             if (renders.start) {
-                renders.start.prepare();
+                if (renders.start.prepare) renders.start.prepare();
+
                 engine.setUpdate(renders.start.update);
             }
         },
         off: () => {
-            if (renders.start) engine.removeUpdate(renders.start.id);
+            if (renders.start) engine.removeUpdate(renders.start.update.id);
         },
         set: false,
     },
     end: {
         on: () => {
-            if (renders.end) engine.setUpdate(renders.end);
+            if (renders.end) {
+                if (renders.end.prepare) renders.end.prepare();
+                engine.setUpdate(renders.end.update);
+            }
         },
         off: () => {
-            if (renders.end) engine.removeUpdate(renders.end.id);
+            if (renders.end) engine.removeUpdate(renders.end.update.id);
         },
         set: false,
     },
@@ -94,7 +98,7 @@ const createSetEngine = (engine: Engine, renders: Partial<EntityRenders>): Entit
 };
 
 const setCallBacks = (
-    {colors, animations, handlers}: InternalEntity,
+    {animations, handlers}: InternalEntity,
     setEngine: EntitySetEngine,
     callBacks: EntityCallBacks,
 ) => {

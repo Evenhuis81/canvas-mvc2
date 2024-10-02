@@ -140,7 +140,7 @@ const createFadeIn1Transition = (
     },
     prepare: () => {
         fill.a = 0;
-        stroke.a - 0;
+        stroke.a = 0;
         textFill.a = 0;
     },
 });

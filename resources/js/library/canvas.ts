@@ -25,7 +25,7 @@ export const getCanvas = (options?: Partial<CanvasOptions>) => {
 
     const canvas = document.createElement('canvas');
 
-    if (canvasOptions.contextMenu)
+    if (!canvasOptions.contextMenu)
         canvas.addEventListener('contextmenu', e => {
             e.preventDefault();
 

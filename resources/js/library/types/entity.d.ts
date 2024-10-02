@@ -1,4 +1,5 @@
-interface EntitySketch {
+type EntityDefault = {
+    type: 'default';
     x: number;
     y: number;
     w: number;
@@ -13,7 +14,14 @@ interface EntitySketch {
     fontSize: number;
     textAlign: CanvasTextAlign;
     textBaseLine: CanvasTextBaseline;
-}
+};
+
+type EntityCircle = {
+    type: 'circle';
+    radius: number;
+};
+
+type EntityShape = EntityDefault | EntityCircle;
 
 interface EntityEvents {
     show: (quickShow?: boolean) => void;
@@ -40,7 +48,7 @@ interface EntityListeners {
 type EntityAnimationType = 'noise' | 'none';
 type EntityTransitionTypes = 'fadein1' | 'fadeout1' | 'slideinleft' | 'none';
 type EntityHoverTransitionTypes = 'bold' | 'none';
-type EntityTypes = EntityAnimationType | EntityTransitionTypes | EntityHoverTransitionTypes;
+// type EntityRenderTypes = EntityAnimationType | EntityTransitionTypes | EntityHoverTransitionTypes;
 
 type EntityColors = {
     fill: RGBA;
@@ -68,7 +76,6 @@ interface EntityCallBacks {
 // handlers = user input, listeners = browser implemented
 interface Entity {
     properties: EntityProperties;
-    sketch: EntitySketch;
     handlers: MouseHandlers & TransitionHandlers;
     listeners: EntityListeners;
     events: EntityEvents;
@@ -88,9 +95,10 @@ interface EntityHandlers extends TransitionHandlers {
     mouse: Partial<MouseHandlers>;
 }
 
-type EntityConfig = EntitySketch & EntityProperties & EntityHandlers & EntityAnimationProperties;
+type EntityConfig = EntityShape & EntityProperties & EntityHandlers & EntityAnimationProperties;
 
 type InternalEntity = Omit<Entity, 'events'> & {
+    sketch: EntityShape;
     engine: Engine;
     context: CanvasRenderingContext2D;
     input: Input;
