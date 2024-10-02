@@ -24,11 +24,9 @@ const getInternalEntity = () => {
     // };
 };
 
-const getShape = (shape: EntityShape) => {
-    if (shape.type === 'circle') return shape.type;
-    if (shape.type === 'default') return shape.type;
-
-    return;
+const getShape = <T extends , K extends EntityShape>(type: T, shape: K) => {
+    if (shape.type === 'circle') console.log('circle');
+    if (shape.type === 'default') console.log('default');
 };
 
 const create = ({context, engine, input}: Resources, options: Partial<EntityConfig> = {}) => {
@@ -43,9 +41,9 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     // mouse + transition handlers mixed
     const {mouse, onStartEnd, onEndEnd, ...rest2} = rest;
 
-    const {shape, animations} = getAnimations(rest2);
+    const {sketch, animations} = getAnimations(rest2);
 
-    const entityType = getShape(shape);
+    // getShape<typeof shape.type, typeof shape>(shape.type, shape);
 
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
@@ -117,8 +115,10 @@ const defaultSketchProperties = {
 };
 
 const getAnimations = (rest: Omit<EntityConfig, keyof EntityProperties | keyof EntityHandlers>) => {
-    const {startType, startSpeed, endType, endSpeed, hoverType, animationType, animateAtStart, animateAtEnd, ...shape} =
+    const {startType, startSpeed, endType, endSpeed, hoverType, animationType, animateAtStart, animateAtEnd, ...sketch} =
         rest;
+
+    if (sketch.type === 'circle')
 
     return {
         animations: {
@@ -131,7 +131,7 @@ const getAnimations = (rest: Omit<EntityConfig, keyof EntityProperties | keyof E
             animateAtStart,
             animateAtEnd,
         },
-        shape,
+        sketch,
     };
 };
 

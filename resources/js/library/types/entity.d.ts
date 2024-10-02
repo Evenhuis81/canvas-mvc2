@@ -98,7 +98,7 @@ interface EntityHandlers extends TransitionHandlers {
 type EntityConfig = EntityShape & EntityProperties & EntityHandlers & EntityAnimationProperties;
 
 type InternalEntity = Omit<Entity, 'events'> & {
-    sketch: EntityShape;
+    // sketch: EntityShape;
     engine: Engine;
     context: CanvasRenderingContext2D;
     input: Input;
