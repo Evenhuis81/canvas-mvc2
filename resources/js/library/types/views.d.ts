@@ -1,12 +1,10 @@
-import {Vector, Vector2} from './vector';
-
 type Zoom = 'in' | 'out';
 
 interface StaticView {
     paint: Paint;
 }
 
-interface TransformedView extends PropertiesTV, MethodsTV {}
+type TransformedView = PropertiesTV & MethodsTV;
 
 interface MethodsTV {
     screen2World: (x: number, y: number) => void;

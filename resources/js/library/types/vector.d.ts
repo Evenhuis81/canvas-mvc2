@@ -1,14 +1,14 @@
-export interface Vector {
+type Vector = {
     x: number;
     y: number;
-}
+};
 
-export interface Vector2 {
+type Vector2 = {
     x: number;
     y: number;
     x2: number;
     y2: number;
-}
+};
 
 // add: (vector: Vector2) => void;
 // set: (vector: Vector2) => void;

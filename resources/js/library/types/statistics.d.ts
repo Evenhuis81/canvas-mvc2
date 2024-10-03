@@ -1,5 +1,3 @@
-import {Engine, Show} from './engine';
-
 type Statistic = {
     id: string | number;
     name: string;
@@ -12,7 +10,7 @@ type StatisticResource = {
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
     engine: Engine;
-    show: Show;
+    draw: Draw;
     active: boolean;
 };
 
