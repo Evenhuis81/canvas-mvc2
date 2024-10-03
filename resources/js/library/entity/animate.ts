@@ -121,8 +121,6 @@ const setCallBacks = (
     };
 
     callBacks.startEnd = () => {
-        console.log('callBack startEnd');
-
         setEngine('start', 'off');
         setEngine('animation', 'on'); // This could have a (double) check
         setEngine('hover', 'on');

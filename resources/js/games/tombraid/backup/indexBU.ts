@@ -1,8 +1,8 @@
 /* eslint-disable max-lines-per-function */
-// import {enableStatistics} from 'library/statistics';
 // import {gameStore} from './store';
 // import {getCanvas, getContext2D} from 'library/canvas';
 // import {getEngine} from 'library/engine';
+// import {enableStatistics} from 'library/statistics';
 // import {getTV} from 'games/library/transformedView';
 // import {setMouseInput} from 'games/library/input';
 
@@ -62,9 +62,6 @@
 
 // Engine Shows
 // engine.setDraw(s);
-
-// Make this a hidden option inside the canvas
-// enableStatistics();
 
 // await loadFont('OpenS', 'OpenSans-VariableFont_wdth,wght.ttf');
 

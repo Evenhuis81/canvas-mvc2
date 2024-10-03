@@ -1,12 +1,22 @@
-import {Vector, Vector2} from './vector';
-
 type Zoom = 'in' | 'out';
 
 interface StaticView {
     paint: Paint;
 }
 
-interface TransformedView extends PropertiesTV, MethodsTV {}
+type TransformedView = PropertiesTV & MethodsTV & PaintTV;
+
+interface PaintTV {
+    fillRect: (obj: TVFillRect) => void;
+    strokeRect: (obj: TVStrokeRect) => void;
+    line: (obj: TVLine) => void;
+    text: (obj: TVText) => void;
+    fillStrokeRect: (obj: TVFillStrokeRect) => void;
+    roundFillStrokeRect: (obj: TVRoundFillStrokeRect) => void;
+    fillCircle: (obj: TVFillCircle) => void;
+    strokeCircle: (obj: TVStrokeCircle) => void;
+    fillStrokeCircle: (obj: TVFillStrokeCircle) => void;
+}
 
 interface MethodsTV {
     screen2World: (x: number, y: number) => void;
@@ -25,7 +35,7 @@ interface MethodsTV {
     setWorldBorders: (borders: Vector2) => void;
     setOffset: (offset: Vector) => void;
     setDefaults: (canvas: HTMLCanvasElement) => void;
-    // getGrid: (context: CanvasRenderingContext2D) => Show;
+    // getGrid: (context: CanvasRenderingContext2D) => Draw;
     setMiddle: (target: Vector) => void;
     moveTo: (target: Vector, slowR?: number) => Update;
     setUnitWeight: (unitLw: Vector) => void;

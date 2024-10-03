@@ -1,5 +1,3 @@
-import type {StaticView, TransformedView} from './views';
-
 interface Resources {
     id: string | number;
     canvas: HTMLCanvasElement;

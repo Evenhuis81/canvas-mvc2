@@ -14,7 +14,7 @@ interface Events {
     wheel: Wheel;
 }
 
-type InsideRect = (rect: Rectangle) => boolean;
+type InsideRect = (rect: TVRect) => boolean;
 
 type Input = {
     mouse: {
