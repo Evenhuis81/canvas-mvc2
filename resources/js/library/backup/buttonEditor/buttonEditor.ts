@@ -1,11 +1,11 @@
 import Button from 'library/button/button';
 import {resources} from 'library/index';
-import {ButtonEvent, ButtonOptions} from 'library/types/button';
+// import {ButtonEvent, ButtonOptions} from 'library/types/button';
 
 export const loadButtonEditor = () => {
     const {context, engine, input} = resources.tr;
 
-    Button.create(context, engine, input, createNewButtonOptions);
+    // Button.create(context, engine, input, createNewButtonOptions);
     // Button.create(context, engine, input, backButton);
 };
 
@@ -21,8 +21,8 @@ const createMouseUpForBackButton = () => () => {
     // Button.destruct('back');
 };
 
-const createNewButtonOptions: ButtonOptions = {
-    type: 'fillStrokeRound',
+const createNewButtonOptions: Partial<ButtonOptions> = {
+    // type: 'fillStrokeRound',
     x: innerWidth * 0.5,
     y: innerHeight * 0.9,
     w: innerWidth * 0.4,
@@ -33,11 +33,11 @@ const createNewButtonOptions: ButtonOptions = {
     id: 'create',
     text: 'Create New',
     font: '36px sans-serif',
-    mouseup: mouseupCreateNewButton,
+    // mouseup: mouseupCreateNewButton,
 };
 
-const backButton: ButtonOptions = {
-    type: 'fillStrokeRound',
+const backButton: Partial<ButtonOptions> = {
+    // type: 'fillStrokeRound',
     x: innerWidth * 0.1,
     y: innerHeight * 0.1,
     w: 25,
@@ -46,5 +46,5 @@ const backButton: ButtonOptions = {
     id: 'back',
     text: 'Go Back <-',
     font: '36px monospace',
-    mouseup: createMouseUpForBackButton(),
+    // mouseup: createMouseUpForBackButton(),
 };

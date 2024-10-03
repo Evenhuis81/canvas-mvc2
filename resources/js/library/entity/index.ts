@@ -116,7 +116,7 @@ const defaultSketchProperties = {
     stroke: '#f00',
     fill: '#000',
     textFill: '#fff',
-    text: 'Insert Text',
+    text: 'Entity',
     font: 'monospace',
     fontSize: 16,
     textAlign: 'center',

@@ -3,7 +3,7 @@ import {goToMenu} from './menu';
 
 export default {
     setup: async () => {
-        initialize('tr', {containerID: 'container', full: true, clear: true, bg: '#000'});
+        initialize('tr', {containerID: 'container', full: true, clear: true, backgroundColor: '#000'});
 
         goToMenu();
     },
