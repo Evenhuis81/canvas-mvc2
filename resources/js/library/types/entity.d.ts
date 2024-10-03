@@ -1,5 +1,4 @@
-type EntityDefault = {
-    type: 'default';
+type EntitySketch = {
     x: number;
     y: number;
     w: number;
@@ -15,13 +14,6 @@ type EntityDefault = {
     textAlign: CanvasTextAlign;
     textBaseLine: CanvasTextBaseline;
 };
-
-type EntityCircle = {
-    type: 'circle';
-    radius: number;
-};
-
-type EntityShape = EntityDefault | EntityCircle;
 
 interface EntityEvents {
     show: (quickShow?: boolean) => void;
@@ -81,6 +73,7 @@ interface Entity {
     events: EntityEvents;
     animations: EntityAnimationProperties;
     colors: EntityColors;
+    sketch: EntitySketch;
 }
 
 // click = mouse & touch (touch not yet implemented): see comments.txt for notes (expand into instructions)
@@ -95,7 +88,7 @@ interface EntityHandlers extends TransitionHandlers {
     mouse: Partial<MouseHandlers>;
 }
 
-type EntityConfig = EntityShape & EntityProperties & EntityHandlers & EntityAnimationProperties;
+type EntityConfig = EntitySketch & EntityProperties & EntityHandlers & EntityAnimationProperties;
 
 type InternalEntity = Omit<Entity, 'events'> & {
     // sketch: EntityShape;

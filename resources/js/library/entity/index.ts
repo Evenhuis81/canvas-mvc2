@@ -10,48 +10,57 @@ const createResource = (res: Resources) => ({
     create: (options?: Partial<EntityConfig>) => create(res, options),
 });
 
-const getInternalEntity = () => {
-    // : InternalEntity = {
-    //     properties,
-    //     animations,
-    //     sketch,
-    //     handlers,
-    //     listeners,
-    //     colors,
-    //     engine,
-    //     context,
-    //     input,
-    // };
-};
-
-const getShape = <T extends , K extends EntityShape>(type: T, shape: K) => {
-    if (shape.type === 'circle') console.log('circle');
-    if (shape.type === 'default') console.log('default');
-};
-
 const create = ({context, engine, input}: Resources, options: Partial<EntityConfig> = {}) => {
     // Extract internal properties from entity config options
     const {id, name, disabled, show, showDelay, ...rest} = {
         id: options.id ?? `entity-${uid()}`,
         ...getProperties(defaultSketchProperties, options),
     }; // Add statistics options -> internal options view
-
     const properties = {id, name, disabled, show, showDelay};
 
     // mouse + transition handlers mixed
     const {mouse, onStartEnd, onEndEnd, ...rest2} = rest;
+    const handlers = getHandlers({...mouse}, {...(onStartEnd && {onStartEnd}), ...(onEndEnd && {onEndEnd})});
 
-    const {sketch, animations} = getAnimations(rest2);
+    const {
+        startType,
+        startSpeed,
+        endType,
+        endSpeed,
+        hoverType,
+        animationType,
+        animateAtStart,
+        animateAtEnd,
+        ...sketch
+    } = rest;
 
-    // getShape<typeof shape.type, typeof shape>(shape.type, shape);
+    const animations = {
+        startType,
+        startSpeed,
+        endType,
+        endSpeed,
+        hoverType,
+        animationType,
+        animateAtStart,
+        animateAtEnd,
+        ...sketch,
+    };
 
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
-    const handlers = getHandlers({...mouse}, {...(onStartEnd && {onStartEnd}), ...(onEndEnd && {onEndEnd})});
-
     const listeners = createListeners(sketch, handlers, input);
 
-    const entity = getInternalEntity();
+    const entity: InternalEntity = {
+        properties,
+        animations,
+        sketch,
+        handlers,
+        listeners,
+        colors,
+        engine,
+        context,
+        input,
+    };
 
     const callBacks = createCallBacks(entity);
 
@@ -112,27 +121,6 @@ const defaultSketchProperties = {
     fontSize: 16,
     textAlign: 'center',
     textBaseLine: 'middle',
-};
-
-const getAnimations = (rest: Omit<EntityConfig, keyof EntityProperties | keyof EntityHandlers>) => {
-    const {startType, startSpeed, endType, endSpeed, hoverType, animationType, animateAtStart, animateAtEnd, ...sketch} =
-        rest;
-
-    if (sketch.type === 'circle')
-
-    return {
-        animations: {
-            startType,
-            startSpeed,
-            endType,
-            endSpeed,
-            hoverType,
-            animationType,
-            animateAtStart,
-            animateAtEnd,
-        },
-        sketch,
-    };
 };
 
 // TODO::Resource availability check
