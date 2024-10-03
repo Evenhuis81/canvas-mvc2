@@ -1,37 +1,13 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable complexity */
-import {levelStore, Resources} from '..';
+import {resources} from 'library/index';
 import {vec, vector} from 'library/vector';
-import type {Vector} from 'library/types/vector';
-import {TransformedView} from 'library/types/views';
+import {levelResource} from '../menu';
 
 // TODO::Tasks for player module
 // 1. make separate modules getplayer methods / inputs / movement / collisions (whatever methods is getting too large);
 // 2. expend animations / use phases;
 // 3. create a 'facing' property (which direction is the player actually facing);
-
-type PlayerProperties = {
-    posMiddle: Vector; // middle of rect
-    pos: Vector;
-    vel: Vector;
-    acc: Vector;
-    w: number;
-    h: number;
-    accSpeed: number;
-    maxSpeed: number;
-    friction: number;
-    direction: 'none' | 'up' | 'down' | 'left' | 'right';
-    posChangeHistory: Vector[];
-    lastPos: Vector;
-    topLeft: string;
-    bottomLeft: string;
-    topRight: string;
-    bottomRight: string;
-    xInt: number;
-    yInt: number;
-    movement: 'free' | 'strict';
-};
-
 const player: PlayerProperties = {
     posMiddle: vector(),
     pos: vector(),
@@ -92,7 +68,7 @@ const collide = {
 const collisionAndResolve = () => {
     if (player.direction === 'none') return;
 
-    const {map: levelMap} = levelStore.state;
+    const {map: levelMap} = levelResource;
 
     player.yInt = Math.floor(player.pos.y);
     player.xInt = Math.floor(player.pos.x);
@@ -114,10 +90,12 @@ export const friction = () => {
     if (player.vel.y < 0.01 && player.vel.y > -0.01) player.vel.y = 0;
 };
 
-export const getPlayer = () => {
+export const getPlayer = (startPos: Vector) => {
     // TV method to set player in middle of screen
 
-    const {tv} = Resources.state;
+    console.log(startPos);
+
+    const {tv} = resources.tr;
 
     const update = {
         id: 3,
@@ -146,8 +124,8 @@ export const getPlayer = () => {
             player.posChangeHistory.shift();
             player.posChangeHistory.push(vector(-xChange, -yChange));
 
-            Resources.state.tv.offset.x += player.posChangeHistory[0].x;
-            Resources.state.tv.offset.y += player.posChangeHistory[0].y;
+            tv.offset.x += player.posChangeHistory[0].x;
+            tv.offset.y += player.posChangeHistory[0].y;
         },
     };
 

@@ -3,7 +3,6 @@ import {createEntityEvents, createListeners, getHandlers} from './properties';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {resources} from '..';
-import type {Resources} from 'library/types';
 import {createCallBacks} from './animate';
 
 const createResource = (res: Resources) => ({

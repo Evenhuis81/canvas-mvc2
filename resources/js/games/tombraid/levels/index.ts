@@ -1,11 +1,9 @@
 /* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
 /* eslint-disable no-param-reassign */
-import {TransformedView} from 'library/types/views';
 import {getCoinMap, getLevelMap} from './levels';
 import {vector} from 'library/vector';
 import type {CoinMap, LevelMap, MapElement} from 'games/tombraid/types/level';
-// import {statistics} from '..';
 
 const getEmptyXFromRow = (levelMapRow: MapElement[], emptiesRow: number[], count = 0) => {
     // This works only if right side ends with no '.' or 'S'
@@ -41,8 +39,6 @@ const createMapShow = (
     let alpha = 0;
     let alphaVel = 0.005;
     let alphaActive = true;
-
-    // statistics.state.setFn(() => `elementsDrawn: ${elementsDrawn.nr}`);
 
     const noEmptyX = getEmptyX(levelMap);
 
