@@ -103,8 +103,6 @@ const setCallBacks = (
     callBacks: EntityCallBacks,
 ) => {
     callBacks.start = quickShow => {
-        console.log('callBack start', `quickShow: ${quickShow}`);
-
         if (quickShow) {
             setEngine('draw', 'on');
             setEngine('animation', 'on');
@@ -133,8 +131,6 @@ const setCallBacks = (
     };
 
     callBacks.end = quickHide => {
-        console.log('callBack end', `quickHide: ${quickHide}`);
-
         if (quickHide) {
             setEngine('draw', 'off');
             setEngine('animation', 'off');
@@ -153,8 +149,6 @@ const setCallBacks = (
     };
 
     callBacks.endEnd = () => {
-        console.log('callBack endEnd');
-
         setEngine('end', 'off');
         setEngine('animation', 'off'); // This could have a (double) check
         setEngine('hover', 'off');

@@ -20,6 +20,7 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     // mouse + transition handlers mixed
     const {mouse, onStartEnd, onEndEnd, ...rest2} = rest;
+
     const handlers = getHandlers({...mouse}, {...(onStartEnd && {onStartEnd}), ...(onEndEnd && {onEndEnd})});
 
     const {
@@ -32,7 +33,7 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         animateAtStart,
         animateAtEnd,
         ...sketch
-    } = rest;
+    } = rest2;
 
     const animations = {
         startType,
@@ -43,7 +44,6 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         animationType,
         animateAtStart,
         animateAtEnd,
-        ...sketch,
     };
 
     const colors = getSketchRGBAColorsFromHexString(sketch);

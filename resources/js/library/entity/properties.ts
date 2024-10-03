@@ -1,4 +1,3 @@
-/* eslint-disable max-lines-per-function */
 export const createEntityEvents = ({animations, properties, listeners}: InternalEntity, callBacks: EntityCallBacks) => {
     // parameter default gives auto start (and end) transitions if type !'none', manually able to set by user input
     const show = (quickShow = animations.startType === 'none') => {
@@ -51,12 +50,8 @@ export const createEntityEvents = ({animations, properties, listeners}: Internal
 
 // Mouse and Transition handlers mixed
 export const getHandlers = (mouse: Partial<MouseHandlers>, transitions: Partial<TransitionHandlers>) => ({
-    down: () => {
-        console.log('handlers.down() internally');
-    },
-    up: () => {
-        console.log('handlers.up() internally');
-    },
+    down: () => {},
+    up: () => {},
     onStartEnd: () => {},
     onEndEnd: () => {},
     button: 0,
@@ -70,10 +65,14 @@ export const createListeners = (sketch: EntitySketch, handlers: MouseHandlers & 
     let enabled = false;
 
     const mousedownListener = (evt: MouseEvent) => {
-        if (mouse.insideRect(sketch) && evt.button === button) down(evt);
+        if (mouse.insideRect(sketch) && evt.button === button) {
+            // statistic click counter
+            down(evt);
+        }
     };
 
     const mouseupListener = (evt: MouseEvent) => {
+        // statistic release counter (inside or outside)
         if (mouse.insideRect(sketch) && evt.button === button) up(evt);
     };
 
