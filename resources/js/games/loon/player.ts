@@ -1,6 +1,4 @@
 /* eslint-disable max-lines-per-function */
-import {TransformedView} from 'games/library/types/tv';
-import {vector} from 'games/library/vector';
 
 const player = {
     pos: vector(2, 2),

@@ -19,3 +19,18 @@ type PlayerProperties = {
     yInt: number;
     movement: 'free' | 'strict';
 };
+
+type TRPlayer = {
+    update: {
+        id: number;
+        name: string;
+        fn: () => void;
+    };
+    show: {
+        id: number;
+        name: string;
+        fn: () => void;
+    };
+    setPosition: (pos: Vector) => void;
+    middlePos: Vector;
+};

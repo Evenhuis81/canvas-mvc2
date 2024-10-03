@@ -1,12 +1,8 @@
-import type {Show} from 'library/types/engine';
-import type {TransformedView} from 'library/types/views';
-import type {Vector} from 'library/types/vector';
+type MapElement = 'X' | '.' | 'S' | 'C' | 'T';
 
-export type MapElement = 'X' | '.' | 'S' | 'C' | 'T';
+type LevelMap = MapElement[][];
 
-export type LevelMap = MapElement[][];
-
-export type Levels = {[key: number]: LevelMap};
+type Levels = {[key: number]: LevelMap};
 
 type CoinMap = number[][];
 
@@ -22,12 +18,12 @@ interface TextBlock extends Block {
     //
 }
 
-export interface LevelResource {
+interface LevelResource {
     map: LevelMap;
     // blocks: Block[][];
     coins: CoinMap;
     width: number;
     height: number;
     playerStart: Vector;
-    createShow: (levelMap: LevelMap, coins: CoinMap, tv: TransformedView, width: number, height: number) => Show;
+    createShow: (levelMap: LevelMap, coins: CoinMap, tv: TransformedView, width: number, height: number) => Draw;
 }

@@ -65,10 +65,8 @@ const collide = {
     },
 };
 
-const collisionAndResolve = () => {
+const collisionAndResolve = (lvlResourceID: number) => {
     if (player.direction === 'none') return;
-
-    const {map: levelMap} = levelResource;
 
     player.yInt = Math.floor(player.pos.y);
     player.xInt = Math.floor(player.pos.x);
@@ -96,6 +94,7 @@ export const getPlayer = (startPos: Vector) => {
     console.log(startPos);
 
     const {tv} = resources.tr;
+    const {map: levelMap} = levelResource[lvlResourceID];
 
     const update = {
         id: 3,

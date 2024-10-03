@@ -4,7 +4,6 @@ import {getTV} from './views/tv';
 import {getInput} from 'library/input';
 import {getSV} from './views/sv';
 import {uid} from './helpers';
-import type {LibraryOptions, Resources} from './types';
 
 export const resources: Record<string | number, Resources> = {};
 
