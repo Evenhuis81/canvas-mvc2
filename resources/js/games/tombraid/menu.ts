@@ -4,7 +4,13 @@ import {startLevel} from './initiatize';
 export const goToMenu = () => {
     const entity = createEntity('tr');
 
-    const startButton = entity.create({
+    const level1 = entity.create();
+
+    // Need entity to have option to set handler after creation (and run() or someting)
+};
+
+const createLevelButtons = () => {
+    const buttonBase = {
         x: 80,
         y: 50,
         text: 'Start #1',
@@ -15,11 +21,11 @@ export const goToMenu = () => {
         mouse: {
             up: () => {
                 // touch missing
-                startButton.hide();
+                // level1.hide();
             },
         },
         onEndEnd: () => {
             startLevel(1);
         },
-    });
+    };
 };

@@ -26,7 +26,7 @@ export const startLevel = (levelNr: number) => {
     const player = getPlayer();
     player.setPosition(level.playerStart);
     const playerUpdate = player.createUpdate(tv, level.map);
-    const playerDraw = player.createDrawRect(tv);
+    const playerDraw = player.createDrawCircle(tv);
     engine.setDraw(playerDraw);
     engine.setUpdate(playerUpdate);
 };
