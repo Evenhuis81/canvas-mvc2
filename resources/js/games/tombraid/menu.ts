@@ -6,10 +6,24 @@ export const goToMenu = () => {
 
     const level1 = entity.create();
 
-    // Need entity to have option to set handler after creation (and run() or someting)
+    // level1.setHandlers();
+
+    // mouse: {
+    //     up: () => {
+    //         // touch missing
+    //         // level1.hide();
+    //     },
+    // },
+    // onEndEnd: () => {
+    //     startLevel(1);
+    // },
 };
 
-const createLevelButtons = () => {
+const createLevelButtons = (amount: number) => {
+    // const buttons: Entity = [];
+
+    for (let i = 0; i < 5; i++) {}
+
     const buttonBase = {
         x: 80,
         y: 50,
@@ -18,14 +32,5 @@ const createLevelButtons = () => {
         startSpeed: 3,
         endType: 'fadeout1',
         endSpeed: 3,
-        mouse: {
-            up: () => {
-                // touch missing
-                // level1.hide();
-            },
-        },
-        onEndEnd: () => {
-            startLevel(1);
-        },
     };
 };

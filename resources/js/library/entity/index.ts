@@ -67,7 +67,16 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     initialize(entity, events);
 
-    return events;
+    // Make sure entity is not active (ie. listeners, add) when handlers are not yet set from outside
+
+    const setHandlers = (handlers: MouseHandlers & TransitionHandlers) => {
+        //
+    };
+
+    return {
+        setHandlers,
+        ...events,
+    };
 };
 
 const initialize = ({properties}: InternalEntity, events: EntityEvents) => {

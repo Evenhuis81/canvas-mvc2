@@ -50,10 +50,18 @@ export const createEntityEvents = ({animations, properties, listeners}: Internal
 
 // Mouse and Transition handlers mixed
 export const getHandlers = (mouse: Partial<MouseHandlers>, transitions: Partial<TransitionHandlers>) => ({
-    down: () => {},
-    up: () => {},
-    onStartEnd: () => {},
-    onEndEnd: () => {},
+    down: () => {
+        console.log('mouse down entity internal');
+    },
+    up: () => {
+        console.log('mouse up entity internal');
+    },
+    onStartEnd: () => {
+        console.log('onStartEnd entity internal');
+    },
+    onEndEnd: () => {
+        console.log('onEndEnd entity internal');
+    },
     button: 0,
     ...mouse,
     ...transitions,

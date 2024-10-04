@@ -84,6 +84,8 @@ interface MouseHandlers {
     button: number;
 }
 
+// All handlers in object -> mouse, key, touch, transition: {startFinished, endFinished}
+
 interface EntityHandlers extends TransitionHandlers {
     mouse: Partial<MouseHandlers>;
 }
