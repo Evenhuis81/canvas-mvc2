@@ -29,7 +29,7 @@ const getEmptyX = (levelMap: LevelMap) => {
 
 const createMapShow = (
     levelMap: LevelMap,
-    coinMap: CoinMap,
+    // coinMap: CoinMap,
     tv: TransformedView,
     screenWidth: number,
     screenHeight: number,
@@ -46,6 +46,7 @@ const createMapShow = (
         id: 4,
         name: 'level',
         fn: () => {
+            // remove
             alpha += alphaVel;
 
             if (alpha > 1) {
@@ -155,6 +156,9 @@ export const getPlayerStart = (levelMap: LevelMap) => {
         const playerX = levelMap[y].indexOf('S');
 
         if (playerX !== -1) return vector(playerX, y);
+        // if (playerX !== -1) continue;
+
+        // return vector(playerX, y);
     }
 
     throw new Error('start position "S" for player not found in level map');

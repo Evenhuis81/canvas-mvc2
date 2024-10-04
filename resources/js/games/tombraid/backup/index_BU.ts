@@ -151,6 +151,15 @@
 // import {getTV} from 'games/library/transformedView';
 // enableStatistics();
 
+// statistics.state.set({
+//     id: 8,
+//     name: 'player (middle) pos',
+//     fn: () => `player.x: ${player.middlePos.x}, player.y: ${player.middlePos.y}`,
+// });
+
+// statistics.state.setFn(() => `${tv.scale.x}`);
+// };
+
 // const startLevel = (
 //     levelNr: number,
 //     tv: TransformedView,

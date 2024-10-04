@@ -2,41 +2,6 @@
 /* eslint-disable complexity */
 import {resources} from 'library/index';
 import {vec, vector} from 'library/vector';
-import {levelResource} from '../menu';
-
-// TODO::Tasks for player module
-// 1. make separate modules getplayer methods / inputs / movement / collisions (whatever methods is getting too large);
-// 2. expend animations / use phases;
-// 3. create a 'facing' property (which direction is the player actually facing);
-const player: PlayerProperties = {
-    posMiddle: vector(),
-    pos: vector(),
-    vel: vector(),
-    acc: vector(),
-    w: 1,
-    h: 1,
-    accSpeed: 0.04,
-    maxSpeed: 0.75,
-    friction: 0.95,
-    direction: 'none',
-    posChangeHistory: Array(10).fill(vector()),
-    lastPos: vector(),
-    topLeft: '',
-    bottomLeft: '',
-    topRight: '',
-    bottomRight: '',
-    xInt: 0,
-    yInt: 0,
-    movement: 'strict',
-};
-
-const reset = () => {
-    player.direction = 'none';
-    player.vel.x = 0;
-    player.vel.y = 0;
-    player.acc.x = 0;
-    player.acc.y = 0;
-};
 
 const collide = {
     up: () => {
@@ -65,20 +30,20 @@ const collide = {
     },
 };
 
-const collisionAndResolve = (lvlResourceID: number) => {
-    if (player.direction === 'none') return;
+// const collisionAndResolve = (lvlResourceID: number) => {
+//     if (player.direction === 'none') return;
 
-    player.yInt = Math.floor(player.pos.y);
-    player.xInt = Math.floor(player.pos.x);
+//     player.yInt = Math.floor(player.pos.y);
+//     player.xInt = Math.floor(player.pos.x);
 
-    player.topLeft = levelMap[player.yInt][player.xInt];
-    player.bottomLeft = levelMap[player.yInt + 1][player.xInt];
-    player.topRight = levelMap[player.yInt][player.xInt + 1];
-    player.bottomRight = levelMap[player.yInt + 1][player.xInt + 1];
+//     player.topLeft = levelMap[player.yInt][player.xInt];
+//     player.bottomLeft = levelMap[player.yInt + 1][player.xInt];
+//     player.topRight = levelMap[player.yInt][player.xInt + 1];
+//     player.bottomRight = levelMap[player.yInt + 1][player.xInt + 1];
 
-    // add collision for coinMap
-    collide[player.direction]();
-};
+//     // add collision for coinMap
+//     collide[player.direction]();
+// };
 
 export const friction = () => {
     player.vel.x *= player.friction;
@@ -88,13 +53,8 @@ export const friction = () => {
     if (player.vel.y < 0.01 && player.vel.y > -0.01) player.vel.y = 0;
 };
 
-export const getPlayer = (startPos: Vector) => {
-    // TV method to set player in middle of screen
-
-    console.log(startPos);
-
+export const getPlayer = (startPos?: Vector) => {
     const {tv} = resources.tr;
-    const {map: levelMap} = levelResource[lvlResourceID];
 
     const update = {
         id: 3,
@@ -114,7 +74,7 @@ export const getPlayer = (startPos: Vector) => {
             player.posMiddle.x = player.pos.x + 0.5;
             player.posMiddle.y = player.pos.y + 0.5;
 
-            collisionAndResolve();
+            // collisionAndResolve();
 
             // integrated in transformed view
             const xChange = player.lastPos.x - player.pos.x;
@@ -128,6 +88,10 @@ export const getPlayer = (startPos: Vector) => {
         },
     };
 
+    const setLevel = (level: LevelResource) => {
+        //
+    };
+
     const setPosition = (pos: Vector) => {
         player.pos.x = pos.x;
         player.pos.y = pos.y;
@@ -137,7 +101,15 @@ export const getPlayer = (startPos: Vector) => {
 
     switchMovement.initiate();
 
-    return {update, show: createShowCircle(tv), setPosition, middlePos: player.posMiddle};
+    return {update, show: createShowCircle(tv), setPosition, middlePos: player.posMiddle, setLevel};
+};
+
+const reset = () => {
+    player.direction = 'none';
+    player.vel.x = 0;
+    player.vel.y = 0;
+    player.acc.x = 0;
+    player.acc.y = 0;
 };
 
 export const createShowRect = (tv: TransformedView) => ({
@@ -222,4 +194,30 @@ const keydownListenerFree = ({code}: KeyboardEvent) => {
 
 const keyupListenerFree = ({code}: KeyboardEvent) => {
     if (code === 'KeyW' || code === 'KeyS' || code === 'KeyA' || code === 'KeyD') reset();
+};
+
+// TODO::Tasks for player module
+// 1. make separate modules getplayer methods / inputs / movement / collisions (whatever methods is getting too large);
+// 2. expend animations / use phases;
+// 3. create a 'facing' property (which direction is the player actually facing);
+const player: PlayerProperties = {
+    posMiddle: vector(),
+    pos: vector(),
+    vel: vector(),
+    acc: vector(),
+    w: 1,
+    h: 1,
+    accSpeed: 0.04,
+    maxSpeed: 0.75,
+    friction: 0.95,
+    direction: 'none',
+    posChangeHistory: Array(10).fill(vector()),
+    lastPos: vector(),
+    topLeft: '',
+    bottomLeft: '',
+    topRight: '',
+    bottomRight: '',
+    xInt: 0,
+    yInt: 0,
+    movement: 'strict',
 };
