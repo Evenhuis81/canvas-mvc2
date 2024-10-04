@@ -26,7 +26,7 @@ type TRPlayer = {
         name: string;
         fn: () => void;
     };
-    show: {
+    draw: {
         id: number;
         name: string;
         fn: () => void;

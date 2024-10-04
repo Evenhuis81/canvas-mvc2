@@ -1,5 +1,3 @@
-import {Block, Levels} from 'games/tombraid/types/level';
-
 // Legenda
 // X = solid block all sides
 // S = player start position

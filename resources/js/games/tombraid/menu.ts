@@ -1,10 +1,5 @@
 import createEntity from 'library/entity';
-import {getLevel} from './levels';
-import {vector, vector2} from 'library/vector';
-import {getPlayer} from './player';
-
-export const levelResource: Record<number, LevelResource> = {};
-export const playerResource: Record<number, PlayerProperties> = {};
+import {startLevel} from './initiatize';
 
 export const goToMenu = () => {
     const entity = createEntity('tr');
@@ -16,7 +11,7 @@ export const goToMenu = () => {
         startType: 'fadein1',
         startSpeed: 3,
         endType: 'fadeout1',
-        endSpeed: 2,
+        endSpeed: 3,
         mouse: {
             up: () => {
                 // touch missing
@@ -24,8 +19,7 @@ export const goToMenu = () => {
             },
         },
         onEndEnd: () => {
-            console.log('onEndEnd');
-            // startLevel(2, tv, context, canvas, engine);
+            startLevel(1);
         },
     });
 };

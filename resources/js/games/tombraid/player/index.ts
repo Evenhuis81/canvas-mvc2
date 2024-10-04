@@ -1,7 +1,18 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable complexity */
-import {resources} from 'library/index';
 import {vec, vector} from 'library/vector';
+
+export const getPlayer = () => {
+    switchMovement.initiate();
+
+    return {
+        createUpdate,
+        createDrawCircle,
+        createDrawRect,
+        setPosition,
+        middlePos: player.posMiddle,
+    };
+};
 
 const collide = {
     up: () => {
@@ -30,20 +41,20 @@ const collide = {
     },
 };
 
-// const collisionAndResolve = (lvlResourceID: number) => {
-//     if (player.direction === 'none') return;
+const createCollisionAndResolve = (levelMap: LevelMap) => () => {
+    if (player.direction === 'none') return;
 
-//     player.yInt = Math.floor(player.pos.y);
-//     player.xInt = Math.floor(player.pos.x);
+    player.yInt = Math.floor(player.pos.y);
+    player.xInt = Math.floor(player.pos.x);
 
-//     player.topLeft = levelMap[player.yInt][player.xInt];
-//     player.bottomLeft = levelMap[player.yInt + 1][player.xInt];
-//     player.topRight = levelMap[player.yInt][player.xInt + 1];
-//     player.bottomRight = levelMap[player.yInt + 1][player.xInt + 1];
+    player.topLeft = levelMap[player.yInt][player.xInt];
+    player.bottomLeft = levelMap[player.yInt + 1][player.xInt];
+    player.topRight = levelMap[player.yInt][player.xInt + 1];
+    player.bottomRight = levelMap[player.yInt + 1][player.xInt + 1];
 
-//     // add collision for coinMap
-//     collide[player.direction]();
-// };
+    // add collision for coinMap
+    collide[player.direction]();
+};
 
 export const friction = () => {
     player.vel.x *= player.friction;
@@ -53,8 +64,15 @@ export const friction = () => {
     if (player.vel.y < 0.01 && player.vel.y > -0.01) player.vel.y = 0;
 };
 
-export const getPlayer = (startPos?: Vector) => {
-    const {tv} = resources.tr;
+const setPosition = (pos: Vector) => {
+    player.pos.x = pos.x;
+    player.pos.y = pos.y;
+    player.lastPos.x = pos.x;
+    player.lastPos.y = pos.y;
+};
+
+const createUpdate = (tv: TransformedView, levelMap: LevelMap) => {
+    const collisionAndResolve = createCollisionAndResolve(levelMap);
 
     const update = {
         id: 3,
@@ -74,7 +92,7 @@ export const getPlayer = (startPos?: Vector) => {
             player.posMiddle.x = player.pos.x + 0.5;
             player.posMiddle.y = player.pos.y + 0.5;
 
-            // collisionAndResolve();
+            collisionAndResolve();
 
             // integrated in transformed view
             const xChange = player.lastPos.x - player.pos.x;
@@ -88,20 +106,7 @@ export const getPlayer = (startPos?: Vector) => {
         },
     };
 
-    const setLevel = (level: LevelResource) => {
-        //
-    };
-
-    const setPosition = (pos: Vector) => {
-        player.pos.x = pos.x;
-        player.pos.y = pos.y;
-        player.lastPos.x = pos.x;
-        player.lastPos.y = pos.y;
-    };
-
-    switchMovement.initiate();
-
-    return {update, show: createShowCircle(tv), setPosition, middlePos: player.posMiddle, setLevel};
+    return update;
 };
 
 const reset = () => {
@@ -112,7 +117,7 @@ const reset = () => {
     player.acc.y = 0;
 };
 
-export const createShowRect = (tv: TransformedView) => ({
+export const createDrawRect = (tv: TransformedView) => ({
     id: 3,
     name: 'player',
     fn: () => {
@@ -120,8 +125,7 @@ export const createShowRect = (tv: TransformedView) => ({
     },
 });
 
-// This is needed for tv follow method so that the position is actually in the middle and I dont'need +0.5
-const createShowCircle = (tv: TransformedView) => ({
+const createDrawCircle = (tv: TransformedView) => ({
     id: 3,
     name: 'player',
     fn: () => {

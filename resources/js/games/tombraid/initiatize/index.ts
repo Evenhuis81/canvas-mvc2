@@ -2,10 +2,33 @@ import {vector} from 'library/vector';
 import {getLevel} from '../levels';
 import {getPlayer} from '../player';
 import {resources} from 'library/index';
-import {levelResource} from '../menu';
 
-export const startLevel = (lvlResourceID: string | number, resourceID: string | number) => {
-    createStartLevel(levelResource[lvlResourceID], resources[resourceID]);
+// const levelResource: Record<number, TRLevel> = {};
+// const playerResource: Record<number, TRPlayer> = {};
+
+export const startLevel = (levelNr: number) => {
+    const {tv, canvas, engine} = resources.tr;
+
+    // All things level related
+    const level = getLevel(levelNr);
+    const levelDraw = level.createDraw(level.map, level.coins, tv, canvas.width, canvas.height);
+    engine.setDraw(levelDraw);
+
+    // All things tv related
+    const scale = canvas.width / 24;
+    tv.setUnitWeight({x: 1 / scale, y: 1 / scale});
+    tv.setScale(vector(scale, scale));
+    tv.setScreenSize(vector(canvas.width, canvas.height));
+    // Needs level
+    tv.setMiddle(vector(level.playerStart.x + 0.5, level.playerStart.y + 0.5));
+
+    // All things player related
+    const player = getPlayer();
+    player.setPosition(level.playerStart);
+    const playerUpdate = player.createUpdate(tv, level.map);
+    const playerDraw = player.createDrawRect(tv);
+    engine.setDraw(playerDraw);
+    engine.setUpdate(playerUpdate);
 };
 
 export const onResize = (
@@ -13,7 +36,7 @@ export const onResize = (
     canvas: HTMLCanvasElement,
     tv: TransformedView,
     player: TRPlayer,
-    level: LevelResource,
+    level: TRLevel,
 ) => {
     engine.removeDraw(4);
 
@@ -26,33 +49,7 @@ export const onResize = (
     tv.setScreenSize(vector(canvas.width, canvas.height));
     tv.setMiddle(vector(player.middlePos.x, player.middlePos.y));
 
-    const levelShow = level.createShow(level.map, level.coins, tv, canvas.width, canvas.height);
-
-    engine.setDraw(levelShow);
-};
-
-const createStartLevel = (level: LevelResource, resources: Resources) => (levelNr: number) => {
-    const level = getLevel(levelNr);
-
-    const {tv, canvas, engine} = resources;
-
-    const player = getPlayer(level.playerStart);
-
-    const scale = canvas.width / 24;
-
-    tv.setUnitWeight({x: 1 / scale, y: 1 / scale});
-
-    tv.setScale(vector(scale, scale));
-    tv.setScreenSize(vector(canvas.width, canvas.height));
-
-    player.setPosition(level.playerStart);
-
-    tv.setMiddle(vector(level.playerStart.x + 0.5, level.playerStart.y + 0.5));
-
-    const levelDraw = level.createShow(level.map, level.coins, tv, canvas.width, canvas.height);
+    const levelDraw = level.createDraw(level.map, level.coins, tv, canvas.width, canvas.height);
 
     engine.setDraw(levelDraw);
-    engine.setDraw(player.show);
-
-    engine.setUpdate(player.update);
 };

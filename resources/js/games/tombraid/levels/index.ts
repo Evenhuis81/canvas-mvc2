@@ -27,9 +27,9 @@ const getEmptyX = (levelMap: LevelMap) => {
     return empties;
 };
 
-const createMapShow = (
+const createMapDraw = (
     levelMap: LevelMap,
-    // coinMap: CoinMap,
+    coinMap: CoinMap,
     tv: TransformedView,
     screenWidth: number,
     screenHeight: number,
@@ -146,7 +146,7 @@ export const getLevel = (id: number) => {
         width: levelMap[0].length,
         height: levelMap.length,
         playerStart: getPlayerStart(levelMap),
-        createShow: createMapShow, // Map + Coins (separate?)
+        createDraw: createMapDraw, // Map + Coins (separate?)
         coins: coinMap,
     };
 };

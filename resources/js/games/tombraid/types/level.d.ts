@@ -1,3 +1,12 @@
+interface TRLevel {
+    map: LevelMap;
+    coins: CoinMap;
+    width: number;
+    height: number;
+    playerStart: Vector;
+    createDraw: (levelMap: LevelMap, coins: CoinMap, tv: TransformedView, width: number, height: number) => Draw;
+}
+
 type MapElement = 'X' | '.' | 'S' | 'C' | 'T';
 
 type LevelMap = MapElement[][];
@@ -14,16 +23,4 @@ type Block = {
     y: number;
 };
 
-interface TextBlock extends Block {
-    //
-}
-
-interface LevelResource {
-    map: LevelMap;
-    // blocks: Block[][];
-    coins: CoinMap;
-    width: number;
-    height: number;
-    playerStart: Vector;
-    createShow: (levelMap: LevelMap, coins: CoinMap, tv: TransformedView, width: number, height: number) => Draw;
-}
+interface TextBlock extends Block {}
