@@ -76,19 +76,13 @@ export const createListeners = (sketch: EntitySketch, handlers: MouseHandlers & 
     let enabled = false;
 
     const mousedownListener = (evt: MouseEvent) => {
-        if (mouse.insideRect(sketch) && evt.button === handlers.button) {
-            // statistic click counter
-            handlers.down(evt);
-        }
+        // statistic click counter
+        if (mouse.insideRect(sketch) && evt.button === handlers.button) handlers.down(evt);
     };
 
     const mouseupListener = (evt: MouseEvent) => {
         // statistic release counter (inside or outside)
-        if (mouse.insideRect(sketch) && evt.button === handlers.button) {
-            console.log(handlers);
-
-            handlers.up(evt);
-        }
+        if (mouse.insideRect(sketch) && evt.button === handlers.button) handlers.up(evt);
     };
 
     const add = () => {

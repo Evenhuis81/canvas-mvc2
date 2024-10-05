@@ -67,20 +67,35 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     initialize(entity, events);
 
-    // After creation from user input, test reference
+    // User input handlers after creation
     const setHandlers = (mouseHandlers?: Partial<MouseHandlers>, transitionHandlers?: Partial<TransitionHandlers>) => {
-        // console.log(handlers);
+        // if (mouseHandlers) {
+        //     const keys = Object.keys(mouseHandlers) as Array<keyof Partial<MouseHandlers>>;
 
-        if (mouseHandlers?.up) {
-            handlers.up = mouseHandlers.up;
-        }
+        //     keys.forEach(key => {
+        //         if (key === undefined) return;
+
+        //         entity.handlers[key] = mouseHandlers[key];
+        //     })
+        // }
+
+        const newHandlers = {...entity.handlers, ...mouseHandlers};
+
+        console.log(newHandlers);
+
+        // looese reference
+        entity.handlers = {...newHandlers};
+
+        // if (mouseHandlers?.up) {
+        //     handlers.up = mouseHandlers.up;
+        // }
         // handlers = {
         //     ...handlers,
         //     ...mouseHandlers,
         //     ...transitionHandlers,
         // };
 
-        console.log(handlers);
+        // console.log(handlers);
     };
 
     return {
