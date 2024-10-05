@@ -1,5 +1,5 @@
 /* eslint-disable max-lines-per-function */
-import {createEntityEvents, createListeners, getHandlers} from './properties';
+import {createEntityEvents, createListeners, createHandlers} from './properties';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {resources} from '..';
@@ -20,7 +20,7 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     // mouse + transition handlers mixed
     const {mouse, onStartEnd, onEndEnd, ...rest2} = rest;
 
-    const handlers = getHandlers({...mouse}, {...(onStartEnd && {onStartEnd}), ...(onEndEnd && {onEndEnd})});
+    const handlers = createHandlers(mouse, {...(onStartEnd && {onStartEnd}), ...(onEndEnd && {onEndEnd})});
 
     const {
         startType,
@@ -67,10 +67,20 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     initialize(entity, events);
 
-    // Make sure entity is not active (ie. listeners, add) when handlers are not yet set from outside
+    // After creation from user input, test reference
+    const setHandlers = (mouseHandlers?: Partial<MouseHandlers>, transitionHandlers?: Partial<TransitionHandlers>) => {
+        // console.log(handlers);
 
-    const setHandlers = (handlers: MouseHandlers & TransitionHandlers) => {
-        //
+        if (mouseHandlers?.up) {
+            handlers.up = mouseHandlers.up;
+        }
+        // handlers = {
+        //     ...handlers,
+        //     ...mouseHandlers,
+        //     ...transitionHandlers,
+        // };
+
+        console.log(handlers);
     };
 
     return {

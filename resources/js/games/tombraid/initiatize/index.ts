@@ -11,7 +11,9 @@ export const startLevel = (levelNr: number) => {
 
     // All things level related
     const level = getLevel(levelNr);
+    // reduce amount of parameters
     const levelDraw = level.createDraw(level.map, level.coins, tv, canvas.width, canvas.height);
+    // set unique ID's and give overview of id's in options/statistics
     engine.setDraw(levelDraw);
 
     // All things tv related
@@ -31,6 +33,7 @@ export const startLevel = (levelNr: number) => {
     engine.setUpdate(playerUpdate);
 };
 
+// Merge with existing onresize in library/canvas
 export const onResize = (
     engine: Engine,
     canvas: HTMLCanvasElement,

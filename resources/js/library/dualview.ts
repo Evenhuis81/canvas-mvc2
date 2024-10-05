@@ -1,7 +1,6 @@
 import {getCanvas, getContext2D} from 'library/canvas';
 import {setConsoleToggle, setResize} from './input';
 import {createDualViewTransitionUpdate} from './button/transition';
-import type {DualViewProperties, Resources} from './types';
 
 // StatResource
 // id: number | string,
@@ -17,7 +16,7 @@ export const createDualView = ({id, canvas, container, engine}: Resources) => {
     const context2 = getContext2D(canvas);
 
     const props = {
-        id,
+        id, // make all id's unique
         canvas1: canvas,
         canvas2,
         context2,
@@ -34,6 +33,7 @@ export const createDualView = ({id, canvas, container, engine}: Resources) => {
         props.onDeactivation = onDeactivation;
     };
 
+    // In browser F12 doesn't trigger onresize, workaround:
     setConsoleToggle(() => resize(props));
 
     // Initial resize

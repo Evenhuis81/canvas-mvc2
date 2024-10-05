@@ -15,6 +15,10 @@ type EntitySketch = {
     textBaseLine: CanvasTextBaseline;
 };
 
+type SetHandlers = (mouseHandlers?: Partial<MouseHandlers>, transitionHandlers?: Partial<TransitionHandlers>) => void;
+
+type UserEntity = EntityEvents & {setHandlers: SetHandlers};
+
 interface EntityEvents {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
