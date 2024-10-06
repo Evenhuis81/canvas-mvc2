@@ -57,16 +57,14 @@ type HandlerTypes = 'mouseup' | 'mousedown' | 'startTransitionEnd' | 'endTransit
 
 type UserHandler = {
     type: HandlerTypes;
-    handler: () => void;
+    listener: () => void;
     button?: number; // TODO::Only on mouse handlers (ts extends)
 };
 
+// needs Event on handlerTypes
 type EntityHandlers = {
-    [Property in HandlerTypes]: {
-        handler: () => void;
-        button: number; // wrong
-    };
-};
+    [Property in HandlerTypes]: () => void;
+} & {button: number}; // wrong;
 
 interface EntityCallBacks {
     start: (quickShow: boolean, prepare?: () => void) => void;

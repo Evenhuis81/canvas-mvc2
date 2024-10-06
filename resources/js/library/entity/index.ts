@@ -17,23 +17,8 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     }; // Add statistics options -> internal options view
     const properties = {id, name, disabled, show, showDelay};
 
-    // mouse, {...(onStartEnd && {onStartEnd}), ...(onEndEnd && {onEndEnd})};
-    // mousedown, mouseup, startTransitionEnd, endTransitionEnd
-    // mouse + transition handlers mixed, needs fix
-    const {handlers: userHandlers, ...rest2} = rest;
-    const handlers = createHandlers(userHandlers);
-
-    const {
-        startType,
-        startSpeed,
-        endType,
-        endSpeed,
-        hoverType,
-        animationType,
-        animateAtStart,
-        animateAtEnd,
-        ...sketch
-    } = rest2;
+    const {startType, startSpeed, endType, endSpeed, hoverType, animationType, animateAtStart, animateAtEnd, ...rest2} =
+        rest;
     const animations = {
         startType,
         startSpeed,
@@ -44,6 +29,10 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         animateAtStart,
         animateAtEnd,
     };
+
+    const {handlers: userHandlers, ...sketch} = rest2;
+
+    const handlers = createHandlers(userHandlers);
 
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
@@ -65,18 +54,13 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     const events = createEntityEvents(entity, callBacks);
 
-    initialize(entity, events);
-
     // User input handlers after creation
     const setHandler = (handler: UserHandler) => {
-        //
+        handlers[handler.type] = handler.listener;
+        handlers.button = handler.button || 0;
     };
 
-    // Test if reference loss
-    // return {
-    //     setHandlers,
-    //     ...events,
-    // };
+    initialize(entity, events);
 
     return Object.assign({setHandler}, events);
 };

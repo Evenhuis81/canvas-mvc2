@@ -125,7 +125,7 @@ const setCallBacks = (
         setEngine('animation', 'on'); // This could have a (double) check
         setEngine('hover', 'on');
 
-        handlers.onStartEnd();
+        handlers.startTransitionEnd();
     };
 
     callBacks.end = quickHide => {
@@ -151,7 +151,7 @@ const setCallBacks = (
         setEngine('animation', 'off'); // This could have a (double) check
         setEngine('hover', 'off');
 
-        handlers.onEndEnd();
+        handlers.endTransitionEnd();
     };
 };
 

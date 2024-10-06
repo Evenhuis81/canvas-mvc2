@@ -48,40 +48,46 @@ export const createEntityEvents = ({animations, properties, listeners}: Internal
     return {show, hide, destroy, enable, disable};
 };
 
+const createDefaultUserHandlers = () => ({
+    mousedown: () => {
+        console.log('mousedown handler internal');
+    },
+    mouseup: () => {
+        console.log('mouseup handler internal');
+    },
+    startTransitionEnd: () => {
+        console.log('startTransitionEnd handler internal');
+    },
+    endTransitionEnd: () => {
+        console.log('endTransitionEnd handler internal');
+    },
+    button: 0,
+});
+
 // Mouse and Transition handlers mixed
 export const createHandlers = (handlers?: UserHandler[]) => {
+    const defaults = createDefaultUserHandlers();
+
     handlers?.forEach(handler => {
-        //
+        defaults[handler.type] = handler.listener;
+        defaults.button = handler.button || 0;
     });
-    // down: () => {
-    //     console.log('mouse down entity internal');
-    // },
-    // up: () => {
-    //     console.log('mouse up entity internal');
-    // },
-    // onStartEnd: () => {
-    //     console.log('onStartEnd entity internal');
-    // },
-    // onEndEnd: () => {
-    //     console.log('onEndEnd entity internal');
-    // },
-    // button: 0,
-    // ...mouseHandlers,
-    // ...transitionHandlers,
+
+    return defaults;
 };
 
-export const createListeners = (sketch: EntitySketch, handlers: MouseHandlers & TransitionHandlers, {mouse}: Input) => {
+export const createListeners = (sketch: EntitySketch, handlers: EntityHandlers, {mouse}: Input) => {
     // TODO:: activate listeners/Handlers according to user input
     let enabled = false;
 
     const mousedownListener = (evt: MouseEvent) => {
         // statistic click counter
-        if (mouse.insideRect(sketch) && evt.button === handlers.button) handlers.down(evt);
+        if (mouse.insideRect(sketch) && evt.button === handlers.button) handlers.mousedown();
     };
 
     const mouseupListener = (evt: MouseEvent) => {
         // statistic release counter (inside or outside)
-        if (mouse.insideRect(sketch) && evt.button === handlers.button) handlers.up(evt);
+        if (mouse.insideRect(sketch) && evt.button === handlers.button) handlers.mouseup();
     };
 
     const add = () => {

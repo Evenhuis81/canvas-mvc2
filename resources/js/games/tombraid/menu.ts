@@ -20,7 +20,7 @@ export const goToMenu = () => {
 
     entities[0].setHandler({
         type: 'mouseup',
-        handler: () => {
+        listener: () => {
             console.log('USER INPUT: Up handler');
         },
     });
