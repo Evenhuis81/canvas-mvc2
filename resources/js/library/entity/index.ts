@@ -17,10 +17,11 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     }; // Add statistics options -> internal options view
     const properties = {id, name, disabled, show, showDelay};
 
-    // mouse + transition handlers mixed
-    // const {mouse, onStartEnd, onEndEnd, ...rest2} = rest;
-
-    const handlers = createHandlers(mouse, {...(onStartEnd && {onStartEnd}), ...(onEndEnd && {onEndEnd})});
+    // mouse, {...(onStartEnd && {onStartEnd}), ...(onEndEnd && {onEndEnd})};
+    // mousedown, mouseup, startTransitionEnd, endTransitionEnd
+    // mouse + transition handlers mixed, needs fix
+    const {handlers: userHandlers, ...rest2} = rest;
+    const handlers = createHandlers(userHandlers);
 
     const {
         startType,
@@ -33,7 +34,6 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         animateAtEnd,
         ...sketch
     } = rest2;
-
     const animations = {
         startType,
         startSpeed,
@@ -68,14 +68,17 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     initialize(entity, events);
 
     // User input handlers after creation
-    const setHandlers = (type: EntityHandlersTypes) => {
+    const setHandler = (handler: UserHandler) => {
         //
     };
 
-    return {
-        setHandlers,
-        ...events,
-    };
+    // Test if reference loss
+    // return {
+    //     setHandlers,
+    //     ...events,
+    // };
+
+    return Object.assign({setHandler}, events);
 };
 
 const initialize = ({properties}: InternalEntity, events: EntityEvents) => {

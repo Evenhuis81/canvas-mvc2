@@ -18,8 +18,9 @@ export const goToMenu = () => {
     //     });
     // });
 
-    entities[0].setHandlers({
-        up: () => {
+    entities[0].setHandler({
+        type: 'mouseup',
+        handler: () => {
             console.log('USER INPUT: Up handler');
         },
     });

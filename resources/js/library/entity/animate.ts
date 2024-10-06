@@ -18,7 +18,7 @@ export const createCallBacks = (entity: InternalEntity) => {
 
     const setEngine = createSetEngine(entity.engine, renders);
 
-    // transforms empty callBacks to usable callBacks
+    // transforms empty callBacks to functional callBacks
     setCallBacks(entity, setEngine, callBacks);
 
     return callBacks;

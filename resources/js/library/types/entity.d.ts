@@ -24,6 +24,8 @@ interface EntityEvents {
     disable: () => void;
 }
 
+type UserEntity = EntityEvents & {setHandler: (handler: UserHandler) => void};
+
 interface EntityProperties {
     id: number | string;
     name: string;
@@ -49,17 +51,24 @@ type EntityColors = {
     textFill: RGBA;
 };
 
-type EntityHandlersTypes = 'startTransitionEnd' | 'endTransitionEnd' | 'mouseup' | 'mousedown';
-
 // click = mouse & touch (touch not yet implemented): see comments.txt for notes (expand into instructions)
 // MouseEvent => ButtonEvent (see button.ts)
-interface UserHandlers {
-    mouseup: (event: MouseEvent) => void;
-    mousedown: (event: MouseEvent) => void;
-    button: number; // make part of each handler
-}
+type HandlerTypes = 'mouseup' | 'mousedown' | 'startTransitionEnd' | 'endTransitionEnd';
 
-interface EntityHandlers {
+type UserHandler = {
+    type: HandlerTypes;
+    handler: () => void;
+    button?: number; // TODO::Only on mouse handlers (ts extends)
+};
+
+type EntityHandlers = {
+    [Property in HandlerTypes]: {
+        handler: () => void;
+        button: number; // wrong
+    };
+};
+
+interface EntityCallBacks {
     start: (quickShow: boolean, prepare?: () => void) => void;
     startEnd: () => void;
     end: (quickHide: boolean, prepare?: () => void) => void;
@@ -67,25 +76,24 @@ interface EntityHandlers {
 }
 
 interface Entity {
+    sketch: EntitySketch;
     properties: EntityProperties;
     handlers: EntityHandlers;
     listeners: EntityListeners;
-    events: EntityEvents;
     animations: EntityAnimationProperties;
     colors: EntityColors;
-    sketch: EntitySketch;
+    events: EntityEvents;
 }
 
 type InternalEntity = Omit<Entity, 'events'> & {
-    // sketch: EntityShape;
     engine: Engine;
     context: CanvasRenderingContext2D;
     input: Input;
 };
 
-type EntityConfig = EntitySketch & EntityProperties & EntityHandlers & EntityAnimationProperties;
+type EntityConfig = EntitySketch & EntityProperties & EntityAnimationProperties & {handlers: UserHandler[]};
 
-// Preferably animation types can be undefined, but this needs proper defaults on typescript (previously stuck)
+// Preferably animation types can be undefined, but this needs proper defaults on typescript
 interface EntityAnimationProperties {
     animateAtStart: boolean;
     animateAtEnd: boolean;

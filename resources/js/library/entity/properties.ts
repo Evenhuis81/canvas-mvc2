@@ -49,30 +49,29 @@ export const createEntityEvents = ({animations, properties, listeners}: Internal
 };
 
 // Mouse and Transition handlers mixed
-export const createHandlers = (
-    mouseHandlers?: Partial<MouseHandlers>,
-    transitionHandlers?: Partial<TransitionHandlers>,
-) => ({
-    down: () => {
-        console.log('mouse down entity internal');
-    },
-    up: () => {
-        console.log('mouse up entity internal');
-    },
-    onStartEnd: () => {
-        console.log('onStartEnd entity internal');
-    },
-    onEndEnd: () => {
-        console.log('onEndEnd entity internal');
-    },
-    button: 0,
-    ...mouseHandlers,
-    ...transitionHandlers,
-});
+export const createHandlers = (handlers?: UserHandler[]) => {
+    handlers?.forEach(handler => {
+        //
+    });
+    // down: () => {
+    //     console.log('mouse down entity internal');
+    // },
+    // up: () => {
+    //     console.log('mouse up entity internal');
+    // },
+    // onStartEnd: () => {
+    //     console.log('onStartEnd entity internal');
+    // },
+    // onEndEnd: () => {
+    //     console.log('onEndEnd entity internal');
+    // },
+    // button: 0,
+    // ...mouseHandlers,
+    // ...transitionHandlers,
+};
 
 export const createListeners = (sketch: EntitySketch, handlers: MouseHandlers & TransitionHandlers, {mouse}: Input) => {
     // TODO:: activate listeners/Handlers according to user input
-    // const {down, up, button} = handlers;
     let enabled = false;
 
     const mousedownListener = (evt: MouseEvent) => {
