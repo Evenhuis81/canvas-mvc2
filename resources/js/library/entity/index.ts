@@ -18,7 +18,7 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     const properties = {id, name, disabled, show, showDelay};
 
     // mouse + transition handlers mixed
-    const {mouse, onStartEnd, onEndEnd, ...rest2} = rest;
+    // const {mouse, onStartEnd, onEndEnd, ...rest2} = rest;
 
     const handlers = createHandlers(mouse, {...(onStartEnd && {onStartEnd}), ...(onEndEnd && {onEndEnd})});
 
@@ -68,34 +68,8 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     initialize(entity, events);
 
     // User input handlers after creation
-    const setHandlers = (mouseHandlers?: Partial<MouseHandlers>, transitionHandlers?: Partial<TransitionHandlers>) => {
-        // if (mouseHandlers) {
-        //     const keys = Object.keys(mouseHandlers) as Array<keyof Partial<MouseHandlers>>;
-
-        //     keys.forEach(key => {
-        //         if (key === undefined) return;
-
-        //         entity.handlers[key] = mouseHandlers[key];
-        //     })
-        // }
-
-        const newHandlers = {...entity.handlers, ...mouseHandlers};
-
-        console.log(newHandlers);
-
-        // looese reference
-        entity.handlers = {...newHandlers};
-
-        // if (mouseHandlers?.up) {
-        //     handlers.up = mouseHandlers.up;
-        // }
-        // handlers = {
-        //     ...handlers,
-        //     ...mouseHandlers,
-        //     ...transitionHandlers,
-        // };
-
-        // console.log(handlers);
+    const setHandlers = (type: EntityHandlersTypes) => {
+        //
     };
 
     return {

@@ -1,3 +1,4 @@
+// TODO::MultiType with generic objects
 type EntitySketch = {
     x: number;
     y: number;
@@ -14,10 +15,6 @@ type EntitySketch = {
     textAlign: CanvasTextAlign;
     textBaseLine: CanvasTextBaseline;
 };
-
-type SetHandlers = (mouseHandlers?: Partial<MouseHandlers>, transitionHandlers?: Partial<TransitionHandlers>) => void;
-
-type UserEntity = EntityEvents & {setHandlers: SetHandlers};
 
 interface EntityEvents {
     show: (quickShow?: boolean) => void;
@@ -52,27 +49,26 @@ type EntityColors = {
     textFill: RGBA;
 };
 
-// type EntityAnimationsConfig<Type> = {
-//     [Property in keyof Type as `${string & Property}Type`]: Type[Property];
-// };
+type EntityHandlersTypes = 'startTransitionEnd' | 'endTransitionEnd' | 'mouseup' | 'mousedown';
 
-// TODO::Use type of EntityCallBacks
-type TransitionHandlers = {
-    onStartEnd: () => void;
-    onEndEnd: () => void;
-};
+// click = mouse & touch (touch not yet implemented): see comments.txt for notes (expand into instructions)
+// MouseEvent => ButtonEvent (see button.ts)
+interface UserHandlers {
+    mouseup: (event: MouseEvent) => void;
+    mousedown: (event: MouseEvent) => void;
+    button: number; // make part of each handler
+}
 
-interface EntityCallBacks {
+interface EntityHandlers {
     start: (quickShow: boolean, prepare?: () => void) => void;
     startEnd: () => void;
     end: (quickHide: boolean, prepare?: () => void) => void;
     endEnd: () => void;
 }
 
-// handlers = user input, listeners = browser implemented
 interface Entity {
     properties: EntityProperties;
-    handlers: MouseHandlers & TransitionHandlers;
+    handlers: EntityHandlers;
     listeners: EntityListeners;
     events: EntityEvents;
     animations: EntityAnimationProperties;
@@ -80,28 +76,14 @@ interface Entity {
     sketch: EntitySketch;
 }
 
-// click = mouse & touch (touch not yet implemented): see comments.txt for notes (expand into instructions)
-// MouseEvent => ButtonEvent (see button.ts)
-interface MouseHandlers {
-    up: (event: MouseEvent) => void;
-    down: (event: MouseEvent) => void;
-    button: number;
-}
-
-// All handlers in object -> mouse, key, touch, transition: {startFinished, endFinished}
-
-interface EntityHandlers extends TransitionHandlers {
-    mouse: Partial<MouseHandlers>;
-}
-
-type EntityConfig = EntitySketch & EntityProperties & EntityHandlers & EntityAnimationProperties;
-
 type InternalEntity = Omit<Entity, 'events'> & {
     // sketch: EntityShape;
     engine: Engine;
     context: CanvasRenderingContext2D;
     input: Input;
 };
+
+type EntityConfig = EntitySketch & EntityProperties & EntityHandlers & EntityAnimationProperties;
 
 // Preferably animation types can be undefined, but this needs proper defaults on typescript (previously stuck)
 interface EntityAnimationProperties {
