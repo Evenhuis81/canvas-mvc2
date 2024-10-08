@@ -92,6 +92,13 @@ const toggleDualView = (props: DualViewProperties) => {
 
     props.transitioning = true;
     props.active = true;
+
+    // Cut from views->input
+    // if (!dualView)
+    //     resizeCB.push(() => {
+    //     canvas.width = innerWidth;
+    //     canvas.height = innerHeight;
+    // });
 };
 
 // This all applies to a 'fullscreen' canvas only

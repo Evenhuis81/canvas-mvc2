@@ -1,6 +1,5 @@
 import {uid} from './helpers';
 import {vector} from './vector';
-import type {Statistic, StatisticResource} from './types/statistics';
 import {createDualView} from './dualview';
 import {resources} from '.';
 
@@ -8,29 +7,29 @@ const statisticsResource: Record<string | number, StatisticResource> = {};
 const toggleKey: Record<string | number, string> = {};
 
 const toggleView = (id: string | number) => {
-    const {engine, show, active} = statisticsResource[id];
+    const {engine, draw, active} = statisticsResource[id];
 
     if (active) {
         statisticsResource[id].active = false;
 
-        engine.removeDraw(`${id}-statistic-show`);
+        engine.removeDraw(`${id}-statistic-draw`);
 
         return;
     }
 
     statisticsResource[id].active = true;
 
-    engine.setDraw(show);
+    engine.setDraw(draw);
 };
 
 export default {
     create: (id: number | string, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, engine: Engine) => {
         const statistics: Statistic[] = [];
 
-        const show = createShow({id, context});
+        const draw = createShow({id, context});
 
         // These contain objects/modules from main resources, so they don't need to be set here aswell
-        statisticsResource[id] = {id, canvas, context, statistics, show, engine, active: false};
+        statisticsResource[id] = {id, canvas, context, statistics, draw, engine, active: false};
 
         toggleKey[id] = 'KeyT'; // default
         addEventListener('keyup', ({code}) => {
@@ -58,7 +57,7 @@ export default {
     },
     run: (id: number | string) => {
         statisticsResource[id].active = true;
-        statisticsResource[id].engine.setDraw(statisticsResource[id].show);
+        statisticsResource[id].engine.setDraw(statisticsResource[id].draw);
     },
     halt: (id: string | number) => {
         // take screenshot and display as static image?
@@ -73,7 +72,7 @@ export default {
     },
 };
 
-const createShow = (props: Omit<StatisticResource, 'show' | 'canvas' | 'engine' | 'statistics' | 'active'>) => {
+const createShow = (props: Omit<StatisticResource, 'draw' | 'canvas' | 'engine' | 'statistics' | 'active'>) => {
     const {id, context: ctx} = props;
 
     const txtPosDefault = vector(10, 10);
@@ -81,7 +80,7 @@ const createShow = (props: Omit<StatisticResource, 'show' | 'canvas' | 'engine' 
     const txtMargin = 5;
 
     return {
-        id: `${id}-statistic-show`,
+        id: `${id}-statistic-draw`,
         name: `Statistic Show`,
         fn: () => {
             ctx.textAlign = 'center';

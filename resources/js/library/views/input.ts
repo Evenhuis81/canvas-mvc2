@@ -1,6 +1,3 @@
-import type {Input} from 'library/types/input';
-import type {MethodsTV, PropertiesTV} from '../types/views';
-
 const mousedownHandler =
     ({startPan}: PropertiesTV, methods: MethodsTV) =>
     ({button, offsetX, offsetY}: MouseEvent) => {
@@ -45,6 +42,7 @@ const wheelHandler =
     };
 
 export const setTVEvents = (props: PropertiesTV, methods: MethodsTV, input: Input) => {
+    // TODO::Test performance of multiple eventListeners on same element or 1 with a array loop (like engine)
     addEventListener('mousedown', mousedownHandler(props, methods));
     addEventListener('mousemove', mousemoveHandler(props, input));
     addEventListener('keydown', keydownHandler(methods));

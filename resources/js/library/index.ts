@@ -4,10 +4,21 @@ import {getTV} from './views/tv';
 import {getInput} from 'library/input';
 import {getSV} from './views/sv';
 import {uid} from './helpers';
+import {createStore} from './store';
 
 export const resources: Record<string | number, Resources> = {};
 
+// type Type1 = {data: number[]};
+// type Type2 = {test: string | number, data: number[]}
+
+// const createLibraryStore = <T extends string | number>(id?: T extends undefined ? undefined : T)  => {
+//     if (!id) return createStore<T>();
+//     else return createStore<Type1>();
+// }
+
 export const initialize = (id?: string | number, options?: Partial<LibraryOptions>) => {
+    // const libraryStore = id ? createStore<Type2>() : createStore<Type1>();
+
     const libraryID = id ?? uid();
 
     const canvas = getCanvas(options);

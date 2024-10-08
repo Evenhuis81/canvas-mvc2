@@ -61,12 +61,6 @@ export const getInput = (canvas: HTMLCanvasElement, dualView: boolean = false) =
         mouse.touchEnded = true;
     });
 
-    if (!dualView)
-        resizeCB.push(() => {
-            canvas.width = innerWidth;
-            canvas.height = innerHeight;
-        });
-
     const resize = () => {
         for (let i = 0; i < resizeCB.length; i++) resizeCB[i]();
     };
