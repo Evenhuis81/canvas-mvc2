@@ -34,6 +34,7 @@ const properties = {
     worldView: vector2(),
     orientation: '',
     unitWeight: vector(1, 1),
+    history: Array(10).fill(vector()),
 };
 
 const screen2World = (x: number, y: number) => {
@@ -192,6 +193,17 @@ const moveTo = (target: Vector, slowR = 2) => {
     };
 };
 
+export const delay = (lastPos: Vector, currentPos: Vector) => {
+    const xChange = lastPos.x - currentPos.x;
+    const yChange = lastPos.y - currentPos.y;
+
+    properties.history.shift();
+    properties.history.push(vector(-xChange, -yChange));
+
+    properties.offset.x += properties.history[0].x;
+    properties.offset.y += properties.history[0].y;
+};
+
 const s2W = (source: Vector) =>
     vector(source.x / properties.scale.x + properties.offset.x, source.y / properties.scale.y + properties.offset.y);
 
@@ -217,4 +229,5 @@ const methods = {
     setMiddle,
     moveTo,
     setUnitWeight,
+    delay,
 };

@@ -39,6 +39,7 @@ interface MethodsTV {
     setMiddle: (target: Vector) => void;
     moveTo: (target: Vector, slowR?: number) => Update;
     setUnitWeight: (unitLw: Vector) => void;
+    delay: (lastPos: Vector, pos: Vector) => void;
 }
 
 interface PropertiesTV {

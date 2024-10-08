@@ -9,7 +9,6 @@ type PlayerProperties = {
     maxSpeed: number;
     friction: number;
     direction: 'none' | 'up' | 'down' | 'left' | 'right';
-    posChangeHistory: Vector[];
     lastPos: Vector;
     topLeft: string;
     bottomLeft: string;
