@@ -82,6 +82,8 @@ const createUpdate = (tv: TransformedView, levelMap: LevelMap) => {
             player.lastPos = {...player.pos};
             vec.add(player.vel, player.acc);
 
+            // TODO::Fix movement (test level 3), up glitch, no down after hit text
+
             if (player.movement === 'free') friction(); // only in free mode
 
             vec.limit(player.vel, -player.maxSpeed, player.maxSpeed);
@@ -94,7 +96,7 @@ const createUpdate = (tv: TransformedView, levelMap: LevelMap) => {
 
             collisionAndResolve();
 
-            // integrated in transformed view
+            // TODO::Integrate in TV
             const xChange = player.lastPos.x - player.pos.x;
             const yChange = player.lastPos.y - player.pos.y;
 

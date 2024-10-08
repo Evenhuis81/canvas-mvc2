@@ -10,30 +10,23 @@ export const goToMenu = () => {
 
     buttons.forEach(button => entities.push(entity.create(button)));
 
-    // entities.forEach(e => {
-    //     e.setHandlers({
-    //         up: () => {
-    //             console.log('test up handlers entity');
-    //         },
-    //     });
-    // });
-
     entities[0].setHandler({
         type: 'mouseup',
         listener: () => {
-            console.log('USER INPUT: Up handler');
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    entities[i].hide();
+                }, i * 200);
+            }
         },
     });
 
-    // mouse: {
-    //     up: () => {
-    //         // touch missing
-    //         // level1.hide();
-    //     },
-    // },
-    // onEndEnd: () => {
-    //     startLevel(1);
-    // },
+    entities[0].setHandler({
+        type: 'endTransitionEnd',
+        listener: () => {
+            startLevel(3);
+        },
+    });
 };
 
 const createLevelButtons = (amount: number) => {
