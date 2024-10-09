@@ -1,5 +1,5 @@
 /* eslint-disable max-lines-per-function */
-import {createEntityEvents, createListeners, createHandlers} from './properties';
+import {createEntityEvents, createListeners, createUserListeners} from './properties';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {resources} from '..';
@@ -30,39 +30,34 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         animateAtEnd,
     };
 
-    const {handlers: userHandlers, ...sketch} = rest2;
+    const {listeners: userListenersConfig, ...sketch} = rest2;
 
-    const handlers = createHandlers(userHandlers);
+    const {setListener, userListeners} = createUserListeners(userListenersConfig);
 
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
-    const listeners = createListeners(sketch, handlers, input);
+    const entityListeners = createListeners(sketch, userListeners, input);
 
     const entity: InternalEntity = {
         properties,
         animations,
         sketch,
-        handlers,
-        listeners,
+        userListeners,
+        entityListeners,
         colors,
         engine,
         context,
         input,
     };
 
+    // Includes draw and updates
     const callBacks = createCallBacks(entity);
 
     const events = createEntityEvents(entity, callBacks);
 
-    // User input handlers after creation
-    const setHandler = (handler: UserHandler) => {
-        handlers[handler.type] = handler.listener;
-        handlers.button = handler.button || 0;
-    };
-
     initialize(entity, events);
 
-    return Object.assign({setHandler}, events);
+    return Object.assign({setListener}, events);
 };
 
 const initialize = ({properties}: InternalEntity, events: EntityEvents) => {

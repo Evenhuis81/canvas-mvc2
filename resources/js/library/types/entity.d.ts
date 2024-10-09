@@ -24,7 +24,9 @@ interface EntityEvents {
     disable: () => void;
 }
 
-type UserEntity = EntityEvents & {setHandler: (handler: UserHandler) => void};
+type SetUserListener = <K extends keyof UserListeners>(type: K, listener: UserListeners[K]) => void;
+
+type UserEntity = EntityEvents & {setListener: SetUserListener};
 
 interface EntityProperties {
     id: number | string;
@@ -53,18 +55,19 @@ type EntityColors = {
 
 // click = mouse & touch (touch not yet implemented): see comments.txt for notes (expand into instructions)
 // MouseEvent => ButtonEvent (see button.ts)
-type HandlerTypes = 'mouseup' | 'mousedown' | 'startTransitionEnd' | 'endTransitionEnd';
 
-type UserHandler = {
-    type: HandlerTypes;
-    listener: () => void;
-    button?: number; // TODO::Only on mouse handlers (ts extends)
+// type UserListenerTypes = 'mouseup' | 'mousedown' | 'startTransitionEnd' | 'endTransitionEnd';
+type UserListeners = {
+    mouseup: (evt: MouseEvent) => void;
+    mousedown: (evt: MouseEvent) => void;
+    startTransitionEnd: () => void;
+    endTransitionEnd: () => void;
 };
 
 // needs Event on handlerTypes
-type EntityHandlers = {
-    [Property in HandlerTypes]: () => void;
-} & {button: number}; // wrong;
+// type EntityHandlers = {
+//     [Property in HandlerTypes]: () => void;
+// } & {button: number}; // wrong;
 
 interface EntityCallBacks {
     start: (quickShow: boolean, prepare?: () => void) => void;
@@ -76,8 +79,8 @@ interface EntityCallBacks {
 interface Entity {
     sketch: EntitySketch;
     properties: EntityProperties;
-    handlers: EntityHandlers;
-    listeners: EntityListeners;
+    userListeners: UserListeners;
+    entityListeners: EntityListeners;
     animations: EntityAnimationProperties;
     colors: EntityColors;
     events: EntityEvents;
@@ -89,7 +92,7 @@ type InternalEntity = Omit<Entity, 'events'> & {
     input: Input;
 };
 
-type EntityConfig = EntitySketch & EntityProperties & EntityAnimationProperties & {handlers: UserHandler[]};
+type EntityConfig = EntitySketch & EntityProperties & EntityAnimationProperties & {listeners: Partial<UserListeners>};
 
 // Preferably animation types can be undefined, but this needs proper defaults on typescript
 interface EntityAnimationProperties {
@@ -98,10 +101,12 @@ interface EntityAnimationProperties {
     animationType: EntityAnimationType;
     hoverType: EntityHoverTransitionTypes;
     startType: EntityTransitionTypes;
-    startSpeed: 1 | 2 | 3;
+    startSpeed: TransitionSpeed;
     endType: EntityTransitionTypes;
-    endSpeed: 1 | 2 | 3;
+    endSpeed: TransitionSpeed;
 }
+
+type TransitionSpeed = 1 | 2 | 3 | 4 | 5;
 
 type RenderFunctions = {
     update: Required<Update>;

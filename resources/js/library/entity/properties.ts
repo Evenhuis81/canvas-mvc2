@@ -1,11 +1,14 @@
-export const createEntityEvents = ({animations, properties, listeners}: InternalEntity, callBacks: EntityCallBacks) => {
+export const createEntityEvents = (
+    {animations, properties, entityListeners}: InternalEntity,
+    callBacks: EntityCallBacks,
+) => {
     // parameter default gives auto start (and end) transitions if type !'none', manually able to set by user input
     const show = (quickShow = animations.startType === 'none') => {
         if (properties.show) throwError(properties.id, 'showing');
 
         properties.show = true;
 
-        listeners.add();
+        entityListeners.add();
 
         callBacks.start(quickShow);
     };
@@ -15,14 +18,14 @@ export const createEntityEvents = ({animations, properties, listeners}: Internal
 
         properties.show = false;
 
-        listeners.remove();
+        entityListeners.remove();
 
         callBacks.end(quickHide);
     };
 
     const destroy = () => {
         // = hide ? test and fix later (possibly have user input parameters)
-        // listeners.remove();
+        // entityListeners.remove();
         // if (properties.show) hide(false);
         // if (!properties.disabled) disable();
     };
@@ -31,14 +34,14 @@ export const createEntityEvents = ({animations, properties, listeners}: Internal
         // =show ? test and fix later (possibly have user input parameters)
         // if (!properties.disabled) throwError(properties.id, 'enabled');
         // properties.disabled = false;
-        // listeners.add();
+        // entityListeners.add();
         // enable handlers / animations / create enable properties (sketch, colors or such)
     };
 
     const disable = () => {
         if (properties.disabled) throwError(properties.id, 'disabled');
 
-        listeners.remove();
+        entityListeners.remove();
 
         properties.disabled = true;
 
@@ -48,46 +51,53 @@ export const createEntityEvents = ({animations, properties, listeners}: Internal
     return {show, hide, destroy, enable, disable};
 };
 
-const createDefaultUserHandlers = () => ({
+const createDefaultUserListeners = () => ({
     mousedown: () => {
-        console.log('mousedown handler internal');
+        console.log('mousedown listener internal');
     },
     mouseup: () => {
-        console.log('mouseup handler internal');
+        console.log('mouseup listener internal');
     },
     startTransitionEnd: () => {
-        console.log('startTransitionEnd handler internal');
+        console.log('startTransitionEnd listener internal');
     },
     endTransitionEnd: () => {
-        console.log('endTransitionEnd handler internal');
+        console.log('endTransitionEnd listener internal');
     },
-    button: 0,
 });
 
 // Mouse and Transition handlers mixed
-export const createHandlers = (handlers?: UserHandler[]) => {
-    const defaults = createDefaultUserHandlers();
+export const createUserListeners = (listeners?: Partial<UserListeners>) => {
+    const defaults: UserListeners = createDefaultUserListeners();
 
-    handlers?.forEach(handler => {
-        defaults[handler.type] = handler.listener;
-        defaults.button = handler.button || 0;
-    });
+    let key: keyof UserListeners;
 
-    return defaults;
+    if (listeners) {
+        for (key in listeners) {
+            if (key) continue;
+
+            defaults[key] = listeners[key];
+        }
+    }
+
+    // User input handlers after creation
+    const setListener: SetUserListener = (type, listener) => (defaults[type] = listener);
+
+    return {setListener, userListeners: defaults};
 };
 
-export const createListeners = (sketch: EntitySketch, handlers: EntityHandlers, {mouse}: Input) => {
+export const createListeners = (sketch: EntitySketch, userListeners: UserListeners, {mouse}: Input) => {
     // TODO:: activate listeners/Handlers according to user input
     let enabled = false;
 
     const mousedownListener = (evt: MouseEvent) => {
-        // statistic click counter
-        if (mouse.insideRect(sketch) && evt.button === handlers.button) handlers.mousedown();
+        // statistic click counter and make button dynamic
+        if (mouse.insideRect(sketch) && evt.button === 0) userListeners.mousedown(evt);
     };
 
     const mouseupListener = (evt: MouseEvent) => {
         // statistic release counter (inside or outside)
-        if (mouse.insideRect(sketch) && evt.button === handlers.button) handlers.mouseup();
+        if (mouse.insideRect(sketch) && evt.button === 0) userListeners.mouseup(evt);
     };
 
     const add = () => {

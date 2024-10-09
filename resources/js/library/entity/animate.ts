@@ -98,7 +98,7 @@ const createSetEngine = (engine: Engine, renders: Partial<EntityRenders>): Entit
 };
 
 const setCallBacks = (
-    {animations, handlers}: InternalEntity,
+    {animations, userListeners}: InternalEntity,
     setEngine: EntitySetEngine,
     callBacks: EntityCallBacks,
 ) => {
@@ -125,7 +125,7 @@ const setCallBacks = (
         setEngine('animation', 'on'); // This could have a (double) check
         setEngine('hover', 'on');
 
-        handlers.startTransitionEnd();
+        userListeners.startTransitionEnd();
     };
 
     callBacks.end = quickHide => {
@@ -151,7 +151,7 @@ const setCallBacks = (
         setEngine('animation', 'off'); // This could have a (double) check
         setEngine('hover', 'off');
 
-        handlers.endTransitionEnd();
+        userListeners.endTransitionEnd();
     };
 };
 
