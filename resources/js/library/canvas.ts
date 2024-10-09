@@ -1,5 +1,4 @@
 import {uid} from './helpers';
-import type {CanvasOptions, LibraryOptions} from './types';
 
 // Make this a seperate module when enough default objects arrise
 const defaultCanvasOptions = {
@@ -25,12 +24,13 @@ export const getCanvas = (options?: Partial<CanvasOptions>) => {
 
     const canvas = document.createElement('canvas');
 
-    if (!canvasOptions.contextMenu)
+    if (!canvasOptions.contextMenu) {
         canvas.addEventListener('contextmenu', e => {
             e.preventDefault();
 
             return false;
         });
+    }
 
     canvas.width = canvasOptions.width;
     canvas.height = canvasOptions.height;

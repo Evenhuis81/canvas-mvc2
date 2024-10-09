@@ -1,14 +1,19 @@
 import {initialize, resources} from 'library/index';
-import {CanvasOptions} from 'library/types';
-import {createMap} from './map';
+import {runDemo} from '.';
 
-const canvasOptions: CanvasOptions = {full: true, clear: true, containerID: 'container', bg: '#000'};
+// const canvasOptions = {full: true, clear: true, containerID: 'container', backg: '#000'};
 
 export default {
     setup: () => {
-        initialize('train', canvasOptions);
+        initialize('train', {
+            full: true,
+            clear: true,
+            containerID: 'container',
+            backgroundColor: '#000',
+        });
 
-        const map = createMap();
+        runDemo(resources.train);
+        // const map = createMap();
     },
     run: () => resources.train.engine.run(),
     runOnce: () => resources.train.engine.runOnce(),
