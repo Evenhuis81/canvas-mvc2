@@ -1,12 +1,8 @@
 import createEntity from 'library/entity';
-import {startLevel} from './initiatize';
+// import {startLevel} from './initiatize';
 
 export const mainMenu = () => {
     // Copy from tombraid main menu:
-    // Start Casual Game
-    // Settings
-    // Exit Game
-
     const entity = createEntity('tr');
 
     const start = entity.create(mainButton);
@@ -20,7 +16,7 @@ export const mainMenu = () => {
     });
 
     start.setListener('endTransitionEnd', () => {
-        console.log('level screen');
+        goToLevelSelection();
     });
 };
 
@@ -47,52 +43,58 @@ const mainButton: Partial<EntityConfig> = {
     fontSize: 64,
 };
 
-export const goToMenu = () => {
-    const buttons = createLevelButtons(5);
+export const goToLevelSelection = () => {
+    const elementAmount = 30;
+    const fadeSpeed = 50;
 
-    const entity = createEntity('tr');
+    // TODO::Put this in resources
+    // const entity = createEntity('tr');
 
-    const entities: UserEntity[] = [];
+    const entities = createLevelSelectEntities(elementAmount, fadeSpeed);
 
-    buttons.forEach(button => entities.push(entity.create(button)));
+    // entities[0].setListener('mouseup', () => {
+    //     for (let i = 0; i < elementAmount; i++) {
+    //         setTimeout(() => {
+    //             entities[i].hide();
+    //         }, i * fadeInSpeed);
+    //     }
+    // });
 
-    entities[0].setListener('mouseup', () => {
-        for (let i = 0; i < 5; i++) {
-            setTimeout(() => {
-                entities[i].hide();
-            }, i * 200);
-        }
-    });
-
-    entities[0].setListener('endTransitionEnd', () => {
-        startLevel(3);
-    });
+    // entities[0].setListener('endTransitionEnd', () => {
+    //     startLevel(3);
+    // });
 };
 
-const createLevelButtons = (amount: number) => {
-    const heightDif = 70;
-    const delayDif = 200;
+const createLevelSelectEntities = (amount: number, delayDif: number) => {
+    const heightDif = innerHeight / amount - innerHeight * 0.1;
+    const widthDif = innerWidth / amount - innerWidth * 0.1;
 
     const base: Partial<EntityConfig> = {
-        x: 80,
-        y: 50,
-        text: 'Entity #1',
+        x: widthDif,
+        y: heightDif,
+        text: '',
         startType: 'fadein1',
-        startSpeed: 3,
+        startSpeed: 5,
         endType: 'fadeout1',
-        endSpeed: 3,
+        endSpeed: 5,
         showDelay: 0,
     };
 
-    const buttons: (typeof base)[] = [];
+    const elements: UserEntity[] = [];
+    // levelSelectElements.forEach(element => entities.push(entity.create(element)));
+
+    // const buttons: Partial<EntityConfig>[] = [];
 
     for (let i = 0; i < amount; i++) {
-        base.y = 50 + i * heightDif;
-        base.text = `Entity #${i + 1}`;
-        base.showDelay = delayDif * i;
+        // const copyBase = {
+        //     ...base,
+        // }
+        // copyBase.y += heightDif;
+        // base.text = `#${i + 1}`;
+        // base.showDelay = delayDif * i;
 
-        buttons.push({...base});
+        elements.push({...base});
     }
 
-    return buttons;
+    return elements;
 };
