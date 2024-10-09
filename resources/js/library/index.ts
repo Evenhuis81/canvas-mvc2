@@ -4,25 +4,10 @@ import {getTV} from './views/tv';
 import {getInput} from 'library/input';
 import {getSV} from './views/sv';
 import {uid} from './helpers';
-import {createStore} from './store';
 
-export const resources: Record<string | number, Resources> = {};
+export const resources: Record<string | number, ResourcesAndTV> = {};
 
-// type Type1 = {data: number[]};
-// type Type2 = {test: string | number, data: number[]}
-
-// const createLibraryStore = <T extends string | number>(id?: T extends undefined ? undefined : T)  => {
-//     if (!id) return createStore<T>();
-//     else return createStore<Type1>();
-// }
-
-type TV<T> = T extends {tv: boolean} ? TVOn : TVOff;
-type TVOff = {};
-type TVOn = {tv: boolean};
-
-export const initialize = <T>(opt: TV<T>, id?: string | number, options?: Partial<LibraryOptions>) => {
-    // const libraryStore = createStore<Type2>() : createStore<Type1>();
-
+export const initialize = (id?: string | number, options?: Partial<LibraryOptions>) => {
     const libraryID = id ?? uid();
 
     const canvas = getCanvas(options);
@@ -43,24 +28,7 @@ export const initialize = <T>(opt: TV<T>, id?: string | number, options?: Partia
     const sv = getSV(context, engine);
 
     resources[libraryID] = {id: libraryID, canvas, context, engine, container, sv, tv, input};
-
-    // return resources[libraryID];
-    return opt;
 };
-
-const optOff = {
-    staticView: {
-        option2: 10,
-    },
-};
-const optOn = {
-    tv: true,
-    transformedView: {
-        option1: 'test',
-    },
-};
-
-const initOn = initialize<{tv: boolean}>(optOn);
 
 export const getLibraryOptions = (context: CanvasRenderingContext2D, engine: Engine) => {
     const setClear = () => clearOn(engine, context);

@@ -26,7 +26,7 @@ export default {
     create: (id: number | string, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, engine: Engine) => {
         const statistics: Statistic[] = [];
 
-        const draw = createShow({id, context});
+        const draw = createDraw({id, context});
 
         // These contain objects/modules from main resources, so they don't need to be set here aswell
         statisticsResource[id] = {id, canvas, context, statistics, draw, engine, active: false};
@@ -72,7 +72,7 @@ export default {
     },
 };
 
-const createShow = (props: Omit<StatisticResource, 'draw' | 'canvas' | 'engine' | 'statistics' | 'active'>) => {
+const createDraw = (props: Omit<StatisticResource, 'draw' | 'canvas' | 'engine' | 'statistics' | 'active'>) => {
     const {id, context: ctx} = props;
 
     const txtPosDefault = vector(10, 10);
@@ -142,30 +142,30 @@ const setStatistics = (options: Partial<StatisticOptions>) => {
 // const statSwitch: Record<keyof StatisticOptions, (resource: Resources) => void> = {
 // DualView and Statistics are together untill DualView gets multi purpose
 // Beware deactivated firing even when it has not yet become activated
-const createStatSwitch = () => ({
-    dualView: () => {
-        // const {setListeners} = createDualView({statResource});
+// const createStatSwitch = () => ({
+//     dualView: () => {
+//         // const {setListeners} = createDualView({statResource});
 
-        const onActivation = () => {
-            console.log('activated');
-        };
+//         const onActivation = () => {
+//             console.log('activated');
+//         };
 
-        const onDeactivation = () => {
-            console.log('de-activated');
-        };
+//         const onDeactivation = () => {
+//             console.log('de-activated');
+//         };
 
-        setListeners(onActivation, onDeactivation);
-    },
-    // When dualView is true, this should not be true
-    overlay: ({id, canvas, context, engine}) => {
-        statistics.create(id, canvas, context, engine);
+//         setListeners(onActivation, onDeactivation);
+//     },
+//     // When dualView is true, this should not be true
+//     overlay: ({id, canvas, context, engine}) => {
+//         statistics.create(id, canvas, context, engine);
 
-        statistics.setFn(id, () => 'test stat');
+//         statistics.setFn(id, () => 'test stat');
 
-        // statistics.run(id);
-    },
-    toggleKey: ({id, toggleKey}) => statistics.setToggleKey(id, toggleKey),
-});
+//         // statistics.run(id);
+//     },
+//     toggleKey: ({id, toggleKey}) => statistics.setToggleKey(id, toggleKey),
+// });
 
 addEventListener('keyup', ({code}) => {
     if (code === 'KeyZ') {

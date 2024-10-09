@@ -5,8 +5,11 @@ interface Resources {
     container: HTMLDivElement;
     engine: Engine;
     sv: StaticView;
-    tv: TransformedView;
     input: Input;
+}
+
+interface ResourcesAndTV extends Resources {
+    tv: TransformedView;
 }
 
 interface StatisticOptions {
