@@ -5,9 +5,9 @@ export const mainMenu = () => {
     // Copy from tombraid main menu:
     const entity = createEntity('tr');
 
-    const start = entity.create(mainButton);
-    const settings = entity.create({...mainButton, y: innerHeight * 0.5, text: 'Settings'});
-    const exit = entity.create({...mainButton, y: innerHeight * 0.75, text: 'Exit Game'});
+    const start = entity.create({...mainButton, show: false});
+    const settings = entity.create({...mainButton, y: innerHeight * 0.5, text: 'Settings', show: false});
+    const exit = entity.create({...mainButton, y: innerHeight * 0.75, text: 'Exit Game', show: false});
 
     start.setListener('mouseup', () => {
         start.hide();
@@ -15,9 +15,9 @@ export const mainMenu = () => {
         exit.hide();
     });
 
-    start.setListener('endTransitionEnd', () => {
-        goToLevelSelection();
-    });
+    start.setListener('endTransitionEnd', () => {});
+
+    goToLevelSelection();
 };
 
 // Make dynamic with calculatedOptions for resize canvas
@@ -64,11 +64,9 @@ export const goToLevelSelection = () => {
 
 const createLevelSelectEntities = (amount: number, delayDif: number) => {
     const rowsOrColumns = Math.sqrt(amount);
-    console.log(rowsOrColumns, innerWidth, innerHeight);
-    const widthDif = innerWidth / rowsOrColumns - innerWidth * 0.1;
-    const heightDif = innerHeight / rowsOrColumns - innerHeight * 0.2;
-    const squareLength = innerWidth / (rowsOrColumns * 1.5);
-    console.log(widthDif, heightDif, squareLength);
+    const widthDif = (innerWidth - innerWidth * 0.1) / rowsOrColumns;
+    const heightDif = (innerHeight - innerHeight * 0.2) / rowsOrColumns;
+    const squareLength = innerWidth / (rowsOrColumns * 3);
 
     const base: Partial<EntityConfig> = {
         w: squareLength,
@@ -88,6 +86,18 @@ const createLevelSelectEntities = (amount: number, delayDif: number) => {
     let row = 1;
     for (let i = 0; i < amount; i++) {
         elements.push(entity.create({...base, x: column * widthDif, y: row * heightDif, text: (i + 1).toString()}));
+
+        elements[i].setListener('mouseup', () => {
+            elements.forEach(element => element.hide());
+        });
+
+        type EntEvt = {
+            clicked: boolean;
+        };
+
+        elements[i].setListener('endTransitionEnd', (entityEvent: EntEvt) => {
+            if (entityEvent.clicked) startLevel(i + 1);
+        });
 
         column++;
         if (column > rowsOrColumns) {

@@ -52,10 +52,10 @@ export const createEntityEvents = (
 };
 
 const createDefaultUserListeners = () => ({
-    mousedown: () => {
+    mousedown: (evt: MouseEvent) => {
         console.log('mousedown listener internal');
     },
-    mouseup: () => {
+    mouseup: (evt: MouseEvent) => {
         console.log('mouseup listener internal');
     },
     startTransitionEnd: () => {
@@ -74,8 +74,6 @@ export const createUserListeners = (listeners?: Partial<UserListeners>) => {
 
     if (listeners) {
         for (key in listeners) {
-            if (key) continue;
-
             defaults[key] = listeners[key];
         }
     }
