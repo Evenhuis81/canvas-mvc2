@@ -1,5 +1,5 @@
 import createEntity from 'library/entity';
-// import {startLevel} from './initiatize';
+import {startLevel} from './initiatize';
 
 export const mainMenu = () => {
     // Copy from tombraid main menu:
@@ -44,13 +44,10 @@ const mainButton: Partial<EntityConfig> = {
 };
 
 export const goToLevelSelection = () => {
-    const elementAmount = 30;
-    const fadeSpeed = 50;
+    const elementAmount = 25;
+    const delayDifference = 50;
 
-    // TODO::Put this in resources
-    // const entity = createEntity('tr');
-
-    const entities = createLevelSelectEntities(elementAmount, fadeSpeed);
+    const entities = createLevelSelectEntities(elementAmount, delayDifference);
 
     // entities[0].setListener('mouseup', () => {
     //     for (let i = 0; i < elementAmount; i++) {
@@ -66,34 +63,37 @@ export const goToLevelSelection = () => {
 };
 
 const createLevelSelectEntities = (amount: number, delayDif: number) => {
-    const heightDif = innerHeight / amount - innerHeight * 0.1;
-    const widthDif = innerWidth / amount - innerWidth * 0.1;
+    const rowsOrColumns = Math.sqrt(amount);
+    console.log(rowsOrColumns, innerWidth, innerHeight);
+    const widthDif = innerWidth / rowsOrColumns - innerWidth * 0.1;
+    const heightDif = innerHeight / rowsOrColumns - innerHeight * 0.2;
+    const squareLength = innerWidth / (rowsOrColumns * 1.5);
+    console.log(widthDif, heightDif, squareLength);
 
     const base: Partial<EntityConfig> = {
-        x: widthDif,
-        y: heightDif,
-        text: '',
+        w: squareLength,
+        h: squareLength,
         startType: 'fadein1',
         startSpeed: 5,
         endType: 'fadeout1',
         endSpeed: 5,
-        showDelay: 0,
     };
 
     const elements: UserEntity[] = [];
-    // levelSelectElements.forEach(element => entities.push(entity.create(element)));
 
-    // const buttons: Partial<EntityConfig>[] = [];
+    // TODO::Put this in resources
+    const entity = createEntity('tr');
 
+    let column = 1;
+    let row = 1;
     for (let i = 0; i < amount; i++) {
-        // const copyBase = {
-        //     ...base,
-        // }
-        // copyBase.y += heightDif;
-        // base.text = `#${i + 1}`;
-        // base.showDelay = delayDif * i;
+        elements.push(entity.create({...base, x: column * widthDif, y: row * heightDif, text: (i + 1).toString()}));
 
-        elements.push({...base});
+        column++;
+        if (column > rowsOrColumns) {
+            column = 1;
+            row++;
+        }
     }
 
     return elements;
