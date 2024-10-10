@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 export const createEntityEvents = (
     {animations, properties, entityListeners}: InternalEntity,
     callBacks: EntityCallBacks,
@@ -13,14 +14,26 @@ export const createEntityEvents = (
         callBacks.start(quickShow);
     };
 
-    const hide = (quickHide = animations.endType === 'none') => {
+    const hide = (quickHide = animations.endType, hideTime = properties.hideTime) => {
         if (!properties.show) throwError(properties.id, 'hiding');
 
-        properties.show = false;
+        const hideMe = () => {
+            properties.show = false;
 
-        entityListeners.remove();
+            entityListeners.remove();
 
-        callBacks.end(quickHide);
+            callBacks.end(quickHide);
+        };
+
+        if (hideTime) {
+            setTimeout(() => {
+                hideMe();
+            }, hideTime);
+
+            return;
+        }
+
+        hideMe();
     };
 
     const destroy = () => {
@@ -51,11 +64,11 @@ export const createEntityEvents = (
     return {show, hide, destroy, enable, disable};
 };
 
-const createDefaultUserListeners = () => ({
-    mousedown: (evt: MouseEvent) => {
+const defaultUserListeners: UserListeners = {
+    mousedown: () => {
         console.log('mousedown listener internal');
     },
-    mouseup: (evt: MouseEvent) => {
+    mouseup: () => {
         console.log('mouseup listener internal');
     },
     startTransitionEnd: () => {
@@ -64,38 +77,48 @@ const createDefaultUserListeners = () => ({
     endTransitionEnd: () => {
         console.log('endTransitionEnd listener internal');
     },
-});
-
-// Mouse and Transition handlers mixed
-export const createUserListeners = (listeners?: Partial<UserListeners>) => {
-    const defaults: UserListeners = createDefaultUserListeners();
-
-    let key: keyof UserListeners;
-
-    if (listeners) {
-        for (key in listeners) {
-            defaults[key] = listeners[key];
-        }
-    }
-
-    // User input handlers after creation
-    const setListener: SetUserListener = (type, listener) => (defaults[type] = listener);
-
-    return {setListener, userListeners: defaults};
 };
 
-export const createListeners = (sketch: EntitySketch, userListeners: UserListeners, {mouse}: Input) => {
+// Mouse and Transition handlers mixed
+export const createUserListeners = (userListeners?: Partial<UserListeners>) => {
+    const listeners = {...defaultUserListeners};
+
+    // User input handlers after creation
+    const setListener: SetUserListener = (type, listener) => {
+        if (!listener) return;
+
+        listeners[type] = listener;
+    };
+
+    if (!userListeners) return {setListener, userListeners: listeners};
+
+    let key: keyof UserListeners;
+    for (key in userListeners) setListener(key, userListeners[key]);
+
+    return {setListener, userListeners: listeners};
+};
+
+export const createListeners = (
+    sketch: EntitySketch,
+    userListeners: UserListeners,
+    properties: EntityProperties,
+    {mouse}: Input,
+) => {
     // TODO:: activate listeners/Handlers according to user input
     let enabled = false;
 
     const mousedownListener = (evt: MouseEvent) => {
         // statistic click counter and make button dynamic
-        if (mouse.insideRect(sketch) && evt.button === 0) userListeners.mousedown(evt);
+        if (mouse.insideRect(sketch)) userListeners.mousedown(evt);
     };
 
     const mouseupListener = (evt: MouseEvent) => {
         // statistic release counter (inside or outside)
-        if (mouse.insideRect(sketch) && evt.button === 0) userListeners.mouseup(evt);
+        if (mouse.insideRect(sketch)) {
+            properties.clicked = true;
+
+            userListeners.mouseup(evt, properties.clicked);
+        }
     };
 
     const add = () => {

@@ -1,9 +1,9 @@
 /* eslint-disable max-lines-per-function */
+import {createCallBacks} from './animate';
 import {createEntityEvents, createListeners, createUserListeners} from './properties';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {resources} from '..';
-import {createCallBacks} from './animate';
 
 const createResource = (res: Resources) => ({
     create: (options?: Partial<EntityConfig>) => create(res, options),
@@ -11,11 +11,11 @@ const createResource = (res: Resources) => ({
 
 const create = ({context, engine, input}: Resources, options: Partial<EntityConfig> = {}) => {
     // Extract internal properties from entity config options
-    const {id, name, disabled, show, showDelay, ...rest} = {
+    const {id, name, disabled, show, showDelay, clicked, hideTime, ...rest} = {
         id: options.id ?? `entity-${uid()}`,
         ...getProperties(defaultSketchProperties, options),
     }; // Add statistics options -> internal options view
-    const properties = {id, name, disabled, show, showDelay};
+    const properties = {id, name, disabled, show, showDelay, clicked, hideTime};
 
     const {startType, startSpeed, endType, endSpeed, hoverType, animationType, animateAtStart, animateAtEnd, ...rest2} =
         rest;
@@ -30,13 +30,13 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         animateAtEnd,
     };
 
-    const {listeners: userListenersConfig, ...sketch} = rest2;
+    const {listeners, ...sketch} = rest2;
 
-    const {setListener, userListeners} = createUserListeners(userListenersConfig);
+    const {setListener, userListeners} = createUserListeners(listeners);
 
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
-    const entityListeners = createListeners(sketch, userListeners, input);
+    const entityListeners = createListeners(sketch, userListeners, properties, input);
 
     const entity: InternalEntity = {
         properties,
@@ -57,7 +57,16 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     initialize(entity, events);
 
-    return Object.assign({setListener}, events);
+    const setHideTime = (time: number) => (properties.hideTime = time);
+
+    const setAnimationProperty = <K extends keyof EntityAnimationProperties>(
+        type: K,
+        value: EntityAnimationProperties[K],
+    ) => {
+        animations[type] = value;
+    };
+
+    return {...events, setListener, setHideTime, setAnimationProperty};
 };
 
 const initialize = ({properties}: InternalEntity, events: EntityEvents) => {
@@ -86,6 +95,8 @@ const defaultSketchProperties = {
     disabled: false,
     show: true,
     showDelay: 0,
+    clicked: false,
+    hideTime: 0,
     // Animation Properties ('none' -> undefined?)
     animateAtStart: false,
     animateAtEnd: false,

@@ -1,5 +1,6 @@
-import createEntity from 'library/entity';
+/* eslint-disable max-lines-per-function */
 import {startLevel} from './initiatize';
+import createEntity from 'library/entity';
 
 export const mainMenu = () => {
     // Copy from tombraid main menu:
@@ -45,9 +46,9 @@ const mainButton: Partial<EntityConfig> = {
 
 export const goToLevelSelection = () => {
     const elementAmount = 25;
-    const delayDifference = 50;
+    // const delayDifference = 25;
 
-    const entities = createLevelSelectEntities(elementAmount, delayDifference);
+    createLevelSelectEntities(elementAmount);
 
     // entities[0].setListener('mouseup', () => {
     //     for (let i = 0; i < elementAmount; i++) {
@@ -62,7 +63,7 @@ export const goToLevelSelection = () => {
     // });
 };
 
-const createLevelSelectEntities = (amount: number, delayDif: number) => {
+const createLevelSelectEntities = (amount: number) => {
     const rowsOrColumns = Math.sqrt(amount);
     const widthDif = (innerWidth - innerWidth * 0.1) / rowsOrColumns;
     const heightDif = (innerHeight - innerHeight * 0.2) / rowsOrColumns;
@@ -85,19 +86,28 @@ const createLevelSelectEntities = (amount: number, delayDif: number) => {
     let column = 1;
     let row = 1;
     for (let i = 0; i < amount; i++) {
-        elements.push(entity.create({...base, x: column * widthDif, y: row * heightDif, text: (i + 1).toString()}));
+        elements.push(
+            entity.create({...base, x: column * widthDif, y: row * heightDif, text: (i + 1).toString(), show: false}),
+        );
 
-        elements[i].setListener('mouseup', () => {
+        const tis = elements[i];
+
+        tis.setHideTime((amount - 1) * 25 - i * 25);
+
+        tis.setListener('mouseup', (evt, clicked) => {
+            // if (clicked) tis.setAnimationProperty('endTransitionStart');
+            if (clicked) tis.setHideTime(0);
+
             elements.forEach(element => element.hide());
         });
 
-        type EntEvt = {
-            clicked: boolean;
-        };
-
-        elements[i].setListener('endTransitionEnd', (entityEvent: EntEvt) => {
-            if (entityEvent.clicked) startLevel(i + 1);
+        tis.setListener('endTransitionEnd', clicked => {
+            if (clicked) startLevel(i + 1);
         });
+
+        setTimeout(() => {
+            tis.show();
+        }, 25 * i);
 
         column++;
         if (column > rowsOrColumns) {
@@ -106,5 +116,5 @@ const createLevelSelectEntities = (amount: number, delayDif: number) => {
         }
     }
 
-    return elements;
+    // return elements;
 };

@@ -16,6 +16,7 @@ type EntitySketch = {
     textBaseLine: CanvasTextBaseline;
 };
 
+// EntityEvents -> EntityMethods || EntityFunctions
 interface EntityEvents {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
@@ -24,9 +25,11 @@ interface EntityEvents {
     disable: () => void;
 }
 
-type SetUserListener = <K extends keyof UserListeners>(type: K, listener: UserListeners[K]) => void;
+type SetUserListener = <K extends keyof UserListeners>(type: K, listener?: UserListeners[K]) => void;
 
-type UserEntity = EntityEvents & {setListener: SetUserListener};
+type HideTime = (time: number) => void;
+
+type UserEntity = EntityEvents & {setListener: SetUserListener; setHideTime: HideTime};
 
 interface EntityProperties {
     id: number | string;
@@ -34,6 +37,8 @@ interface EntityProperties {
     disabled: boolean;
     show: boolean;
     showDelay: number;
+    clicked: boolean;
+    hideTime: number;
 }
 
 interface EntityListeners {
@@ -56,12 +61,18 @@ type EntityColors = {
 // click = mouse & touch (touch not yet implemented): see comments.txt for notes (expand into instructions)
 // MouseEvent => ButtonEvent (see button.ts)
 
-// type UserListenerTypes = 'mouseup' | 'mousedown' | 'startTransitionEnd' | 'endTransitionEnd';
+type UserListenerTypes = 'mouseup' | 'mousedown' | 'startTransitionEnd' | 'endTransitionEnd';
+
+// type EntityEvent = {
+//     clicked: boolean;
+//     mouseEvent: MouseEvent;
+// };
+
 type UserListeners = {
     mouseup: (evt: MouseEvent) => void;
     mousedown: (evt: MouseEvent) => void;
-    startTransitionEnd: () => void;
-    endTransitionEnd: () => void;
+    startTransitionEnd: (clicked: boolean) => void;
+    endTransitionEnd: (clicked: boolean) => void;
 };
 
 // needs Event on handlerTypes

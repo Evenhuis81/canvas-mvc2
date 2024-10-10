@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import {createCreateRenders} from './renders';
 
 export const createCallBacks = (entity: InternalEntity) => {
@@ -98,7 +99,7 @@ const createSetEngine = (engine: Engine, renders: Partial<EntityRenders>): Entit
 };
 
 const setCallBacks = (
-    {animations, userListeners}: InternalEntity,
+    {animations, userListeners, properties}: InternalEntity,
     setEngine: EntitySetEngine,
     callBacks: EntityCallBacks,
 ) => {
@@ -125,7 +126,7 @@ const setCallBacks = (
         setEngine('animation', 'on'); // This could have a (double) check
         setEngine('hover', 'on');
 
-        userListeners.startTransitionEnd();
+        userListeners.startTransitionEnd(properties.clicked);
     };
 
     callBacks.end = quickHide => {
@@ -151,7 +152,7 @@ const setCallBacks = (
         setEngine('animation', 'off'); // This could have a (double) check
         setEngine('hover', 'off');
 
-        userListeners.endTransitionEnd();
+        userListeners.endTransitionEnd(properties.clicked);
     };
 };
 
