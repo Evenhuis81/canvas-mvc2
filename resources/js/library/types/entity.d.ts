@@ -30,6 +30,8 @@ interface EntityProperties {
 type EntityAnimationType = 'noise' | 'none';
 type EntityTransitionTypes = 'fadein1' | 'fadeout1' | 'slideinleft' | 'none';
 type EntityHoverTransitionTypes = 'bold' | 'none';
+
+// This needs better name, it conflicts with EntityRenders (keyof) at createRenders in animate.ts
 type EntityRenderTypes = EntityAnimationType | EntityTransitionTypes | EntityHoverTransitionTypes;
 
 type EntityColors = {
@@ -109,6 +111,7 @@ type TransitionSpeed = 1 | 2 | 3 | 4 | 5;
 type RenderFunctions = {
     update: Required<Update>;
     prepare?: () => void;
+    // finish?: () => void;
 };
 
 interface EntityRenders {
@@ -116,7 +119,7 @@ interface EntityRenders {
     hover: RenderFunctions;
     start: RenderFunctions;
     end: RenderFunctions;
-    draw: Required<Draw>;
+    // draw: Required<Draw>;
 }
 
 // Future states: 'pauze' | 'continue';

@@ -9,13 +9,19 @@ export const createCallBacks = (entity: EntityTemp) => {
     const createRenders = createCreateRenders(entity, callBacks);
 
     // convert undefined to empty update/draw? (for engineRenders)
+    // Make completely optional (see notes in notebook)
     const renders = {
-        animation: animationType === 'none' ? undefined : createRenders.animationUpdates[animationType](),
+        entity: animationType === 'none' ? undefined : createRenders.animationUpdates[animationType](),
         hover: hoverType === 'none' ? undefined : createRenders.hoverTransitions[hoverType](),
         start: startType === 'none' ? undefined : createRenders.entityTransitions[startType](),
         end: endType === 'none' ? undefined : createRenders.entityTransitions[endType](),
-        draw: createRenders.draw,
+        // draw: createRenders.draw,
     };
+
+    // Needs better naming (see note entity.d.ts) + mix all renderTypes together
+    // const setAnimationType = (type: EntityAnimationType, renderType: 'noise') => {
+    //     renders[type] = createRenders.animationUpdates[renderType]
+    // }
 
     const setEngine = createSetEngine(entity.engine, renders);
 
@@ -70,15 +76,15 @@ const createEngineRenders = (engine: Engine, renders: Partial<EntityRenders>) =>
         },
         set: false,
     },
-    draw: {
-        on: () => {
-            if (renders.draw) engine.setDraw(renders.draw);
-        },
-        off: () => {
-            if (renders.draw) engine.removeDraw(renders.draw.id);
-        },
-        set: false,
-    },
+    // draw: {
+    //     on: () => {
+    //         if (renders.draw) engine.setDraw(renders.draw);
+    //     },
+    //     off: () => {
+    //         if (renders.draw) engine.removeDraw(renders.draw.id);
+    //     },
+    //     set: false,
+    // },
 });
 
 // Possible returnvalue for setEngine: fail or succeed on setting update/draw
