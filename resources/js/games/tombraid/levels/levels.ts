@@ -75,3 +75,5 @@ const levels: Levels = {
     ],
     4: [['X', 'S']],
 };
+
+for (let i = 5; i < 26; i++) levels[i] = [['S']];

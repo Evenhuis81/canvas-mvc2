@@ -46,32 +46,25 @@ const mainButton: Partial<EntityConfig> = {
 
 export const goToLevelSelection = () => {
     const elementAmount = 25;
-    // const delayDifference = 25;
 
     createLevelSelectEntities(elementAmount);
-
-    // entities[0].setListener('mouseup', () => {
-    //     for (let i = 0; i < elementAmount; i++) {
-    //         setTimeout(() => {
-    //             entities[i].hide();
-    //         }, i * fadeInSpeed);
-    //     }
-    // });
-
-    // entities[0].setListener('endTransitionEnd', () => {
-    //     startLevel(3);
-    // });
 };
 
 const createLevelSelectEntities = (amount: number) => {
+    // console.log(innerWidth, innerHeight); // Put in statistics for easy view
+
+    // For landscape mode
     const rowsOrColumns = Math.sqrt(amount);
-    const widthDif = (innerWidth - innerWidth * 0.1) / rowsOrColumns;
-    const heightDif = (innerHeight - innerHeight * 0.2) / rowsOrColumns;
-    const squareLength = innerWidth / (rowsOrColumns * 3);
+    const paddingY = innerHeight * 0.1;
+    const paddingX = (innerWidth - (innerHeight - 2 * paddingY)) / 2;
+    const elDist = innerHeight - (paddingY * 2) / rowsOrColumns; // TODO::Set element distance
+    // const squareLength = heightDif / 2;
+    // console.log(heightDif);
+    const timeoutDif = 25;
 
     const base: Partial<EntityConfig> = {
-        w: squareLength,
-        h: squareLength,
+        // w: squareLength,
+        // h: squareLength,
         startType: 'fadein1',
         startSpeed: 5,
         endType: 'fadeout1',
@@ -80,34 +73,33 @@ const createLevelSelectEntities = (amount: number) => {
 
     const elements: UserEntity[] = [];
 
-    // TODO::Put this in resources
-    const entity = createEntity('tr');
+    const entity = createEntity('tr'); // TODO::Put this in resources
 
     let column = 1;
     let row = 1;
     for (let i = 0; i < amount; i++) {
         elements.push(
-            entity.create({...base, x: column * widthDif, y: row * heightDif, text: (i + 1).toString(), show: false}),
+            entity.create({...base, x: column * heightDif, y: row * heightDif, text: (i + 1).toString(), show: false}),
         );
 
-        const tis = elements[i];
+        const element = elements[i];
 
-        tis.setHideTime((amount - 1) * 25 - i * 25);
+        element.setHideTime((amount - 1) * timeoutDif - i * timeoutDif);
 
-        tis.setListener('mouseup', (evt, clicked) => {
-            // if (clicked) tis.setAnimationProperty('endTransitionStart');
-            if (clicked) tis.setHideTime(0);
-
+        element.setListener('mouseup', () => {
+            // if (clicked) element.setAnimationProperty('endTransitionStart');
+            // if (clicked) element.setHideTime(0);
             elements.forEach(element => element.hide());
         });
 
-        tis.setListener('endTransitionEnd', clicked => {
-            if (clicked) startLevel(i + 1);
+        element.setListener('endTransitionEnd', () => {
+            console.log('endTransitionEnd', i);
+            // if (clicked) startLevel(i + 1);
         });
 
         setTimeout(() => {
-            tis.show();
-        }, 25 * i);
+            element.show();
+        }, timeoutDif * i);
 
         column++;
         if (column > rowsOrColumns) {
@@ -115,6 +107,4 @@ const createLevelSelectEntities = (amount: number) => {
             row++;
         }
     }
-
-    // return elements;
 };

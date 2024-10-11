@@ -14,7 +14,7 @@ export const createEntityEvents = (
         callBacks.start(quickShow);
     };
 
-    const hide = (quickHide = animations.endType, hideTime = properties.hideTime) => {
+    const hide = (quickHide = animations.endType !== 'none', hideTime = properties.hideTime) => {
         if (!properties.show) throwError(properties.id, 'hiding');
 
         const hideMe = () => {
@@ -113,11 +113,11 @@ export const createListeners = (
     };
 
     const mouseupListener = (evt: MouseEvent) => {
-        // statistic release counter (inside or outside)
+        // statistic release counter (inside or outside), can be used to check clicked (to remove clicked property)
         if (mouse.insideRect(sketch)) {
             properties.clicked = true;
 
-            userListeners.mouseup(evt, properties.clicked);
+            userListeners.mouseup(evt);
         }
     };
 
