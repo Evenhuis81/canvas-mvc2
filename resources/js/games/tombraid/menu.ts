@@ -4,27 +4,27 @@ import createEntity from 'library/entity';
 
 export const mainMenu = () => {
     // Copy from tombraid main menu:
-    const entity = createEntity('tr');
+    // const entity = createEntity('tr');
 
-    const start = entity.create({...mainButton, show: false});
-    const settings = entity.create({...mainButton, y: innerHeight * 0.5, text: 'Settings', show: false});
-    const exit = entity.create({...mainButton, y: innerHeight * 0.75, text: 'Exit Game', show: false});
+    // const start = entity.create({...mainButton, show: false});
+    // const settings = entity.create({...mainButton, y: innerHeight * 0.5, text: 'Settings', show: false});
+    // const exit = entity.create({...mainButton, y: innerHeight * 0.75, text: 'Exit Game', show: false});
 
-    start.setListener('mouseup', () => {
-        start.hide();
-        settings.hide();
-        exit.hide();
-    });
+    // start.setListener('mouseup', () => {
+    //     start.hide();
+    //     settings.hide();
+    //     exit.hide();
+    // });
 
-    start.setListener('endTransitionEnd', () => {});
+    // start.setListener('endTransitionEnd', () => {});
 
     goToLevelSelection();
 };
 
 // Make dynamic with calculatedOptions for resize canvas
 // Entity Color can't take in regular css names (like 'red')
-// Create superfast fadein fadeout (more speeds)
-// Create oscillerate animation and / or real noise one
+// Alter speed 'system' for even faster or slower transitions
+// Create oscillerate animation and/or real noise animation
 
 const mainButton: Partial<EntityConfig> = {
     startType: 'fadein1',
@@ -50,21 +50,20 @@ export const goToLevelSelection = () => {
     createLevelSelectEntities(elementAmount);
 };
 
+// For landscape mode
 const createLevelSelectEntities = (amount: number) => {
-    // console.log(innerWidth, innerHeight); // Put in statistics for easy view
-
-    // For landscape mode
     const rowsOrColumns = Math.sqrt(amount);
     const paddingY = innerHeight * 0.1;
-    const paddingX = (innerWidth - (innerHeight - 2 * paddingY)) / 2;
-    const elDist = innerHeight - (paddingY * 2) / rowsOrColumns; // TODO::Set element distance
-    // const squareLength = heightDif / 2;
-    // console.log(heightDif);
-    const timeoutDif = 25;
+    const paddingX = innerWidth - (innerHeight - 2 * paddingY);
+    const squareLength = (innerHeight - paddingY) / 7; // margin = anything from div/5 - ?
+    const squareDistance = (innerHeight - paddingY) / 5;
+    const startY = paddingY / 2 + squareLength / 2;
+    const startX = paddingX / 2 + squareLength / 2;
+    const timeoutDifference = 25;
 
     const base: Partial<EntityConfig> = {
-        // w: squareLength,
-        // h: squareLength,
+        w: squareLength,
+        h: squareLength,
         startType: 'fadein1',
         startSpeed: 5,
         endType: 'fadeout1',
@@ -75,16 +74,22 @@ const createLevelSelectEntities = (amount: number) => {
 
     const entity = createEntity('tr'); // TODO::Put this in resources
 
-    let column = 1;
-    let row = 1;
+    let column = 0;
+    let row = 0;
     for (let i = 0; i < amount; i++) {
         elements.push(
-            entity.create({...base, x: column * heightDif, y: row * heightDif, text: (i + 1).toString(), show: false}),
+            entity.create({
+                ...base,
+                x: startX + column * squareDistance,
+                y: startY + row * squareDistance,
+                text: (i + 1).toString(),
+                show: false,
+            }),
         );
 
         const element = elements[i];
 
-        element.setHideTime((amount - 1) * timeoutDif - i * timeoutDif);
+        element.setHideTime((amount - 1) * timeoutDifference - i * timeoutDifference);
 
         element.setListener('mouseup', () => {
             // if (clicked) element.setAnimationProperty('endTransitionStart');
@@ -92,18 +97,19 @@ const createLevelSelectEntities = (amount: number) => {
             elements.forEach(element => element.hide());
         });
 
-        element.setListener('endTransitionEnd', () => {
-            console.log('endTransitionEnd', i);
-            // if (clicked) startLevel(i + 1);
+        element.setListener('endTransitionEnd', clicked => {
+            console.log(clicked);
+
+            if (clicked) startLevel(i + 1);
         });
 
         setTimeout(() => {
             element.show();
-        }, timeoutDif * i);
+        }, timeoutDifference * i);
 
         column++;
-        if (column > rowsOrColumns) {
-            column = 1;
+        if (column > rowsOrColumns - 1) {
+            column = 0;
             row++;
         }
     }

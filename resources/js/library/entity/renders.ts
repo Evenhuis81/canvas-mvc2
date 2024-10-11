@@ -1,5 +1,5 @@
 export const createCreateRenders = (
-    entity: InternalEntity,
+    entity: Omit<Entity, 'entityListeners' | 'callBacks'>,
     callBacks: Pick<EntityCallBacks, 'startEnd' | 'endEnd'>,
 ) => {
     const {id, name} = entity.properties;
@@ -176,7 +176,7 @@ const createSlideInLeftTransitionUpdate = () => () => {
 };
 
 const createTransitionUpdate =
-    ({input: {mouse}, sketch}: InternalEntity, transition: TransitionBase) =>
+    ({input: {mouse}, sketch}: Omit<Entity, 'entityListeners' | 'callBacks'>, transition: TransitionBase) =>
     () => {
         if (mouse.insideRect(sketch)) {
             transition.forward();
@@ -202,7 +202,7 @@ const createNoiseUpdate = (sketch: EntitySketch) => () => {
 };
 
 const createDraw =
-    ({sketch, context: ctx, colors: {fill, stroke, textFill}}: InternalEntity) =>
+    ({sketch, context: ctx, colors: {fill, stroke, textFill}}: EntityTemp) =>
     () => {
         ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
         ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;

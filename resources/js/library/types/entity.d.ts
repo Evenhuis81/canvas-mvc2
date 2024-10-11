@@ -16,21 +16,6 @@ type EntitySketch = {
     textBaseLine: CanvasTextBaseline;
 };
 
-// EntityEvents -> EntityMethods || EntityFunctions
-interface EntityEvents {
-    show: (quickShow?: boolean) => void;
-    hide: (quickHide?: boolean) => void;
-    destroy: () => void;
-    enable: () => void;
-    disable: () => void;
-}
-
-type SetUserListener = <K extends keyof UserListeners>(type: K, listener?: UserListeners[K]) => void;
-
-type HideTime = (time: number) => void;
-
-type UserEntity = EntityEvents & {setListener: SetUserListener; setHideTime: HideTime};
-
 interface EntityProperties {
     id: number | string;
     name: string;
@@ -41,16 +26,11 @@ interface EntityProperties {
     hideTime: number;
 }
 
-interface EntityListeners {
-    add: () => void;
-    remove: () => void;
-}
-
 // TODO::Dynamically add 'none' unionType
 type EntityAnimationType = 'noise' | 'none';
 type EntityTransitionTypes = 'fadein1' | 'fadeout1' | 'slideinleft' | 'none';
 type EntityHoverTransitionTypes = 'bold' | 'none';
-// type EntityRenderTypes = EntityAnimationType | EntityTransitionTypes | EntityHoverTransitionTypes;
+type EntityRenderTypes = EntityAnimationType | EntityTransitionTypes | EntityHoverTransitionTypes;
 
 type EntityColors = {
     fill: RGBA;
@@ -58,27 +38,23 @@ type EntityColors = {
     textFill: RGBA;
 };
 
-// click = mouse & touch (touch not yet implemented): see comments.txt for notes (expand into instructions)
-// MouseEvent => ButtonEvent (see button.ts)
+interface EntityListeners {
+    add: () => void;
+    remove: () => void;
+}
 
-type UserListenerTypes = 'mouseup' | 'mousedown' | 'startTransitionEnd' | 'endTransitionEnd';
+type SetUserListener = <K extends keyof UserListeners>(type: K, listener?: UserListeners[K]) => void;
+type SetHideTime = (time: number) => void;
 
-// type EntityEvent = {
-//     clicked: boolean;
-//     mouseEvent: MouseEvent;
-// };
-
-type UserListeners = {
-    mouseup: (evt: MouseEvent) => void;
-    mousedown: (evt: MouseEvent) => void;
-    startTransitionEnd: (clicked: boolean) => void;
-    endTransitionEnd: (clicked: boolean) => void;
-};
-
-// needs Event on handlerTypes
-// type EntityHandlers = {
-//     [Property in HandlerTypes]: () => void;
-// } & {button: number}; // wrong;
+interface UserEntity {
+    show: (quickShow?: boolean) => void;
+    hide: (quickHide?: boolean) => void;
+    destroy: () => void;
+    enable: () => void;
+    disable: () => void;
+    setListener: SetUserListener;
+    setHideTime: SetHideTime;
+}
 
 interface EntityCallBacks {
     start: (quickShow: boolean, prepare?: () => void) => void;
@@ -87,21 +63,32 @@ interface EntityCallBacks {
     endEnd: () => void;
 }
 
+type UserListenerTypes = 'mouseup' | 'mousedown' | 'startTransitionEnd' | 'endTransitionEnd';
+
+// click = mouse & touch (touch not yet implemented): see comments.txt for notes (expand into instructions)
+type UserListeners = {
+    mouseup: (evt: MouseEvent) => void;
+    mousedown: (evt: MouseEvent) => void;
+    startTransitionEnd: (clicked: boolean) => void;
+    endTransitionEnd: (clicked: boolean) => void;
+};
+
 interface Entity {
     sketch: EntitySketch;
     properties: EntityProperties;
     userListeners: UserListeners;
     entityListeners: EntityListeners;
+    callBacks: EntityCallBacks;
     animations: EntityAnimationProperties;
     colors: EntityColors;
-    events: EntityEvents;
-}
-
-type InternalEntity = Omit<Entity, 'events'> & {
     engine: Engine;
     context: CanvasRenderingContext2D;
     input: Input;
-};
+}
+
+type EntityTemp = Omit<Entity, 'entityListeners' | 'callBacks'>;
+
+// type InternalEntity = Omit<Entity, 'events'> & {
 
 type EntityConfig = EntitySketch & EntityProperties & EntityAnimationProperties & {listeners: Partial<UserListeners>};
 

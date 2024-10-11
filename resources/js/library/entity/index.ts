@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import {createCallBacks} from './animate';
-import {createEntityEvents, createListeners, createUserListeners} from './properties';
+import {createEntityListeners, createUserEntity, createUserListeners} from './properties';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {resources} from '..';
@@ -36,40 +36,31 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
-    const entityListeners = createListeners(sketch, userListeners, properties, input);
-
-    const entity: InternalEntity = {
+    const entity1 = {
         properties,
         animations,
         sketch,
         userListeners,
-        entityListeners,
         colors,
         engine,
         context,
         input,
-    };
+    }; // Temp object for creating entityListeners and callBacks
 
-    // Includes draw and updates
-    const callBacks = createCallBacks(entity);
+    const entityListeners = createEntityListeners(entity1);
 
-    const events = createEntityEvents(entity, callBacks);
+    const callBacks = createCallBacks(entity1); // Includes draw and updates
 
-    initialize(entity, events);
+    const entity = {...entity1, callBacks, entityListeners};
 
-    const setHideTime = (time: number) => (properties.hideTime = time);
+    const userMethods = createUserEntity(entity);
 
-    const setAnimationProperty = <K extends keyof EntityAnimationProperties>(
-        type: K,
-        value: EntityAnimationProperties[K],
-    ) => {
-        animations[type] = value;
-    };
+    initialize(entity, userMethods);
 
-    return {...events, setListener, setHideTime, setAnimationProperty};
+    return {...userMethods, setListener};
 };
 
-const initialize = ({properties}: InternalEntity, events: EntityEvents) => {
+const initialize = ({properties}: Entity, methods: Omit<UserEntity, 'setListener'>) => {
     if (properties.show) {
         // Test optional setTimeout (mind the 'on top of stack')
         setTimeout(() => {
@@ -77,14 +68,14 @@ const initialize = ({properties}: InternalEntity, events: EntityEvents) => {
 
             properties.showDelay = 0; // one time calling show with showDelay
 
-            events.show();
+            methods.show();
         }, properties.showDelay);
     }
 
     if (properties.disabled) {
         properties.disabled = false;
 
-        events.disable();
+        methods.disable();
     }
 };
 

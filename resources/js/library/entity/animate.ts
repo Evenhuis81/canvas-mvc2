@@ -1,7 +1,7 @@
 /* eslint-disable max-lines-per-function */
 import {createCreateRenders} from './renders';
 
-export const createCallBacks = (entity: InternalEntity) => {
+export const createCallBacks = (entity: EntityTemp) => {
     const {animationType, hoverType, startType, endType} = entity.animations;
 
     const callBacks = createEmptyCallBacks();
@@ -99,7 +99,7 @@ const createSetEngine = (engine: Engine, renders: Partial<EntityRenders>): Entit
 };
 
 const setCallBacks = (
-    {animations, userListeners, properties}: InternalEntity,
+    {animations, userListeners, properties}: EntityTemp,
     setEngine: EntitySetEngine,
     callBacks: EntityCallBacks,
 ) => {
