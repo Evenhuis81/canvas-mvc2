@@ -1,5 +1,5 @@
 /* eslint-disable max-lines-per-function */
-import {createCallBacks} from './animate';
+import {createVisualsAndCallBacks} from './animate';
 import {createEntityListeners, createUserEntity, createUserListeners} from './properties';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
@@ -19,7 +19,7 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     const {startType, startSpeed, endType, endSpeed, hoverType, animationType, animateAtStart, animateAtEnd, ...rest2} =
         rest;
-    const animations = {
+    const visualProperties = {
         startType,
         startSpeed,
         endType,
@@ -38,7 +38,7 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     const entity1 = {
         properties,
-        animations,
+        visualProperties,
         sketch,
         userListeners,
         colors,
@@ -49,18 +49,18 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     const entityListeners = createEntityListeners(entity1);
 
-    const callBacks = createCallBacks(entity1); // Includes draw and updates
+    const {visuals, callBacks} = createVisualsAndCallBacks(entity1); // Also creates setEngine
 
-    const entity = {...entity1, callBacks, entityListeners};
+    const entity = {...entity1, entityListeners, visuals, callBacks};
 
-    const userMethods = createUserEntity(entity);
+    const userMethods = {setListener, ...createUserEntity(entity)};
 
     initialize(entity, userMethods);
 
-    return {...userMethods, setListener};
+    return userMethods;
 };
 
-const initialize = ({properties}: Entity, methods: Omit<UserEntity, 'setListener'>) => {
+const initialize = ({properties}: Entity, methods: UserEntity) => {
     if (properties.show) {
         // Test optional setTimeout (mind the 'on top of stack')
         setTimeout(() => {
@@ -91,12 +91,12 @@ const defaultSketchProperties = {
     // Animation Properties ('none' -> undefined?)
     animateAtStart: false,
     animateAtEnd: false,
-    animationType: 'none',
-    hoverType: 'none',
-    startType: 'none',
-    endType: 'none',
-    startSpeed: 2,
-    endSpeed: 2,
+    // animationType: 'none',
+    // hoverType: 'none',
+    // startType: 'none',
+    // endType: 'none',
+    startSpeed: 3,
+    endSpeed: 3,
     // Sketch
     x: 300,
     y: 200,

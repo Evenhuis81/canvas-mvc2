@@ -1,7 +1,7 @@
 /* eslint-disable max-lines-per-function */
-export const createUserEntity = ({animations, properties, entityListeners, callBacks}: Entity) => {
+export const createUserEntity = ({visualProperties, properties, entityListeners, callBacks}: Entity) => {
     // parameter default gives auto start (and end) transitions if type !'none', manually able to set by user input
-    const show = (quickShow = animations.startType === 'none') => {
+    const show = (quickShow = !visualProperties.startType) => {
         if (properties.show) throwError(properties.id, 'showing');
 
         properties.show = true;
@@ -11,10 +11,8 @@ export const createUserEntity = ({animations, properties, entityListeners, callB
         callBacks.start(quickShow);
     };
 
-    const hide = (quickHide = animations.endType === 'none', hideTime = properties.hideTime) => {
+    const hide = (quickHide = !visualProperties.endType, hideTime = properties.hideTime) => {
         if (!properties.show) throwError(properties.id, 'hiding');
-
-        console.log(quickHide);
 
         const hideMe = () => {
             properties.show = false;
@@ -51,20 +49,17 @@ export const createUserEntity = ({animations, properties, entityListeners, callB
     };
 
     const disable = () => {
-        if (properties.disabled) throwError(properties.id, 'disabled');
-
-        entityListeners.remove();
-
-        properties.disabled = true;
-
+        // if (properties.disabled) throwError(properties.id, 'disabled');
+        // entityListeners.remove();
+        // properties.disabled = true;
         // disable handlers / animations / create disable properties (sketch, colors, etc)
     };
 
     const setHideTime = (time: number) => (properties.hideTime = time);
 
-    // const setAnimationProperty = <K extends keyof EntityAnimationProperties>(
+    // const setVisualProperty = <K extends keyof EntityVisualProperties>(
     //     type: K,
-    //     value: EntityAnimationProperties[K],
+    //     value: EntityVisualProperties[K],
     // ) => {
     //     animations[type] = value;
     // };
@@ -72,6 +67,7 @@ export const createUserEntity = ({animations, properties, entityListeners, callB
     return {show, hide, destroy, enable, disable, setHideTime};
 };
 
+// TODO::Make optional
 const defaultUserListeners: UserListeners = {
     mousedown: () => {
         console.log('mousedown listener internal');
@@ -106,12 +102,7 @@ export const createUserListeners = (userListeners?: Partial<UserListeners>) => {
     return {setListener, userListeners: listeners};
 };
 
-export const createEntityListeners = ({
-    sketch,
-    userListeners,
-    properties,
-    input: {mouse},
-}: Omit<Entity, 'entityListeners' | 'callBacks'>) => {
+export const createEntityListeners = ({sketch, userListeners, properties, input: {mouse}}: EntityTemp) => {
     // TODO:: activate listeners/Handlers according to user input
     let enabled = false;
 

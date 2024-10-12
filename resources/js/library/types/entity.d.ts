@@ -26,13 +26,11 @@ interface EntityProperties {
     hideTime: number;
 }
 
-// TODO::Dynamically add 'none' unionType
-type EntityAnimationType = 'noise' | 'none';
-type EntityTransitionTypes = 'fadein1' | 'fadeout1' | 'slideinleft' | 'none';
-type EntityHoverTransitionTypes = 'bold' | 'none';
+type EntityAnimations = 'noise';
+type EntityTransitions = 'fadein1' | 'fadeout1' | 'slideinleft';
+type EntityHovers = 'bold';
 
-// This needs better name, it conflicts with EntityRenders (keyof) at createRenders in animate.ts
-type EntityRenderTypes = EntityAnimationType | EntityTransitionTypes | EntityHoverTransitionTypes;
+type EntityVisualTypes = EntityAnimations | EntityTransitions | EntityHovers;
 
 type EntityColors = {
     fill: RGBA;
@@ -81,48 +79,47 @@ interface Entity {
     userListeners: UserListeners;
     entityListeners: EntityListeners;
     callBacks: EntityCallBacks;
-    animations: EntityAnimationProperties;
+    visualProperties: EntityVisualProperties;
+    visuals: EntityVisuals;
     colors: EntityColors;
     engine: Engine;
     context: CanvasRenderingContext2D;
     input: Input;
 }
 
-type EntityTemp = Omit<Entity, 'entityListeners' | 'callBacks'>;
+type EntityTemp = Omit<Entity, 'entityListeners' | 'callBacks' | 'visuals'>;
 
-// type InternalEntity = Omit<Entity, 'events'> & {
-
-type EntityConfig = EntitySketch & EntityProperties & EntityAnimationProperties & {listeners: Partial<UserListeners>};
+type EntityConfig = EntitySketch & EntityProperties & EntityVisualProperties & {listeners: Partial<UserListeners>};
 
 // Preferably animation types can be undefined, but this needs proper defaults on typescript
-interface EntityAnimationProperties {
+interface EntityVisualProperties {
     animateAtStart: boolean;
     animateAtEnd: boolean;
-    animationType: EntityAnimationType;
-    hoverType: EntityHoverTransitionTypes;
-    startType: EntityTransitionTypes;
+    animationType?: EntityAnimations;
+    hoverType?: EntityHovers;
+    startType?: EntityTransitions;
     startSpeed: TransitionSpeed;
-    endType: EntityTransitionTypes;
+    endType?: EntityTransitions;
     endSpeed: TransitionSpeed;
 }
 
 type TransitionSpeed = 1 | 2 | 3 | 4 | 5;
 
-type RenderFunctions = {
+type Renderer = {
     update: Required<Update>;
     prepare?: () => void;
     // finish?: () => void;
 };
 
-interface EntityRenders {
-    animation: RenderFunctions;
-    hover: RenderFunctions;
-    start: RenderFunctions;
-    end: RenderFunctions;
-    // draw: Required<Draw>;
+interface EntityVisuals {
+    entity?: Renderer;
+    hover?: Renderer;
+    start?: Renderer;
+    end?: Renderer;
+    draw: Required<Draw>;
 }
 
 // Future states: 'pauze' | 'continue';
 type EntityEngineState = 'on' | 'off';
 
-type EntitySetEngine = (type: keyof EntityRenders | 'draw', state: EntityEngineState) => void;
+type EntitySetEngine = (type: keyof EntityVisuals, state: EntityEngineState) => void;

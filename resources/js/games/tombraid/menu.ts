@@ -98,8 +98,6 @@ const createLevelSelectEntities = (amount: number) => {
         });
 
         element.setListener('endTransitionEnd', clicked => {
-            console.log(clicked);
-
             if (clicked) startLevel(i + 1);
         });
 

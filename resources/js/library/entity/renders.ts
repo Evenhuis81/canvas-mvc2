@@ -1,51 +1,48 @@
-export const createCreateRenders = (
-    entity: Omit<Entity, 'entityListeners' | 'callBacks'>,
-    callBacks: Pick<EntityCallBacks, 'startEnd' | 'endEnd'>,
-) => {
+export const createRenders = (entity: EntityTemp, callBacks: Pick<EntityCallBacks, 'startEnd' | 'endEnd'>) => {
     const {id, name} = entity.properties;
 
-    const hoverTransitions = {
+    const hovers = {
         bold: () => {
-            const transition = createBoldHoverTransition(entity.sketch);
+            const hover = createHoverBold(entity.sketch);
 
             return {
                 update: {
                     id: id + '-hover',
-                    name: `entity-hover-update${name}`,
-                    fn: createTransitionUpdate(entity, transition),
+                    name: `hover-bold-${name}`,
+                    fn: createTransitionUpdate(entity, hover),
                 },
             };
         },
     };
 
-    const entityTransitions = {
+    const transitions = {
         fadein1: () => {
-            const {update: fn, prepare} = createFadeIn1Transition(
+            const {update: fn, prepare} = createTransitionFadein1(
                 entity.colors,
-                0.005 * entity.animations.startSpeed,
+                0.005 * entity.visualProperties.startSpeed,
                 callBacks,
             );
 
             return {
                 update: {
                     id: id + '-fadein1',
-                    name: `entity-fadein1-update${name}`,
+                    name: `transition-fadein1-${name}`,
                     fn,
                 },
                 prepare,
             };
         },
         fadeout1: () => {
-            const {update: fn, prepare} = createFadeOut1Transition(
+            const {update: fn, prepare} = createTransitionFadeout1(
                 entity.colors,
-                0.005 * entity.animations.endSpeed,
+                0.005 * entity.visualProperties.endSpeed,
                 callBacks,
             );
 
             return {
                 update: {
                     id: id + '-fadeout1',
-                    name: `entity-fadeout1-update${name}`,
+                    name: `transition-fadeout1${name}`,
                     fn,
                 },
                 prepare,
@@ -53,19 +50,19 @@ export const createCreateRenders = (
         },
         slideinleft: () => ({
             update: {
-                id: id + '-slideInLeft',
-                name: `entity-slideinleft-update${name}`,
-                fn: createSlideInLeftTransitionUpdate(),
+                id: id + '-slideinleft',
+                name: `transition-slideinleft-${name}`,
+                fn: createTransitionSlideinleft(),
             },
         }),
     };
 
-    const animationUpdates = {
+    const animations = {
         noise: () => ({
             update: {
-                id: id + '-animation',
-                name: `noise-animation-update-${name}`,
-                fn: createNoiseUpdate(entity.sketch),
+                id: id + '-noise',
+                name: `animation-noise-${name}`,
+                fn: createAnimationNoise(entity.sketch),
             },
         }),
     };
@@ -77,14 +74,14 @@ export const createCreateRenders = (
     };
 
     return {
-        hoverTransitions,
-        entityTransitions,
-        animationUpdates,
+        hovers,
+        transitions,
+        animations,
         draw,
     };
 };
 
-const createBoldHoverTransition = (sketch: EntitySketch) => {
+const createHoverBold = (sketch: EntitySketch) => {
     const origin = {
         lw: sketch.lw,
         f: sketch.fontSize,
@@ -119,7 +116,7 @@ const createBoldHoverTransition = (sketch: EntitySketch) => {
     return {forward, reverse};
 };
 
-const createFadeIn1Transition = (
+const createTransitionFadein1 = (
     {fill, stroke, textFill}: EntityColors,
     alphaVelocity: number,
     callBacks: Pick<EntityCallBacks, 'startEnd'>,
@@ -130,7 +127,7 @@ const createFadeIn1Transition = (
         textFill.a += alphaVelocity;
 
         if (fill.a >= 1) {
-            // create endPrepare (=finish) method for this and put in animate.ts
+            // create endPrepare (finish) method for this and put in animate.ts
             fill.a = 1;
             stroke.a = 1;
             textFill.a = 1;
@@ -145,7 +142,7 @@ const createFadeIn1Transition = (
     },
 });
 
-const createFadeOut1Transition = (
+const createTransitionFadeout1 = (
     {fill, stroke, textFill}: EntityColors,
     alphaVelocity: number,
     callBacks: Pick<EntityCallBacks, 'endEnd'>,
@@ -156,7 +153,7 @@ const createFadeOut1Transition = (
         textFill.a -= alphaVelocity;
 
         if (fill.a <= 0) {
-            // create endPrepare method for this and put in animate.ts
+            // create endPrepare (finish) method for this and put in animate.ts
             fill.a = 0;
             stroke.a = 0;
             textFill.a = 0;
@@ -171,12 +168,12 @@ const createFadeOut1Transition = (
     },
 });
 
-const createSlideInLeftTransitionUpdate = () => () => {
+const createTransitionSlideinleft = () => () => {
     //
 };
 
 const createTransitionUpdate =
-    ({input: {mouse}, sketch}: Omit<Entity, 'entityListeners' | 'callBacks'>, transition: TransitionBase) =>
+    ({input: {mouse}, sketch}: EntityTemp, transition: TransitionBase) =>
     () => {
         if (mouse.insideRect(sketch)) {
             transition.forward();
@@ -187,7 +184,7 @@ const createTransitionUpdate =
         transition.reverse();
     };
 
-const createNoiseUpdate = (sketch: EntitySketch) => () => {
+const createAnimationNoise = (sketch: EntitySketch) => () => {
     sketch.x += upd.adj.x;
     sketch.y += upd.adj.y;
 
