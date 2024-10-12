@@ -27,10 +27,10 @@ interface EntityProperties {
 }
 
 type EntityAnimations = 'noise';
-type EntityTransitions = 'fadein1' | 'fadeout1' | 'slideinleft';
+type EntityTransitions = 'fadein1' | 'fadeout1' | 'slideinleft' | 'explode';
 type EntityHovers = 'bold';
 
-type EntityVisualTypes = EntityAnimations | EntityTransitions | EntityHovers;
+type EntityVisualType = EntityAnimations | EntityTransitions | EntityHovers;
 
 type EntityColors = {
     fill: RGBA;
@@ -45,6 +45,7 @@ interface EntityListeners {
 
 type SetUserListener = <K extends keyof UserListeners>(type: K, listener?: UserListeners[K]) => void;
 type SetHideTime = (time: number) => void;
+type SetVisual = (kind: Exclude<keyof EntityVisuals, 'draw'>, type: EntityVisualType) => void;
 
 interface UserEntity {
     show: (quickShow?: boolean) => void;
@@ -54,6 +55,7 @@ interface UserEntity {
     disable: () => void;
     setListener: SetUserListener;
     setHideTime: SetHideTime;
+    setVisual: SetVisual;
 }
 
 interface EntityCallBacks {

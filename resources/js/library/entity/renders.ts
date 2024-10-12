@@ -55,6 +55,18 @@ export const createRenders = (entity: EntityTemp, callBacks: Pick<EntityCallBack
                 fn: createTransitionSlideinleft(),
             },
         }),
+        explode: () => {
+            const {update: fn, prepare} = createTransitionExplode(entity.colors, entity.sketch, callBacks);
+
+            return {
+                update: {
+                    id: id + '-slideinleft',
+                    name: `transition-slideinleft-${name}`,
+                    fn,
+                },
+                prepare,
+            };
+        },
     };
 
     const animations = {
@@ -171,6 +183,25 @@ const createTransitionFadeout1 = (
 const createTransitionSlideinleft = () => () => {
     //
 };
+
+const createTransitionExplode = (
+    {fill, stroke, textFill}: EntityColors,
+    sketch: EntitySketch,
+    callBacks: Pick<EntityCallBacks, 'endEnd'>,
+) => ({
+    update: () => {
+        sketch.lw += 0.1;
+
+        if (sketch.lw > 10) {
+            //
+
+            callBacks.endEnd();
+        }
+    },
+    prepare: () => {
+        //
+    },
+});
 
 const createTransitionUpdate =
     ({input: {mouse}, sketch}: EntityTemp, transition: TransitionBase) =>

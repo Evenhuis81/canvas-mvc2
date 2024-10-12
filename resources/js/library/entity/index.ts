@@ -49,11 +49,11 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     const entityListeners = createEntityListeners(entity1);
 
-    const {visuals, callBacks} = createVisualsAndCallBacks(entity1); // Also creates setEngine
+    const {visuals, callBacks, setVisual} = createVisualsAndCallBacks(entity1); // Also creates setEngine
 
     const entity = {...entity1, entityListeners, visuals, callBacks};
 
-    const userMethods = {setListener, ...createUserEntity(entity)};
+    const userMethods = {setListener, setVisual, ...createUserEntity(entity)};
 
     initialize(entity, userMethods);
 

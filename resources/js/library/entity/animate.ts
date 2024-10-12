@@ -8,8 +8,6 @@ export const createVisualsAndCallBacks = (entity: EntityTemp) => {
 
     const renders = createRenders(entity, callBacks);
 
-    // convert undefined to empty update/draw? (for engineRenders)
-    // Make completely optional (see notes in notebook)
     const visuals = {
         entity: animationType ? renders.animations[animationType]() : undefined,
         hover: hoverType ? renders.hovers[hoverType]() : undefined,
@@ -18,18 +16,16 @@ export const createVisualsAndCallBacks = (entity: EntityTemp) => {
         draw: renders.draw,
     };
 
-    // const setVisual = (type: EntityVisualTypes) => {
-    //     visuals[type] = createRenders.animationUpdates[renderType];
-    // };
+    const mixedRenders = {...renders.animations, ...renders.hovers, ...renders.transitions};
 
-    // const removeVisual = () => {};
+    const setVisual: SetVisual = (kind, type) => (visuals[kind] = mixedRenders[type]());
 
     const setEngine = createSetEngine(entity.engine, visuals);
 
     // transforms empty callBacks to functional callBacks
     setCallBacks(entity, setEngine, callBacks);
 
-    return {visuals, callBacks};
+    return {visuals, callBacks, setVisual};
 };
 
 // TODO::remove duplications and if statements, see comments in createCallBacks -> renders object

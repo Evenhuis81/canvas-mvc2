@@ -92,13 +92,18 @@ const createLevelSelectEntities = (amount: number) => {
         element.setHideTime((amount - 1) * timeoutDifference - i * timeoutDifference);
 
         element.setListener('mouseup', () => {
+            element.setVisual('end', 'explode');
             // if (clicked) element.setAnimationProperty('endTransitionStart');
             // if (clicked) element.setHideTime(0);
             elements.forEach(element => element.hide());
         });
 
         element.setListener('endTransitionEnd', clicked => {
-            if (clicked) startLevel(i + 1);
+            if (clicked) {
+                element.hide(true);
+
+                startLevel(i + 1);
+            }
         });
 
         setTimeout(() => {
