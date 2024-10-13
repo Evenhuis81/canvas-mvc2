@@ -71,12 +71,6 @@ type EntityEvent<Event> = {
     evt: Event;
 };
 
-type UserListenersParsed = {
-    type: keyof UserListeners;
-    listener: UserListeners[keyof UserListeners];
-};
-
-// click = mouse & touch (touch not yet implemented): see comments.txt for notes (expand into instructions)
 type UserListeners = {
     mouseup: (evt: EntityEvent<MouseEvent>) => void;
     mousedown: (evt: EntityEvent<MouseEvent>) => void;
@@ -84,14 +78,14 @@ type UserListeners = {
     endTransitionEnd: (clicked: boolean) => void;
     touchstart: (evt: EntityEvent<TouchEvent>) => void;
     touchend: (evt: EntityEvent<TouchEvent>) => void;
-    clickdown: (evt: EntityEvent<MouseEvent | TouchEvent>) => void;
-    clickup: (evt: EntityEvent<MouseEvent | TouchEvent>) => void;
+    clickdown: (evt: EntityEvent<MouseEvent | TouchEvent>) => void; // mouse & touch combined
+    clickup: (evt: EntityEvent<MouseEvent | TouchEvent>) => void; // mouse & touch combined
 };
 
 interface Entity {
     sketch: EntitySketch;
     properties: EntityProperties;
-    userListeners: UserListenersParsed[];
+    userListeners: Partial<UserListeners>;
     entityListeners: EntityListeners;
     callBacks: EntityCallBacks;
     visualProperties: EntityVisualProperties;
@@ -105,7 +99,6 @@ type EntityTemp = Omit<Entity, 'entityListeners' | 'callBacks' | 'visuals'>;
 
 type EntityConfig = EntitySketch & EntityProperties & EntityVisualProperties & {listeners: Partial<UserListeners>};
 
-// Preferably animation types can be undefined, but this needs proper defaults on typescript
 interface EntityVisualProperties {
     animateAtStart: boolean;
     animateAtEnd: boolean;

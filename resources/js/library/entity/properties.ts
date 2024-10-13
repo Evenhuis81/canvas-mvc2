@@ -95,19 +95,14 @@ const defaultUserListeners: UserListeners = {
     },
 };
 
-// Mouse and Transition handlers mixed
-export const createUserListeners = <Type extends {[Property in keyof UserListeners]: UserListeners[Property]}>(
-    userListeners?: Partial<UserListeners>,
-) => {
-    // const listeners = {...defaultUserListeners};
-    const listeners = <Type>{};
+export const createUserListeners = (userListeners?: Partial<UserListeners>) => {
+    const listeners = {...userListeners};
 
     // User input handlers after creation
     const setListener: SetUserListener = (type, listener) => {
         if (!listener) return;
 
         listeners[type] = listener;
-        // listeners.push({type, listener})
     };
 
     if (!userListeners) return {setListener, userListeners: listeners};
@@ -119,21 +114,17 @@ export const createUserListeners = <Type extends {[Property in keyof UserListene
 };
 
 export const createEntityListeners = ({sketch, userListeners, properties, input: {mouse, touch}}: EntityTemp) => {
-    // TODO:: activate listeners/Handlers according to user input
-    // const listeners: {type: keyof UserListeners} = []
+    const {mousedown, mouseup, touchstart, touchend, clickdown, clickup} = userListeners;
     let enabled = false;
+
+    // create dynamic object to call handlers automatically that are set by the user, use exisiting types for this if possible
+    const listeners = [];
 
     const mousedownListener = (evt: MouseEvent) => {
         // statistic click counter and make button dynamic
         if (mouse.insideRect(sketch)) {
-            const entityHandler = userListeners.find(userListener => (userListener.type = 'mousedown'));
-
-            if (!entityHandler) return;
-
-            entityHandler.listener({clicked: properties.clicked, evt});
-
-            // See mouseupListener comments
-            userListeners.clickdown({clicked: properties.clicked, evt});
+            if (clickdown) clickdown({clicked: properties.clicked, evt});
+            if (mousedown) mousedown({clicked: properties.clicked, evt});
         }
     };
 

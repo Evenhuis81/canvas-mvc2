@@ -66,7 +66,8 @@ const initialize = ({properties}: Entity, methods: UserEntity) => {
         setTimeout(() => {
             properties.show = false;
 
-            properties.showDelay = 0; // one time calling show with showDelay
+            // one time calling show with showDelay?
+            properties.showDelay = 0;
 
             methods.show();
         }, properties.showDelay);
@@ -88,13 +89,9 @@ const defaultSketchProperties = {
     showDelay: 0,
     clicked: false,
     hideTime: 0,
-    // Animation Properties ('none' -> undefined?)
+    // Visual Properties (visual types can be undefined)
     animateAtStart: false,
     animateAtEnd: false,
-    // animationType: 'none',
-    // hoverType: 'none',
-    // startType: 'none',
-    // endType: 'none',
     startSpeed: 3,
     endSpeed: 3,
     // Sketch
