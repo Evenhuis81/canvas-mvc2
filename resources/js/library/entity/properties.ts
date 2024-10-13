@@ -81,6 +81,9 @@ const defaultUserListeners: UserListeners = {
     endTransitionEnd: () => {
         console.log('endTransitionEnd listener internal');
     },
+    touchend: () => {
+        console.log('touchend listener internal');
+    },
 };
 
 // Mouse and Transition handlers mixed
@@ -102,9 +105,11 @@ export const createUserListeners = (userListeners?: Partial<UserListeners>) => {
     return {setListener, userListeners: listeners};
 };
 
-export const createEntityListeners = ({sketch, userListeners, properties, input: {mouse}}: EntityTemp) => {
+export const createEntityListeners = ({sketch, userListeners, properties, input: {mouse, touch}}: EntityTemp) => {
     // TODO:: activate listeners/Handlers according to user input
     let enabled = false;
+
+    // const listeners: {type: keyof UserListeners} = []
 
     const mousedownListener = (evt: MouseEvent) => {
         // statistic click counter and make button dynamic
@@ -120,6 +125,15 @@ export const createEntityListeners = ({sketch, userListeners, properties, input:
         }
     };
 
+    // Create mixed touch and mouse listener (click), requires above TODO
+    const touchendListener = (evt: TouchEvent) => {
+        if (touch.insideRect(sketch)) {
+            properties.clicked = true;
+
+            userListeners.touchend(evt);
+        }
+    };
+
     const add = () => {
         if (enabled) return;
 
@@ -127,6 +141,7 @@ export const createEntityListeners = ({sketch, userListeners, properties, input:
 
         addEventListener('mousedown', mousedownListener);
         addEventListener('mouseup', mouseupListener);
+        addEventListener('touchend', touchendListener);
     };
 
     const remove = () => {
@@ -134,6 +149,7 @@ export const createEntityListeners = ({sketch, userListeners, properties, input:
 
         removeEventListener('mousedown', mousedownListener);
         removeEventListener('mouseup', mouseupListener);
+        removeEventListener('touchend', touchendListener);
 
         enabled = false;
     };

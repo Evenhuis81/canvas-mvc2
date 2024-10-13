@@ -65,7 +65,7 @@ interface EntityCallBacks {
     endEnd: () => void;
 }
 
-type UserListenerTypes = 'mouseup' | 'mousedown' | 'startTransitionEnd' | 'endTransitionEnd';
+// type UserListenerTypes = 'mouseup' | 'mousedown' | 'startTransitionEnd' | 'endTransitionEnd';
 
 // click = mouse & touch (touch not yet implemented): see comments.txt for notes (expand into instructions)
 type UserListeners = {
@@ -73,6 +73,7 @@ type UserListeners = {
     mousedown: (evt: MouseEvent) => void;
     startTransitionEnd: (clicked: boolean) => void;
     endTransitionEnd: (clicked: boolean) => void;
+    touchend: (evt: TouchEvent) => void;
 };
 
 interface Entity {
@@ -82,7 +83,6 @@ interface Entity {
     entityListeners: EntityListeners;
     callBacks: EntityCallBacks;
     visualProperties: EntityVisualProperties;
-    visuals: EntityVisuals;
     colors: EntityColors;
     engine: Engine;
     context: CanvasRenderingContext2D;
