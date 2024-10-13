@@ -10,8 +10,6 @@ export default {
             backgroundColor: '#000',
         });
 
-        // goToMenu();
-
         mainMenu();
     },
     run: () => resources.tr.engine.run(),

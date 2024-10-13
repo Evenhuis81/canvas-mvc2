@@ -91,15 +91,22 @@ const createLevelSelectEntities = (amount: number) => {
 
         element.setHideTime((amount - 1) * timeoutDifference - i * timeoutDifference);
 
-        element.setListener('touchend', evt => {
-            // element.setListener('mouseup', () => {
-            console.log(evt);
-
-            element.setVisual('end', 'explode');
-            // if (clicked) element.setHideTime(0);
-
-            elements.forEach(element => element.hide());
+        element.setListener('clickdown', evt => {
+            console.log('clickdown User Input triggered');
+            console.log('mouse or touch event?: ', evt);
         });
+
+        element.setListener('clickup', evt => {
+            console.log('clickup User Input triggered');
+            console.log('mouse or touch event?: ', evt);
+        });
+
+        // element.setListener('touchend', () => {
+        //     element.setVisual('end', 'explode');
+        //     // if (clicked) element.setHideTime(0);
+
+        //     elements.forEach(element => element.hide());
+        // });
 
         element.setListener('endTransitionEnd', clicked => {
             if (clicked) {

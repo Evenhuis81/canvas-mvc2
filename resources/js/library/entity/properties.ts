@@ -81,8 +81,17 @@ const defaultUserListeners: UserListeners = {
     endTransitionEnd: () => {
         console.log('endTransitionEnd listener internal');
     },
+    touchstart: () => {
+        console.log('touchstart listener internal');
+    },
     touchend: () => {
         console.log('touchend listener internal');
+    },
+    clickdown: () => {
+        console.log('clickdown listener internal');
+    },
+    clickup: () => {
+        console.log('clickup listener internal');
     },
 };
 
@@ -107,13 +116,17 @@ export const createUserListeners = (userListeners?: Partial<UserListeners>) => {
 
 export const createEntityListeners = ({sketch, userListeners, properties, input: {mouse, touch}}: EntityTemp) => {
     // TODO:: activate listeners/Handlers according to user input
-    let enabled = false;
-
     // const listeners: {type: keyof UserListeners} = []
+    let enabled = false;
 
     const mousedownListener = (evt: MouseEvent) => {
         // statistic click counter and make button dynamic
-        if (mouse.insideRect(sketch)) userListeners.mousedown(evt);
+        if (mouse.insideRect(sketch)) {
+            userListeners.mousedown({clicked: properties.clicked, evt});
+
+            // See mouseupListener comments
+            userListeners.clickdown({clicked: properties.clicked, evt});
+        }
     };
 
     const mouseupListener = (evt: MouseEvent) => {
@@ -121,16 +134,27 @@ export const createEntityListeners = ({sketch, userListeners, properties, input:
         if (mouse.insideRect(sketch)) {
             properties.clicked = true;
 
-            userListeners.mouseup(evt);
+            userListeners.mouseup({clicked: properties.clicked, evt});
+
+            // See below comments, until done, choose mouse or touch to call usermethod
+            userListeners.clickup({clicked: properties.clicked, evt});
         }
     };
 
-    // Create mixed touch and mouse listener (click), requires above TODO
+    // To call 1 method for userListener and send both mouse and touch events on 'click', requires 1st line method TODO
+    const touchstartListener = (evt: TouchEvent) => {
+        if (touch.insideRect(sketch)) {
+            properties.clicked = true;
+
+            userListeners.touchstart({clicked: properties.clicked, evt});
+        }
+    };
+
     const touchendListener = (evt: TouchEvent) => {
         if (touch.insideRect(sketch)) {
             properties.clicked = true;
 
-            userListeners.touchend(evt);
+            userListeners.touchend({clicked: properties.clicked, evt});
         }
     };
 
@@ -141,6 +165,7 @@ export const createEntityListeners = ({sketch, userListeners, properties, input:
 
         addEventListener('mousedown', mousedownListener);
         addEventListener('mouseup', mouseupListener);
+        addEventListener('touchstart', touchendListener);
         addEventListener('touchend', touchendListener);
     };
 
@@ -149,6 +174,7 @@ export const createEntityListeners = ({sketch, userListeners, properties, input:
 
         removeEventListener('mousedown', mousedownListener);
         removeEventListener('mouseup', mouseupListener);
+        removeEventListener('touchstart', touchendListener);
         removeEventListener('touchend', touchendListener);
 
         enabled = false;

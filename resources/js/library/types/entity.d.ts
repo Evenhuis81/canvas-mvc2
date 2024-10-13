@@ -65,15 +65,21 @@ interface EntityCallBacks {
     endEnd: () => void;
 }
 
-// type UserListenerTypes = 'mouseup' | 'mousedown' | 'startTransitionEnd' | 'endTransitionEnd';
+type EntityEvent<Event> = {
+    clicked: boolean;
+    evt: Event;
+};
 
 // click = mouse & touch (touch not yet implemented): see comments.txt for notes (expand into instructions)
 type UserListeners = {
-    mouseup: (evt: MouseEvent) => void;
-    mousedown: (evt: MouseEvent) => void;
+    mouseup: (evt: EntityEvent<MouseEvent>) => void;
+    mousedown: (evt: EntityEvent<MouseEvent>) => void;
     startTransitionEnd: (clicked: boolean) => void;
     endTransitionEnd: (clicked: boolean) => void;
-    touchend: (evt: TouchEvent) => void;
+    touchstart: (evt: EntityEvent<TouchEvent>) => void;
+    touchend: (evt: EntityEvent<TouchEvent>) => void;
+    clickdown: (evt: EntityEvent<MouseEvent | TouchEvent>) => void;
+    clickup: (evt: EntityEvent<MouseEvent | TouchEvent>) => void;
 };
 
 interface Entity {
