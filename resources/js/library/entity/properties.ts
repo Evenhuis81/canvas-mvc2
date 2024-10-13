@@ -96,14 +96,18 @@ const defaultUserListeners: UserListeners = {
 };
 
 // Mouse and Transition handlers mixed
-export const createUserListeners = (userListeners?: Partial<UserListeners>) => {
-    const listeners = {...defaultUserListeners};
+export const createUserListeners = <Type extends {[Property in keyof UserListeners]: UserListeners[Property]}>(
+    userListeners?: Partial<UserListeners>,
+) => {
+    // const listeners = {...defaultUserListeners};
+    const listeners = <Type>{};
 
     // User input handlers after creation
     const setListener: SetUserListener = (type, listener) => {
         if (!listener) return;
 
         listeners[type] = listener;
+        // listeners.push({type, listener})
     };
 
     if (!userListeners) return {setListener, userListeners: listeners};
@@ -122,7 +126,11 @@ export const createEntityListeners = ({sketch, userListeners, properties, input:
     const mousedownListener = (evt: MouseEvent) => {
         // statistic click counter and make button dynamic
         if (mouse.insideRect(sketch)) {
-            userListeners.mousedown({clicked: properties.clicked, evt});
+            const entityHandler = userListeners.find(userListener => (userListener.type = 'mousedown'));
+
+            if (!entityHandler) return;
+
+            entityHandler.listener({clicked: properties.clicked, evt});
 
             // See mouseupListener comments
             userListeners.clickdown({clicked: properties.clicked, evt});
@@ -165,7 +173,7 @@ export const createEntityListeners = ({sketch, userListeners, properties, input:
 
         addEventListener('mousedown', mousedownListener);
         addEventListener('mouseup', mouseupListener);
-        addEventListener('touchstart', touchendListener);
+        addEventListener('touchstart', touchstartListener);
         addEventListener('touchend', touchendListener);
     };
 
@@ -174,7 +182,7 @@ export const createEntityListeners = ({sketch, userListeners, properties, input:
 
         removeEventListener('mousedown', mousedownListener);
         removeEventListener('mouseup', mouseupListener);
-        removeEventListener('touchstart', touchendListener);
+        removeEventListener('touchstart', touchstartListener);
         removeEventListener('touchend', touchendListener);
 
         enabled = false;

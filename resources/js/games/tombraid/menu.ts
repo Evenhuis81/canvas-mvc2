@@ -45,7 +45,7 @@ const mainButton: Partial<EntityConfig> = {
 };
 
 export const goToLevelSelection = () => {
-    const elementAmount = 25;
+    const elementAmount = 1;
 
     createLevelSelectEntities(elementAmount);
 };
@@ -91,10 +91,10 @@ const createLevelSelectEntities = (amount: number) => {
 
         element.setHideTime((amount - 1) * timeoutDifference - i * timeoutDifference);
 
-        element.setListener('clickdown', evt => {
-            console.log('clickdown User Input triggered');
-            console.log('mouse or touch event?: ', evt);
-        });
+        // element.setListener('clickdown', evt => {
+        //     console.log('clickdown User Input triggered');
+        //     console.log('mouse or touch event?: ', evt);
+        // });
 
         element.setListener('clickup', evt => {
             console.log('clickup User Input triggered');

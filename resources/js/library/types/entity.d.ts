@@ -43,6 +43,7 @@ interface EntityListeners {
     remove: () => void;
 }
 
+// {type: K; listener?: UserListeners[K]};
 type SetUserListener = <K extends keyof UserListeners>(type: K, listener?: UserListeners[K]) => void;
 type SetHideTime = (time: number) => void;
 type SetVisual = (kind: Exclude<keyof EntityVisuals, 'draw'>, type: EntityVisualType) => void;
@@ -70,6 +71,11 @@ type EntityEvent<Event> = {
     evt: Event;
 };
 
+type UserListenersParsed = {
+    type: keyof UserListeners;
+    listener: UserListeners[keyof UserListeners];
+};
+
 // click = mouse & touch (touch not yet implemented): see comments.txt for notes (expand into instructions)
 type UserListeners = {
     mouseup: (evt: EntityEvent<MouseEvent>) => void;
@@ -85,7 +91,7 @@ type UserListeners = {
 interface Entity {
     sketch: EntitySketch;
     properties: EntityProperties;
-    userListeners: UserListeners;
+    userListeners: UserListenersParsed[];
     entityListeners: EntityListeners;
     callBacks: EntityCallBacks;
     visualProperties: EntityVisualProperties;
