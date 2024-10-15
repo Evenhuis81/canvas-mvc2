@@ -109,23 +109,44 @@ export const createEntityListeners = ({sketch, userListeners, properties, input:
     // const {mousedown, mouseup, touchstart, touchend, clickdown, clickup} = userListeners;
     let enabled = false;
 
-    const listeners: Listeners[] = [];
+    const listeners: ReturnType<typeof createEntityListener>[] = [];
+
+    const createEntityListener = <K extends keyof UserListeners, L extends UserListeners[K] | undefined>(
+        key: K,
+        listener: L,
+    ) => {
+        if (!listener) return;
+
+        return {
+            type: key,
+            listener,
+        };
+    };
+
+    let key: keyof UserListeners;
+    for (key in userListeners) {
+        listeners.push(createEntityListener(key, userListeners[key]));
+    }
+
+    listeners.forEach(listenerr => {
+        //
+    });
 
     interface MousedownListener {
-        type: 'mousedown',
+        type: 'mousedown';
         listener: (evt: EntityEvent<MouseEvent>) => void;
     }
 
     interface TouchstartListener {
-        type: 'touchstart',
+        type: 'touchstart';
         listener: (evt: EntityEvent<TouchEvent>) => void;
     }
 
     // type ListenerTypes = 'mousedown' | 'touchstart';
 
-    type Listeners = MousedownListener | TouchstartListener;
+    // type Listeners = MousedownListener | TouchstartListener;
 
-    const createListtener = <K extends Listeners['type']>(key: K, listener: Listeners['listener']) => {
+    // const createListtener = <K extends Listeners['type']>(key: K, listener: Listeners['listener']) => {
     //     if (key === 'mousedown') {
     //         const tt = {type: key, listener}
     //     }
@@ -137,26 +158,26 @@ export const createEntityListeners = ({sketch, userListeners, properties, input:
     // }
 
     // let key: ListenerTypes;
-    for (const key in testListeners) {
-        // const testList = userListeners[key];
-        // if (testList)
-        const listt = createListtener(key, testListeners[key]);
-            // listeners.push({
-            //     type: key,
-            //     listener: testList,
-            // });
-    }
+    // for (const key in testListeners) {
+    //     const testList = userListeners[key];
+    //     if (testList)
+    //     const listt = createListtener(key, testListeners[key]);
+    //         listeners.push({
+    //             type: key,
+    //             listener: testList,
+    //         });
+    // }
 
-    const createListener = {
-        mouseup: () => {},
-        mousedown: () => {},
-        startTransitionEnd: () => {},
-        endTransitionEnd: () => {},
-        touchstart: () => {},
-        touchend: () => {},
-        clickdown: () => {},
-        clickup: () => {},
-    };
+    // const createListener = {
+    //     mouseup: () => {},
+    //     mousedown: () => {},
+    //     startTransitionEnd: () => {},
+    //     endTransitionEnd: () => {},
+    //     touchstart: () => {},
+    //     touchend: () => {},
+    //     clickdown: () => {},
+    //     clickup: () => {},
+    // };
 
     // const mousedownListener = (evt: MouseEvent) => {
     //     if (mouse.insideRect(sketch)) {

@@ -78,14 +78,14 @@ type UserListeners = {
     endTransitionEnd: (clicked: boolean) => void;
     touchstart: (evt: EntityEvent<TouchEvent>) => void;
     touchend: (evt: EntityEvent<TouchEvent>) => void;
-    clickdown: (evt: EntityEvent<MouseEvent | TouchEvent>) => void; // mouse & touch combined
-    clickup: (evt: EntityEvent<MouseEvent | TouchEvent>) => void; // mouse & touch combined
+    clickdown: (evt: EntityEvent<MouseEvent & TouchEvent>) => void; // mouse & touch combined
+    clickup: (evt: EntityEvent<MouseEvent & TouchEvent>) => void; // mouse & touch combined
 };
 
-type UserListener = {
-    type: keyof UserListeners;
-    listener: (evt: EntityEvent<MouseEvent | TouchEvent>) => void;
-};
+// type UserListener = {
+//     type: keyof UserListeners;
+//     listener: (evt: EntityEvent<MouseEvent | TouchEvent>) => void;
+// };
 
 interface Entity {
     sketch: EntitySketch;
