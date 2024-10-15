@@ -45,9 +45,22 @@ const mainButton: Partial<EntityConfig> = {
 };
 
 export const goToLevelSelection = () => {
-    const elementAmount = 1;
+    const entity = createEntity('tr');
 
-    createLevelSelectEntities(elementAmount);
+    const testEntity = entity.create({
+        listeners: {
+            mousedown: evt => {
+                console.log(evt);
+            },
+            clickdown: evt => {
+                console.log(evt);
+            },
+        },
+    });
+
+    // const elementAmount = 1;
+
+    // createLevelSelectEntities(elementAmount);
 };
 
 // For landscape mode

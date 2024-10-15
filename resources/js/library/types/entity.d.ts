@@ -82,6 +82,11 @@ type UserListeners = {
     clickup: (evt: EntityEvent<MouseEvent | TouchEvent>) => void; // mouse & touch combined
 };
 
+type UserListener = {
+    type: keyof UserListeners;
+    listener: (evt: EntityEvent<MouseEvent | TouchEvent>) => void;
+};
+
 interface Entity {
     sketch: EntitySketch;
     properties: EntityProperties;

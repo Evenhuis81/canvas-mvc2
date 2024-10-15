@@ -129,7 +129,7 @@ const setCallBacks = (
         setEngine('entity', 'on'); // This could have a (double) check
         setEngine('hover', 'on');
 
-        userListeners.startTransitionEnd(properties.clicked);
+        // userListeners.startTransitionEnd(properties.clicked);
     };
 
     callBacks.end = quickHide => {
@@ -155,7 +155,7 @@ const setCallBacks = (
         setEngine('entity', 'off'); // This could have a (double) check
         setEngine('hover', 'off');
 
-        userListeners.endTransitionEnd(properties.clicked);
+        // userListeners.endTransitionEnd(properties.clicked);
     };
 };
 

@@ -57,13 +57,6 @@ export const createUserEntity = ({visualProperties, properties, entityListeners,
 
     const setHideTime = (time: number) => (properties.hideTime = time);
 
-    // const setVisualProperty = <K extends keyof EntityVisualProperties>(
-    //     type: K,
-    //     value: EntityVisualProperties[K],
-    // ) => {
-    //     animations[type] = value;
-    // };
-
     return {show, hide, destroy, enable, disable, setHideTime};
 };
 
@@ -95,86 +88,130 @@ const defaultUserListeners: UserListeners = {
     },
 };
 
-export const createUserListeners = (userListeners?: Partial<UserListeners>) => {
-    const listeners = {...userListeners};
+export const createUserListeners = (userListeners: Partial<UserListeners> = {}) => {
+    const setListener: SetUserListener = (type, listener) => (userListeners[type] = listener); // User input handlers after creation
 
-    // User input handlers after creation
-    const setListener: SetUserListener = (type, listener) => {
-        if (!listener) return;
+    return {setListener, userListeners};
+};
 
-        listeners[type] = listener;
-    };
-
-    if (!userListeners) return {setListener, userListeners: listeners};
-
-    let key: keyof UserListeners;
-    for (key in userListeners) setListener(key, userListeners[key]);
-
-    return {setListener, userListeners: listeners};
+const createListener = {
+    mouseup: () => {},
+    mousedown: () => {},
+    startTransitionEnd: () => {},
+    endTransitionEnd: () => {},
+    touchstart: () => {},
+    touchend: () => {},
+    clickdown: () => {},
+    clickup: () => {},
 };
 
 export const createEntityListeners = ({sketch, userListeners, properties, input: {mouse, touch}}: EntityTemp) => {
-    const {mousedown, mouseup, touchstart, touchend, clickdown, clickup} = userListeners;
+    // const {mousedown, mouseup, touchstart, touchend, clickdown, clickup} = userListeners;
     let enabled = false;
 
-    // create dynamic object to call handlers automatically that are set by the user, use exisiting types for this if possible
-    const listeners = [];
+    const listeners: Listeners[] = [];
 
-    const mousedownListener = (evt: MouseEvent) => {
-        // statistic click counter and make button dynamic
-        if (mouse.insideRect(sketch)) {
-            if (clickdown) clickdown({clicked: properties.clicked, evt});
-            if (mousedown) mousedown({clicked: properties.clicked, evt});
-        }
+    interface MousedownListener {
+        type: 'mousedown',
+        listener: (evt: EntityEvent<MouseEvent>) => void;
+    }
+
+    interface TouchstartListener {
+        type: 'touchstart',
+        listener: (evt: EntityEvent<TouchEvent>) => void;
+    }
+
+    // type ListenerTypes = 'mousedown' | 'touchstart';
+
+    type Listeners = MousedownListener | TouchstartListener;
+
+    const createListtener = <K extends Listeners['type']>(key: K, listener: Listeners['listener']) => {
+    //     if (key === 'mousedown') {
+    //         const tt = {type: key, listener}
+    //     }
+    // }
+
+    // const testListeners: Partial<UserListeners> = {
+    //     mousedown: () => {},
+    //     touchstart: () => {},
+    // }
+
+    // let key: ListenerTypes;
+    for (const key in testListeners) {
+        // const testList = userListeners[key];
+        // if (testList)
+        const listt = createListtener(key, testListeners[key]);
+            // listeners.push({
+            //     type: key,
+            //     listener: testList,
+            // });
+    }
+
+    const createListener = {
+        mouseup: () => {},
+        mousedown: () => {},
+        startTransitionEnd: () => {},
+        endTransitionEnd: () => {},
+        touchstart: () => {},
+        touchend: () => {},
+        clickdown: () => {},
+        clickup: () => {},
     };
 
-    const mouseupListener = (evt: MouseEvent) => {
-        // statistic release counter (inside or outside), can be used to check clicked (to remove clicked property)
-        if (mouse.insideRect(sketch)) {
-            properties.clicked = true;
+    // const mousedownListener = (evt: MouseEvent) => {
+    //     if (mouse.insideRect(sketch)) {
+    //         if (clickdown) clickdown({clicked: properties.clicked, evt});
+    //         if (mousedown) mousedown({clicked: properties.clicked, evt});
+    //     }
+    // };
 
-            userListeners.mouseup({clicked: properties.clicked, evt});
+    // const mouseupListener = (evt: MouseEvent) => {
+    //     // statistic release counter (inside or outside), can be used to check clicked (to remove clicked property)
+    //     if (mouse.insideRect(sketch)) {
+    //         properties.clicked = true;
 
-            // See below comments, until done, choose mouse or touch to call usermethod
-            userListeners.clickup({clicked: properties.clicked, evt});
-        }
-    };
+    //         mouseup({clicked: properties.clicked, evt});
 
-    // To call 1 method for userListener and send both mouse and touch events on 'click', requires 1st line method TODO
-    const touchstartListener = (evt: TouchEvent) => {
-        if (touch.insideRect(sketch)) {
-            properties.clicked = true;
+    //         // See below comments, until done, choose mouse or touch to call usermethod
+    //         userListeners.clickup({clicked: properties.clicked, evt});
+    //     }
+    // };
 
-            userListeners.touchstart({clicked: properties.clicked, evt});
-        }
-    };
+    // // To call 1 method for userListener and send both mouse and touch events on 'click', requires 1st line method TODO
+    // const touchstartListener = (evt: TouchEvent) => {
+    //     if (touch.insideRect(sketch)) {
+    //         properties.clicked = true;
 
-    const touchendListener = (evt: TouchEvent) => {
-        if (touch.insideRect(sketch)) {
-            properties.clicked = true;
+    //         userListeners.touchstart({clicked: properties.clicked, evt});
+    //     }
+    // };
 
-            userListeners.touchend({clicked: properties.clicked, evt});
-        }
-    };
+    // const touchendListener = (evt: TouchEvent) => {
+    //     if (touch.insideRect(sketch)) {
+    //         properties.clicked = true;
+
+    //         userListeners.touchend({clicked: properties.clicked, evt});
+    //     }
+    // };
 
     const add = () => {
         if (enabled) return;
 
         enabled = true;
 
-        addEventListener('mousedown', mousedownListener);
-        addEventListener('mouseup', mouseupListener);
-        addEventListener('touchstart', touchstartListener);
-        addEventListener('touchend', touchendListener);
+        // addEventListener('mousedown', mousedownListener);
+        // addEventListener('mouseup', mouseupListener);
+        // addEventListener('touchstart', touchstartListener);
+        // addEventListener('touchend', touchendListener);
     };
 
     const remove = () => {
         if (!enabled) return;
 
-        removeEventListener('mousedown', mousedownListener);
-        removeEventListener('mouseup', mouseupListener);
-        removeEventListener('touchstart', touchstartListener);
-        removeEventListener('touchend', touchendListener);
+        // removeEventListener('mousedown', mousedownListener);
+        // removeEventListener('mouseup', mouseupListener);
+        // removeEventListener('touchstart', touchstartListener);
+        // removeEventListener('touchend', touchendListener);
 
         enabled = false;
     };
