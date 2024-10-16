@@ -30,22 +30,22 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
         animateAtEnd,
     };
 
-    const {listeners, ...sketch} = rest2;
+    const {listeners: userListeners, ...sketch} = rest2;
 
-    const {setListener, userListeners} = createUserListeners(listeners);
+    const {setListener, listeners} = createListeners(userListeners);
 
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
-    const entity1 = {
-        properties,
-        visualProperties,
-        sketch,
-        userListeners,
-        colors,
-        engine,
-        context,
-        input,
-    }; // Temp object for creating entityListeners and callBacks
+    // const entity1 = {
+    //     properties,
+    //     visualProperties,
+    //     sketch,
+    //     listeners,
+    //     colors,
+    //     engine,
+    //     context,
+    //     input,
+    // };
 
     const entityListeners = createEntityListeners(entity1);
 

@@ -1,12 +1,13 @@
 /* eslint-disable max-lines-per-function */
-export const createUserEntity = ({visualProperties, properties, entityListeners, callBacks}: Entity) => {
-    // parameter default gives auto start (and end) transitions if type !'none', manually able to set by user input
+export const createUserEntity = ({visualProperties, properties, listeners, callBacks}: Entity) => {
+    // parameter default gives auto start (and end) transitions if type !undefined, manually able to set by user input
     const show = (quickShow = !visualProperties.startType) => {
+        // Make throwError more general and easier to use (less parameters)
         if (properties.show) throwError(properties.id, 'showing');
 
         properties.show = true;
 
-        entityListeners.add();
+        listeners.add();
 
         callBacks.start(quickShow);
     };
@@ -17,7 +18,7 @@ export const createUserEntity = ({visualProperties, properties, entityListeners,
         const hideMe = () => {
             properties.show = false;
 
-            entityListeners.remove();
+            listeners.remove();
 
             callBacks.end(quickHide);
         };
@@ -33,80 +34,17 @@ export const createUserEntity = ({visualProperties, properties, entityListeners,
         hideMe();
     };
 
-    const destroy = () => {
-        // = hide ? test and fix later (possibly have user input parameters)
-        // entityListeners.remove();
-        // if (properties.show) hide(false);
-        // if (!properties.disabled) disable();
-    };
-
-    const enable = () => {
-        // =show ? test and fix later (possibly have user input parameters)
-        // if (!properties.disabled) throwError(properties.id, 'enabled');
-        // properties.disabled = false;
-        // entityListeners.add();
-        // enable handlers / animations / create enable properties (sketch, colors or such)
-    };
-
-    const disable = () => {
-        // if (properties.disabled) throwError(properties.id, 'disabled');
-        // entityListeners.remove();
-        // properties.disabled = true;
-        // disable handlers / animations / create disable properties (sketch, colors, etc)
-    };
-
     const setHideTime = (time: number) => (properties.hideTime = time);
 
-    return {show, hide, destroy, enable, disable, setHideTime};
+    return {show, hide, setHideTime};
 };
-
-// TODO::Make optional
-const defaultUserListeners: UserListeners = {
-    mousedown: () => {
-        console.log('mousedown listener internal');
-    },
-    mouseup: () => {
-        console.log('mouseup listener internal');
-    },
-    startTransitionEnd: () => {
-        console.log('startTransitionEnd listener internal');
-    },
-    endTransitionEnd: () => {
-        console.log('endTransitionEnd listener internal');
-    },
-    touchstart: () => {
-        console.log('touchstart listener internal');
-    },
-    touchend: () => {
-        console.log('touchend listener internal');
-    },
-    clickdown: () => {
-        console.log('clickdown listener internal');
-    },
-    clickup: () => {
-        console.log('clickup listener internal');
-    },
-};
-
 export const createUserListeners = (userListeners: Partial<UserListeners> = {}) => {
     const setListener: SetUserListener = (type, listener) => (userListeners[type] = listener); // User input handlers after creation
 
     return {setListener, userListeners};
 };
 
-const createListener = {
-    mouseup: () => {},
-    mousedown: () => {},
-    startTransitionEnd: () => {},
-    endTransitionEnd: () => {},
-    touchstart: () => {},
-    touchend: () => {},
-    clickdown: () => {},
-    clickup: () => {},
-};
-
-export const createEntityListeners = ({sketch, userListeners, properties, input: {mouse, touch}}: EntityTemp) => {
-    // const {mousedown, mouseup, touchstart, touchend, clickdown, clickup} = userListeners;
+export const createListeners = ({sketch, userListeners, properties, input: {mouse, touch}}: EntityTemp) => {
     let enabled = false;
 
     const listeners: ReturnType<typeof createEntityListener>[] = [];
@@ -214,6 +152,19 @@ export const createEntityListeners = ({sketch, userListeners, properties, input:
     //         userListeners.touchend({clicked: properties.clicked, evt});
     //     }
     // };
+
+    // type UserListener = {
+    //     type: keyof UserListeners;
+    //     listener: (evt: EntityEvent<MouseEvent | TouchEvent>) => void;
+    // };
+    // ReturnType<typeof createEntityListener>[] = [];
+
+    //     const createEntityListener = <K extends keyof UserListeners, L extends UserListeners[K] | undefined>(
+    //         key: K,
+    //         listener: L,
+    //     )
+
+    // {type: K; listener?: UserListeners[K]};
 
     const add = () => {
         if (enabled) return;

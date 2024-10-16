@@ -38,12 +38,11 @@ type EntityColors = {
     textFill: RGBA;
 };
 
-interface EntityListeners {
+interface ListenerMethods {
     add: () => void;
     remove: () => void;
 }
 
-// {type: K; listener?: UserListeners[K]};
 type SetUserListener = <K extends keyof UserListeners>(type: K, listener?: UserListeners[K]) => void;
 type SetHideTime = (time: number) => void;
 type SetVisual = (kind: Exclude<keyof EntityVisuals, 'draw'>, type: EntityVisualType) => void;
@@ -71,7 +70,9 @@ type EntityEvent<Event> = {
     evt: Event;
 };
 
-type UserListeners = {
+type EntityListeners = UserListeners & ListenerMethods;
+
+interface UserListeners {
     mouseup: (evt: EntityEvent<MouseEvent>) => void;
     mousedown: (evt: EntityEvent<MouseEvent>) => void;
     startTransitionEnd: (clicked: boolean) => void;
@@ -80,18 +81,13 @@ type UserListeners = {
     touchend: (evt: EntityEvent<TouchEvent>) => void;
     clickdown: (evt: EntityEvent<MouseEvent & TouchEvent>) => void; // mouse & touch combined
     clickup: (evt: EntityEvent<MouseEvent & TouchEvent>) => void; // mouse & touch combined
-};
-
-// type UserListener = {
-//     type: keyof UserListeners;
-//     listener: (evt: EntityEvent<MouseEvent | TouchEvent>) => void;
-// };
+}
 
 interface Entity {
     sketch: EntitySketch;
     properties: EntityProperties;
     userListeners: Partial<UserListeners>;
-    entityListeners: EntityListeners;
+    listeners: EntityListeners;
     callBacks: EntityCallBacks;
     visualProperties: EntityVisualProperties;
     colors: EntityColors;
