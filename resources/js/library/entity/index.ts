@@ -10,27 +10,8 @@ const createResource = (res: Resources) => ({
 });
 
 const create = ({context, engine, input}: Resources, options: Partial<EntityConfig> = {}) => {
-    // Extract internal properties from entity config options
-    const {id, name, disabled, show, showDelay, clicked, hideTime, ...rest} = {
-        id: options.id ?? `entity-${uid()}`,
-        ...getProperties(defaultSketchProperties, options),
-    }; // Add statistics options -> internal options view
-    const properties = {id, name, disabled, show, showDelay, clicked, hideTime};
-
-    const {startType, startSpeed, endType, endSpeed, hoverType, animationType, animateAtStart, animateAtEnd, ...rest2} =
-        rest;
-    const visualProperties = {
-        startType,
-        startSpeed,
-        endType,
-        endSpeed,
-        hoverType,
-        animationType,
-        animateAtStart,
-        animateAtEnd,
-    };
-
-    const {listeners: userListeners, ...sketch} = rest2;
+    // Extract internal properties from entity config options, TODO::See SketchType in entity.d.t.s
+    const {properties, visualProperties, userListeners, sketch} = extractOptions(options);
 
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
@@ -73,11 +54,36 @@ const initialize = ({properties}: Entity, methods: UserEntity) => {
         }, properties.showDelay);
     }
 
-    if (properties.disabled) {
-        properties.disabled = false;
+    // if (properties.disabled) {
+    //     properties.disabled = false;
 
-        methods.disable();
-    }
+    //     methods.disable();
+    // }
+};
+
+const extractOptions = (options: Partial<EntityConfig>) => {
+    const {id, name, disabled, show, showDelay, clicked, hideTime, ...rest} = {
+        id: options.id ?? `entity-${uid()}`,
+        ...getProperties(defaultSketchProperties, options),
+    }; // Add statistics options -> internal options view
+    const properties = {id, name, disabled, show, showDelay, clicked, hideTime};
+
+    const {startType, startSpeed, endType, endSpeed, hoverType, animationType, animateAtStart, animateAtEnd, ...rest2} =
+        rest;
+    const visualProperties = {
+        startType,
+        startSpeed,
+        endType,
+        endSpeed,
+        hoverType,
+        animationType,
+        animateAtStart,
+        animateAtEnd,
+    };
+
+    const {listeners: userListeners, ...sketch} = rest2;
+
+    return {properties, visualProperties, userListeners, sketch};
 };
 
 const defaultSketchProperties = {

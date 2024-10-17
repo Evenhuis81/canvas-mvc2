@@ -70,7 +70,15 @@ type EntityEvent<Event> = {
     evt: Event;
 };
 
-type EntityListeners = UserListeners & ListenerMethods;
+type CreateEntityListener = <K extends keyof UserListeners, V extends UserListeners[K]>(
+    key: K,
+    listener: V,
+) => {
+    type: K;
+    listener: NonNullable<V>;
+};
+
+type EntityListeners = {listeners: ReturnType<CreateEntityListener>[]} & ListenerMethods;
 
 interface UserListeners {
     mouseup: (evt: EntityEvent<MouseEvent>) => void;
@@ -83,20 +91,20 @@ interface UserListeners {
     clickup: (evt: EntityEvent<MouseEvent & TouchEvent>) => void; // mouse & touch combined
 }
 
-interface Entity {
-    sketch: EntitySketch;
-    properties: EntityProperties;
-    userListeners: Partial<UserListeners>;
-    listeners: EntityListeners;
-    callBacks: EntityCallBacks;
-    visualProperties: EntityVisualProperties;
-    colors: EntityColors;
-    engine: Engine;
-    context: CanvasRenderingContext2D;
-    input: Input;
-}
+// interface Entity {
+//     sketch: EntitySketch;
+//     properties: EntityProperties;
+//     userListeners: Partial<UserListeners>;
+//     listeners: EntityListeners;
+//     callBacks: EntityCallBacks;
+//     visualProperties: EntityVisualProperties;
+//     colors: EntityColors;
+//     engine: Engine;
+//     context: CanvasRenderingContext2D;
+//     input: Input;
+// }
 
-type EntityTemp = Omit<Entity, 'entityListeners' | 'callBacks' | 'visuals'>;
+// type EntityTemp = Omit<Entity, 'entityListeners' | 'callBacks' | 'visuals'>;
 
 type EntityConfig = EntitySketch & EntityProperties & EntityVisualProperties & {listeners: Partial<UserListeners>};
 
