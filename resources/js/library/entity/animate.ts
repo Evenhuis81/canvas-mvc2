@@ -158,10 +158,3 @@ const setCallBacks = (
         // userListeners.endTransitionEnd(properties.clicked);
     };
 };
-
-const emptyCallBacks = {
-    start: () => {},
-    startEnd: () => {},
-    end: () => {},
-    endEnd: () => {},
-};

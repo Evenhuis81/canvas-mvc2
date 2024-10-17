@@ -38,13 +38,14 @@ type EntityColors = {
     textFill: RGBA;
 };
 
+type SetUserHandler = <K extends keyof UserHandlers, V extends UserHandlers[K]>(key: K, jandler: V) => void;
 type SetHideTime = (time: number) => void;
 type SetVisual = (kind: Exclude<keyof EntityVisuals, 'draw'>, type: EntityVisualType) => void;
 
 interface UserEntity {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
-    setListener: SetUserListener;
+    setListener: SetUserHandler;
     setHideTime: SetHideTime;
     setVisual: SetVisual;
     // destroy: () => void;
@@ -64,26 +65,30 @@ type EntityEvent<Evt> = {
     evt: Evt;
 };
 
-interface ListenerMethods {
+interface HandlerMethods {
     add: () => void;
     remove: () => void;
 }
 
-type ParseListener = <K extends keyof UserListeners, V extends UserListeners[K]>(
+type ParseHandler = <K extends keyof UserHandlers, V extends UserHandlers[K]>(
     key: K,
-    listener: V,
+    handlers: V,
 ) => {
     type: K;
-    listener: NonNullable<V>;
+    handlers: NonNullable<V>;
 };
 
-type SetUserListener = <K extends keyof UserListeners, V extends UserListeners[K]>(key: K, listener: V) => void;
+type ParsedHandler = Extract<ReturnType<ParseHandler>, {}>;
 
-type ParsedListener = Extract<ReturnType<ParseListener>, {}>;
+type EntityHandlers = {
+    user: {
+        native: ParsedHandler[];
+        callback;
+    };
+    entity: {};
+} & HandlerMethods;
 
-type Listeners = {listeners: ParsedListener[]} & ListenerMethods;
-
-interface UserListeners {
+interface UserHandlers {
     mouseup: (evt: EntityEvent<MouseEvent>) => void;
     mousedown: (evt: EntityEvent<MouseEvent>) => void;
     startTransitionEnd: (clicked: boolean) => void;
@@ -94,7 +99,7 @@ interface UserListeners {
     clickup: (evt: EntityEvent<MouseEvent & TouchEvent>) => void; // mouse & touch combined
 }
 
-type EntityConfig = EntitySketch & EntityProperties & EntityVisualProperties & {listeners: Partial<UserListeners>};
+type EntityConfig = EntitySketch & EntityProperties & EntityVisualProperties & {listeners: Partial<UserHandlers>};
 
 interface EntityVisualProperties {
     animateAtStart: boolean;
@@ -127,18 +132,3 @@ interface EntityVisuals {
 type EntityEngineState = 'on' | 'off';
 
 type EntitySetEngine = (type: keyof EntityVisuals, state: EntityEngineState) => void;
-
-// interface Entity {
-//     sketch: EntitySketch;
-//     properties: EntityProperties;
-//     userListeners: Partial<UserListeners>;
-//     listeners: EntityListeners;
-//     callBacks: EntityCallBacks;
-//     visualProperties: EntityVisualProperties;
-//     colors: EntityColors;
-//     engine: Engine;
-//     context: CanvasRenderingContext2D;
-//     input: Input;
-// }
-
-// type EntityTemp = Omit<Entity, 'entityListeners' | 'callBacks' | 'visuals'>;
