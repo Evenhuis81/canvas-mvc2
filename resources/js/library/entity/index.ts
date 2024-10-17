@@ -15,7 +15,9 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
-    const {setListener, listeners} = createListeners(sketch, userListeners, properties, input);
+    const {setListener, listeners} = createListeners(userListeners);
+
+    const listenerHandler = createListenerHandler();
 
     const entityListeners = createEntityListeners(entity1);
 
@@ -28,17 +30,6 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
     initialize(entity, userMethods);
 
     return userMethods;
-
-    // const entity1 = {
-    //     properties,
-    //     visualProperties,
-    //     sketch,
-    //     listeners,
-    //     colors,
-    //     engine,
-    //     context,
-    //     input,
-    // };
 };
 
 const initialize = ({properties}: Entity, methods: UserEntity) => {

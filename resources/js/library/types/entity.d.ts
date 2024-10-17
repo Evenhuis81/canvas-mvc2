@@ -38,24 +38,18 @@ type EntityColors = {
     textFill: RGBA;
 };
 
-interface ListenerMethods {
-    add: () => void;
-    remove: () => void;
-}
-
-type SetUserListener = <K extends keyof UserListeners>(type: K, listener?: UserListeners[K]) => void;
 type SetHideTime = (time: number) => void;
 type SetVisual = (kind: Exclude<keyof EntityVisuals, 'draw'>, type: EntityVisualType) => void;
 
 interface UserEntity {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
+    // setListener: SetUserListener;
+    setHideTime: SetHideTime;
+    setVisual: SetVisual;
     // destroy: () => void;
     // enable: () => void;
     // disable: () => void;
-    setListener: SetUserListener;
-    setHideTime: SetHideTime;
-    setVisual: SetVisual;
 }
 
 interface EntityCallBacks {
@@ -65,12 +59,17 @@ interface EntityCallBacks {
     endEnd: () => void;
 }
 
-type EntityEvent<Event> = {
+type EntityEvent<Evt> = {
     clicked: boolean;
-    evt: Event;
+    evt: Evt;
 };
 
-type CreateEntityListener = <K extends keyof UserListeners, V extends UserListeners[K]>(
+interface ListenerMethods {
+    add: () => void;
+    remove: () => void;
+}
+
+type ParseListener = <K extends keyof UserListeners, V extends UserListeners[K]>(
     key: K,
     listener: V,
 ) => {
@@ -78,7 +77,11 @@ type CreateEntityListener = <K extends keyof UserListeners, V extends UserListen
     listener: NonNullable<V>;
 };
 
-type EntityListeners = {listeners: ReturnType<CreateEntityListener>[]} & ListenerMethods;
+type SetUserListener = <K extends keyof UserListeners, V extends UserListeners[K]>(key: K, listener: V) => void;
+
+type ParsedListener = Extract<ReturnType<ParseListener>, {}>;
+
+type ListenersHandler = {listeners: ParsedListener[]} & ListenerMethods;
 
 interface UserListeners {
     mouseup: (evt: EntityEvent<MouseEvent>) => void;
@@ -90,21 +93,6 @@ interface UserListeners {
     clickdown: (evt: EntityEvent<MouseEvent & TouchEvent>) => void; // mouse & touch combined
     clickup: (evt: EntityEvent<MouseEvent & TouchEvent>) => void; // mouse & touch combined
 }
-
-// interface Entity {
-//     sketch: EntitySketch;
-//     properties: EntityProperties;
-//     userListeners: Partial<UserListeners>;
-//     listeners: EntityListeners;
-//     callBacks: EntityCallBacks;
-//     visualProperties: EntityVisualProperties;
-//     colors: EntityColors;
-//     engine: Engine;
-//     context: CanvasRenderingContext2D;
-//     input: Input;
-// }
-
-// type EntityTemp = Omit<Entity, 'entityListeners' | 'callBacks' | 'visuals'>;
 
 type EntityConfig = EntitySketch & EntityProperties & EntityVisualProperties & {listeners: Partial<UserListeners>};
 
@@ -139,3 +127,18 @@ interface EntityVisuals {
 type EntityEngineState = 'on' | 'off';
 
 type EntitySetEngine = (type: keyof EntityVisuals, state: EntityEngineState) => void;
+
+// interface Entity {
+//     sketch: EntitySketch;
+//     properties: EntityProperties;
+//     userListeners: Partial<UserListeners>;
+//     listeners: EntityListeners;
+//     callBacks: EntityCallBacks;
+//     visualProperties: EntityVisualProperties;
+//     colors: EntityColors;
+//     engine: Engine;
+//     context: CanvasRenderingContext2D;
+//     input: Input;
+// }
+
+// type EntityTemp = Omit<Entity, 'entityListeners' | 'callBacks' | 'visuals'>;

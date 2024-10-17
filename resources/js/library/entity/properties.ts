@@ -39,51 +39,51 @@ export const createUserEntity = ({visualProperties, properties, listeners, callB
     return {show, hide, setHideTime};
 };
 
-const createUserListeners = (userListeners: Partial<UserListeners> = {}) => {
-    const setListener: SetUserListener = (type, listener) => (userListeners[type] = listener); // User input handlers after creation
+export const createListeners = (userListeners: Partial<UserListeners> = {}) => {
+    // TODO::Seperate eventListeners and entityCallBacks (onStartEnd etc.) possibly make object: {callBacks: user: {}, entity: {}}
+    const listeners: ParsedListener[] = [];
 
-    return {setListener, userListeners};
-};
-
-export const createListeners = (
-    sketch: EntitySketch,
-    userListeners: UserListeners,
-    properties: EntityProperties,
-    {mouse, touch}: Input,
-) => {
-    const listeners: ReturnType<typeof createEntityListener>[] = [];
-    let enabled = false;
-
-    type EntityListener<K extends keyof UserListeners, L extends UserListeners[K] | undefined> =
-        | {
-              type: K;
-              listener: NonNullable<L>;
-          }
-        | undefined;
-
-    type CreateEntityListener = <K extends keyof UserListeners, L extends UserListeners[K] | undefined>(
-        key: K,
-        listener: L,
-    ) => EntityListener<K, L>;
+    const parseListener: ParseListener = (key, listener) => ({
+        type: key,
+        listener,
+    });
 
     let key: keyof UserListeners;
     for (key in userListeners) {
-        listeners.push(createEntityListener(key, userListeners[key]));
+        const ll = userListeners[key];
+
+        if (!ll) continue;
+
+        listeners.push(parseListener(key, ll));
     }
 
-    listeners.forEach(listenerr => {
-        //
-    });
+    // User input handlers after creation
+    // TODO::Test if overwritten listener gets handled properly
+    const setListener: SetUserListener = (type, listener) => {
+        const parsedListener = parseListener(type, listener);
 
-    interface MousedownListener {
-        type: 'mousedown';
-        listener: (evt: EntityEvent<MouseEvent>) => void;
-    }
+        const index = listeners.findIndex(list => list.type === parsedListener.type);
 
-    interface TouchstartListener {
-        type: 'touchstart';
-        listener: (evt: EntityEvent<TouchEvent>) => void;
-    }
+        if (index === -1) {
+            listeners.push(parsedListener);
+
+            return;
+        }
+
+        listeners[index] = parsedListener;
+    };
+
+    return {setListener, listeners};
+
+    // interface MousedownListener {
+    //     type: 'mousedown';
+    //     listener: (evt: EntityEvent<MouseEvent>) => void;
+    // }
+
+    // interface TouchstartListener {
+    //     type: 'touchstart';
+    //     listener: (evt: EntityEvent<TouchEvent>) => void;
+    // }
 
     // type ListenerTypes = 'mousedown' | 'touchstart';
 
@@ -157,25 +157,17 @@ export const createListeners = (
     //         userListeners.touchend({clicked: properties.clicked, evt});
     //     }
     // };
+};
 
-    // type UserListener = {
-    //     type: keyof UserListeners;
-    //     listener: (evt: EntityEvent<MouseEvent | TouchEvent>) => void;
-    // };
-    // ReturnType<typeof createEntityListener>[] = [];
-
-    //     const createEntityListener = <K extends keyof UserListeners, L extends UserListeners[K] | undefined>(
-    //         key: K,
-    //         listener: L,
-    //     )
-
-    // {type: K; listener?: UserListeners[K]};
+export const createListenerHandler = (listeners: ParsedListener[]) => {
+    let enabled = false;
 
     const add = () => {
         if (enabled) return;
 
         enabled = true;
 
+        addEventListeners(listeners);
         // addEventListener('mousedown', mousedownListener);
         // addEventListener('mouseup', mouseupListener);
         // addEventListener('touchstart', touchstartListener);
@@ -185,6 +177,7 @@ export const createListeners = (
     const remove = () => {
         if (!enabled) return;
 
+        removeListeners(listeners);
         // removeEventListener('mousedown', mousedownListener);
         // removeEventListener('mouseup', mouseupListener);
         // removeEventListener('touchstart', touchstartListener);
