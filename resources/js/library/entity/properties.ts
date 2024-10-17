@@ -38,28 +38,33 @@ export const createUserEntity = ({visualProperties, properties, listeners, callB
 
     return {show, hide, setHideTime};
 };
-export const createUserListeners = (userListeners: Partial<UserListeners> = {}) => {
+
+const createUserListeners = (userListeners: Partial<UserListeners> = {}) => {
     const setListener: SetUserListener = (type, listener) => (userListeners[type] = listener); // User input handlers after creation
 
     return {setListener, userListeners};
 };
 
-export const createListeners = ({sketch, userListeners, properties, input: {mouse, touch}}: EntityTemp) => {
+export const createListeners = (
+    sketch: EntitySketch,
+    userListeners: UserListeners,
+    properties: EntityProperties,
+    {mouse, touch}: Input,
+) => {
+    const listeners: ReturnType<typeof createEntityListener>[] = [];
     let enabled = false;
 
-    const listeners: ReturnType<typeof createEntityListener>[] = [];
+    type EntityListener<K extends keyof UserListeners, L extends UserListeners[K] | undefined> =
+        | {
+              type: K;
+              listener: NonNullable<L>;
+          }
+        | undefined;
 
-    const createEntityListener = <K extends keyof UserListeners, L extends UserListeners[K] | undefined>(
+    type CreateEntityListener = <K extends keyof UserListeners, L extends UserListeners[K] | undefined>(
         key: K,
         listener: L,
-    ) => {
-        if (!listener) return;
-
-        return {
-            type: key,
-            listener,
-        };
-    };
+    ) => EntityListener<K, L>;
 
     let key: keyof UserListeners;
     for (key in userListeners) {

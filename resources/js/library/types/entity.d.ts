@@ -50,9 +50,9 @@ type SetVisual = (kind: Exclude<keyof EntityVisuals, 'draw'>, type: EntityVisual
 interface UserEntity {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
-    destroy: () => void;
-    enable: () => void;
-    disable: () => void;
+    // destroy: () => void;
+    // enable: () => void;
+    // disable: () => void;
     setListener: SetUserListener;
     setHideTime: SetHideTime;
     setVisual: SetVisual;
