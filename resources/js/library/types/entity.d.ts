@@ -44,7 +44,7 @@ type SetVisual = (kind: Exclude<keyof EntityVisuals, 'draw'>, type: EntityVisual
 interface UserEntity {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
-    // setListener: SetUserListener;
+    setListener: SetUserListener;
     setHideTime: SetHideTime;
     setVisual: SetVisual;
     // destroy: () => void;
@@ -81,7 +81,7 @@ type SetUserListener = <K extends keyof UserListeners, V extends UserListeners[K
 
 type ParsedListener = Extract<ReturnType<ParseListener>, {}>;
 
-type ListenersHandler = {listeners: ParsedListener[]} & ListenerMethods;
+type Listeners = {listeners: ParsedListener[]} & ListenerMethods;
 
 interface UserListeners {
     mouseup: (evt: EntityEvent<MouseEvent>) => void;

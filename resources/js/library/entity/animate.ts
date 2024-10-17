@@ -4,7 +4,7 @@ import {createRenders} from './renders';
 export const createVisualsAndCallBacks = (entity: EntityTemp) => {
     const {animationType, hoverType, startType, endType} = entity.visualProperties;
 
-    const callBacks = createEmptyCallBacks();
+    const callBacks = {...emptyCallBacks};
 
     const renders = createRenders(entity, callBacks);
 
@@ -159,9 +159,9 @@ const setCallBacks = (
     };
 };
 
-const createEmptyCallBacks = () => ({
+const emptyCallBacks = {
     start: () => {},
     startEnd: () => {},
     end: () => {},
     endEnd: () => {},
-});
+};

@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import {createVisualsAndCallBacks} from './animate';
-import {createListeners, createUserEntity} from './properties';
+import {createListenerHandler, createListeners, createUserEntity} from './properties';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {resources} from '..';
@@ -17,7 +17,7 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     const {setListener, listeners} = createListeners(userListeners);
 
-    const listenerHandler = createListenerHandler();
+    const listenerHandler = createListenerHandler(listeners);
 
     const entityListeners = createEntityListeners(entity1);
 
