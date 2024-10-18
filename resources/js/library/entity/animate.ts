@@ -1,12 +1,12 @@
 /* eslint-disable max-lines-per-function */
 import {createRenders} from './renders';
 
-export const createVisualsAndCallBacks = (entity: EntityTemp) => {
+export const createVisualsAndCallbacks = (entity: EntityTemp) => {
     const {animationType, hoverType, startType, endType} = entity.visualProperties;
 
-    const callBacks = {...emptyCallBacks};
+    const callbacks = {...emptyCallbacks};
 
-    const renders = createRenders(entity, callBacks);
+    const renders = createRenders(entity, callbacks);
 
     const visuals = {
         entity: animationType ? renders.animations[animationType]() : undefined,
@@ -22,13 +22,13 @@ export const createVisualsAndCallBacks = (entity: EntityTemp) => {
 
     const setEngine = createSetEngine(entity.engine, visuals);
 
-    // transforms empty callBacks to functional callBacks
-    setCallBacks(entity, setEngine, callBacks);
+    // transforms empty callbacks to functional callbacks
+    setCallbacks(entity, setEngine, callbacks);
 
-    return {visuals, callBacks, setVisual};
+    return {visuals, callbacks, setVisual};
 };
 
-// TODO::remove duplications and if statements, see comments in createCallBacks -> renders object
+// TODO::remove duplications and if statements, see comments in createCallbacks -> renders object
 const createEngineRenders = (engine: Engine, renders: Partial<EntityVisuals>) => ({
     entity: {
         on: () => {
@@ -101,12 +101,12 @@ const createSetEngine = (engine: Engine, renders: Partial<EntityVisuals>): Entit
     };
 };
 
-const setCallBacks = (
+const setCallbacks = (
     {visualProperties, userListeners, properties}: EntityTemp,
     setEngine: EntitySetEngine,
-    callBacks: EntityCallBacks,
+    callbacks: EntityCallbacks,
 ) => {
-    callBacks.start = quickShow => {
+    callbacks.start = quickShow => {
         if (quickShow) {
             setEngine('draw', 'on');
             setEngine('entity', 'on');
@@ -124,7 +124,7 @@ const setCallBacks = (
         setEngine('draw', 'on');
     };
 
-    callBacks.startEnd = () => {
+    callbacks.startEnd = () => {
         setEngine('start', 'off');
         setEngine('entity', 'on'); // This could have a (double) check
         setEngine('hover', 'on');
@@ -132,7 +132,7 @@ const setCallBacks = (
         // userListeners.startTransitionEnd(properties.clicked);
     };
 
-    callBacks.end = quickHide => {
+    callbacks.end = quickHide => {
         if (quickHide) {
             setEngine('draw', 'off');
             setEngine('entity', 'off');
@@ -146,11 +146,11 @@ const setCallBacks = (
         // Useless check? if entity is !'none', entity is already running
         if (visualProperties.animateAtEnd && visualProperties.endType) setEngine('entity', 'on');
 
-        // See comments on this in callBack.start()
+        // See comments on this in callback.start()
         setEngine('hover', 'off');
     };
 
-    callBacks.endEnd = () => {
+    callbacks.endEnd = () => {
         setEngine('end', 'off');
         setEngine('entity', 'off'); // This could have a (double) check
         setEngine('hover', 'off');

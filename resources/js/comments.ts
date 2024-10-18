@@ -7,7 +7,7 @@
 //     properties: EntityProperties;
 //     userListeners: Partial<UserListeners>;
 //     listeners: EntityListeners;
-//     callBacks: EntityCallBacks;
+//     callbacks: EntityCallbacks;
 //     visualProperties: EntityVisualProperties;
 //     colors: EntityColors;
 //     engine: Engine;
@@ -15,7 +15,7 @@
 //     input: Input;
 // }
 
-// type EntityTemp = Omit<Entity, 'entityListeners' | 'callBacks' | 'visuals'>;
+// type EntityTemp = Omit<Entity, 'entityListeners' | 'callbacks' | 'visuals'>;
 
 // const throwError2 = (id: string | number = 'noID', subject: string = 'subject', action: string = "'noAction'") => {
 //     throw Error(`${subject} with id '${id}' already ${action}`);

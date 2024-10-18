@@ -1,15 +1,16 @@
 /* eslint-disable max-lines-per-function */
-import {createVisualsAndCallBacks} from './animate';
-import {createListenerHandler, createListenerMethods, createListeners, createUserEntity} from './properties';
+import {createVisualsAndCallbacks} from './animate';
+import {createListenerMethods, createListeners} from './properties';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {resources} from '..';
+import {UserConfig} from 'library/types/entity';
 
 const createResource = (res: Resources) => ({
-    create: (options?: Partial<EntityConfig>) => create(res, options),
+    create: (options?: Partial<UserConfig>) => create(res, options),
 });
 
-const create = ({context, engine, input}: Resources, options: Partial<EntityConfig> = {}) => {
+const create = ({context, engine, input}: Resources, options: Partial<UserConfig> = {}) => {
     // Extract internal properties from entity config options, TODO::See SketchType in entity.d.t.s
     const {properties, visualProperties, userListeners, sketch} = extractOptions(options);
 
@@ -21,9 +22,9 @@ const create = ({context, engine, input}: Resources, options: Partial<EntityConf
 
     // const entityListeners = createEntityListeners(entity1);
 
-    const {callBacks, setVisual} = createVisualsAndCallBacks(entity1); // Also creates setEngine
+    const {callbacks, setVisual} = createVisualsAndCallbacks(entity1); // Also creates setEngine
 
-    const entity = {...entity1, entityListeners, callBacks};
+    const entity = {...entity1, entityListeners, callbacks};
 
     const userMethods = {setListener, setVisual, ...createUserEntity(entity)};
 

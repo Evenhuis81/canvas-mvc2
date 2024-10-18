@@ -1,33 +1,33 @@
 /* eslint-disable max-lines-per-function */
-export const createUserEntity = (
-    visualProperties: EntityVisualProperties,
-    properties: EntityProperties,
+export const createUserMethods = (
+    vProps: VisualProperties,
+    props: GeneralProperties,
     listeners: ListenerHandler,
-    callBacks: EntityCallBacks,
+    callbacks: EntityCallbacks,
 ) => {
     // parameter default gives auto start (and end) transitions if type !undefined, manually able to set by user input
-    const show = (quickShow = !visualProperties.startType) => {
+    const show = (quickShow = !vProps.startType) => {
         // Make throwError more general and easier to use (less parameters)
-        if (properties.show) throw Error('show is already active');
-        // throwError(properties.id, 'showing');
+        if (props.show) throw Error('show is already active');
+        // throwError(props.id, 'showing');
 
-        properties.show = true;
+        props.show = true;
 
         listeners.add();
 
-        callBacks.start(quickShow);
+        callbacks.start(quickShow);
     };
 
-    const hide = (quickHide = !visualProperties.endType, hideTime = properties.hideTime) => {
-        if (!properties.show) throw Error('hide is already active');
-        // throwError(properties.id, 'hiding');
+    const hide = (quickHide = !vProps.endType, hideTime = props.hideTime) => {
+        if (!props.show) throw Error('hide is already active');
+        // throwError(props.id, 'hiding');
 
         const hideMe = () => {
-            properties.show = false;
+            props.show = false;
 
             listeners.remove();
 
-            callBacks.end(quickHide);
+            callbacks.end(quickHide);
         };
 
         if (hideTime) {
@@ -41,7 +41,7 @@ export const createUserEntity = (
         hideMe();
     };
 
-    const setHideTime = (time: number) => (properties.hideTime = time);
+    const setHideTime = (time: number) => (props.hideTime = time);
 
     return {show, hide, setHideTime};
 };
@@ -51,7 +51,7 @@ export const createListeners = (userListeners: Partial<UserListeners> = {}) => {
         throwError('clickdownconflict');
     if (userListeners.clickup && (userListeners.mouseup || userListeners.touchend)) throwError('clickupconflict');
 
-    // TODO::Seperate eventListeners and entityCallBacks (onStartEnd etc) possibly make object: {callBacks: user: {}, entity: {}}
+    // TODO::Seperate eventListeners and entityCallbacks (onStartEnd etc) possibly make object: {callbacks: user: {}, entity: {}}
     const listeners: ParsedListener[] = [];
 
     const parseListener: ParseListener = (key, listener) => ({
@@ -68,9 +68,9 @@ export const createListeners = (userListeners: Partial<UserListeners> = {}) => {
         listeners.push(parseListener(key, ll));
     }
 
-    // User input handlers after creation
+    // User input after creation
     // TODO::Test if overwritten listener gets handled properly
-    const setListener: SetUserHandler = (type, listener) => {
+    const setListener: SetUserListener = (type, listener) => {
         const parsedListener = parseListener(type, listener);
 
         const index = listeners.findIndex(list => list.type === parsedListener.type);
@@ -87,9 +87,9 @@ export const createListeners = (userListeners: Partial<UserListeners> = {}) => {
     return {setListener, listeners: createEventHandler(listeners)};
 };
 
-const createEventHandler = (listeners: ) => {
+const createEventHandler = (listeners: any) => {
     //
-}
+};
 
 const createEventListener = {
     mouseup: () => {},
@@ -101,10 +101,6 @@ const createEventListener = {
     clickdown: () => {},
     clickup: () => {},
 };
-
-// Listener -> Handler
-// user: native: {'mousedown', 'mouseup', etc(keyof GlobalWindowEventMap)} & mixed in root: 'clickdown', 'clickup', onStartEnd, etc
-// entity: callBacks
 
 const addListeners = (listeners: ParsedListener[]) => {
     listeners.forEach(listener => {
@@ -151,7 +147,7 @@ const err = {
 
 const throwError = (type: keyof typeof err) => err[type];
 
-const emptyCallBacks = {
+const emptyCallbacks = {
     start: () => {},
     startEnd: () => {},
     end: () => {},

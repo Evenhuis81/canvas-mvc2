@@ -1,5 +1,5 @@
 // TODO::MultiType with generic objects
-type EntitySketch = {
+export type Sketch = {
     x: number;
     y: number;
     w: number;
@@ -16,7 +16,7 @@ type EntitySketch = {
     textBaseLine: CanvasTextBaseline;
 };
 
-interface EntityProperties {
+export interface Properties {
     id: number | string;
     name: string;
     disabled: boolean;
@@ -26,101 +26,96 @@ interface EntityProperties {
     hideTime: number;
 }
 
-type EntityAnimations = 'noise';
-type EntityTransitions = 'fadein1' | 'fadeout1' | 'slideinleft' | 'explode';
-type EntityHovers = 'bold';
+export type Animations = 'noise';
+export type Transitions = 'fadein1' | 'fadeout1' | 'slideinleft' | 'explode';
+export type Hovers = 'bold';
 
-type EntityVisualType = EntityAnimations | EntityTransitions | EntityHovers;
+export type VisualType = Animations | Transitions | Hovers;
 
-type EntityColors = {
+export type Colors = {
     fill: RGBA;
     stroke: RGBA;
     textFill: RGBA;
 };
 
-type SetUserHandler = <K extends keyof UserHandlers, V extends UserHandlers[K]>(key: K, jandler: V) => void;
-type SetHideTime = (time: number) => void;
-type SetVisual = (kind: Exclude<keyof EntityVisuals, 'draw'>, type: EntityVisualType) => void;
+export type SetHideTime = (time: number) => void;
+export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
+export type SetUserListener = <K extends keyof UserListeners, V extends UserListeners[K]>(key: K, handler: V) => void;
 
-interface UserEntity {
+export interface UserMethods {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
-    setListener: SetUserHandler;
+    setListener: SetUserListener;
     setHideTime: SetHideTime;
     setVisual: SetVisual;
-    // destroy: () => void;
-    // enable: () => void;
-    // disable: () => void;
 }
 
-interface EntityCallBacks {
+export interface Callbacks {
     start: (quickShow: boolean, prepare?: () => void) => void;
     startEnd: () => void;
     end: (quickHide: boolean, prepare?: () => void) => void;
     endEnd: () => void;
 }
 
-type EntityEvent<Evt> = {
+export type ListenerEvent<Evt> = {
     clicked: boolean;
     evt: Evt;
 };
 
-interface HandlerMethods {
-    add: () => void;
-    remove: () => void;
+export interface ListenerMethods {
+    addListeners: () => void;
+    removeListeners: () => void;
 }
 
-type ParseHandler = <K extends keyof UserHandlers, V extends UserHandlers[K]>(
+export type ParseListener = <K extends keyof UserListeners, V extends UserListeners[K]>(
     key: K,
-    handlers: V,
+    listener: V,
 ) => {
     type: K;
-    handlers: NonNullable<V>;
+    listener: NonNullable<V>;
 };
 
-type ParsedHandler = Extract<ReturnType<ParseHandler>, {}>;
+export type ParsedListener = Extract<ReturnType<ParseListener>, {}>;
 
-type EntityHandlers = {
+export type EventHandler = {
     user: {
-        native: ParsedHandler[];
-        callback;
+        native: ParsedListener[];
+        custom: ParsedListener[]; // clickup-down/startEnd/etc
     };
-    entity: {};
-} & HandlerMethods;
+} & ListenerMethods &
+    Callbacks;
 
-interface UserHandlers {
-    mouseup: (evt: EntityEvent<MouseEvent>) => void;
-    mousedown: (evt: EntityEvent<MouseEvent>) => void;
+export interface UserListeners {
+    mouseup: (evt: ListenerEvent<MouseEvent>) => void;
+    mousedown: (evt: ListenerEvent<MouseEvent>) => void;
     startTransitionEnd: (clicked: boolean) => void;
     endTransitionEnd: (clicked: boolean) => void;
-    touchstart: (evt: EntityEvent<TouchEvent>) => void;
-    touchend: (evt: EntityEvent<TouchEvent>) => void;
-    clickdown: (evt: EntityEvent<MouseEvent & TouchEvent>) => void; // mouse & touch combined
-    clickup: (evt: EntityEvent<MouseEvent & TouchEvent>) => void; // mouse & touch combined
+    touchstart: (evt: ListenerEvent<TouchEvent>) => void;
+    touchend: (evt: ListenerEvent<TouchEvent>) => void;
+    clickdown: (evt: ListenerEvent<MouseEvent & TouchEvent>) => void; // mouse & touch combined
+    clickup: (evt: ListenerEvent<MouseEvent & TouchEvent>) => void; // mouse & touch combined
 }
 
-type EntityConfig = EntitySketch & EntityProperties & EntityVisualProperties & {listeners: Partial<UserHandlers>};
+export type UserConfig = Sketch & Properties & VisualProperties & {listeners: Partial<UserListeners>};
 
-interface EntityVisualProperties {
+export interface VisualProperties {
     animateAtStart: boolean;
     animateAtEnd: boolean;
-    animationType?: EntityAnimations;
-    hoverType?: EntityHovers;
-    startType?: EntityTransitions;
+    animationType?: Animations;
+    hoverType?: Hovers;
+    startType?: Transitions;
     startSpeed: TransitionSpeed;
-    endType?: EntityTransitions;
+    endType?: Transitions;
     endSpeed: TransitionSpeed;
 }
+export type TransitionSpeed = 1 | 2 | 3 | 4 | 5;
 
-type TransitionSpeed = 1 | 2 | 3 | 4 | 5;
-
-type Renderer = {
+export type Renderer = {
     update: Required<Update>;
     prepare?: () => void;
-    // finish?: () => void;
 };
 
-interface EntityVisuals {
+export interface Visuals {
     entity?: Renderer;
     hover?: Renderer;
     start?: Renderer;
@@ -128,7 +123,6 @@ interface EntityVisuals {
     draw: Required<Draw>;
 }
 
-// Future states: 'pauze' | 'continue';
-type EntityEngineState = 'on' | 'off';
+export type EngineState = 'on' | 'off'; // Future states: 'pauze' | 'continue'?;
 
-type EntitySetEngine = (type: keyof EntityVisuals, state: EntityEngineState) => void;
+export type SetEngine = (type: keyof Visuals, state: EngineState) => void;

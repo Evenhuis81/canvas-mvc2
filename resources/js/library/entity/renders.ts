@@ -1,4 +1,6 @@
-export const createRenders = (entity: EntityTemp, callBacks: Pick<EntityCallBacks, 'startEnd' | 'endEnd'>) => {
+import {Callbacks} from 'library/types/entity';
+
+export const createRenders = (entity: EntityTemp, callbacks: Pick<Callbacks, 'startEnd' | 'endEnd'>) => {
     const {id, name} = entity.properties;
 
     const hovers = {
@@ -20,7 +22,7 @@ export const createRenders = (entity: EntityTemp, callBacks: Pick<EntityCallBack
             const {update: fn, prepare} = createTransitionFadein1(
                 entity.colors,
                 0.005 * entity.visualProperties.startSpeed,
-                callBacks,
+                callbacks,
             );
 
             return {
@@ -36,7 +38,7 @@ export const createRenders = (entity: EntityTemp, callBacks: Pick<EntityCallBack
             const {update: fn, prepare} = createTransitionFadeout1(
                 entity.colors,
                 0.005 * entity.visualProperties.endSpeed,
-                callBacks,
+                callbacks,
             );
 
             return {
@@ -56,7 +58,7 @@ export const createRenders = (entity: EntityTemp, callBacks: Pick<EntityCallBack
             },
         }),
         explode: () => {
-            const {update: fn, prepare} = createTransitionExplode(entity.colors, entity.sketch, callBacks);
+            const {update: fn, prepare} = createTransitionExplode(entity.colors, entity.sketch, callbacks);
 
             return {
                 update: {
@@ -131,7 +133,7 @@ const createHoverBold = (sketch: EntitySketch) => {
 const createTransitionFadein1 = (
     {fill, stroke, textFill}: EntityColors,
     alphaVelocity: number,
-    callBacks: Pick<EntityCallBacks, 'startEnd'>,
+    callbacks: Pick<Callbacks, 'startEnd'>,
 ) => ({
     update: () => {
         fill.a += alphaVelocity;
@@ -144,7 +146,7 @@ const createTransitionFadein1 = (
             stroke.a = 1;
             textFill.a = 1;
 
-            callBacks.startEnd();
+            callbacks.startEnd();
         }
     },
     prepare: () => {
@@ -157,7 +159,7 @@ const createTransitionFadein1 = (
 const createTransitionFadeout1 = (
     {fill, stroke, textFill}: EntityColors,
     alphaVelocity: number,
-    callBacks: Pick<EntityCallBacks, 'endEnd'>,
+    callbacks: Pick<Callbacks, 'endEnd'>,
 ) => ({
     update: () => {
         fill.a -= alphaVelocity;
@@ -170,7 +172,7 @@ const createTransitionFadeout1 = (
             stroke.a = 0;
             textFill.a = 0;
 
-            callBacks.endEnd();
+            callbacks.endEnd();
         }
     },
     prepare: () => {
@@ -187,7 +189,7 @@ const createTransitionSlideinleft = () => () => {
 const createTransitionExplode = (
     {fill, stroke, textFill}: EntityColors,
     sketch: EntitySketch,
-    callBacks: Pick<EntityCallBacks, 'endEnd'>,
+    callbacks: Pick<Callbacks, 'endEnd'>,
 ) => ({
     update: () => {
         sketch.lw += 0.1;
@@ -195,7 +197,7 @@ const createTransitionExplode = (
         if (sketch.lw > 10) {
             //
 
-            callBacks.endEnd();
+            callbacks.endEnd();
         }
     },
     prepare: () => {
