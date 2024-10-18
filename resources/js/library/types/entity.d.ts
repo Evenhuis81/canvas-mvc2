@@ -57,10 +57,10 @@ export interface Callbacks {
     endEnd: () => void;
 }
 
-export type ListenerEvent<Evt> = {
-    clicked: boolean;
-    evt: Evt;
-};
+// export type ListenerEvent<Evt> = {
+//     clicked: boolean;
+//     evt: Evt;
+// };
 
 export interface ListenerMethods {
     addListeners: () => void;
@@ -75,25 +75,25 @@ export type ParseListener = <K extends keyof UserListeners, V extends UserListen
     listener: NonNullable<V>;
 };
 
-export type ParsedListener = Extract<ReturnType<ParseListener>, {}>;
+export type EntityListener = Extract<ReturnType<ParseListener>, {}>;
 
-export type EventHandler = {
-    user: {
-        native: ParsedListener[];
-        custom: ParsedListener[]; // clickup-down/startEnd/etc
-    };
-} & ListenerMethods &
-    Callbacks;
+// export type EventHandler = {
+//     user: {
+//         native: EntityListener[];
+//         custom: EntityListener[]; // clickup-down/startEnd/etc
+//     };
+// } & ListenerMethods &
+//     Callbacks;
 
 export interface UserListeners {
-    mouseup: (evt: ListenerEvent<MouseEvent>) => void;
-    mousedown: (evt: ListenerEvent<MouseEvent>) => void;
-    startTransitionEnd: (clicked: boolean) => void;
-    endTransitionEnd: (clicked: boolean) => void;
-    touchstart: (evt: ListenerEvent<TouchEvent>) => void;
-    touchend: (evt: ListenerEvent<TouchEvent>) => void;
-    clickdown: (evt: ListenerEvent<MouseEvent & TouchEvent>) => void; // mouse & touch combined
-    clickup: (evt: ListenerEvent<MouseEvent & TouchEvent>) => void; // mouse & touch combined
+    clickdown: (evt: MouseEvent | TouchEvent) => void; // mouse & touch combined
+    clickup: (evt: MouseEvent | TouchEvent) => void; // mouse & touch combined
+    mousedown: (evt: MouseEvent) => void;
+    mouseup: (evt: MouseEvent) => void;
+    touchstart: (evt: TouchEvent) => void;
+    touchend: (evt: TouchEvent) => void;
+    startTransitionEnd: () => void;
+    endTransitionEnd: () => void;
 }
 
 export type UserConfig = Sketch & Properties & VisualProperties & {listeners: Partial<UserListeners>};

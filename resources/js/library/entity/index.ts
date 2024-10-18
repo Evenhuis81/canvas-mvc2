@@ -1,10 +1,10 @@
 /* eslint-disable max-lines-per-function */
 import {createVisualsAndCallbacks} from './animate';
-import {createListenerMethods, createListeners} from './properties';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {resources} from '..';
-import {UserConfig} from 'library/types/entity';
+import type {UserConfig} from 'library/types/entity';
+import {createListenerMethods, createListeners} from './listeners';
 
 const createResource = (res: Resources) => ({
     create: (options?: Partial<UserConfig>) => create(res, options),
@@ -12,7 +12,7 @@ const createResource = (res: Resources) => ({
 
 const create = ({context, engine, input}: Resources, options: Partial<UserConfig> = {}) => {
     // Extract internal properties from entity config options, TODO::See SketchType in entity.d.t.s
-    const {properties, visualProperties, userListeners, sketch} = extractOptions(options);
+    const {generalProperties, visualProperties, userListeners, sketch} = extractOptions(options);
 
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
@@ -53,15 +53,17 @@ const initialize = ({properties}: Entity, methods: UserEntity) => {
     // }
 };
 
-const extractOptions = (options: Partial<EntityConfig>) => {
+const extractOptions = (options: Partial<UserConfig>) => {
     const {id, name, disabled, show, showDelay, clicked, hideTime, ...rest} = {
         id: options.id ?? `entity-${uid()}`,
         ...getProperties(defaultSketchProperties, options),
-    }; // Add statistics options -> internal options view
-    const properties = {id, name, disabled, show, showDelay, clicked, hideTime};
+    };
+
+    const generalProperties = {id, name, disabled, show, showDelay, clicked, hideTime};
 
     const {startType, startSpeed, endType, endSpeed, hoverType, animationType, animateAtStart, animateAtEnd, ...rest2} =
         rest;
+
     const visualProperties = {
         startType,
         startSpeed,
@@ -75,19 +77,19 @@ const extractOptions = (options: Partial<EntityConfig>) => {
 
     const {listeners: userListeners, ...sketch} = rest2;
 
-    return {properties, visualProperties, userListeners, sketch};
+    return {generalProperties, visualProperties, userListeners, sketch};
 };
 
 const defaultSketchProperties = {
-    // Mixed Internal Properties (+id from creation)
-    name: 'noName', // + Counter?
+    // generalProperties (mixed internal properties + id from creation)
+    name: 'noName', // + counter/uid?
     type: 'default',
     disabled: false,
     show: true,
     showDelay: 0,
     clicked: false,
     hideTime: 0,
-    // Visual Properties (visual types can be undefined)
+    // visualProperties (types can be undefined)
     animateAtStart: false,
     animateAtEnd: false,
     startSpeed: 3,
