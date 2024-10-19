@@ -11,30 +11,26 @@ import type {
 export const createHandler = (listeners: Partial<ListenerOptionsNative> = {}) => {
     const nativeListeners: ReturnType<ParseNativeListener>[] = [];
 
-    type ParseNativeListener = <K extends keyof WindowEventMap, V extends WindowEventMap[K]>(
-        key: K,
-        listener: V,
-    ) => {
-        type: K;
-        listener: NonNullable<V>;
-    };
+    // type ParseNativeListener = <K extends keyof WindowEventMap, V extends (evt: WindowEventMap[K]) => void>(
+    //     key: K,
+    //     listener: V,
+    // ) => {
+    //     type: K;
+    //     listener: V;
+    // };
 
     const parseNativeListener: ParseNativeListener = (key, listener) => ({
         type: key,
         listener,
     });
 
-    // let key: keyof ListenerOptions;
+    let key: keyof WindowEventMap;
+
     for (key in listeners) {
-        const listener = listeners[key];
-
-        if (!listener) continue;
-
-        if (key === 'mousedown' || key === 'mouseup' || key === 'touchstart' || key === 'touchend') {
-            nativeListeners.push({type: key, listener});
-        }
-
-        listeners.push(parseListener(key, listener));
+        // const listener = listeners[key];
+        // if (!listener) continue;
+        // addEventListener(key, listener);
+        // nativeListeners.push(parseNativeListener(key, listener));
     }
 
     // TODO::Test if overwritten listener gets handled properly

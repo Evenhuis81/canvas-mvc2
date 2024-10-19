@@ -97,9 +97,16 @@ export type EntityListener = Extract<ReturnType<ParseListenerOption>, {}>;
 
 export type NativeListener = ReturnType<ParseEntityListener>;
 
-type ListenerOptionsNative = {
-    [Key in keyof WindowEventMap]: (evt: WindowEventMap[Key]) => void;
+type ListenerOptionsNative = <NativeType extends keyof WindowEventMap, NativeEvent extends WindowEventMap[NativeType]>(
+    key: NativeType,
+    listener: (evt: NativeEvent) => void,
+) => {
+    type: NativeType;
+    listener: (evt: NativeEvent) => void;
 };
+// {
+//     [Key in keyof WindowEventMap]: (evt: WindowEventMap[Key]) => void;
+// };
 
 export interface ListenerOptionsCustom {
     clickdown: (evt: MouseEvent | TouchEvent) => void; // mouse & touch combined
