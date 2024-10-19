@@ -1,62 +1,53 @@
-/* eslint-disable max-lines-per-function */
-import {createVisualsAndCallbacks} from './animate';
 import {getProperties, uid} from 'library/helpers';
-import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {resources} from '..';
-import type {UserConfig} from 'library/types/entity';
-import {createListenerMethods, createListeners} from './listeners';
+import type {ConfigOptions, EntityMethods, GeneralProperties} from 'library/types/entity';
+import {createHandler} from './handler';
 
 const createResource = (res: Resources) => ({
-    create: (options?: Partial<UserConfig>) => create(res, options),
+    create: (options?: Partial<ConfigOptions>) => create(res, options),
 });
 
-const create = ({context, engine, input}: Resources, options: Partial<UserConfig> = {}) => {
-    // Extract internal properties from entity config options, TODO::See SketchType in entity.d.t.s
-    const {generalProperties, visualProperties, userListeners, sketch} = extractOptions(options);
+const create = ({context, engine, input}: Resources, options: Partial<ConfigOptions> = {}) => {
+    // Extract internal properties from options
+    const {generalProperties, visualProperties, listenerOptions, sketch} = extractOptions(options);
 
-    const colors = getSketchRGBAColorsFromHexString(sketch);
+    const {setListener, listeners} = createHandler(listenerOptions);
 
-    const {setListener, listeners} = createListeners(userListeners);
-
-    const listenerMethods = createListenerMethods(listeners);
+    // const listenerMethods = createListenerMethods(listeners);
 
     // const entityListeners = createEntityListeners(entity1);
 
-    const {callbacks, setVisual} = createVisualsAndCallbacks(entity1); // Also creates setEngine
+    // const {callbacks, setVisual} = createVisualsAndCallbacks(entity1); // Also creates setEngine
 
-    const entity = {...entity1, entityListeners, callbacks};
+    // const entity = {...entity1, entityListeners, callbacks};
 
-    const userMethods = {setListener, setVisual, ...createUserEntity(entity)};
+    // Mix-in with draw method
+    // const colors = getSketchRGBAColorsFromHexString(sketch);
+    // const userMethods = {setListener, setVisual, ...createUserEntity(entity)};
 
-    initialize(entity, userMethods);
+    // initialize(entity, userMethods);
 
-    return userMethods;
+    // return userMethods;
 };
 
-const initialize = ({properties}: Entity, methods: UserEntity) => {
-    if (properties.show) {
-        // Test optional setTimeout (mind the 'on top of stack')
+const initialize = (gProps: GeneralProperties, methods: EntityMethods) => {
+    if (gProps.show) {
+        // Test optional setTimeout efficiency
         setTimeout(() => {
-            properties.show = false;
+            gProps.show = false;
 
-            // one time calling show with showDelay?
-            properties.showDelay = 0;
+            // TODO::Make this optional (or with entityMethod)
+            gProps.showDelay = 0;
 
             methods.show();
-        }, properties.showDelay);
+        }, gProps.showDelay);
     }
-
-    // if (properties.disabled) {
-    //     properties.disabled = false;
-
-    //     methods.disable();
-    // }
 };
 
-const extractOptions = (options: Partial<UserConfig>) => {
+const extractOptions = (options: Partial<ConfigOptions>) => {
     const {id, name, disabled, show, showDelay, clicked, hideTime, ...rest} = {
         id: options.id ?? `entity-${uid()}`,
-        ...getProperties(defaultSketchProperties, options),
+        ...getProperties(defaultProperties, options),
     };
 
     const generalProperties = {id, name, disabled, show, showDelay, clicked, hideTime};
@@ -75,13 +66,13 @@ const extractOptions = (options: Partial<UserConfig>) => {
         animateAtEnd,
     };
 
-    const {listeners: userListeners, ...sketch} = rest2;
+    const {listeners: listenerOptions, ...sketch} = rest2;
 
-    return {generalProperties, visualProperties, userListeners, sketch};
+    return {generalProperties, visualProperties, listenerOptions, sketch};
 };
 
-const defaultSketchProperties = {
-    // generalProperties (mixed internal properties + id from creation)
+const defaultProperties = {
+    // generalProperties (mixed internal properties + id set in abstractOptions)
     name: 'noName', // + counter/uid?
     type: 'default',
     disabled: false,

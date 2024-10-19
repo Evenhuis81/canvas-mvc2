@@ -1,24 +1,20 @@
-import type {EntityListener, ParseListener, SetUserListener, Sketch, UserListeners} from 'library/types/entity';
+import type {EntityListener, ParseListenerOption, SetUserListener, Sketch, ListenerOptions} from 'library/types/entity';
 
-export const createListeners = (userListeners: Partial<UserListeners> = {}) => {
-    if (userListeners.clickdown && (userListeners.mousedown || userListeners.touchstart))
-        throwError('clickdownconflict');
-    if (userListeners.clickup && (userListeners.mouseup || userListeners.touchend)) throwError('clickupconflict');
-
+export const createHandler = (listenerOptions: Partial<ListenerOptions> = {}) => {
     const listeners: EntityListener[] = [];
 
-    const parseListener: ParseListener = (key, listener) => ({
+    const parseListener: ParseListenerOption = (key, listener) => ({
         type: key,
         listener,
     });
 
-    let key: keyof UserListeners;
-    for (key in userListeners) {
-        const userListener = userListeners[key];
+    let key: keyof ListenerOptions;
+    for (key in listenerOptions) {
+        const listener = listenerOptions[key];
 
-        if (!userListener) continue;
+        if (!listener) continue;
 
-        listeners.push(parseListener(key, userListener));
+        listeners.push(parseListener(key, listener));
     }
 
     // TODO::Test if overwritten listener gets handled properly

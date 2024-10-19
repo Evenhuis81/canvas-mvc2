@@ -2,6 +2,12 @@
 // This should become a reesource, but with different 'themes' or statistic variants. (for different kind of options)
 // Create text object according to StaticView, with calculated options (like button, possible to 'lend' those)
 
+// if (properties.disabled) {
+//     properties.disabled = false;
+
+//     methods.disable();
+// }
+
 // interface Entity {
 //     sketch: EntitySketch;
 //     properties: EntityProperties;

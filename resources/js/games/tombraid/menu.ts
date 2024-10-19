@@ -1,23 +1,9 @@
 /* eslint-disable max-lines-per-function */
+import type {ConfigOptions, Entity} from 'library/types/entity';
 import {startLevel} from './initiatize';
 import createEntity from 'library/entity';
 
 export const mainMenu = () => {
-    // Copy from tombraid main menu:
-    // const entity = createEntity('tr');
-
-    // const start = entity.create({...mainButton, show: false});
-    // const settings = entity.create({...mainButton, y: innerHeight * 0.5, text: 'Settings', show: false});
-    // const exit = entity.create({...mainButton, y: innerHeight * 0.75, text: 'Exit Game', show: false});
-
-    // start.setListener('mouseup', () => {
-    //     start.hide();
-    //     settings.hide();
-    //     exit.hide();
-    // });
-
-    // start.setListener('endTransitionEnd', () => {});
-
     goToLevelSelection();
 };
 
@@ -25,8 +11,7 @@ export const mainMenu = () => {
 // Entity Color can't take in regular css names (like 'red')
 // Alter speed 'system' for even faster or slower transitions
 // Create oscillerate animation and/or real noise animation
-
-const mainButton: Partial<EntityConfig> = {
+const mainButton: Partial<ConfigOptions> = {
     startType: 'fadein1',
     startSpeed: 5,
     endType: 'fadeout1',
@@ -49,12 +34,12 @@ export const goToLevelSelection = () => {
 
     const testEntity = entity.create({
         listeners: {
-            mousedown: evt => {
-                console.log(evt);
-            },
-            clickdown: evt => {
-                console.log(evt);
-            },
+            // mousedown: evt => {
+            //     console.log(evt);
+            // },
+            // clickdown: evt => {
+            //     console.log(evt);
+            // },
         },
     });
 
@@ -74,7 +59,7 @@ const createLevelSelectEntities = (amount: number) => {
     const startX = paddingX / 2 + squareLength / 2;
     const timeoutDifference = 25;
 
-    const base: Partial<EntityConfig> = {
+    const base: Partial<ConfigOptions> = {
         w: squareLength,
         h: squareLength,
         startType: 'fadein1',
@@ -83,7 +68,7 @@ const createLevelSelectEntities = (amount: number) => {
         endSpeed: 5,
     };
 
-    const elements: UserEntity[] = [];
+    const elements: Entity[] = [];
 
     const entity = createEntity('tr'); // TODO::Put this in resources
 
@@ -121,14 +106,14 @@ const createLevelSelectEntities = (amount: number) => {
         //     elements.forEach(element => element.hide());
         // });
 
-        element.setListener('endTransitionEnd', clicked => {
-            if (clicked) {
-                // element.hide(true); no -> (already hidden)
-                // element.destroy(); yes
+        // element.setListener('endTransitionEnd', clicked => {
+        //     if (clicked) {
+        //         // element.hide(true); no -> (already hidden)
+        //         // element.destroy(); yes
 
-                startLevel(i + 1);
-            }
-        });
+        //         startLevel(i + 1);
+        //     }
+        // });
 
         setTimeout(() => {
             element.show();
@@ -141,3 +126,18 @@ const createLevelSelectEntities = (amount: number) => {
         }
     }
 };
+
+// Copy from tombraid main menu:
+// const entity = createEntity('tr');
+
+// const start = entity.create({...mainButton, show: false});
+// const settings = entity.create({...mainButton, y: innerHeight * 0.5, text: 'Settings', show: false});
+// const exit = entity.create({...mainButton, y: innerHeight * 0.75, text: 'Exit Game', show: false});
+
+// start.setListener('mouseup', () => {
+//     start.hide();
+//     settings.hide();
+//     exit.hide();
+// });
+
+// start.setListener('endTransitionEnd', () => {});

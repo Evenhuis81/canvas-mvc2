@@ -16,7 +16,7 @@ export type Sketch = {
     textBaseLine: CanvasTextBaseline;
 };
 
-export interface Properties {
+export interface GeneralProperties {
     id: number | string;
     name: string;
     disabled: boolean;
@@ -40,15 +40,20 @@ export type Colors = {
 
 export type SetHideTime = (time: number) => void;
 export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
-export type SetUserListener = <K extends keyof UserListeners, V extends UserListeners[K]>(key: K, handler: V) => void;
+export type SetUserListener = <K extends keyof ListenerOptions, V extends ListenerOptions[K]>(
+    key: K,
+    handler: V,
+) => void;
 
-export interface UserMethods {
+export interface EntityMethods {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
     setListener: SetUserListener;
     setHideTime: SetHideTime;
     setVisual: SetVisual;
 }
+
+export type Entity = EntityMethods;
 
 export interface Callbacks {
     start: (quickShow: boolean, prepare?: () => void) => void;
@@ -57,17 +62,12 @@ export interface Callbacks {
     endEnd: () => void;
 }
 
-// export type ListenerEvent<Evt> = {
-//     clicked: boolean;
-//     evt: Evt;
-// };
-
 export interface ListenerMethods {
     addListeners: () => void;
     removeListeners: () => void;
 }
 
-export type ParseListener = <K extends keyof UserListeners, V extends UserListeners[K]>(
+export type ParseListenerOption = <K extends keyof ListenerOptions, V extends ListenerOptions[K]>(
     key: K,
     listener: V,
 ) => {
@@ -75,17 +75,9 @@ export type ParseListener = <K extends keyof UserListeners, V extends UserListen
     listener: NonNullable<V>;
 };
 
-export type EntityListener = Extract<ReturnType<ParseListener>, {}>;
+export type EntityListener = Extract<ReturnType<ParseListenerOption>, {}>;
 
-// export type EventHandler = {
-//     user: {
-//         native: EntityListener[];
-//         custom: EntityListener[]; // clickup-down/startEnd/etc
-//     };
-// } & ListenerMethods &
-//     Callbacks;
-
-export interface UserListeners {
+export interface ListenerOptions {
     clickdown: (evt: MouseEvent | TouchEvent) => void; // mouse & touch combined
     clickup: (evt: MouseEvent | TouchEvent) => void; // mouse & touch combined
     mousedown: (evt: MouseEvent) => void;
@@ -96,7 +88,7 @@ export interface UserListeners {
     endTransitionEnd: () => void;
 }
 
-export type UserConfig = Sketch & Properties & VisualProperties & {listeners: Partial<UserListeners>};
+export type ConfigOptions = Sketch & GeneralProperties & VisualProperties & {listeners: Partial<ListenerOptions>};
 
 export interface VisualProperties {
     animateAtStart: boolean;
