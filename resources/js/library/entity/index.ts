@@ -9,9 +9,9 @@ const createResource = (res: Resources) => ({
 
 const create = ({context, engine, input}: Resources, options: Partial<ConfigOptions> = {}) => {
     // Extract internal properties from options
-    const {generalProperties, visualProperties, listenerOptions, sketch} = extractOptions(options);
+    const {generalProperties, visualProperties, listeners, sketch} = extractOptions(options);
 
-    const {setListener, handler} = createHandler(listenerOptions);
+    const {setListener, handler} = createHandler(listeners);
 
     // const listenerMethods = createListenerMethods(listeners);
 
@@ -66,9 +66,9 @@ const extractOptions = (options: Partial<ConfigOptions>) => {
         animateAtEnd,
     };
 
-    const {listeners: listenerOptions, ...sketch} = rest2;
+    const {listeners, ...sketch} = rest2;
 
-    return {generalProperties, visualProperties, listenerOptions, sketch};
+    return {generalProperties, visualProperties, listeners, sketch};
 };
 
 const defaultProperties = {

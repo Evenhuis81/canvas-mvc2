@@ -1,38 +1,82 @@
-import type {EntityListener, ParseListenerOption, SetUserListener, Sketch, ListenerOptions} from 'library/types/entity';
+import type {
+    EntityListener,
+    ParseListenerOption,
+    Sketch,
+    ListenerOptions,
+    ParseEntityListener,
+    NativeListener,
+    ListenerOptionsNative,
+} from 'library/types/entity';
 
-export const createHandler = (listenerOptions: Partial<ListenerOptions> = {}) => {
-    const listeners: EntityListener[] = [];
+export const createHandler = (listeners: Partial<ListenerOptionsNative> = {}) => {
+    const nativeListeners: ReturnType<ParseNativeListener>[] = [];
 
-    const parseListener: ParseListenerOption = (key, listener) => ({
+    type ParseNativeListener = <K extends keyof WindowEventMap, V extends WindowEventMap[K]>(
+        key: K,
+        listener: V,
+    ) => {
+        type: K;
+        listener: NonNullable<V>;
+    };
+
+    const parseNativeListener: ParseNativeListener = (key, listener) => ({
         type: key,
         listener,
     });
 
-    let key: keyof ListenerOptions;
-    for (key in listenerOptions) {
-        const listener = listenerOptions[key];
+    // let key: keyof ListenerOptions;
+    for (key in listeners) {
+        const listener = listeners[key];
 
         if (!listener) continue;
+
+        if (key === 'mousedown' || key === 'mouseup' || key === 'touchstart' || key === 'touchend') {
+            nativeListeners.push({type: key, listener});
+        }
 
         listeners.push(parseListener(key, listener));
     }
 
     // TODO::Test if overwritten listener gets handled properly
-    const setListener: SetUserListener = (type, listener) => {
-        const parsedListener = parseListener(type, listener);
+    // const setListener: SetUserListener = (type, listener) => {
+    //     const parsedListener = parseListener(type, listener);
 
-        const index = listeners.findIndex(list => list.type === parsedListener.type);
+    //     const index = listeners.findIndex(list => list.type === parsedListener.type);
 
-        if (index === -1) {
-            listeners.push(parsedListener);
+    //     if (index === -1) {
+    //         listeners.push(parsedListener);
 
-            return;
-        }
+    //         return;
+    //     }
 
-        listeners[index] = parsedListener;
-    };
+    //     listeners[index] = parsedListener;
+    // };
+
+    // const {addListeners, removeListeners} = createListenerMethods(listeners);
 
     return {setListener, handler: listeners}; // temp return (not a real handler)
+};
+
+const createListenerMethods = (listeners: EntityListener[]) => {
+    // mousedown, mouseup, click (=mouseup/touchend), touchstart, touchend (native listeners)
+    // startTransitionEnd, endTransitionEnd -> custom listeners used for callbacks
+
+    // addEventListener<K extends keyof WindowEventMap>(type: K, listener: (this: Window, ev: WindowEventMap[K])
+
+    const nativeListeners: NativeListener[] = [];
+
+    const parseEntityListener: ParseEntityListener = entityListener => {
+        const {type, listener} = entityListener;
+
+        if (type === 'mousedown' || type === 'mouseup' || type === 'touchstart' || type === 'touchend') {
+            return {
+                type,
+                listener,
+            };
+        }
+
+        return;
+    };
 };
 
 // const createNativeListeners = (listeners: EntityListener[]) => {

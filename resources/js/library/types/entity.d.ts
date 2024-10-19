@@ -40,15 +40,15 @@ export type Colors = {
 
 export type SetHideTime = (time: number) => void;
 export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
-export type SetUserListener = <K extends keyof ListenerOptions, V extends ListenerOptions[K]>(
-    key: K,
-    handler: V,
-) => void;
+// export type SetUserListener = <K extends keyof ListenerOptions, V extends ListenerOptions[K]>(
+//     key: K,
+//     handler: V,
+// ) => void;
 
 export interface EntityMethods {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
-    setListener: SetUserListener;
+    // setListener: SetUserListener;
     setHideTime: SetHideTime;
     setVisual: SetVisual;
 }
@@ -67,6 +67,12 @@ export interface ListenerMethods {
     removeListeners: () => void;
 }
 
+export interface EntityHandler extends ListenerMethods {
+    parsed: EntityListener[];
+    native: NativeListener[];
+    // custom: any[];
+}
+
 export type ParseListenerOption = <K extends keyof ListenerOptions, V extends ListenerOptions[K]>(
     key: K,
     listener: V,
@@ -75,20 +81,37 @@ export type ParseListenerOption = <K extends keyof ListenerOptions, V extends Li
     listener: NonNullable<V>;
 };
 
+export type ParseEntityListener = <
+    NativeType extends keyof WindowEventMap,
+    NativeEvent extends WindowEventMap[NativeType],
+>(
+    entityListener: EntityListener,
+) =>
+    | {
+          type: NativeType;
+          listener: (evt: NativeEvent) => void;
+      }
+    | undefined;
+
 export type EntityListener = Extract<ReturnType<ParseListenerOption>, {}>;
 
-export interface ListenerOptions {
+export type NativeListener = ReturnType<ParseEntityListener>;
+
+type ListenerOptionsNative = {
+    [Key in keyof WindowEventMap]: (evt: WindowEventMap[Key]) => void;
+};
+
+export interface ListenerOptionsCustom {
     clickdown: (evt: MouseEvent | TouchEvent) => void; // mouse & touch combined
     clickup: (evt: MouseEvent | TouchEvent) => void; // mouse & touch combined
-    mousedown: (evt: MouseEvent) => void;
-    mouseup: (evt: MouseEvent) => void;
-    touchstart: (evt: TouchEvent) => void;
-    touchend: (evt: TouchEvent) => void;
     startTransitionEnd: () => void;
     endTransitionEnd: () => void;
 }
 
-export type ConfigOptions = Sketch & GeneralProperties & VisualProperties & {listeners: Partial<ListenerOptions>};
+export type ListenerOptions = ListenerOptionsNative & ListenerOptionsCustom;
+
+// export type ConfigOptions = Sketch & GeneralProperties & VisualProperties & {listeners: Partial<ListenerOptions>};
+export type ConfigOptions = Sketch & GeneralProperties & VisualProperties & {listeners: Partial<ListenerOptionsNative>};
 
 export interface VisualProperties {
     animateAtStart: boolean;
