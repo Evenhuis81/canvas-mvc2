@@ -32,7 +32,7 @@ export const createHandler = (listenerOptions: Partial<ListenerOptions> = {}) =>
         listeners[index] = parsedListener;
     };
 
-    return {setListener, listeners};
+    return {setListener, handler: listeners}; // temp return (not a real handler)
 };
 
 // const createNativeListeners = (listeners: EntityListener[]) => {

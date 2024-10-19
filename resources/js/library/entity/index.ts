@@ -11,7 +11,7 @@ const create = ({context, engine, input}: Resources, options: Partial<ConfigOpti
     // Extract internal properties from options
     const {generalProperties, visualProperties, listenerOptions, sketch} = extractOptions(options);
 
-    const {setListener, listeners} = createHandler(listenerOptions);
+    const {setListener, handler} = createHandler(listenerOptions);
 
     // const listenerMethods = createListenerMethods(listeners);
 
