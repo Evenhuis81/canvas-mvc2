@@ -11,7 +11,15 @@ const create = ({context, engine, input}: Resources, options: Partial<ConfigOpti
     // Extract internal properties from options
     const {generalProperties, visualProperties, listeners, sketch} = extractOptions(options);
 
-    const {setListener, handler} = createHandler(listeners);
+    // const {setListener, handler} = createHandler(listeners);
+    createHandler({
+        mousedown: evt => {
+            console.log('mousedown triggered', evt.button);
+        },
+        click: evt => {
+            console.log('click triggered', evt.button);
+        },
+    });
 
     // const listenerMethods = createListenerMethods(listeners);
 

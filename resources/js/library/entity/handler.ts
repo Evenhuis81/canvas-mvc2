@@ -1,16 +1,62 @@
-import type {
-    EntityListener,
-    ParseListenerOption,
-    Sketch,
-    ListenerOptions,
-    ParseEntityListener,
-    NativeListener,
-    ListenerOptionsNative,
-} from 'library/types/entity';
+import {ListenerMethods} from 'library/types/entity';
 
-export const createHandler = (listeners: Partial<ListenerOptionsNative> = {}) => {
-    const nativeListeners: ReturnType<ParseNativeListener>[] = [];
+// export type ListenerOptions = ListenerOptionsNative & ListenerOptionsCustom;
 
+// export interface EntityHandler extends ListenerMethods {
+// parsed: EntityListener[];
+// native: NativeListener[];
+// // custom: any[];
+// }
+
+// export type ParseListenerOption = <K extends keyof ListenerOptions, V extends ListenerOptions[K]>(
+//     key: K,
+//     listener: V,
+// ) => {
+//     type: K;
+//     listener: NonNullable<V>;
+// };
+
+// export type ParseEntityListener = <
+//     NativeType extends keyof WindowEventMap,
+//     NativeEvent extends WindowEventMap[NativeType],
+// >(
+//     entityListener: EntityListener,
+// ) =>
+//     | {
+//           type: NativeType;
+//           listener: (evt: NativeEvent) => void;
+//       }
+//     | undefined;
+
+// export type EntityListener = Extract<ReturnType<ParseListenerOption>, {}>;
+
+// export type NativeListener = ReturnType<ParseEntityListener>;
+
+// key: NativeType,
+// listener: (evt: NativeEvent) => void,
+// ) => {
+//     type: NativeType;
+//     listener: (evt: NativeEvent) => void;
+// };
+
+export type ListenerOptionsNative<
+    NativeType extends keyof WindowEventMap,
+    NativeEvent extends WindowEventMap[NativeType],
+> = {
+    [Key in NativeType]: (evt: NativeEvent) => void;
+};
+
+export const createHandler = <K extends keyof WindowEventMap, V extends WindowEventMap[K]>(
+    listeners: Partial<ListenerOptionsNative<K, V>> = {},
+) => {
+    let key: K;
+
+    for (key in listeners) {
+        const listener = listeners[key];
+
+        if (!listener) addEventListener(key, listeners[key]);
+    }
+    // const nativeListeners: ReturnType<ParseNativeListener>[] = [];
     // type ParseNativeListener = <K extends keyof WindowEventMap, V extends (evt: WindowEventMap[K]) => void>(
     //     key: K,
     //     listener: V,
@@ -18,84 +64,74 @@ export const createHandler = (listeners: Partial<ListenerOptionsNative> = {}) =>
     //     type: K;
     //     listener: V;
     // };
-
-    const parseNativeListener: ParseNativeListener = (key, listener) => ({
-        type: key,
-        listener,
-    });
-
-    let key: keyof WindowEventMap;
-
-    for (key in listeners) {
-        // const listener = listeners[key];
-        // if (!listener) continue;
-        // addEventListener(key, listener);
-        // nativeListeners.push(parseNativeListener(key, listener));
-    }
-
+    // const parseNativeListener: ParseNativeListener = (key, listener) => ({
+    //     type: key,
+    //     listener,
+    // });
+    // let key: keyof WindowEventMap;
+    // for (key in listeners) {
+    // const listener = listeners[key];
+    // if (!listener) continue;
+    // addEventListener(key, listener);
+    // nativeListeners.push(parseNativeListener(key, listener));
+    // }
     // TODO::Test if overwritten listener gets handled properly
     // const setListener: SetUserListener = (type, listener) => {
     //     const parsedListener = parseListener(type, listener);
-
     //     const index = listeners.findIndex(list => list.type === parsedListener.type);
-
     //     if (index === -1) {
     //         listeners.push(parsedListener);
-
     //         return;
     //     }
-
     //     listeners[index] = parsedListener;
     // };
-
     // const {addListeners, removeListeners} = createListenerMethods(listeners);
-
-    return {setListener, handler: listeners}; // temp return (not a real handler)
+    // return {setListener, handler: listeners}; // temp return (not a real handler)
 };
 
-const createListenerMethods = (listeners: EntityListener[]) => {
-    // mousedown, mouseup, click (=mouseup/touchend), touchstart, touchend (native listeners)
-    // startTransitionEnd, endTransitionEnd -> custom listeners used for callbacks
+// const createListenerMethods = (listeners: EntityListener[]) => {
+// mousedown, mouseup, click (=mouseup/touchend), touchstart, touchend (native listeners)
+// startTransitionEnd, endTransitionEnd -> custom listeners used for callbacks
 
-    // addEventListener<K extends keyof WindowEventMap>(type: K, listener: (this: Window, ev: WindowEventMap[K])
+// addEventListener<K extends keyof WindowEventMap>(type: K, listener: (this: Window, ev: WindowEventMap[K])
 
-    const nativeListeners: NativeListener[] = [];
+//     const nativeListeners: NativeListener[] = [];
 
-    const parseEntityListener: ParseEntityListener = entityListener => {
-        const {type, listener} = entityListener;
+//     const parseEntityListener: ParseEntityListener = entityListener => {
+//         const {type, listener} = entityListener;
 
-        if (type === 'mousedown' || type === 'mouseup' || type === 'touchstart' || type === 'touchend') {
-            return {
-                type,
-                listener,
-            };
-        }
+//         if (type === 'mousedown' || type === 'mouseup' || type === 'touchstart' || type === 'touchend') {
+//             return {
+//                 type,
+//                 listener,
+//             };
+//         }
 
-        return;
-    };
-};
+//         return;
+//     };
+// };
 
 // const createNativeListeners = (listeners: EntityListener[]) => {
 
 // }
 
-const createNativeListener = {
-    //     clickdown: (listeners) => {},
-    //     mousedown: (listener: EntityListener, sketch: Sketch, mouse: Input["mouse"], clickdown = false) => (evt: MouseEvent) => {
-    //         if (mouse.insideRect(sketch)) {
-    //             //         if (clickdown) clickdown({clicked: properties.clicked, evt});
-    //             //         if (mousedown) mousedown({clicked: properties.clicked, evt});
-    //             }
-    //     },
-    //     mouseup: () => {},
-    //     startTransitionEnd: () => {},
-    //     endTransitionEnd: () => {},
-    //     touchstart: () => {},
-    //     touchend: () => {},
-    //     clickup: () => {},
-};
+// const createNativeListener = {
+//     clickdown: (listeners) => {},
+//     mousedown: (listener: EntityListener, sketch: Sketch, mouse: Input["mouse"], clickdown = false) => (evt: MouseEvent) => {
+//         if (mouse.insideRect(sketch)) {
+//             //         if (clickdown) clickdown({clicked: properties.clicked, evt});
+//             //         if (mousedown) mousedown({clicked: properties.clicked, evt});
+//             }
+//     },
+//     mouseup: () => {},
+//     startTransitionEnd: () => {},
+//     endTransitionEnd: () => {},
+//     touchstart: () => {},
+//     touchend: () => {},
+//     clickup: () => {},
+// };
 
-export const createListenerMethods = (listeners: EntityListener[]) => {
+export const createListenerMethods = () => {
     // const mousedownListener = (evt: MouseEvent) => {
     //     if (mouse.insideRect(sketch)) {
     //         if (clickdown) clickdown({clicked: properties.clicked, evt});
@@ -133,10 +169,6 @@ export const createListenerMethods = (listeners: EntityListener[]) => {
     };
 
     return {add, remove};
-};
-
-const createEventHandler = (listeners: any) => {
-    //
 };
 
 const emptyCallbacks = {

@@ -67,47 +67,6 @@ export interface ListenerMethods {
     removeListeners: () => void;
 }
 
-export interface EntityHandler extends ListenerMethods {
-    parsed: EntityListener[];
-    native: NativeListener[];
-    // custom: any[];
-}
-
-export type ParseListenerOption = <K extends keyof ListenerOptions, V extends ListenerOptions[K]>(
-    key: K,
-    listener: V,
-) => {
-    type: K;
-    listener: NonNullable<V>;
-};
-
-export type ParseEntityListener = <
-    NativeType extends keyof WindowEventMap,
-    NativeEvent extends WindowEventMap[NativeType],
->(
-    entityListener: EntityListener,
-) =>
-    | {
-          type: NativeType;
-          listener: (evt: NativeEvent) => void;
-      }
-    | undefined;
-
-export type EntityListener = Extract<ReturnType<ParseListenerOption>, {}>;
-
-export type NativeListener = ReturnType<ParseEntityListener>;
-
-type ListenerOptionsNative = <NativeType extends keyof WindowEventMap, NativeEvent extends WindowEventMap[NativeType]>(
-    key: NativeType,
-    listener: (evt: NativeEvent) => void,
-) => {
-    type: NativeType;
-    listener: (evt: NativeEvent) => void;
-};
-// {
-//     [Key in keyof WindowEventMap]: (evt: WindowEventMap[Key]) => void;
-// };
-
 export interface ListenerOptionsCustom {
     clickdown: (evt: MouseEvent | TouchEvent) => void; // mouse & touch combined
     clickup: (evt: MouseEvent | TouchEvent) => void; // mouse & touch combined
@@ -115,10 +74,8 @@ export interface ListenerOptionsCustom {
     endTransitionEnd: () => void;
 }
 
-export type ListenerOptions = ListenerOptionsNative & ListenerOptionsCustom;
-
 // export type ConfigOptions = Sketch & GeneralProperties & VisualProperties & {listeners: Partial<ListenerOptions>};
-export type ConfigOptions = Sketch & GeneralProperties & VisualProperties & {listeners: Partial<ListenerOptionsNative>};
+export type ConfigOptions = Sketch & GeneralProperties & VisualProperties;
 
 export interface VisualProperties {
     animateAtStart: boolean;
