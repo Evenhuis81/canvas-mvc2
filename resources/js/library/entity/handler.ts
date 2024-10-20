@@ -39,22 +39,37 @@ import {ListenerMethods} from 'library/types/entity';
 //     listener: (evt: NativeEvent) => void;
 // };
 
-export type ListenerOptionsNative<
-    NativeType extends keyof WindowEventMap,
-    NativeEvent extends WindowEventMap[NativeType],
-> = {
-    [Key in NativeType]: (evt: NativeEvent) => void;
+// , NativeEvent extends WindowEventMap[NativeType]
+export type NativeEvent<NativeType extends keyof HTMLElementEventMap> = {
+    [Key in NativeType]: (evt: HTMLElementEventMap[Key]) => void;
 };
 
-export const createHandler = <K extends keyof WindowEventMap, V extends WindowEventMap[K]>(
-    listeners: Partial<ListenerOptionsNative<K, V>> = {},
-) => {
-    let key: K;
+// export type NativeListener = {
 
-    for (key in listeners) {
+// }
+
+export const createHandler = <K extends keyof HTMLElementEventMap>(
+    canvas: HTMLCanvasElement,
+    listeners?: NativeEvent<K>,
+) => {
+    const nativeListeners = <NativeEvent<K>>{};
+
+    // canvas.addEventListener('touchstart', (evt) => {
+    //     evt.
+    // })
+
+    addEventListener('touchstart', evt => {
+        console.log('click on window eventlistener', evt);
+    });
+
+    for (const key in listeners) {
         const listener = listeners[key];
 
-        if (!listener) addEventListener(key, listeners[key]);
+        if (!listener) continue;
+
+        // canvas.addEventListener(key, listener);
+        canvas.addEventListener(key, listener);
+        // nativeListeners[key] = listener;
     }
     // const nativeListeners: ReturnType<ParseNativeListener>[] = [];
     // type ParseNativeListener = <K extends keyof WindowEventMap, V extends (evt: WindowEventMap[K]) => void>(

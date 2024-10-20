@@ -7,18 +7,24 @@ const createResource = (res: Resources) => ({
     create: (options?: Partial<ConfigOptions>) => create(res, options),
 });
 
-const create = ({context, engine, input}: Resources, options: Partial<ConfigOptions> = {}) => {
+const create = ({context, engine, input, canvas}: Resources, options: Partial<ConfigOptions> = {}) => {
     // Extract internal properties from options
-    const {generalProperties, visualProperties, listeners, sketch} = extractOptions(options);
+    const {generalProperties, visualProperties, sketch} = extractOptions(options);
 
     // const {setListener, handler} = createHandler(listeners);
-    createHandler({
-        mousedown: evt => {
-            console.log('mousedown triggered', evt.button);
-        },
+    createHandler(canvas, {
+        // mousedown: evt => {
+        //     console.log('mousedown triggered', evt.button);
+        // },
         click: evt => {
-            console.log('click triggered', evt.button);
+            console.log('click triggered', evt);
         },
+        // touchstart: evt => {
+        //     console.log('touchstart triggered', evt);
+        // },
+        // touchend: evt => {
+        //     console.log('touchend triggered', evt);
+        // },
     });
 
     // const listenerMethods = createListenerMethods(listeners);
@@ -74,9 +80,10 @@ const extractOptions = (options: Partial<ConfigOptions>) => {
         animateAtEnd,
     };
 
-    const {listeners, ...sketch} = rest2;
+    // const {listeners, ...sketch} = rest2;
+    const {...sketch} = rest2;
 
-    return {generalProperties, visualProperties, listeners, sketch};
+    return {generalProperties, visualProperties, sketch};
 };
 
 const defaultProperties = {
