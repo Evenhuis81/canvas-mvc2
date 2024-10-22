@@ -1,31 +1,21 @@
 import {getProperties, uid} from 'library/helpers';
 import {resources} from '..';
-import type {ConfigOptions, EntityMethods, GeneralProperties} from 'library/types/entity';
-import {createHandler} from './handler';
+import type {ConfigOptions, EntityMethods, GeneralProperties, NativeEventListeners} from 'library/types/entity';
+import {createEventHandler} from './handler';
 
 const createResource = (res: Resources) => ({
     create: (options?: Partial<ConfigOptions>) => create(res, options),
 });
 
-const create = ({context, engine, input, canvas}: Resources, options: Partial<ConfigOptions> = {}) => {
+const create = <K extends keyof HTMLElementEventMap>(
+    {context, engine, input, canvas}: Resources,
+    options: Partial<ConfigOptions & {listeners: NativeEventListeners<K>}> = {},
+) => {
     // Extract internal properties from options
-    const {generalProperties, visualProperties, sketch} = extractOptions(options);
+    const ll = options.listeners;
+    const {generalProperties, visualProperties, listeners, sketch} = extractOptions(options);
 
-    // const {setListener, handler} = createHandler(listeners);
-    createHandler(canvas, {
-        // mousedown: evt => {
-        //     console.log('mousedown triggered', evt.button);
-        // },
-        click: evt => {
-            console.log('click triggered', evt);
-        },
-        // touchstart: evt => {
-        //     console.log('touchstart triggered', evt);
-        // },
-        // touchend: evt => {
-        //     console.log('touchend triggered', evt);
-        // },
-    });
+    const {setListener, handler} = createEventHandler(canvas, listeners);
 
     // const listenerMethods = createListenerMethods(listeners);
 
@@ -58,7 +48,9 @@ const initialize = (gProps: GeneralProperties, methods: EntityMethods) => {
     }
 };
 
-const extractOptions = (options: Partial<ConfigOptions>) => {
+const extractOptions = <T extends keyof HTMLElementEventMap>(
+    options: Partial<ConfigOptions & {listeners: NativeEventListeners<T>}>,
+) => {
     const {id, name, disabled, show, showDelay, clicked, hideTime, ...rest} = {
         id: options.id ?? `entity-${uid()}`,
         ...getProperties(defaultProperties, options),
@@ -81,9 +73,9 @@ const extractOptions = (options: Partial<ConfigOptions>) => {
     };
 
     // const {listeners, ...sketch} = rest2;
-    const {...sketch} = rest2;
+    const {listeners, ...sketch} = rest2;
 
-    return {generalProperties, visualProperties, sketch};
+    return {generalProperties, visualProperties, listeners, sketch};
 };
 
 const defaultProperties = {

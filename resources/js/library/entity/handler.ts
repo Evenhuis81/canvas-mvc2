@@ -1,4 +1,4 @@
-import {ListenerMethods} from 'library/types/entity';
+import {ListenerMethods, NativeEventListeners} from 'library/types/entity';
 
 // export type ListenerOptions = ListenerOptionsNative & ListenerOptionsCustom;
 
@@ -40,27 +40,20 @@ import {ListenerMethods} from 'library/types/entity';
 // };
 
 // , NativeEvent extends WindowEventMap[NativeType]
-export type NativeEvent<NativeType extends keyof HTMLElementEventMap> = {
-    [Key in NativeType]: (evt: HTMLElementEventMap[Key]) => void;
-};
 
 // export type NativeListener = {
 
 // }
 
-export const createHandler = <K extends keyof HTMLElementEventMap>(
+export const createEventHandler = <K extends keyof HTMLElementEventMap>(
     canvas: HTMLCanvasElement,
-    listeners?: NativeEvent<K>,
+    listeners?: NativeEventListeners<K>,
 ) => {
-    const nativeListeners = <NativeEvent<K>>{};
+    const nativeListeners = <NativeEventListeners<K>>{};
 
     // canvas.addEventListener('touchstart', (evt) => {
     //     evt.
     // })
-
-    addEventListener('touchstart', evt => {
-        console.log('click on window eventlistener', evt);
-    });
 
     for (const key in listeners) {
         const listener = listeners[key];

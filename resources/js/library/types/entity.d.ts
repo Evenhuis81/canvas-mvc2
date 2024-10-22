@@ -74,7 +74,10 @@ export interface ListenerOptionsCustom {
     endTransitionEnd: () => void;
 }
 
-// export type ConfigOptions = Sketch & GeneralProperties & VisualProperties & {listeners: Partial<ListenerOptions>};
+export type NativeEventListeners<NativeType extends keyof HTMLElementEventMap> = {
+    [Key in NativeType]: (evt: HTMLElementEventMap[Key]) => void;
+};
+
 export type ConfigOptions = Sketch & GeneralProperties & VisualProperties;
 
 export interface VisualProperties {

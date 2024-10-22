@@ -34,13 +34,18 @@ export const goToLevelSelection = () => {
 
     const testEntity = entity.create({
         listeners: {
-            // mousedown: evt => {
-            //     console.log(evt);
+            mousedown: evt => {
+                console.log('mousedown triggered', evt.button);
+            },
+            click: evt => {
+                console.log('click triggered', evt);
+            },
+            // touchstart: evt => {
+            //     console.log('touchstart triggered', evt);
             // },
-            // clickdown: evt => {
-            //     console.log(evt);
+            // touchend: evt => {
+            //     console.log('touchend triggered', evt);
             // },
-        },
     });
 
     // const elementAmount = 1;
