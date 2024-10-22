@@ -40,12 +40,13 @@ export const goToLevelSelection = () => {
             click: evt => {
                 console.log('click triggered', evt);
             },
-            // touchstart: evt => {
-            //     console.log('touchstart triggered', evt);
-            // },
-            // touchend: evt => {
-            //     console.log('touchend triggered', evt);
-            // },
+            touchstart: evt => {
+                console.log('touchstart triggered', evt);
+            },
+            touchend: evt => {
+                console.log('touchend triggered', evt);
+            },
+        },
     });
 
     // const elementAmount = 1;
@@ -79,57 +80,57 @@ const createLevelSelectEntities = (amount: number) => {
 
     let column = 0;
     let row = 0;
-    for (let i = 0; i < amount; i++) {
-        elements.push(
-            entity.create({
-                ...base,
-                x: startX + column * squareDistance,
-                y: startY + row * squareDistance,
-                text: (i + 1).toString(),
-                show: false,
-            }),
-        );
+    // for (let i = 0; i < amount; i++) {
+    //     elements.push(
+    //         entity.create({
+    //             ...base,
+    //             x: startX + column * squareDistance,
+    //             y: startY + row * squareDistance,
+    //             text: (i + 1).toString(),
+    //             show: false,
+    //         }),
+    //     );
 
-        const element = elements[i];
+    // const element = elements[i];
 
-        element.setHideTime((amount - 1) * timeoutDifference - i * timeoutDifference);
+    // element.setHideTime((amount - 1) * timeoutDifference - i * timeoutDifference);
 
-        // element.setListener('clickdown', evt => {
-        //     console.log('clickdown User Input triggered');
-        //     console.log('mouse or touch event?: ', evt);
-        // });
+    // element.setListener('clickdown', evt => {
+    //     console.log('clickdown User Input triggered');
+    //     console.log('mouse or touch event?: ', evt);
+    // });
 
-        element.setListener('clickup', evt => {
-            console.log('clickup User Input triggered');
-            console.log('mouse or touch event?: ', evt);
-        });
+    // element.setListener('clickup', evt => {
+    //     console.log('clickup User Input triggered');
+    //     console.log('mouse or touch event?: ', evt);
+    // });
 
-        // element.setListener('touchend', () => {
-        //     element.setVisual('end', 'explode');
-        //     // if (clicked) element.setHideTime(0);
+    // element.setListener('touchend', () => {
+    //     element.setVisual('end', 'explode');
+    //     // if (clicked) element.setHideTime(0);
 
-        //     elements.forEach(element => element.hide());
-        // });
+    //     elements.forEach(element => element.hide());
+    // });
 
-        // element.setListener('endTransitionEnd', clicked => {
-        //     if (clicked) {
-        //         // element.hide(true); no -> (already hidden)
-        //         // element.destroy(); yes
+    // element.setListener('endTransitionEnd', clicked => {
+    //     if (clicked) {
+    //         // element.hide(true); no -> (already hidden)
+    //         // element.destroy(); yes
 
-        //         startLevel(i + 1);
-        //     }
-        // });
+    //         startLevel(i + 1);
+    //     }
+    // });
 
-        setTimeout(() => {
-            element.show();
-        }, timeoutDifference * i);
+    //     setTimeout(() => {
+    //         element.show();
+    //     }, timeoutDifference * i);
 
-        column++;
-        if (column > rowsOrColumns - 1) {
-            column = 0;
-            row++;
-        }
-    }
+    //     column++;
+    //     if (column > rowsOrColumns - 1) {
+    //         column = 0;
+    //         row++;
+    //     }
+    // }
 };
 
 // Copy from tombraid main menu:

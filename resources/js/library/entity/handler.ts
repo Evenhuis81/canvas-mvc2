@@ -1,6 +1,4 @@
-import {ListenerMethods, NativeEventListeners} from 'library/types/entity';
-
-// export type ListenerOptions = ListenerOptionsNative & ListenerOptionsCustom;
+import {ConfigOptions, ListenerMethods, NativeEventListeners} from 'library/types/entity';
 
 // export interface EntityHandler extends ListenerMethods {
 // parsed: EntityListener[];
@@ -49,11 +47,9 @@ export const createEventHandler = <K extends keyof HTMLElementEventMap>(
     canvas: HTMLCanvasElement,
     listeners?: NativeEventListeners<K>,
 ) => {
-    const nativeListeners = <NativeEventListeners<K>>{};
+    if (!listeners) return;
 
-    // canvas.addEventListener('touchstart', (evt) => {
-    //     evt.
-    // })
+    const nativeListeners: NativeEventListeners<K>[] = [];
 
     for (const key in listeners) {
         const listener = listeners[key];

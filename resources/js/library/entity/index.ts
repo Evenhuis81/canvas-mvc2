@@ -1,21 +1,18 @@
 import {getProperties, uid} from 'library/helpers';
 import {resources} from '..';
-import type {ConfigOptions, EntityMethods, GeneralProperties, NativeEventListeners} from 'library/types/entity';
+import type {ConfigOptions, EntityMethods, GeneralProperties} from 'library/types/entity';
 import {createEventHandler} from './handler';
 
 const createResource = (res: Resources) => ({
-    create: (options?: Partial<ConfigOptions>) => create(res, options),
+    create: (options?: Partial<ConfigOptions>) => createEntity(res, options),
 });
 
-const create = <K extends keyof HTMLElementEventMap>(
-    {context, engine, input, canvas}: Resources,
-    options: Partial<ConfigOptions & {listeners: NativeEventListeners<K>}> = {},
-) => {
+const createEntity = ({context, engine, input, canvas}: Resources, options: Partial<ConfigOptions> = {}) => {
     // Extract internal properties from options
-    const ll = options.listeners;
     const {generalProperties, visualProperties, listeners, sketch} = extractOptions(options);
 
-    const {setListener, handler} = createEventHandler(canvas, listeners);
+    // const {setListener, handler} = createEventHandler(canvas, listeners);
+    createEventHandler(canvas, listeners);
 
     // const listenerMethods = createListenerMethods(listeners);
 
@@ -48,9 +45,7 @@ const initialize = (gProps: GeneralProperties, methods: EntityMethods) => {
     }
 };
 
-const extractOptions = <T extends keyof HTMLElementEventMap>(
-    options: Partial<ConfigOptions & {listeners: NativeEventListeners<T>}>,
-) => {
+const extractOptions = (options: Partial<ConfigOptions>) => {
     const {id, name, disabled, show, showDelay, clicked, hideTime, ...rest} = {
         id: options.id ?? `entity-${uid()}`,
         ...getProperties(defaultProperties, options),
