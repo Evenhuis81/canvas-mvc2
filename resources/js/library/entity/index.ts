@@ -1,7 +1,7 @@
+import {createEventHandler} from './handler';
 import {getProperties, uid} from 'library/helpers';
 import {resources} from '..';
 import type {ConfigOptions, EntityMethods, GeneralProperties} from 'library/types/entity';
-import {createEventHandler} from './handler';
 
 const createResource = (res: Resources) => ({
     create: (options?: ConfigOptions) => createEntity(res, options),

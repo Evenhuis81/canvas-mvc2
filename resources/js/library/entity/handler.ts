@@ -1,4 +1,4 @@
-import {ConfigOptions, EntityEventListeners, ListenerMethods, NativeEventListeners} from 'library/types/entity';
+import {ConfigOptions, ListenerMethods, NativeEventListeners} from 'library/types/entity';
 
 // export interface EntityHandler extends ListenerMethods {
 // parsed: EntityListener[];
@@ -42,14 +42,18 @@ import {ConfigOptions, EntityEventListeners, ListenerMethods, NativeEventListene
 // export type NativeListener = {
 
 // }
-const createNativeListener = <K extends keyof HTMLElementEventMap>(
-    type: K,
-    listener: (evt: HTMLElementEventMap[K]) => void,
-) => {
-    nativeListeners.push({type, listener});
-    // canvas.addEventListener(type, listener);
-    // return {type, listener};
-};
+// const createNativeListener = <K extends keyof HTMLElementEventMap>(
+//     type: K,
+//     listener: (evt: HTMLElementEventMap[K]) => void,
+
+// export const createEventHandler = <K extends keyof HTMLElementEventMap>(
+//     canvas: HTMLCanvasElement,
+//     listeners?: NativeEventListeners<K>,
+// ) => {
+//     nativeListeners.push({type, listener});
+//     // canvas.addEventListener(type, listener);
+//     // return {type, listener};
+// };
 
 const createNativeListeners = <K extends keyof HTMLElementEventMap>(
     listeners: Partial<NativeEventListeners<K>> = {},
@@ -78,6 +82,23 @@ export const createEventHandler = (canvas: HTMLCanvasElement, listeners?: Config
     // nativeListeners.forEach(ll => {
     //     canvas.addEventListener(ll.type, ll.listener);
     // });
+    const createNativeListeners = () => {
+        const nativeListeners: EntityEventListeners<Extract<K, string>>[] = [];
+
+        for (const key in listeners) {
+            const listener = listeners[key];
+
+            if (!listener) continue;
+
+            nativeListeners.push({type: key, listener});
+        }
+
+        return nativeListeners;
+    };
+
+    const sadf = createNativeListeners();
+
+    sadf.forEach(llasdf => canvas.addEventListener(llasdf.type, llasdf.listener));
 
     // TODO::Test if overwritten listener gets handled properly
     // const setListener: SetUserListener = (type, listener) => {
