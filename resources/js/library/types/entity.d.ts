@@ -40,15 +40,16 @@ export type Colors = {
 
 export type SetHideTime = (time: number) => void;
 export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
-// export type SetUserListener = <K extends keyof ListenerOptions, V extends ListenerOptions[K]>(
-//     key: K,
-//     handler: V,
-// ) => void;
+// TODO::Convert this to a mixed custom & native event listener type
+export type SetUserListener = <K extends keyof HTMLElementEventMap, V extends HTMLElementEventMap[K]>(
+    key: K,
+    listener: V,
+) => void;
 
 export interface EntityMethods {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
-    // setListener: SetUserListener;
+    setListener: SetUserListener;
     setHideTime: SetHideTime;
     setVisual: SetVisual;
 }
@@ -78,12 +79,9 @@ export type NativeEventListeners<Type extends keyof HTMLElementEventMap> = {
     [Key in Type]: (evt: HTMLElementEventMap[Key]) => void;
 };
 
-// export type EntityEventListeners<Type extends keyof HTMLElementEventMap> = {
-//     type: Type;
-//     listener: (evt: HTMLElementEventMap[Type]) => void;
-// };
+// export type EE = EntityEventListener<keyof HTMLElementEventMap>;
 
-export type EntityEventListeners<Type extends keyof HTMLElementEventMap> = {
+export type EntityEventListener<Type extends keyof HTMLElementEventMap> = {
     type: Type;
     listener: (evt: HTMLElementEventMap[Type]) => void;
 };

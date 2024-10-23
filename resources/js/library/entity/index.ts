@@ -1,4 +1,4 @@
-import {createEventHandler} from './handler';
+import {createHandler} from './handler';
 import {getProperties, uid} from 'library/helpers';
 import {resources} from '..';
 import type {ConfigOptions, EntityMethods, GeneralProperties} from 'library/types/entity';
@@ -12,7 +12,7 @@ const createEntity = ({context, engine, input, canvas}: Resources, options?: Con
     const {generalProperties, visualProperties, listeners, sketch} = extractOptions(options);
 
     // const {setListener, handler} = createEventHandler(canvas, listeners);
-    createEventHandler(canvas, listeners);
+    createHandler(canvas, listeners);
 
     // const listenerMethods = createListenerMethods(listeners);
 
@@ -45,6 +45,7 @@ const initialize = (gProps: GeneralProperties, methods: EntityMethods) => {
     }
 };
 
+// TODO::Set defaults for options if no options is provided (empty entity default)
 const extractOptions = (options: ConfigOptions = {}) => {
     const {id, name, disabled, show, showDelay, clicked, hideTime, ...rest} = {
         id: options.id ?? `entity-${uid()}`,
