@@ -1,7 +1,6 @@
 /* eslint-disable max-lines-per-function */
-import type {ConfigOptions, Entity} from 'library/types/entity';
-import {startLevel} from './initiatize';
 import createEntity from 'library/entity';
+import type {ConfigOptions, Entity} from 'library/types/entity';
 
 export const mainMenu = () => {
     goToLevelSelection();
@@ -46,6 +45,7 @@ export const goToLevelSelection = () => {
             touchend: evt => {
                 console.log('touchend triggered', evt);
             },
+            // keydown: undefined,
         },
     });
 
@@ -78,8 +78,8 @@ const createLevelSelectEntities = (amount: number) => {
 
     const entity = createEntity('tr'); // TODO::Put this in resources
 
-    let column = 0;
-    let row = 0;
+    const column = 0;
+    const row = 0;
     // for (let i = 0; i < amount; i++) {
     //     elements.push(
     //         entity.create({

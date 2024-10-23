@@ -1,13 +1,13 @@
+import {createEventHandler} from './handler';
 import {getProperties, uid} from 'library/helpers';
 import {resources} from '..';
 import type {ConfigOptions, EntityMethods, GeneralProperties} from 'library/types/entity';
-import {createEventHandler} from './handler';
 
 const createResource = (res: Resources) => ({
-    create: (options?: Partial<ConfigOptions>) => createEntity(res, options),
+    create: (options?: ConfigOptions) => createEntity(res, options),
 });
 
-const createEntity = ({context, engine, input, canvas}: Resources, options: Partial<ConfigOptions> = {}) => {
+const createEntity = ({context, engine, input, canvas}: Resources, options: ConfigOptions) => {
     // Extract internal properties from options
     const {generalProperties, visualProperties, listeners, sketch} = extractOptions(options);
 
@@ -45,7 +45,7 @@ const initialize = (gProps: GeneralProperties, methods: EntityMethods) => {
     }
 };
 
-const extractOptions = (options: Partial<ConfigOptions>) => {
+const extractOptions = (options: Partial<ConfigOptions> = {}) => {
     const {id, name, disabled, show, showDelay, clicked, hideTime, ...rest} = {
         id: options.id ?? `entity-${uid()}`,
         ...getProperties(defaultProperties, options),
