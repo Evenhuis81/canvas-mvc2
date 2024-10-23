@@ -79,8 +79,6 @@ export type NativeEventListeners<Type extends keyof HTMLElementEventMap> = {
     [Key in Type]: (evt: HTMLElementEventMap[Key]) => void;
 };
 
-// export type EE = EntityEventListener<keyof HTMLElementEventMap>;
-
 export type EntityEventListener<Type extends keyof HTMLElementEventMap> = {
     type: Type;
     listener: (evt: HTMLElementEventMap[Type]) => void;

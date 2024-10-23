@@ -1,14 +1,16 @@
 import {ConfigOptions, EntityEventListener, NativeEventListeners, SetUserListener} from 'library/types/entity';
 
-const createNativeListeners = <K extends keyof HTMLElementEventMap>(listeners: Partial<NativeEventListeners<K>>) => {
+const createNativeListeners = (listeners: Partial<NativeEventListeners<keyof HTMLElementEventMap>>) => {
+    // const testNativeArray: {type: keyof HTMLElementEventMap, listener: (evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => void}[] = []
+    const nativeListeners: EntityEventListener<keyof HTMLElementEventMap>[] = [];
+
     // const nativeListeners: EntityEventListener<keyof HTMLElementEventMap>[] = [];
 
     // TODO::Convert this to a mixed custom & native event listener type
-    const setListener = <K2 extends keyof HTMLElementEventMap>(
-        type: K2,
-        listener: (evt: HTMLElementEventMap[K2]) => void,
+    const setListener = <K extends keyof HTMLElementEventMap>(
+        type: K,
+        listener: (evt: HTMLElementEventMap[K]) => void,
     ) => {
-        const nativeListeners: EntityEventListener<K2>[] = [];
         const index = nativeListeners.findIndex(l => l.type === type);
 
         if (index === -1) {
@@ -21,13 +23,14 @@ const createNativeListeners = <K extends keyof HTMLElementEventMap>(listeners: P
         nativeListeners[index] = {type, listener};
     };
 
-    for (const key in listeners) {
+    let key: keyof HTMLElementEventMap;
+    for (key in listeners) {
         const listener = listeners[key];
 
         if (!listener) continue;
 
         setListener(key, listener);
-        // nativeListeners.push({type: key, listener});
+        nativeListeners.push({type: key, listener});
     }
 
     return nativeListeners;
