@@ -75,23 +75,21 @@ export interface ListenerOptionsCustom {
 }
 
 export type NativeEventListeners<Type extends keyof HTMLElementEventMap> = {
-    [Key in Type]: (evt: HTMLElementEventMap[Type]) => void;
+    [Key in Type]: (evt: HTMLElementEventMap[Key]) => void;
 };
 
-export type NativeEventListeners2 = {
-    [Key in keyof HTMLElementEventMap]: (evt: HTMLElementEventMap[Key]) => void;
-};
+// export type EntityEventListeners<Type extends keyof HTMLElementEventMap> = {
+//     type: Type;
+//     listener: (evt: HTMLElementEventMap[Type]) => void;
+// };
 
-export type EntityEventListeners<Type extends keyof HTMLElementEventMap> = {
-    type: Type;
-    listener: (evt: HTMLElementEventMap[Type]) => void;
-};
-
-export type ConfigOptions = Sketch &
-    GeneralProperties &
-    VisualProperties & {
-        listeners: Partial<NativeEventListeners2>;
-    };
+export type ConfigOptions = Partial<
+    Sketch &
+        GeneralProperties &
+        VisualProperties & {
+            listeners: Partial<NativeEventListeners<keyof HTMLElementEventMap>>;
+        }
+>;
 
 export interface VisualProperties {
     animateAtStart: boolean;

@@ -1,10 +1,4 @@
-import {
-    ConfigOptions,
-    EntityEventListeners,
-    ListenerMethods,
-    NativeEventListeners,
-    NativeEventListeners2,
-} from 'library/types/entity';
+import {ConfigOptions, EntityEventListeners, ListenerMethods, NativeEventListeners} from 'library/types/entity';
 
 // export interface EntityHandler extends ListenerMethods {
 // parsed: EntityListener[];
@@ -48,47 +42,42 @@ import {
 // export type NativeListener = {
 
 // }
-
-export const createEventHandler = <K extends keyof HTMLElementEventMap>(
-    canvas: HTMLCanvasElement,
-    listeners?: Partial<NativeEventListeners2>,
+const createNativeListener = <K extends keyof HTMLElementEventMap>(
+    type: K,
+    listener: (evt: HTMLElementEventMap[K]) => void,
 ) => {
+    nativeListeners.push({type, listener});
+    // canvas.addEventListener(type, listener);
+    // return {type, listener};
+};
+
+const createNativeListeners = <K extends keyof HTMLElementEventMap>(
+    listeners: Partial<NativeEventListeners<K>> = {},
+) => {
+    const nativeListeners: NativeEventListeners<K>[] = [];
+
+    for (const key in listeners) {
+        const listener = listeners[key];
+
+        if (!listener) continue;
+
+        // canvas.addEventListener(key, listener);
+        createNativeListener(key, listener);
+        // nativeListeners.push({type: key, listener});
+        // return {type: key, listener};
+    }
+
+    return;
+};
+
+export const createEventHandler = (canvas: HTMLCanvasElement, listeners?: ConfigOptions['listeners']) => {
     if (!listeners) return;
 
-    const nativeListeners: EntityEventListeners<K>[] = [];
+    const nativeListeners = createNativeListeners(listeners);
 
-    // type CreateNativeListener = <K2 extends keyof HTMLElementEventMap, V extends (evt: HTMLElementEventMap[K2]) => void>(type: K2, listener: V) => {
-    //     type: K2, listener: V;
-    // }
-
-    const createNativeListener = (type: K, listener: (evt: HTMLElementEventMap[K]) => void) => {
-        nativeListeners.push({type, listener});
-
-        // canvas.addEventListener(type, listener);
-
-        // return {type, listener};
-    };
-
-    const createNativeListeners = () => {
-        for (const key in listeners) {
-            const listener = listeners[key];
-
-            if (!listener) continue;
-
-            canvas.addEventListener(key, listener);
-            // createNativeListener(key, listener);
-            // return {type: key, listener};
-            // nativeListeners.push({type: key, listener});
-        }
-
-        return;
-    };
-
-    createNativeListeners();
-
-    nativeListeners.forEach(ll => {
-        canvas.addEventListener(ll.type, ll.listener);
-    });
+    // nativeListeners.forEach(ll => {
+    //     canvas.addEventListener(ll.type, ll.listener);
+    // });
 
     // TODO::Test if overwritten listener gets handled properly
     // const setListener: SetUserListener = (type, listener) => {
