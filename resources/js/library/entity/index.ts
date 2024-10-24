@@ -11,8 +11,7 @@ const createEntity = ({context, engine, input, canvas}: Resources, options?: Con
     // Extract internal properties from options
     const {generalProperties, visualProperties, listeners, sketch} = extractOptions(options);
 
-    // const {setListener, handler} = createEventHandler(canvas, listeners);
-    createHandler(canvas, listeners);
+    const handler = createHandler(canvas, listeners);
 
     // const listenerMethods = createListenerMethods(listeners);
 

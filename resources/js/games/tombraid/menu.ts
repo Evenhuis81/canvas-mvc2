@@ -36,6 +36,9 @@ export const goToLevelSelection = () => {
             mousedown: evt => {
                 console.log('mousedown triggered', evt.button);
             },
+            mouseup: evt => {
+                console.log('mouseup triggered', evt.button);
+            },
             click: evt => {
                 console.log('click triggered', evt);
             },
