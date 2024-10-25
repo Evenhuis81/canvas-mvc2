@@ -1,46 +1,41 @@
-import {ConfigOptions, EntityEventListener, NativeEventListeners, SetUserListener} from 'library/types/entity';
+import {ConfigOptions, EE, EntityEventMap, EntityListeners, SetUserListener} from 'library/types/entity';
 
-export const createHandler = (canvas: HTMLCanvasElement, listeners?: ConfigOptions['listeners']) => {
+export const createListeners = <T extends keyof EntityEventMap>(
+    canvas: HTMLCanvasElement,
+    listeners?: Partial<EntityListeners<T>>,
+) => {
     if (!listeners) return;
 
-    const {nativeListeners, setListener} = createNativeListeners(canvas, listeners);
+    const listenerHandlers: {type: keyof EntityEventMap; add: () => void; remove: () => void}[] = [];
 
-    const addListeners = () =>
-        nativeListeners.forEach(listener => canvas.addEventListener(listener.type, listener.listener));
-    const removeListeners = () =>
-        nativeListeners.forEach(listener => canvas.removeEventListener(listener.type, listener.listener));
-
-    // temp return (not a real handler, missing callbacks and custom listeners)
-    return {addListeners, removeListeners, setListener, nativeListeners};
-};
-
-const createNativeListeners = <T extends keyof HTMLElementEventMap>(
-    canvas: HTMLCanvasElement,
-    listeners: Partial<NativeEventListeners<T>>,
-) => {
-    const nativeListeners: EntityEventListener[] = [];
-
-    // TODO::Convert this to a mixed custom & native event listener type
-    const setListener = <Key extends keyof HTMLElementEventMap>(
-        type: Key,
-        listener: (evt: HTMLElementEventMap[Key]) => void,
+    const setEntityListener = <K extends keyof EntityEventMap>(
+        type: K,
+        listener: (evt: {entEvt: EE<K>[K]; inputEvent: EntityEventMap[K]}) => void,
     ) => {
-        const index = nativeListeners.findIndex(l => l.type === type);
+        const eListener = (evt: EntityEventMap[K]) => {
+            // if (type === 'mouseup') listener({entEvt: {mouseProp: 'hi'}, inputEvent: evt});
+        };
+        const add = () => {
+            canvas.addEventListener(type, eListener);
+        };
+
+        const remove = () => {
+            canvas.removeEventListener(type, eListener);
+        };
+
+        const index = listenerHandlers.findIndex(t => t.type === type);
 
         if (index === -1) {
-            nativeListeners.push({type, listener});
-
-            canvas.addEventListener(type, listener);
+            add();
 
             return;
         }
 
-        // TODO::Test if overwritten listener gets handled properly
-        canvas.removeEventListener(nativeListeners[index].type, nativeListeners[index].listener);
+        listenerHandlers[index].remove();
 
-        nativeListeners[index] = {type, listener};
+        listenerHandlers[index] = {type, add, remove};
 
-        canvas.addEventListener(type, listener);
+        add();
     };
 
     for (const key in listeners) {
@@ -48,11 +43,70 @@ const createNativeListeners = <T extends keyof HTMLElementEventMap>(
 
         if (!listener) continue;
 
-        setListener(key, listener);
+        setEntityListener(key, listener);
     }
-
-    return {nativeListeners, setListener};
 };
+
+// export const createHandler = (canvas: HTMLCanvasElement, listeners?: ConfigOptions['listeners']) => {
+//     const entityListeners = createListeners(canvas, listeners);
+
+// const handler = {
+//     callbacks: [],
+//     listeners: [],
+//     add: () => {},
+//     remove: () => {},
+//     addAll: () => {},
+//     removeAll: () => {},
+// }
+
+// const addListeners = () =>
+//     nativeListeners.forEach(listener => canvas.addEventListener(listener.type, listener.listener));
+// const removeListeners = () =>
+//     nativeListeners.forEach(listener => canvas.removeEventListener(listener.type, listener.listener));
+
+// temp return (not a real handler, missing callbacks and custom listeners)
+// return {addListeners, removeListeners, setListener, nativeListeners};
+// };
+
+// const createNativeListeners = <T extends keyof HTMLElementEventMap>(
+//     canvas: HTMLCanvasElement,
+//     listeners: Partial<NativeEventListeners<T>>,
+// ) => {
+//     const nativeListeners: EntityEventListener[] = [];
+
+//     // TODO::Convert this to a mixed custom & native event listener type
+//     const setListener = <Key extends keyof HTMLElementEventMap>(
+//         type: Key,
+//         listener: (evt: HTMLElementEventMap[Key]) => void,
+//     ) => {
+//         const index = nativeListeners.findIndex(l => l.type === type);
+
+//         if (index === -1) {
+//             nativeListeners.push({type, listener});
+
+//             canvas.addEventListener(type, listener);
+
+//             return;
+//         }
+
+//         // TODO::Test if overwritten listener gets handled properly
+//         canvas.removeEventListener(nativeListeners[index].type, nativeListeners[index].listener);
+
+//         nativeListeners[index] = {type, listener};
+
+//         canvas.addEventListener(type, listener);
+//     };
+
+//     for (const key in listeners) {
+//         const listener = listeners[key];
+
+//         if (!listener) continue;
+
+//         canvas.addEventListener(key, listener);
+//     }
+
+//     return {nativeListeners, setListener};
+// };
 
 // const createListenerMethods = (listeners: EntityListener[]) => {
 // mousedown, mouseup, click (=mouseup/touchend), touchstart, touchend (native listeners)

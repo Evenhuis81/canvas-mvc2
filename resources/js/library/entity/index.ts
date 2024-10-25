@@ -1,7 +1,7 @@
-import {createHandler} from './handler';
 import {getProperties, uid} from 'library/helpers';
 import {resources} from '..';
 import type {ConfigOptions, EntityMethods, GeneralProperties} from 'library/types/entity';
+import {createListeners} from './handler';
 
 const createResource = (res: Resources) => ({
     create: (options?: ConfigOptions) => createEntity(res, options),
@@ -11,7 +11,9 @@ const createEntity = ({context, engine, input, canvas}: Resources, options?: Con
     // Extract internal properties from options
     const {generalProperties, visualProperties, listeners, sketch} = extractOptions(options);
 
-    const handler = createHandler(canvas, listeners);
+    canvas.tabIndex = 1;
+
+    createListeners(canvas, listeners);
 
     // const listenerMethods = createListenerMethods(listeners);
 
