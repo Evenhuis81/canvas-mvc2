@@ -33,14 +33,17 @@ export const goToLevelSelection = () => {
 
     const testEntity = entity.create({
         listeners: {
-            mouseup: evt => {
-                console.log('mouseup', evt.entityEvent.mouseProp);
-            },
-            keyup: evt => {
-                console.log('keyup', evt.entityEvent.keyProp);
-            },
-            touchstart: evt => {
-                console.log('touchstart', evt.inputEvent.touches, evt.entityEvent.touchProp);
+            // mouseup: evt => {
+            //     console.log('mouseup', evt.entityEvent.mouseProp);
+            // },
+            // keyup: evt => {
+            //     console.log('keyup', evt.entityEvent.keyProp);
+            // },
+            // touchstart: evt => {
+            //     console.log('touchstart', evt.inputEvent.touches, evt.entityEvent.touchProp);
+            // },
+            touchmove: evt => {
+                console.log('mousemoving');
             },
             // keyup: undefined,
         },

@@ -1,9 +1,20 @@
-import {EntityEventMap, EntityInputEventMap, EntityListeners} from 'library/types/entity';
+import {
+    EntityEventMap,
+    EntityInputEventMap,
+    EntityListeners,
+    ListenerHandler,
+    SetEntityListener,
+} from 'library/types/entity';
 
 const entityProps = {
-    keyup: {keyProp: 'testString keyprop'},
+    mousedown: {mouseProp: 'testString mouseprop'},
+    mousemove: {mouseProp: 'testString mouseprop'},
     mouseup: {mouseProp: 'testString mouseprop'},
+    keydown: {keyProp: 'testString keyprop'},
+    keyup: {keyProp: 'testString keyprop'},
     touchstart: {touchProp: 'testString touchprop'},
+    touchmove: {touchProp: 'testString touchprop'},
+    touchend: {touchProp: 'testString touchprop'},
 };
 
 export const createListeners = <T extends keyof EntityInputEventMap>(
@@ -12,31 +23,19 @@ export const createListeners = <T extends keyof EntityInputEventMap>(
 ) => {
     if (!listeners) return;
 
-    const listenerHandlers: {type: keyof EntityInputEventMap; add: () => void; remove: () => void}[] = [];
+    const listenerHandlers: ListenerHandler[] = [];
 
-    const setEntityListener = <K extends keyof EntityInputEventMap>(
-        type: K,
-        listener: (evt: {entityEvent: EntityEventMap[K]; inputEvent: EntityInputEventMap[K]}) => void,
-    ) => {
-        const eListener = (evt: EntityInputEventMap[K]) => {
+    const setEntityListener: SetEntityListener = (type, listener) => {
+        const eListener = (evt: EntityInputEventMap[typeof type]) =>
             listener({entityEvent: entityProps[type], inputEvent: evt});
-        };
 
-        const add = () => {
-            canvas.addEventListener(type, eListener);
-        };
+        const add = () => canvas.addEventListener(type, eListener);
 
-        const remove = () => {
-            canvas.removeEventListener(type, eListener);
-        };
+        const remove = () => canvas.removeEventListener(type, eListener);
 
         const index = listenerHandlers.findIndex(t => t.type === type);
 
-        if (index === -1) {
-            add();
-
-            return;
-        }
+        if (index === -1) return add();
 
         listenerHandlers[index].remove();
 

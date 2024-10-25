@@ -41,15 +41,19 @@ export type Colors = {
 export type SetHideTime = (time: number) => void;
 export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
 // TODO::Convert this to a mixed custom & native event listener type
-export type SetUserListener = <K extends keyof HTMLElementEventMap, V extends HTMLElementEventMap[K]>(
-    key: K,
-    listener: V,
+export type SetEntityListener = <K extends keyof EntityInputEventMap>(
+    type: K,
+    listener: (evt: {entityEvent: EntityEventMap[K]; inputEvent: EntityInputEventMap[K]}) => void,
 ) => void;
+// export type SetUserListener = <K extends keyof HTMLElementEventMap, V extends HTMLElementEventMap[K]>(
+//     key: K,
+//     listener: V,
+// ) => void;
 
 export interface EntityMethods {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
-    setListener: SetUserListener;
+    setListener: SetEntityListener;
     setHideTime: SetHideTime;
     setVisual: SetVisual;
 }
@@ -67,22 +71,38 @@ export interface Callbacks {
 // startTransitionEnd: () => void;
 // endTransitionEnd: () => void;
 
+export type EntityInputEventMap = {
+    mouseup: MouseEvent;
+    mousemove: MouseEvent;
+    mousedown: MouseEvent;
+    keydown: KeyboardEvent;
+    keyup: KeyboardEvent;
+    touchstart: TouchEvent;
+    touchmove: TouchEvent;
+    touchend: TouchEvent;
+};
+
+type EntityMouseEvent = {mouseProp: string};
+type EntityKeyboardEvent = {keyProp: string};
+type EntityTouchEvent = {touchProp: string};
+
+export type EntityEventMap = {
+    mousedown: EntityMouseEvent;
+    mousemove: EntityMouseEvent;
+    mouseup: EntityMouseEvent;
+    keydown: EntityKeyboardEvent;
+    keyup: EntityKeyboardEvent;
+    touchstart: EntityTouchEvent;
+    touchmove: EntityTouchEvent;
+    touchend: EntityTouchEvent;
+};
+
 export interface ListenerMethods {
     addListeners: () => void;
     removeListeners: () => void;
 }
 
-export type EntityInputEventMap = {
-    mouseup: MouseEvent;
-    keyup: KeyboardEvent;
-    touchstart: TouchEvent;
-};
-
-export type EntityEventMap = {
-    mouseup: {mouseProp: string};
-    keyup: {keyProp: string};
-    touchstart: {touchProp: string};
-};
+export type ListenerHandler = {type: keyof EntityInputEventMap; add: () => void; remove: () => void};
 
 export type EntityListeners<Type extends keyof EntityInputEventMap> = {
     [Key in Type]: (evt: {entityEvent: EntityEventMap[Key]; inputEvent: EntityInputEventMap[Key]}) => void;
