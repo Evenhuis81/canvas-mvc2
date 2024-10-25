@@ -67,49 +67,32 @@ export interface Callbacks {
 // startTransitionEnd: () => void;
 // endTransitionEnd: () => void;
 
-// export type NativeEventListeners<Type extends keyof HTMLElementEventMap> = {
-//     [Key in Type]: (evt: HTMLElementEventMap[Key]) => void;
-// };
-
-// export type EntityEventListener = {
-//     type: string;
-//     listener: EventListenerOrEventListenerObject;
-// };
-
 export interface ListenerMethods {
     addListeners: () => void;
     removeListeners: () => void;
 }
 
-type EntityEventMap = {
+export type EntityInputEventMap = {
     mouseup: MouseEvent;
     keyup: KeyboardEvent;
     touchstart: TouchEvent;
 };
 
-type EEE = {
+export type EntityEventMap = {
     mouseup: {mouseProp: string};
     keyup: {keyProp: string};
     touchstart: {touchProp: string};
 };
 
-export type EE<K extends keyof EEE> = {
-    [Key in K]: EEE[K];
-};
-
-type EntityListenerMap<Type extends keyof EntityEventMap> = {
-    [Key in Type]: {entEvt: EE<Key>[Key]; inputEvent: EntityEventMap[Key]};
-};
-
-export type EntityListeners<Type extends keyof EntityEventMap> = {
-    [Key in Type]: (evt: EntityListenerMap<Key>[Key]) => void;
+export type EntityListeners<Type extends keyof EntityInputEventMap> = {
+    [Key in Type]: (evt: {entityEvent: EntityEventMap[Key]; inputEvent: EntityInputEventMap[Key]}) => void;
 };
 
 export type ConfigOptions = Partial<
     Sketch &
         GeneralProperties &
         VisualProperties & {
-            listeners: Partial<EntityListeners<keyof EntityEventMap>>;
+            listeners: Partial<EntityListeners<keyof EntityInputEventMap>>;
         }
 >;
 

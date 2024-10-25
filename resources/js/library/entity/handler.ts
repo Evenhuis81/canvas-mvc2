@@ -1,20 +1,27 @@
-import {ConfigOptions, EE, EntityEventMap, EntityListeners, SetUserListener} from 'library/types/entity';
+import {EntityEventMap, EntityInputEventMap, EntityListeners} from 'library/types/entity';
 
-export const createListeners = <T extends keyof EntityEventMap>(
+const entityProps = {
+    keyup: {keyProp: 'testString keyprop'},
+    mouseup: {mouseProp: 'testString mouseprop'},
+    touchstart: {touchProp: 'testString touchprop'},
+};
+
+export const createListeners = <T extends keyof EntityInputEventMap>(
     canvas: HTMLCanvasElement,
     listeners?: Partial<EntityListeners<T>>,
 ) => {
     if (!listeners) return;
 
-    const listenerHandlers: {type: keyof EntityEventMap; add: () => void; remove: () => void}[] = [];
+    const listenerHandlers: {type: keyof EntityInputEventMap; add: () => void; remove: () => void}[] = [];
 
-    const setEntityListener = <K extends keyof EntityEventMap>(
+    const setEntityListener = <K extends keyof EntityInputEventMap>(
         type: K,
-        listener: (evt: {entEvt: EE<K>[K]; inputEvent: EntityEventMap[K]}) => void,
+        listener: (evt: {entityEvent: EntityEventMap[K]; inputEvent: EntityInputEventMap[K]}) => void,
     ) => {
-        const eListener = (evt: EntityEventMap[K]) => {
-            // if (type === 'mouseup') listener({entEvt: {mouseProp: 'hi'}, inputEvent: evt});
+        const eListener = (evt: EntityInputEventMap[K]) => {
+            listener({entityEvent: entityProps[type], inputEvent: evt});
         };
+
         const add = () => {
             canvas.addEventListener(type, eListener);
         };
@@ -33,6 +40,7 @@ export const createListeners = <T extends keyof EntityEventMap>(
 
         listenerHandlers[index].remove();
 
+        // TODO::Test if overwritten listener gets handled properly
         listenerHandlers[index] = {type, add, remove};
 
         add();
@@ -43,12 +51,10 @@ export const createListeners = <T extends keyof EntityEventMap>(
 
         if (!listener) continue;
 
+        // TODO::Convert this to a mixed custom & native event listener type
         setEntityListener(key, listener);
     }
 };
-
-// export const createHandler = (canvas: HTMLCanvasElement, listeners?: ConfigOptions['listeners']) => {
-//     const entityListeners = createListeners(canvas, listeners);
 
 // const handler = {
 //     callbacks: [],
@@ -64,89 +70,10 @@ export const createListeners = <T extends keyof EntityEventMap>(
 // const removeListeners = () =>
 //     nativeListeners.forEach(listener => canvas.removeEventListener(listener.type, listener.listener));
 
-// temp return (not a real handler, missing callbacks and custom listeners)
-// return {addListeners, removeListeners, setListener, nativeListeners};
-// };
-
-// const createNativeListeners = <T extends keyof HTMLElementEventMap>(
-//     canvas: HTMLCanvasElement,
-//     listeners: Partial<NativeEventListeners<T>>,
-// ) => {
-//     const nativeListeners: EntityEventListener[] = [];
-
-//     // TODO::Convert this to a mixed custom & native event listener type
-//     const setListener = <Key extends keyof HTMLElementEventMap>(
-//         type: Key,
-//         listener: (evt: HTMLElementEventMap[Key]) => void,
-//     ) => {
-//         const index = nativeListeners.findIndex(l => l.type === type);
-
-//         if (index === -1) {
-//             nativeListeners.push({type, listener});
-
-//             canvas.addEventListener(type, listener);
-
-//             return;
-//         }
-
-//         // TODO::Test if overwritten listener gets handled properly
-//         canvas.removeEventListener(nativeListeners[index].type, nativeListeners[index].listener);
-
-//         nativeListeners[index] = {type, listener};
-
-//         canvas.addEventListener(type, listener);
-//     };
-
-//     for (const key in listeners) {
-//         const listener = listeners[key];
-
-//         if (!listener) continue;
-
-//         canvas.addEventListener(key, listener);
-//     }
-
-//     return {nativeListeners, setListener};
-// };
-
-// const createListenerMethods = (listeners: EntityListener[]) => {
 // mousedown, mouseup, click (=mouseup/touchend), touchstart, touchend (native listeners)
 // startTransitionEnd, endTransitionEnd -> custom listeners used for callbacks
 
-// addEventListener<K extends keyof WindowEventMap>(type: K, listener: (this: Window, ev: WindowEventMap[K])
-
-//     const nativeListeners: NativeListener[] = [];
-
-//     const parseEntityListener: ParseEntityListener = entityListener => {
-//         const {type, listener} = entityListener;
-
-//         if (type === 'mousedown' || type === 'mouseup' || type === 'touchstart' || type === 'touchend') {
-//             return {
-//                 type,
-//                 listener,
-//             };
-//         }
-
-//         return;
-//     };
-// };
-
-// const createNativeListener = {
-//     clickdown: (listeners) => {},
-//     mousedown: (listener: EntityListener, sketch: Sketch, mouse: Input["mouse"], clickdown = false) => (evt: MouseEvent) => {
-//         if (mouse.insideRect(sketch)) {
-//             //         if (clickdown) clickdown({clicked: properties.clicked, evt});
-//             //         if (mousedown) mousedown({clicked: properties.clicked, evt});
-//             }
-//     },
-//     mouseup: () => {},
-//     startTransitionEnd: () => {},
-//     endTransitionEnd: () => {},
-//     touchstart: () => {},
-//     touchend: () => {},
-//     clickup: () => {},
-// };
-
-export const createListenerMethods = () => {
+const createListenerMethods = () => {
     // const mousedownListener = (evt: MouseEvent) => {
     //     if (mouse.insideRect(sketch)) {
     //         if (clickdown) clickdown({clicked: properties.clicked, evt});
