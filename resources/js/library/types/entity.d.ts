@@ -87,8 +87,8 @@ export interface ListenerMethods {
 
 export type ListenerHandler = {type: keyof EntityEventMap; add: () => void; remove: () => void};
 
-export type EntityListeners<Type extends keyof EntityEventMap> = {
-    [Key in Type]: (evt: EntityEventMap[Key]) => void;
+export type EntityListeners<T extends keyof EntityEventMap> = {
+    [K in T]: (evt: EntityEventMap[K]) => void;
 };
 
 export type ConfigOptions = Partial<

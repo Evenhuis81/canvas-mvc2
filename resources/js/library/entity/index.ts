@@ -13,7 +13,7 @@ const createEntity = ({context, engine, input, canvas}: Resources, options?: Con
 
     canvas.tabIndex = 1; // no tabIndex = no focus, prevents listeners from working on canvas
 
-    createListeners(canvas, listeners);
+    createListeners(canvas, sketch, listeners);
 
     // const listenerMethods = createListenerMethods(listeners);
 

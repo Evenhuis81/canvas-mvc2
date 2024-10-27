@@ -1,4 +1,5 @@
-import {EntityEventMap, EntityListeners, ListenerHandler} from 'library/types/entity';
+import {getInput} from 'library/input';
+import {EntityEventMap, EntityListeners, ListenerHandler, Sketch} from 'library/types/entity';
 
 const entityProps = {
     mousedown: {mouseProp: 'testString mouseprop'},
@@ -23,17 +24,20 @@ const entityProps = {
 
 export const createListeners = <T extends keyof EntityEventMap>(
     canvas: HTMLCanvasElement,
+    sketch: Sketch,
     listeners?: Partial<EntityListeners<T>>,
 ) => {
     if (!listeners) return;
+
+    const input = getInput(canvas);
 
     const listenerHandlers: ListenerHandler[] = [];
 
     const setEntityListener = <K extends keyof EntityEventMap>(type: K, listener: (evt: EntityEventMap[K]) => void) => {
         const eListener = (evt: HTMLElementEventMap[K]) => {
-            // TODO::
-            if (evt instanceof MouseEvent) {
-                //
+            // TODO::Figure out a clean way to do this
+            if (evt instanceof MouseEvent && input.mouse.insideRect(sketch)) {
+                console.log('mouse event insideRect');
             }
             listener(entityProps[type]);
         };
@@ -59,8 +63,6 @@ export const createListeners = <T extends keyof EntityEventMap>(
 
         if (!listener) continue;
 
-        // if (key === 'mousedown')  oon(key, listener);
-        // TODO::Convert this to a mixed custom & native event listener type
         setEntityListener(key, listener);
     }
 };
