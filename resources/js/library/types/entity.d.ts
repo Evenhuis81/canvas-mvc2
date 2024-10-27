@@ -40,15 +40,10 @@ export type Colors = {
 
 export type SetHideTime = (time: number) => void;
 export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
-// TODO::Convert this to a mixed custom & native event listener type
-export type SetEntityListener = <K extends keyof EntityInputEventMap>(
+export type SetEntityListener = <K extends keyof EntityEventMap>(
     type: K,
-    listener: (evt: {entityEvent: EntityEventMap[K]; inputEvent: EntityInputEventMap[K]}) => void,
+    listener: (evt: EntityEventMap[K]) => void,
 ) => void;
-// export type SetUserListener = <K extends keyof HTMLElementEventMap, V extends HTMLElementEventMap[K]>(
-//     key: K,
-//     listener: V,
-// ) => void;
 
 export interface EntityMethods {
     show: (quickShow?: boolean) => void;
@@ -67,21 +62,6 @@ export interface Callbacks {
     endEnd: () => void;
 }
 
-// clickup: (evt: MouseEvent | TouchEvent) => void; // mouse & touch combined
-// startTransitionEnd: () => void;
-// endTransitionEnd: () => void;
-
-export type EntityInputEventMap = {
-    mouseup: MouseEvent;
-    mousemove: MouseEvent;
-    mousedown: MouseEvent;
-    keydown: KeyboardEvent;
-    keyup: KeyboardEvent;
-    touchstart: TouchEvent;
-    touchmove: TouchEvent;
-    touchend: TouchEvent;
-};
-
 type EntityMouseEvent = {mouseProp: string};
 type EntityKeyboardEvent = {keyProp: string};
 type EntityTouchEvent = {touchProp: string};
@@ -95,6 +75,9 @@ export type EntityEventMap = {
     touchstart: EntityTouchEvent;
     touchmove: EntityTouchEvent;
     touchend: EntityTouchEvent;
+    // clickup: (evt: MouseEvent | TouchEvent) => void; // mouse & touch combined
+    // startTransitionEnd: () => void;
+    // endTransitionEnd: () => void;
 };
 
 export interface ListenerMethods {
@@ -102,17 +85,17 @@ export interface ListenerMethods {
     removeListeners: () => void;
 }
 
-export type ListenerHandler = {type: keyof EntityInputEventMap; add: () => void; remove: () => void};
+export type ListenerHandler = {type: keyof EntityEventMap; add: () => void; remove: () => void};
 
-export type EntityListeners<Type extends keyof EntityInputEventMap> = {
-    [Key in Type]: (evt: {entityEvent: EntityEventMap[Key]; inputEvent: EntityInputEventMap[Key]}) => void;
+export type EntityListeners<Type extends keyof EntityEventMap> = {
+    [Key in Type]: (evt: EntityEventMap[Key]) => void;
 };
 
 export type ConfigOptions = Partial<
     Sketch &
         GeneralProperties &
         VisualProperties & {
-            listeners: Partial<EntityListeners<keyof EntityInputEventMap>>;
+            listeners: Partial<EntityListeners<keyof EntityEventMap>>;
         }
 >;
 

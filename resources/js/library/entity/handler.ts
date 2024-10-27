@@ -1,10 +1,4 @@
-import {
-    EntityEventMap,
-    EntityInputEventMap,
-    EntityListeners,
-    ListenerHandler,
-    SetEntityListener,
-} from 'library/types/entity';
+import {EntityEventMap, EntityListeners, ListenerHandler} from 'library/types/entity';
 
 const entityProps = {
     mousedown: {mouseProp: 'testString mouseprop'},
@@ -17,7 +11,17 @@ const entityProps = {
     touchend: {touchProp: 'testString touchprop'},
 };
 
-export const createListeners = <T extends keyof EntityInputEventMap>(
+// type KeyWithCallback<A extends keyof EntityEventMap> = {
+//     [K in A]: [K, (evt: EntityEventMap[K]) => void];
+// }[A];
+
+// const oon = (...args: KeyWithCallback<keyof EntityEventMap>) => {
+//     if (args[0] === 'keydown') {
+//         const [tt, ll] = args;
+//     }
+// };
+
+export const createListeners = <T extends keyof EntityEventMap>(
     canvas: HTMLCanvasElement,
     listeners?: Partial<EntityListeners<T>>,
 ) => {
@@ -25,9 +29,14 @@ export const createListeners = <T extends keyof EntityInputEventMap>(
 
     const listenerHandlers: ListenerHandler[] = [];
 
-    const setEntityListener: SetEntityListener = (type, listener) => {
-        const eListener = (evt: EntityInputEventMap[typeof type]) =>
-            listener({entityEvent: entityProps[type], inputEvent: evt});
+    const setEntityListener = <K extends keyof EntityEventMap>(type: K, listener: (evt: EntityEventMap[K]) => void) => {
+        const eListener = (evt: HTMLElementEventMap[K]) => {
+            // TODO::
+            if (evt instanceof MouseEvent) {
+                //
+            }
+            listener(entityProps[type]);
+        };
 
         const add = () => canvas.addEventListener(type, eListener);
 
@@ -50,6 +59,7 @@ export const createListeners = <T extends keyof EntityInputEventMap>(
 
         if (!listener) continue;
 
+        // if (key === 'mousedown')  oon(key, listener);
         // TODO::Convert this to a mixed custom & native event listener type
         setEntityListener(key, listener);
     }

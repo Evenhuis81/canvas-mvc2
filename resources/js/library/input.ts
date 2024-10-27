@@ -65,7 +65,7 @@ export const getInput = (canvas: HTMLCanvasElement, dualView: boolean = false) =
         for (let i = 0; i < resizeCB.length; i++) resizeCB[i]();
     };
 
-    let timeout: ReturnType<typeof setTimeout>;
+    let timeout: NodeJS.Timeout;
 
     // resize events are only fired on the window object (mdn mozilla)
     onresize = () => {

@@ -6,44 +6,22 @@ export const mainMenu = () => {
     goToLevelSelection();
 };
 
-// Make dynamic with calculatedOptions for resize canvas
-// Entity Color can't take in regular css names (like 'red')
-// Alter speed 'system' for even faster or slower transitions
-// Create oscillerate animation and/or real noise animation
-const mainButton: Partial<ConfigOptions> = {
-    startType: 'fadein1',
-    startSpeed: 5,
-    endType: 'fadeout1',
-    endSpeed: 5,
-    x: innerWidth * 0.5,
-    y: innerHeight * 0.25,
-    w: 400,
-    h: 80,
-    text: 'Start Game',
-    r: 20,
-    lw: 10,
-    stroke: '#ff9900',
-    fill: '#000',
-    textFill: '#f00',
-    fontSize: 64,
-};
-
 export const goToLevelSelection = () => {
     const entity = createEntity('tr');
 
-    const testEntity = entity.create({
+    entity.create({
         listeners: {
-            // mouseup: evt => {
-            //     console.log('mouseup', evt.entityEvent.mouseProp);
-            // },
-            // keyup: evt => {
-            //     console.log('keyup', evt.entityEvent.keyProp);
-            // },
-            // touchstart: evt => {
-            //     console.log('touchstart', evt.inputEvent.touches, evt.entityEvent.touchProp);
-            // },
+            mouseup: evt => {
+                console.log('mouseup', evt.mouseProp);
+            },
+            keyup: evt => {
+                console.log('keyup', evt.keyProp);
+            },
+            touchstart: evt => {
+                console.log('touchstart', evt.touchProp);
+            },
             touchmove: evt => {
-                console.log('mousemoving');
+                console.log('touchmove', evt.touchProp);
             },
             // keyup: undefined,
         },
@@ -53,6 +31,28 @@ export const goToLevelSelection = () => {
 
     // createLevelSelectEntities(elementAmount);
 };
+
+// Make dynamic with calculatedOptions for resize canvas
+// Entity Color can't take in regular css names (like 'red')
+// Alter speed 'system' for even faster or slower transitions
+// Create oscillerate animation and/or real noise animation
+// const mainButton: Partial<ConfigOptions> = {
+//     startType: 'fadein1',
+//     startSpeed: 5,
+//     endType: 'fadeout1',
+//     endSpeed: 5,
+//     x: innerWidth * 0.5,
+//     y: innerHeight * 0.25,
+//     w: 400,
+//     h: 80,
+//     text: 'Start Game',
+//     r: 20,
+//     lw: 10,
+//     stroke: '#ff9900',
+//     fill: '#000',
+//     textFill: '#f00',
+//     fontSize: 64,
+// };
 
 // For landscape mode
 const createLevelSelectEntities = (amount: number) => {
