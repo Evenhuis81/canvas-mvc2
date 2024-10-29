@@ -5,10 +5,12 @@ import {EntityConfigListeners, EntityEventMap} from 'library/types/entity';
 export const createEventHandler = <T extends keyof EntityEventMap>(
     canvas: HTMLCanvasElement,
     input: Input,
-    listeners?: Partial<EntityConfigListeners<T>>,
+    listeners?: Partial<EntityConfigListeners<keyof EntityEventMap>>,
 ) => {
     const listenerHandlers: ListenerHandler[] = [];
     const setListener = createSetListener(canvas, listenerHandlers, input);
+
+    if (!listeners) return;
 
     for (const key in listeners) {
         const listener = listeners[key];
@@ -25,6 +27,33 @@ export const createEventHandler = <T extends keyof EntityEventMap>(
     const startTransitionEnd = () => {};
     const endTransitionEnd = () => {};
 
+    const obj = {
+        key1: 'sd',
+        key2: false,
+    };
+
+    const newObj = {...obj};
+
+    delete newObj.key1;
+
+    const makeKeyRemover =
+        <Key extends string | number | symbol>(keys: Key[]) =>
+        <Obj extends Record<Key, unknown>>(obj: Obj): Omit<Obj, Key> => {
+            const result = {...obj};
+            keys.forEach(key => {
+                if (key in obj) {
+                    // Check if key is present in Obj
+                    delete result[key]; // If yes, delete key
+                }
+            });
+
+            return result;
+        };
+
+    const keyR = makeKeyRemover(['startTransitionEnd', 'endTransitionEnd']);
+
+    const newListeners = keyR(listeners);
+
     return {setListener, addListeners, removeListeners, startTransitionEnd, endTransitionEnd};
 };
 
@@ -37,16 +66,13 @@ const entityProps = {
     endTransitionEnd: {endTransitionEndProp: 'endTransitionEndProp'},
 };
 
-// const mouseupSet = false;
-
 type ListenerHandler = {type: keyof EntityEventMap; add: () => void; remove: () => void};
 
 const createSetListener =
     (canvas: HTMLCanvasElement, listenerHandlers: ListenerHandler[], input: Input) =>
     <K extends keyof EntityEventMap>(type: K, listener: (evt: EntityEventMap[K]) => void) => {
-        // let startTransitionEnd, endTransitionEnd;
         const run = () => listener(entityProps[type]);
-        // if (type === 'mouseup') {
+
         if (type === 'startTransitionEnd') {
             //
         }
@@ -62,7 +88,7 @@ const createSetListener =
         //         // endTransitionEnd = listener;
         //         break;
         //     // case 'keyup':
-
+        //     //     //
         //     //     break;
         //     // case 'mouseup':
         //     //     //
