@@ -1,50 +1,30 @@
 /* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
 import {EntityConfigListeners, EntityEventMap} from 'library/types/entity';
+import {Input} from 'library/types/input';
 
 export const createEventHandler = <T extends keyof EntityEventMap>(
-    canvas: HTMLCanvasElement,
     input: Input,
-    listeners?: Partial<EntityConfigListeners<keyof EntityEventMap>>,
+    listeners?: Partial<EntityConfigListeners<T>>,
 ) => {
     const listenerHandlers: ListenerHandler[] = [];
-    const setListener = createSetListener(canvas, listenerHandlers, input);
 
-    if (!listeners) return;
-
-    for (const key in listeners) {
-        const listener = listeners[key];
-
-        if (!listener) continue;
-
-        setListener(key, listener);
-    }
-
-    const addListeners = () => listenerHandlers.forEach(l => l.add());
-
-    const removeListeners = () => listenerHandlers.forEach(l => l.remove);
-
-    const startTransitionEnd = () => {};
-    const endTransitionEnd = () => {};
-
-    const obj = {
-        key1: 'sd',
-        key2: false,
+    const eventHandler = {
+        setListener: createSetListener(listenerHandlers, input),
+        addListeners: () => listenerHandlers.forEach(l => l.add()),
+        removeListeners: () => listenerHandlers.forEach(l => l.remove),
+        startTransitionEnd: () => {},
+        endTransitionEnd: () => {},
     };
 
-    const newObj = {...obj};
-
-    delete newObj.key1;
+    if (!listeners) return eventHandler;
 
     const makeKeyRemover =
         <Key extends string | number | symbol>(keys: Key[]) =>
-        <Obj extends Record<Key, unknown>>(obj: Obj): Omit<Obj, Key> => {
+        <Obj extends Partial<Record<Key, unknown>>>(obj: Obj): Omit<Obj, Key> => {
             const result = {...obj};
             keys.forEach(key => {
-                if (key in obj) {
-                    // Check if key is present in Obj
-                    delete result[key]; // If yes, delete key
-                }
+                if (key in obj) delete result[key];
             });
 
             return result;
@@ -54,56 +34,47 @@ export const createEventHandler = <T extends keyof EntityEventMap>(
 
     const newListeners = keyR(listeners);
 
-    return {setListener, addListeners, removeListeners, startTransitionEnd, endTransitionEnd};
+    const ttt = <K extends keyof Omit<EntityEventMap, 'startTransitionEnd' | 'endTransitionEnd'>>(
+        listenerss?: Partial<EntityConfigListeners<K>>,
+    ) => {
+        for (const key in listenerss) {
+            const listener = listenerss[key];
+
+            if (!listener) continue;
+
+            eventHandler.setListener(key, listener);
+        }
+    };
+
+    ttt(newListeners);
+
+    return eventHandler;
 };
 
-const mouseProp = {mouseProp: 'undefined'};
-
 const entityProps = {
-    keyup: {keyProp: 'testString keyprop'},
-    mouseup: mouseProp,
-    startTransitionEnd: {startTransitionEndProp: 'startTransitionEndProp'},
-    endTransitionEnd: {endTransitionEndProp: 'endTransitionEndProp'},
+    mousedown: {mouProp: 'asdf'},
+    mousemove: {mouProp: 'asdf'},
+    mouseup: {mouProp: 'asdf'},
+    keydown: {keyProp: 'asdf'},
+    keyup: {keyProp: 'asdf'},
+    touchstart: {touProp: 'asdf'},
+    touchmove: {touProp: 'asdf'},
+    touchend: {touProp: 'asdf'},
+    startTransitionEnd: {startEndProp: 'startEndProp'},
+    endTransitionEnd: {endEndProp: 'endEndProp'},
 };
 
 type ListenerHandler = {type: keyof EntityEventMap; add: () => void; remove: () => void};
 
 const createSetListener =
-    (canvas: HTMLCanvasElement, listenerHandlers: ListenerHandler[], input: Input) =>
-    <K extends keyof EntityEventMap>(type: K, listener: (evt: EntityEventMap[K]) => void) => {
+    (listenerHandlers: ListenerHandler[], input: Input) =>
+    <K extends keyof Omit<EntityEventMap, 'startTransitionEnd' | 'endTransitionEnd'>>(
+        type: K,
+        listener: (evt: EntityEventMap[K]) => void,
+    ) => {
         const run = () => listener(entityProps[type]);
 
-        if (type === 'startTransitionEnd') {
-            //
-        }
-        if (type === 'endTransitionEnd') {
-            //
-        }
-
-        // switch (type) {
-        //     case 'startTransitionEnd':
-        //         // startTransitionEnd = listener;
-        //         break;
-        //     case 'endTransitionEnd':
-        //         // endTransitionEnd = listener;
-        //         break;
-        //     // case 'keyup':
-        //     //     //
-        //     //     break;
-        //     // case 'mouseup':
-        //     //     //
-        //     //     break;
-        //     default:
-        console.log(type);
         input.setInput(type, run);
-        //         break;
-        // }
-
-        // canvas.addEventListener(type, listener);
-        // }
-        // const nativeListener = () => {
-        //     listener(entityProps[type]);
-        // };
 
         const add = () => {
             // canvas.addEventListener(type, nativeListener);

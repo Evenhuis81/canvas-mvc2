@@ -41,7 +41,10 @@ export type Colors = {
 export type SetHideTime = (time: number) => void;
 export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
 // TODO::Convert this to a mixed custom & native event listener type
-export type SetListener = <K extends keyof EntityEventMap>(key: K, listener: (evt: EntityEventMap[K]) => void) => void;
+export type SetListener = <K extends keyof Omit<EntityEventMap, 'startTransitionEnd' | 'endTransitionEnd'>>(
+    key: K,
+    listener: (evt: EntityEventMap[K]) => void,
+) => void;
 
 export interface EntityMethods {
     show: (quickShow?: boolean) => void;
@@ -66,10 +69,16 @@ export interface EntityHandler {
 }
 
 export type EntityEventMap = {
-    mouseup: {mouseProp: string};
+    mousedown: {mouProp: string};
+    mousemove: {mouProp: string};
+    mouseup: {mouProp: string};
+    keydown: {keyProp: string};
     keyup: {keyProp: string};
-    startTransitionEnd: {startTransitionEndProp: string};
-    endTransitionEnd: {endTransitionEndProp: string};
+    touchstart: {touProp: string};
+    touchmove: {touProp: string};
+    touchend: {touProp: string};
+    startTransitionEnd: {startEndProp: string};
+    endTransitionEnd: {endEndProp: string};
     // clickup: (evt: MouseEvent | TouchEvent) => void; // mouse & touch combined
 };
 

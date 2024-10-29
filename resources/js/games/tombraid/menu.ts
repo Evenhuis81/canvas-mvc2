@@ -12,6 +12,10 @@ export const mainMenu = () => {
         bb.hide();
     });
 
+    bb.setListener('mousedown', () => {
+        //
+    });
+
     // goToLevelSelection();
 };
 
@@ -43,7 +47,7 @@ export const goToLevelSelection = () => {
     entity.create({
         listeners: {
             mouseup: evt => {
-                console.log('mouseup', evt.mouseProp);
+                console.log('mouseup', evt.mouProp);
             },
             keyup: evt => {
                 console.log('keyup', evt.keyProp);
