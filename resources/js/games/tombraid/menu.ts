@@ -1,9 +1,18 @@
+/* eslint-disable no-console */
 /* eslint-disable max-lines-per-function */
+import {ConfigOptions} from 'library/types/entity';
 import createEntity from 'library/entity';
-import type {ConfigOptions, Entity} from 'library/types/entity';
 
 export const mainMenu = () => {
-    goToLevelSelection();
+    const entity = createEntity('tr');
+
+    const bb = entity.create(mainButton);
+
+    bb.setListener('mouseup', () => {
+        bb.hide();
+    });
+
+    // goToLevelSelection();
 };
 
 // Make dynamic with calculatedOptions for resize canvas
@@ -31,17 +40,17 @@ const mainButton: Partial<ConfigOptions> = {
 export const goToLevelSelection = () => {
     const entity = createEntity('tr');
 
-    const testEntity = entity.create({
+    entity.create({
         listeners: {
             mouseup: evt => {
-                console.log('mouseup', evt.entityEvent.mouseProp);
+                console.log('mouseup', evt.mouseProp);
             },
             keyup: evt => {
-                console.log('keyup', evt.entityEvent.keyProp);
+                console.log('keyup', evt.keyProp);
             },
-            touchstart: evt => {
-                console.log('touchstart', evt.inputEvent.touches, evt.entityEvent.touchProp);
-            },
+            // touchstart: evt => {
+            //     console.log('touchstart', evt.touchProp);
+            // },
             // keyup: undefined,
         },
     });
@@ -52,83 +61,84 @@ export const goToLevelSelection = () => {
 };
 
 // For landscape mode
-const createLevelSelectEntities = (amount: number) => {
-    const rowsOrColumns = Math.sqrt(amount);
-    const paddingY = innerHeight * 0.1;
-    const paddingX = innerWidth - (innerHeight - 2 * paddingY);
-    const squareLength = (innerHeight - paddingY) / 7; // margin = anything from div/5 - ?
-    const squareDistance = (innerHeight - paddingY) / 5;
-    const startY = paddingY / 2 + squareLength / 2;
-    const startX = paddingX / 2 + squareLength / 2;
-    const timeoutDifference = 25;
+// const createLevelSelectEntities = (amount: number) => {
+//     const rowsOrColumns = Math.sqrt(amount);
+//     const paddingY = innerHeight * 0.1;
+//     const paddingX = innerWidth - (innerHeight - 2 * paddingY);
+//     const squareLength = (innerHeight - paddingY) / 7; // margin = anything from div/5 - ?
+//     const squareDistance = (innerHeight - paddingY) / 5;
+//     const startY = paddingY / 2 + squareLength / 2;
+//     const startX = paddingX / 2 + squareLength / 2;
+//     const timeoutDifference = 25;
 
-    const base: Partial<ConfigOptions> = {
-        w: squareLength,
-        h: squareLength,
-        startType: 'fadein1',
-        startSpeed: 5,
-        endType: 'fadeout1',
-        endSpeed: 5,
-    };
+//     const base: Partial<ConfigOptions> = {
+//         w: squareLength,
+//         h: squareLength,
+//         startType: 'fadein1',
+//         startSpeed: 5,
+//         endType: 'fadeout1',
+//         endSpeed: 5,
+//     };
 
-    const elements: Entity[] = [];
+//     const elements: Entity[] = [];
 
-    const entity = createEntity('tr'); // TODO::Put this in resources
+//     const entity = createEntity('tr'); // TODO::Put this in resources
 
-    const column = 0;
-    const row = 0;
-    // for (let i = 0; i < amount; i++) {
-    //     elements.push(
-    //         entity.create({
-    //             ...base,
-    //             x: startX + column * squareDistance,
-    //             y: startY + row * squareDistance,
-    //             text: (i + 1).toString(),
-    //             show: false,
-    //         }),
-    //     );
+//     const column = 0;
+//     const row = 0;
 
-    // const element = elements[i];
+// for (let i = 0; i < amount; i++) {
+//     elements.push(
+//         entity.create({
+//             ...base,
+//             x: startX + column * squareDistance,
+//             y: startY + row * squareDistance,
+//             text: (i + 1).toString(),
+//             show: false,
+//         }),
+//     );
 
-    // element.setHideTime((amount - 1) * timeoutDifference - i * timeoutDifference);
+// const element = elements[i];
 
-    // element.setListener('clickdown', evt => {
-    //     console.log('clickdown User Input triggered');
-    //     console.log('mouse or touch event?: ', evt);
-    // });
+// element.setHideTime((amount - 1) * timeoutDifference - i * timeoutDifference);
 
-    // element.setListener('clickup', evt => {
-    //     console.log('clickup User Input triggered');
-    //     console.log('mouse or touch event?: ', evt);
-    // });
+// element.setListener('clickdown', evt => {
+//     console.log('clickdown User Input triggered');
+//     console.log('mouse or touch event?: ', evt);
+// });
 
-    // element.setListener('touchend', () => {
-    //     element.setVisual('end', 'explode');
-    //     // if (clicked) element.setHideTime(0);
+// element.setListener('clickup', evt => {
+//     console.log('clickup User Input triggered');
+//     console.log('mouse or touch event?: ', evt);
+// });
 
-    //     elements.forEach(element => element.hide());
-    // });
+// element.setListener('touchend', () => {
+//     element.setVisual('end', 'explode');
+//     // if (clicked) element.setHideTime(0);
 
-    // element.setListener('endTransitionEnd', clicked => {
-    //     if (clicked) {
-    //         // element.hide(true); no -> (already hidden)
-    //         // element.destroy(); yes
+//     elements.forEach(element => element.hide());
+// });
 
-    //         startLevel(i + 1);
-    //     }
-    // });
+// element.setListener('endTransitionEnd', clicked => {
+//     if (clicked) {
+//         // element.hide(true); no -> (already hidden)
+//         // element.destroy(); yes
 
-    //     setTimeout(() => {
-    //         element.show();
-    //     }, timeoutDifference * i);
+//         startLevel(i + 1);
+//     }
+// });
 
-    //     column++;
-    //     if (column > rowsOrColumns - 1) {
-    //         column = 0;
-    //         row++;
-    //     }
-    // }
-};
+//     setTimeout(() => {
+//         element.show();
+//     }, timeoutDifference * i);
+
+//     column++;
+//     if (column > rowsOrColumns - 1) {
+//         column = 0;
+//         row++;
+//     }
+// }
+// };
 
 // Copy from tombraid main menu:
 // const entity = createEntity('tr');

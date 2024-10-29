@@ -1,7 +1,29 @@
+/* eslint-disable max-lines-per-function */
 const resizeCB: (() => void)[] = [];
 const consoleToggleCB: (() => void)[] = [];
 
-export const getInput = (canvas: HTMLCanvasElement, dualView: boolean = false) => {
+const listeners: {
+    mousedown: (() => void)[];
+    mousemove: (() => void)[];
+    mouseup: (() => void)[];
+    keyup: (() => void)[];
+    keydown: (() => void)[];
+    touchstart: (() => void)[];
+    touchmove: (() => void)[];
+    touchend: (() => void)[];
+} = {
+    mousedown: [],
+    mousemove: [],
+    mouseup: [],
+    keydown: [],
+    keyup: [],
+    touchstart: [],
+    touchmove: [],
+    touchend: [],
+};
+
+// export const getInput = (canvas: HTMLCanvasElement, dualView: boolean = false) => {
+export const getInput = (canvas: HTMLCanvasElement) => {
     const canvasRect = canvas.getBoundingClientRect();
     const buttonHeld: Record<number, boolean> = {};
     const keyHeld: Record<string, boolean> = {};
@@ -14,17 +36,23 @@ export const getInput = (canvas: HTMLCanvasElement, dualView: boolean = false) =
         buttonHeld[evt.button] = true;
     });
 
-    canvas.addEventListener('mouseup', evt => {
-        mouse.touchEnded = false;
-
-        delete buttonHeld[evt.button];
-    });
+    const setInput = (type: keyof typeof listeners, input: () => void) => {
+        listeners[type].push(input);
+    };
 
     canvas.addEventListener('mousemove', evt => {
         mouse.touchEnded = false;
 
         mouse.x = +(evt.clientX - canvasRect.left).toFixed(0);
         mouse.y = +(evt.clientY - canvasRect.top).toFixed(0);
+    });
+
+    canvas.addEventListener('mouseup', evt => {
+        mouse.touchEnded = false;
+
+        delete buttonHeld[evt.button];
+
+        listeners.mouseup.forEach(m => m());
     });
 
     canvas.addEventListener('keydown', evt => {
@@ -38,9 +66,9 @@ export const getInput = (canvas: HTMLCanvasElement, dualView: boolean = false) =
 
         delete keyHeld[evt.code];
 
-        if (evt.code === 'F12') {
-            for (let i = 0; i < resizeCB.length; i++) consoleToggleCB[i]();
-        }
+        if (evt.code === 'F12') for (let i = 0; i < resizeCB.length; i++) consoleToggleCB[i]();
+
+        listeners.mousedown.forEach(m => m());
     });
 
     canvas.addEventListener('touchstart', (evt: TouchEvent) => {
@@ -85,9 +113,10 @@ export const getInput = (canvas: HTMLCanvasElement, dualView: boolean = false) =
         touch: Object.assign(touch, {insideRect: createInsideRect(touch)}),
         buttonHeld,
         keyHeld,
+        setInput,
     };
 };
 
-export const setResize = (cb: () => unknown) => resizeCB.push(cb);
+export const setResize = (cbjh: () => unknown) => resizeCB.push(cbjh);
 
-export const setConsoleToggle = (cb: () => unknown) => consoleToggleCB.push(cb);
+export const setConsoleToggle = (cbs: () => unknown) => consoleToggleCB.push(cbs);

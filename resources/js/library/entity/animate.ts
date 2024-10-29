@@ -1,12 +1,33 @@
 /* eslint-disable max-lines-per-function */
+import {
+    Callbacks,
+    Colors,
+    GeneralProperties,
+    SetEngine,
+    SetVisual,
+    Sketch,
+    VisualProperties,
+    Visuals,
+} from 'library/types/entity';
 import {createRenders} from './renders';
 
-export const createVisualsAndCallbacks = (entity: EntityTemp) => {
-    const {animationType, hoverType, startType, endType} = entity.visualProperties;
+export const createVisualsAndCallbacks = (
+    gProps: GeneralProperties,
+    vProps: VisualProperties,
+    sketch: Sketch,
+    colors: Colors,
+    input: Input,
+    engine: Engine,
+    context: CanvasRenderingContext2D,
+    startTransitionEnd: () => void,
+    endTransitionEnd: () => void,
+) => {
+    const {animationType, hoverType, startType, endType} = vProps;
 
     const callbacks = {...emptyCallbacks};
 
-    const renders = createRenders(entity, callbacks);
+    // callbacks: Pick<Callbacks, 'startEnd' | 'endEnd'>,
+    const renders = createRenders(gProps, sketch, colors, vProps, input, context, callbacks);
 
     const visuals = {
         entity: animationType ? renders.animations[animationType]() : undefined,
@@ -20,16 +41,16 @@ export const createVisualsAndCallbacks = (entity: EntityTemp) => {
 
     const setVisual: SetVisual = (kind, type) => (visuals[kind] = mixedRenders[type]());
 
-    const setEngine = createSetEngine(entity.engine, visuals);
+    const setEngine = createSetEngine(engine, visuals);
 
     // transforms empty callbacks to functional callbacks
-    setCallbacks(entity, setEngine, callbacks);
+    setCallbacks(gProps, vProps, setEngine, callbacks, startTransitionEnd, endTransitionEnd);
 
     return {visuals, callbacks, setVisual};
 };
 
 // TODO::remove duplications and if statements, see comments in createCallbacks -> renders object
-const createEngineRenders = (engine: Engine, renders: Partial<EntityVisuals>) => ({
+const createEngineRenders = (engine: Engine, renders: Partial<Visuals>) => ({
     entity: {
         on: () => {
             if (renders.entity) engine.setUpdate(renders.entity.update);
@@ -85,7 +106,7 @@ const createEngineRenders = (engine: Engine, renders: Partial<EntityVisuals>) =>
 });
 
 // Possible returnvalue for setEngine: fail or succeed on setting update/draw
-const createSetEngine = (engine: Engine, renders: Partial<EntityVisuals>): EntitySetEngine => {
+const createSetEngine = (engine: Engine, renders: Partial<Visuals>): SetEngine => {
     const engineRenders = createEngineRenders(engine, renders);
 
     return (type, state) => {
@@ -102,9 +123,12 @@ const createSetEngine = (engine: Engine, renders: Partial<EntityVisuals>): Entit
 };
 
 const setCallbacks = (
-    {visualProperties, userListeners, properties}: EntityTemp,
-    setEngine: EntitySetEngine,
-    callbacks: EntityCallbacks,
+    gProps: GeneralProperties,
+    vProps: VisualProperties,
+    setEngine: SetEngine,
+    callbacks: Callbacks,
+    startTransitionEnd: () => void,
+    endTransitionEnd: () => void,
 ) => {
     callbacks.start = quickShow => {
         if (quickShow) {
@@ -117,7 +141,7 @@ const setCallbacks = (
 
         setEngine('start', 'on');
 
-        if (visualProperties.animateAtStart && visualProperties.startType) setEngine('entity', 'on');
+        if (vProps.animateAtStart && vProps.startType) setEngine('entity', 'on');
 
         // set hover on startTransition? This requires proper checking on sketch properties change
 
@@ -129,7 +153,8 @@ const setCallbacks = (
         setEngine('entity', 'on'); // This could have a (double) check
         setEngine('hover', 'on');
 
-        // userListeners.startTransitionEnd(properties.clicked);
+        // startTransitionEnd(gProps.clicked);
+        startTransitionEnd();
     };
 
     callbacks.end = quickHide => {
@@ -144,7 +169,7 @@ const setCallbacks = (
         setEngine('end', 'on');
 
         // Useless check? if entity is !'none', entity is already running
-        if (visualProperties.animateAtEnd && visualProperties.endType) setEngine('entity', 'on');
+        if (vProps.animateAtEnd && vProps.endType) setEngine('entity', 'on');
 
         // See comments on this in callback.start()
         setEngine('hover', 'off');
@@ -155,6 +180,14 @@ const setCallbacks = (
         setEngine('entity', 'off'); // This could have a (double) check
         setEngine('hover', 'off');
 
-        // userListeners.endTransitionEnd(properties.clicked);
+        // endTransitionEnd(gProps.clicked);
+        endTransitionEnd();
     };
+};
+
+const emptyCallbacks = {
+    start: () => {},
+    startEnd: () => {},
+    end: () => {},
+    endEnd: () => {},
 };

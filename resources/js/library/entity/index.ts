@@ -1,7 +1,10 @@
+import {createEventHandler} from './handler';
+import {createUserMethods} from './properties';
+import {createVisualsAndCallbacks} from './animate';
 import {getProperties, uid} from 'library/helpers';
+import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {resources} from '..';
 import type {ConfigOptions, EntityMethods, GeneralProperties} from 'library/types/entity';
-import {createListeners} from './handler';
 
 const createResource = (res: Resources) => ({
     create: (options?: ConfigOptions) => createEntity(res, options),
@@ -12,24 +15,37 @@ const createEntity = ({context, engine, input, canvas}: Resources, options?: Con
     const {generalProperties, visualProperties, listeners, sketch} = extractOptions(options);
 
     canvas.tabIndex = 1; // no tabIndex = no focus, prevents listeners from working on canvas
+    canvas.focus();
 
-    createListeners(canvas, listeners);
+    const {setListener, addListeners, removeListeners, startTransitionEnd, endTransitionEnd} = createEventHandler(
+        canvas,
+        input,
+        listeners,
+    );
 
-    // const listenerMethods = createListenerMethods(listeners);
+    const colors = getSketchRGBAColorsFromHexString(sketch);
 
-    // const entityListeners = createEntityListeners(entity1);
+    const {callbacks, setVisual} = createVisualsAndCallbacks(
+        generalProperties,
+        visualProperties,
+        sketch,
+        colors,
+        input,
+        engine,
+        context,
+        startTransitionEnd,
+        endTransitionEnd,
+    ); // Also creates setEngine
 
-    // const {callbacks, setVisual} = createVisualsAndCallbacks(entity1); // Also creates setEngine
+    const userMethods: EntityMethods = {
+        setListener,
+        setVisual,
+        ...createUserMethods(visualProperties, generalProperties, callbacks, addListeners, removeListeners),
+    };
 
-    // const entity = {...entity1, entityListeners, callbacks};
+    initialize(generalProperties, userMethods);
 
-    // Mix-in with draw method
-    // const colors = getSketchRGBAColorsFromHexString(sketch);
-    // const userMethods = {setListener, setVisual, ...createUserEntity(entity)};
-
-    // initialize(entity, userMethods);
-
-    // return userMethods;
+    return userMethods;
 };
 
 const initialize = (gProps: GeneralProperties, methods: EntityMethods) => {
@@ -69,7 +85,10 @@ const extractOptions = (options: ConfigOptions = {}) => {
         animateAtEnd,
     };
 
-    const {listeners, ...sketch} = rest2;
+    const {
+        listeners: {startTransitionEnd, endTransitionEnd, ...native},
+        ...sketch
+    } = rest2;
 
     return {generalProperties, visualProperties, listeners, sketch};
 };

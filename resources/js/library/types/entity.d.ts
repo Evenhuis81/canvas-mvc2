@@ -41,15 +41,12 @@ export type Colors = {
 export type SetHideTime = (time: number) => void;
 export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
 // TODO::Convert this to a mixed custom & native event listener type
-export type SetUserListener = <K extends keyof HTMLElementEventMap, V extends HTMLElementEventMap[K]>(
-    key: K,
-    listener: V,
-) => void;
+export type SetListener = <K extends keyof EntityEventMap>(key: K, listener: (evt: EntityEventMap[K]) => void) => void;
 
 export interface EntityMethods {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
-    setListener: SetUserListener;
+    setListener: SetListener;
     setHideTime: SetHideTime;
     setVisual: SetVisual;
 }
@@ -63,36 +60,28 @@ export interface Callbacks {
     endEnd: () => void;
 }
 
-// clickup: (evt: MouseEvent | TouchEvent) => void; // mouse & touch combined
-// startTransitionEnd: () => void;
-// endTransitionEnd: () => void;
-
-export interface ListenerMethods {
+export interface EntityHandler {
     addListeners: () => void;
     removeListeners: () => void;
 }
 
-export type EntityInputEventMap = {
-    mouseup: MouseEvent;
-    keyup: KeyboardEvent;
-    touchstart: TouchEvent;
-};
-
 export type EntityEventMap = {
     mouseup: {mouseProp: string};
     keyup: {keyProp: string};
-    touchstart: {touchProp: string};
+    startTransitionEnd: {startTransitionEndProp: string};
+    endTransitionEnd: {endTransitionEndProp: string};
+    // clickup: (evt: MouseEvent | TouchEvent) => void; // mouse & touch combined
 };
 
-export type EntityListeners<Type extends keyof EntityInputEventMap> = {
-    [Key in Type]: (evt: {entityEvent: EntityEventMap[Key]; inputEvent: EntityInputEventMap[Key]}) => void;
+export type EntityConfigListeners<Type extends keyof EntityEventMap> = {
+    [Key in Type]: (evt: EntityEventMap[Key]) => void;
 };
 
 export type ConfigOptions = Partial<
     Sketch &
         GeneralProperties &
         VisualProperties & {
-            listeners: Partial<EntityListeners<keyof EntityInputEventMap>>;
+            listeners: Partial<EntityConfigListeners<keyof EntityEventMap>>;
         }
 >;
 
