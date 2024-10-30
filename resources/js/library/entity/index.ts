@@ -18,7 +18,6 @@ const createEntity = ({context, engine, input, canvas}: Resources, options?: Con
     canvas.focus();
 
     const {setListener, addListeners, removeListeners, startTransitionEnd, endTransitionEnd} = createEventHandler(
-        canvas,
         input,
         listeners,
     );
@@ -85,10 +84,7 @@ const extractOptions = (options: ConfigOptions = {}) => {
         animateAtEnd,
     };
 
-    const {
-        listeners: {startTransitionEnd, endTransitionEnd, ...native},
-        ...sketch
-    } = rest2;
+    const {listeners, ...sketch} = rest2;
 
     return {generalProperties, visualProperties, listeners, sketch};
 };

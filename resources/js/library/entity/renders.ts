@@ -1,5 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import {Callbacks, Colors, GeneralProperties, Sketch, VisualProperties} from 'library/types/entity';
+import {Input} from 'library/types/input';
 
 export const createRenders = (
     props: GeneralProperties,

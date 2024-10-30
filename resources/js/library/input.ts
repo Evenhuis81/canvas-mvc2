@@ -2,16 +2,20 @@
 const resizeCB: (() => void)[] = [];
 const consoleToggleCB: (() => void)[] = [];
 
-const listeners: {
-    mousedown: (() => void)[];
-    mousemove: (() => void)[];
-    mouseup: (() => void)[];
-    keyup: (() => void)[];
-    keydown: (() => void)[];
-    touchstart: (() => void)[];
-    touchmove: (() => void)[];
-    touchend: (() => void)[];
-} = {
+export type InputMap = {
+    mousedown: unknown;
+    mousemove: unknown;
+    mouseup: unknown;
+    keydown: unknown;
+    keyup: unknown;
+    touchstart: unknown;
+    touchmove: unknown;
+    touchend: unknown;
+};
+
+type InputListenersMap = {[K in keyof InputMap]: (() => void)[]};
+
+const listeners: InputListenersMap = {
     mousedown: [],
     mousemove: [],
     mouseup: [],
@@ -36,7 +40,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         buttonHeld[evt.button] = true;
     });
 
-    const setInput = (type: keyof typeof listeners, input: () => void) => {
+    const setInput = (type: keyof InputMap, input: () => void) => {
         listeners[type].push(input);
     };
 
@@ -68,7 +72,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
 
         if (evt.code === 'F12') for (let i = 0; i < resizeCB.length; i++) consoleToggleCB[i]();
 
-        listeners.mousedown.forEach(m => m());
+        listeners.keyup.forEach(m => m());
     });
 
     canvas.addEventListener('touchstart', (evt: TouchEvent) => {

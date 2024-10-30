@@ -1,3 +1,5 @@
+import {InputMap} from 'library/input';
+
 type MouseDown = 'mousedown';
 type MouseMove = 'mousemove';
 type MouseUp = 'mouseup';
@@ -30,5 +32,5 @@ type Input = {
     };
     buttonHeld: Record<number, boolean>;
     keyHeld: Record<string, boolean>;
-    setInput: (type: 'keyup' | 'mouseup', ll: () => void) => void;
+    setInput: (type: keyof InputMap, input: () => void) => void;
 };

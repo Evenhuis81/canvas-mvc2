@@ -45,7 +45,10 @@ export type SetEntityListener = <K extends keyof EntityEventMap>(
     listener: (evt: EntityEventMap[K]) => void,
 ) => void;
 // TODO::Convert this to a mixed custom & native event listener type
-export type SetListener = <K extends keyof EntityEventMap>(key: K, listener: (evt: EntityEventMap[K]) => void) => void;
+export type SetListener = <K extends keyof Omit<InputEventMap, 'startTransitionEnd' | 'endTransitionEnd'>>(
+    key: K,
+    listener: (evt: InputEventMap[K]) => void,
+) => void;
 
 export interface EntityMethods {
     show: (quickShow?: boolean) => void;
@@ -64,11 +67,24 @@ export interface Callbacks {
     endEnd: () => void;
 }
 
+export interface EntityHandler {
+    addListeners: () => void;
+    removeListeners: () => void;
+}
+
 type EntityMouseEvent = {mouseProp: string};
 type EntityKeyboardEvent = {keyProp: string};
 type EntityTouchEvent = {touchProp: string};
+type EntityTransitionEvent = {transitionProp: string};
 
-export type EntityEventMap = {
+export type EntityEventMap = CustomEventMap & InputEventMap;
+
+export type CustomEventMap = {
+    startTransitionEnd: EntityTransitionEvent;
+    endTransitionEnd: EntityTransitionEvent;
+};
+
+export type InputEventMap = {
     mousedown: EntityMouseEvent;
     mousemove: EntityMouseEvent;
     mouseup: EntityMouseEvent;
@@ -77,17 +93,7 @@ export type EntityEventMap = {
     touchstart: EntityTouchEvent;
     touchmove: EntityTouchEvent;
     touchend: EntityTouchEvent;
-    // clickup: (evt: MouseEvent | TouchEvent) => void; // mouse & touch combined
-    // startTransitionEnd: () => void;
-    // endTransitionEnd: () => void;
 };
-
-export interface EntityHandler {
-    addListeners: () => void;
-    removeListeners: () => void;
-}
-
-export type ListenerHandler = {type: keyof EntityEventMap; add: () => void; remove: () => void};
 
 export type EntityConfigListeners<Type extends keyof EntityEventMap> = {
     [Key in Type]: (evt: EntityEventMap[Key]) => void;
