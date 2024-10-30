@@ -30,4 +30,5 @@ type Input = {
     };
     buttonHeld: Record<number, boolean>;
     keyHeld: Record<string, boolean>;
+    setInput: (type: 'keyup' | 'mouseup', ll: () => void) => void;
 };

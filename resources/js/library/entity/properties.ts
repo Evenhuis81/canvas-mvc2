@@ -1,33 +1,34 @@
-import {EntityListener, ParseListener, UserListeners} from 'library/types/entity';
+import {Callbacks, GeneralProperties, VisualProperties} from 'library/types/entity';
 
 /* eslint-disable max-lines-per-function */
 export const createUserMethods = (
     vProps: VisualProperties,
-    props: GeneralProperties,
-    listeners: ListenerHandler,
-    callbacks: EntityCallbacks,
+    gProps: GeneralProperties,
+    callbacks: Callbacks,
+    addListeners: () => void,
+    removeListeners: () => void,
 ) => {
     // parameter default gives auto start (and end) transitions if type !undefined, manually able to set by user input
     const show = (quickShow = !vProps.startType) => {
         // Make throwError more general and easier to use (less parameters)
-        if (props.show) throw Error('show is already active');
+        if (gProps.show) throw Error('show is already active');
         // throwError(props.id, 'showing');
 
-        props.show = true;
+        gProps.show = true;
 
-        listeners.add();
+        addListeners();
 
         callbacks.start(quickShow);
     };
 
-    const hide = (quickHide = !vProps.endType, hideTime = props.hideTime) => {
-        if (!props.show) throw Error('hide is already active');
-        // throwError(props.id, 'hiding');
+    const hide = (quickHide = !vProps.endType, hideTime = gProps.hideTime) => {
+        if (!gProps.show) throw Error('hide is already active');
+        // throwError(gProps.id, 'hiding');
 
         const hideMe = () => {
-            props.show = false;
+            gProps.show = false;
 
-            listeners.remove();
+            removeListeners();
 
             callbacks.end(quickHide);
         };
@@ -43,7 +44,7 @@ export const createUserMethods = (
         hideMe();
     };
 
-    const setHideTime = (time: number) => (props.hideTime = time);
+    const setHideTime = (time: number) => (gProps.hideTime = time);
 
     return {show, hide, setHideTime};
 };

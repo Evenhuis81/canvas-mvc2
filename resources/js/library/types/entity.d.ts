@@ -44,11 +44,13 @@ export type SetEntityListener = <K extends keyof EntityEventMap>(
     type: K,
     listener: (evt: EntityEventMap[K]) => void,
 ) => void;
+// TODO::Convert this to a mixed custom & native event listener type
+export type SetListener = <K extends keyof EntityEventMap>(key: K, listener: (evt: EntityEventMap[K]) => void) => void;
 
 export interface EntityMethods {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
-    setListener: SetEntityListener;
+    setListener: SetListener;
     setHideTime: SetHideTime;
     setVisual: SetVisual;
 }
@@ -80,22 +82,22 @@ export type EntityEventMap = {
     // endTransitionEnd: () => void;
 };
 
-export interface ListenerMethods {
+export interface EntityHandler {
     addListeners: () => void;
     removeListeners: () => void;
 }
 
 export type ListenerHandler = {type: keyof EntityEventMap; add: () => void; remove: () => void};
 
-export type EntityListeners<T extends keyof EntityEventMap> = {
-    [K in T]: (evt: EntityEventMap[K]) => void;
+export type EntityConfigListeners<Type extends keyof EntityEventMap> = {
+    [Key in Type]: (evt: EntityEventMap[Key]) => void;
 };
 
 export type ConfigOptions = Partial<
     Sketch &
         GeneralProperties &
         VisualProperties & {
-            listeners: Partial<EntityListeners<keyof EntityEventMap>>;
+            listeners: Partial<EntityConfigListeners<keyof EntityEventMap>>;
         }
 >;
 

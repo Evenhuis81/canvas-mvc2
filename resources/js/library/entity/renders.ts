@@ -1,17 +1,26 @@
-import {Callbacks} from 'library/types/entity';
+/* eslint-disable max-lines-per-function */
+import {Callbacks, Colors, GeneralProperties, Sketch, VisualProperties} from 'library/types/entity';
 
-export const createRenders = (entity: EntityTemp, callbacks: Pick<Callbacks, 'startEnd' | 'endEnd'>) => {
-    const {id, name} = entity.properties;
+export const createRenders = (
+    props: GeneralProperties,
+    sketch: Sketch,
+    colors: Colors,
+    vProps: VisualProperties,
+    input: Input,
+    context: CanvasRenderingContext2D,
+    callbacks: Pick<Callbacks, 'startEnd' | 'endEnd'>,
+) => {
+    const {id, name} = props;
 
     const hovers = {
         bold: () => {
-            const hover = createHoverBold(entity.sketch);
+            const hover = createHoverBold(sketch);
 
             return {
                 update: {
-                    id: id + '-hover',
+                    id: `${id}-hover`,
                     name: `hover-bold-${name}`,
-                    fn: createTransitionUpdate(entity, hover),
+                    fn: createTransitionUpdate(input, sketch, hover),
                 },
             };
         },
@@ -19,15 +28,11 @@ export const createRenders = (entity: EntityTemp, callbacks: Pick<Callbacks, 'st
 
     const transitions = {
         fadein1: () => {
-            const {update: fn, prepare} = createTransitionFadein1(
-                entity.colors,
-                0.005 * entity.visualProperties.startSpeed,
-                callbacks,
-            );
+            const {update: fn, prepare} = createTransitionFadein1(colors, 0.005 * vProps.startSpeed, callbacks);
 
             return {
                 update: {
-                    id: id + '-fadein1',
+                    id: `${id}-fadein1`,
                     name: `transition-fadein1-${name}`,
                     fn,
                 },
@@ -35,15 +40,11 @@ export const createRenders = (entity: EntityTemp, callbacks: Pick<Callbacks, 'st
             };
         },
         fadeout1: () => {
-            const {update: fn, prepare} = createTransitionFadeout1(
-                entity.colors,
-                0.005 * entity.visualProperties.endSpeed,
-                callbacks,
-            );
+            const {update: fn, prepare} = createTransitionFadeout1(colors, 0.005 * vProps.endSpeed, callbacks);
 
             return {
                 update: {
-                    id: id + '-fadeout1',
+                    id: `${id}-fadeout1`,
                     name: `transition-fadeout1${name}`,
                     fn,
                 },
@@ -52,17 +53,17 @@ export const createRenders = (entity: EntityTemp, callbacks: Pick<Callbacks, 'st
         },
         slideinleft: () => ({
             update: {
-                id: id + '-slideinleft',
+                id: `${id}-slideinleft`,
                 name: `transition-slideinleft-${name}`,
                 fn: createTransitionSlideinleft(),
             },
         }),
         explode: () => {
-            const {update: fn, prepare} = createTransitionExplode(entity.colors, entity.sketch, callbacks);
+            const {update: fn, prepare} = createTransitionExplode(sketch, callbacks);
 
             return {
                 update: {
-                    id: id + '-slideinleft',
+                    id: `${id}-slideinleft`,
                     name: `transition-slideinleft-${name}`,
                     fn,
                 },
@@ -74,17 +75,17 @@ export const createRenders = (entity: EntityTemp, callbacks: Pick<Callbacks, 'st
     const animations = {
         noise: () => ({
             update: {
-                id: id + '-noise',
+                id: `${id}-noise`,
                 name: `animation-noise-${name}`,
-                fn: createAnimationNoise(entity.sketch),
+                fn: createAnimationNoise(sketch),
             },
         }),
     };
 
     const draw = {
-        id: id + '-draw',
+        id: `${id}-draw`,
         name: `draw-${name}`,
-        fn: createDraw(entity),
+        fn: createDraw(sketch, context, colors),
     };
 
     return {
@@ -95,7 +96,7 @@ export const createRenders = (entity: EntityTemp, callbacks: Pick<Callbacks, 'st
     };
 };
 
-const createHoverBold = (sketch: EntitySketch) => {
+const createHoverBold = (sketch: Sketch) => {
     const origin = {
         lw: sketch.lw,
         f: sketch.fontSize,
@@ -131,7 +132,7 @@ const createHoverBold = (sketch: EntitySketch) => {
 };
 
 const createTransitionFadein1 = (
-    {fill, stroke, textFill}: EntityColors,
+    {fill, stroke, textFill}: Colors,
     alphaVelocity: number,
     callbacks: Pick<Callbacks, 'startEnd'>,
 ) => ({
@@ -157,7 +158,7 @@ const createTransitionFadein1 = (
 });
 
 const createTransitionFadeout1 = (
-    {fill, stroke, textFill}: EntityColors,
+    {fill, stroke, textFill}: Colors,
     alphaVelocity: number,
     callbacks: Pick<Callbacks, 'endEnd'>,
 ) => ({
@@ -187,9 +188,9 @@ const createTransitionSlideinleft = () => () => {
 };
 
 const createTransitionExplode = (
-    {fill, stroke, textFill}: EntityColors,
-    sketch: EntitySketch,
+    sketch: Sketch,
     callbacks: Pick<Callbacks, 'endEnd'>,
+    // {fill, stroke, textFill}: Colors,
 ) => ({
     update: () => {
         sketch.lw += 0.1;
@@ -206,7 +207,14 @@ const createTransitionExplode = (
 });
 
 const createTransitionUpdate =
-    ({input: {mouse}, sketch}: EntityTemp, transition: TransitionBase) =>
+    (
+        {mouse}: Input,
+        sketch: Sketch,
+        transition: {
+            forward: () => void;
+            reverse: () => void;
+        },
+    ) =>
     () => {
         if (mouse.insideRect(sketch)) {
             transition.forward();
@@ -217,7 +225,7 @@ const createTransitionUpdate =
         transition.reverse();
     };
 
-const createAnimationNoise = (sketch: EntitySketch) => () => {
+const createAnimationNoise = (sketch: Sketch) => () => {
     sketch.x += upd.adj.x;
     sketch.y += upd.adj.y;
 
@@ -232,25 +240,25 @@ const createAnimationNoise = (sketch: EntitySketch) => () => {
 };
 
 const createDraw =
-    ({sketch, context: ctx, colors: {fill, stroke, textFill}}: EntityTemp) =>
+    (sketch: Sketch, c: CanvasRenderingContext2D, {fill, stroke, textFill}: Colors) =>
     () => {
-        ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
-        ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
-        ctx.lineWidth = sketch.lw;
+        c.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
+        c.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
+        c.lineWidth = sketch.lw;
 
-        ctx.beginPath();
-        ctx.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.r);
-        ctx.fill();
-        ctx.stroke();
+        c.beginPath();
+        c.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.r);
+        c.fill();
+        c.stroke();
 
-        ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
-        ctx.font = `${sketch.fontSize}px ${sketch.font}`;
+        c.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
+        c.font = `${sketch.fontSize}px ${sketch.font}`;
 
-        ctx.textAlign = sketch.textAlign;
-        ctx.textBaseline = sketch.textBaseLine;
+        c.textAlign = sketch.textAlign;
+        c.textBaseline = sketch.textBaseLine;
 
-        ctx.beginPath();
-        ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5);
+        c.beginPath();
+        c.fillText(sketch.text, sketch.x, sketch.y + 1.5);
     };
 
 // max property is default 60, need for deltaTime, adj is change in property
