@@ -1,7 +1,6 @@
-import {getColorRGBA} from 'library/colors';
 import {getProperties, uid} from 'library/helpers';
 
-const setTransits = (transits?: Transitions) => ({});
+const setTransits = (transits?: any) => ({});
 
 // export const getButtonProperties = (options: Partial<ButtonOptions>) => {
 //     const {click: handlers, colors, transitions, ...restProperties} = options;

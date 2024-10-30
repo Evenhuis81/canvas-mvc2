@@ -10,9 +10,8 @@ export const createUserMethods = (
 ) => {
     // parameter default gives auto start (and end) transitions if type !undefined, manually able to set by user input
     const show = (quickShow = !vProps.startType) => {
-        // Make throwError more general and easier to use (less parameters)
+        // Make throwError (general and easie to use)
         if (gProps.show) throw Error('show is already active');
-        // throwError(props.id, 'showing');
 
         gProps.show = true;
 
@@ -23,7 +22,6 @@ export const createUserMethods = (
 
     const hide = (quickHide = !vProps.endType, hideTime = gProps.hideTime) => {
         if (!gProps.show) throw Error('hide is already active');
-        // throwError(gProps.id, 'hiding');
 
         const hideMe = () => {
             gProps.show = false;

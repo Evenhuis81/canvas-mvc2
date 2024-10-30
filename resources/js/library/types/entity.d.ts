@@ -40,7 +40,7 @@ export type Colors = {
 
 export type SetHideTime = (time: number) => void;
 export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
-export type SetListener = <K extends keyof InputEventMap>(key: K, listener: (evt: InputEventMap[K]) => void) => void;
+export type SetListener = <K extends keyof EntityEventMap>(key: K, listener: (evt: EntityEventMap[K]) => void) => void;
 
 export interface EntityMethods {
     show: (quickShow?: boolean) => void;
@@ -64,8 +64,6 @@ export type ListenerHandler = {type: keyof EntityEventMap; add: () => void; remo
 export interface EventHandler {
     addListeners: () => void;
     removeListeners: () => void;
-    // startTransitionEnd: (evt: StartEntityTransitionEvent) => void | undefined;
-    // endTransitionEnd: (evt: EndEntityTransitionEvent) => void | undefined;
     startTransitionEnd?: () => void;
     endTransitionEnd?: () => void;
     setListener: SetListener;

@@ -2,6 +2,36 @@
 // This should become a reesource, but with different 'themes' or statistic variants. (for different kind of options)
 // Create text object according to StaticView, with calculated options (like button, possible to 'lend' those)
 
+// const testEntity = entity.create({
+//     listeners: {
+//         mouseup: evt => {
+//             testEntity.hide();
+//         },
+//         keyup: evt => {
+//             console.log('keyup', evt.keyProp);
+//         },
+//         touchstart: evt => {
+//             console.log('touchstart', evt.touchProp);
+//         },
+//         touchmove: evt => {
+//             console.log('touchmove', evt.touchProp);
+//         },
+//         startTransitionEnd: evt => {
+//             console.log('startTransitionEnd', evt.startTransitionProp);
+//         },
+//         endTransitionEnd: evt => {
+//             console.log('endTransitionEnd', evt.endTransitionProp);
+//         },
+//         touchend: evt => {
+//             console.log('touchend', evt.touchProp);
+//         },
+//         // keyup: undefined,
+//     },
+//     startType: 'fadein1',
+//     endType: 'fadeout1',
+//     hoverType: 'bold',
+// });
+
 // type KeyWithCallback<A extends object> = {
 //     [K in keyof A]: [K, (_: A[K]) => void];
 // }[keyof A];
