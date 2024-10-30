@@ -40,15 +40,7 @@ export type Colors = {
 
 export type SetHideTime = (time: number) => void;
 export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
-export type SetEntityListener = <K extends keyof EntityEventMap>(
-    type: K,
-    listener: (evt: EntityEventMap[K]) => void,
-) => void;
-// TODO::Convert this to a mixed custom & native event listener type
-export type SetListener = <K extends keyof Omit<InputEventMap, 'startTransitionEnd' | 'endTransitionEnd'>>(
-    key: K,
-    listener: (evt: InputEventMap[K]) => void,
-) => void;
+export type SetListener = <K extends keyof InputEventMap>(key: K, listener: (evt: InputEventMap[K]) => void) => void;
 
 export interface EntityMethods {
     show: (quickShow?: boolean) => void;
@@ -67,9 +59,14 @@ export interface Callbacks {
     endEnd: () => void;
 }
 
-export interface EntityHandler {
+export type ListenerHandler = {type: keyof EntityEventMap; add: () => void; remove: () => void};
+
+export interface EventHandler {
     addListeners: () => void;
     removeListeners: () => void;
+    startTransitionEnd: (evt: EntityTransitionEvent) => void;
+    endTransitionEnd: (evt: EntityTransitionEvent) => void;
+    setListener: SetListener;
 }
 
 type EntityMouseEvent = {mouseProp: string};

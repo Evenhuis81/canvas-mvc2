@@ -2,6 +2,17 @@
 // This should become a reesource, but with different 'themes' or statistic variants. (for different kind of options)
 // Create text object according to StaticView, with calculated options (like button, possible to 'lend' those)
 
+// const err = {
+//     clickdownconflict: () => {
+//         throw Error('unable set mousedown or touchstart with clickdown');
+//     },
+//     clickupconflict: () => {
+//         throw Error('unable to set mouseup or touchend with clickup');
+//     },
+// };
+
+// const throwError = (type: keyof typeof err) => err[type];
+
 // if (properties.disabled) {
 //     properties.disabled = false;
 

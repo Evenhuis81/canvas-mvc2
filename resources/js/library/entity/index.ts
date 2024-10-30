@@ -14,6 +14,7 @@ const createEntity = ({context, engine, input, canvas}: Resources, options?: Con
     // Extract internal properties from options
     const {generalProperties, visualProperties, listeners, sketch} = extractOptions(options);
 
+    // move this to getCanvas
     canvas.tabIndex = 1; // no tabIndex = no focus, prevents listeners from working on canvas
     canvas.focus();
 

@@ -6,26 +6,18 @@ import createEntity from 'library/entity';
 export const mainMenu = () => {
     const entity = createEntity('tr');
 
-    // const bb = entity.create(mainButton);
+    // const b = entity.create(mainButton);
 
-    // bb.setListener('mouseup', () => {
-    //     bb.hide();
-    // });
-
-    bb.setListener('keydown', () => {
-        //
-    });
-
-    // goToLevelSelection();
+    goToLevelSelection();
 };
 
 export const goToLevelSelection = () => {
     const entity = createEntity('tr');
 
-    entity.create({
+    const entityCreation = entity.create({
         listeners: {
             mouseup: evt => {
-                console.log('mouseup', evt.mouProp);
+                console.log('mouseup', evt.mouseProp);
             },
             keyup: evt => {
                 console.log('keyup', evt.keyProp);
@@ -43,6 +35,14 @@ export const goToLevelSelection = () => {
         },
     });
 
+    // entityCreation.setListener('mouseup', () => {
+    //     entityCreation.hide();
+    // });
+
+    // entityCreation.setListener('keyup', () => {
+    //     //
+    // });
+
     // const elementAmount = 1;
 
     // createLevelSelectEntities(elementAmount);
@@ -52,6 +52,7 @@ export const goToLevelSelection = () => {
 // Entity Color can't take in regular css names (like 'red')
 // Alter speed 'system' for even faster or slower transitions
 // Create oscillerate animation and/or real noise animation
+
 // const mainButton: Partial<ConfigOptions> = {
 //     startType: 'fadein1',
 //     startSpeed: 5,

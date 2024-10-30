@@ -1,19 +1,8 @@
+import {InputListenersMap} from './types/input';
+
 /* eslint-disable max-lines-per-function */
 const resizeCB: (() => void)[] = [];
 const consoleToggleCB: (() => void)[] = [];
-
-export type InputMap = {
-    mousedown: unknown;
-    mousemove: unknown;
-    mouseup: unknown;
-    keydown: unknown;
-    keyup: unknown;
-    touchstart: unknown;
-    touchmove: unknown;
-    touchend: unknown;
-};
-
-type InputListenersMap = {[K in keyof InputMap]: (() => void)[]};
 
 const listeners: InputListenersMap = {
     mousedown: [],
@@ -40,7 +29,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         buttonHeld[evt.button] = true;
     });
 
-    const setInput = (type: keyof InputMap, input: () => void) => {
+    const setInput = <T extends keyof InputListenersMap>(type: T, input: (evt: HTMLElementEventMap[T]) => void) => {
         listeners[type].push(input);
     };
 
@@ -49,6 +38,8 @@ export const getInput = (canvas: HTMLCanvasElement) => {
 
         mouse.x = +(evt.clientX - canvasRect.left).toFixed(0);
         mouse.y = +(evt.clientY - canvasRect.top).toFixed(0);
+
+        listeners.mousemove.forEach(m => m(evt));
     });
 
     canvas.addEventListener('mouseup', evt => {
@@ -56,13 +47,15 @@ export const getInput = (canvas: HTMLCanvasElement) => {
 
         delete buttonHeld[evt.button];
 
-        listeners.mouseup.forEach(m => m());
+        listeners.mouseup.forEach(m => m(evt));
     });
 
     canvas.addEventListener('keydown', evt => {
         mouse.touchEnded = false;
 
         keyHeld[evt.code] = true;
+
+        listeners.keydown.forEach(m => m(evt));
     });
 
     canvas.addEventListener('keyup', evt => {
@@ -72,12 +65,14 @@ export const getInput = (canvas: HTMLCanvasElement) => {
 
         if (evt.code === 'F12') for (let i = 0; i < resizeCB.length; i++) consoleToggleCB[i]();
 
-        listeners.keyup.forEach(m => m());
+        listeners.keyup.forEach(m => m(evt));
     });
 
     canvas.addEventListener('touchstart', (evt: TouchEvent) => {
         touch.x = +(evt.touches[0].clientX - canvasRect.left).toFixed(0);
         touch.y = +(evt.touches[0].clientY - canvasRect.top).toFixed(0);
+
+        listeners.touchstart.forEach(m => m(evt));
     });
 
     canvas.addEventListener('touchmove', (evt: TouchEvent) => {
@@ -85,12 +80,16 @@ export const getInput = (canvas: HTMLCanvasElement) => {
 
         touch.x = +(evt.touches[0].clientX - canvasRect.left).toFixed(0);
         touch.y = +(evt.touches[0].clientY - canvasRect.top).toFixed(0);
+
+        listeners.touchmove.forEach(m => m(evt));
     });
 
     canvas.addEventListener('touchend', (evt: TouchEvent) => {
         evt.preventDefault(); // otherwise mouse gets moved to touch spot, firing all other mouse events
 
         mouse.touchEnded = true;
+
+        listeners.touchend.forEach(m => m(evt));
     });
 
     const resize = () => {

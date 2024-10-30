@@ -30,3 +30,20 @@ export const counter = {
     increase: () => counter.count++,
     decrease: () => counter.count--,
 };
+
+export const makeObjectValueMoverPartial =
+    <Key extends string | number | symbol>(keys: Key[]) =>
+    <Obj extends Partial<Record<Key, unknown>>>(
+        obj: Obj,
+    ): {result: Omit<Obj, Key>; copied: {type: Key; value: Obj[Key]}[]} => {
+        const result = {...obj};
+        const copied: {type: Key; value: Obj[Key]}[] = [];
+        keys.forEach(key => {
+            if (key in obj) {
+                copied.push({type: key, value: result[key]});
+                delete result[key];
+            }
+        });
+
+        return {result, copied};
+    };
