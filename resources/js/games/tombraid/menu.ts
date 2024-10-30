@@ -12,7 +12,7 @@ export const mainMenu = () => {
         bb.hide();
     });
 
-    bb.setListener('mousedown', () => {
+    bb.setListener('keydown', () => {
         //
     });
 

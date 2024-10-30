@@ -3,10 +3,7 @@
 import {EntityConfigListeners, EntityEventMap} from 'library/types/entity';
 import {Input} from 'library/types/input';
 
-export const createEventHandler = <T extends keyof EntityEventMap>(
-    input: Input,
-    listeners?: Partial<EntityConfigListeners<T>>,
-) => {
+export const createEventHandler = (input: Input, listeners?: EntityConfigListeners<keyof EntityEventMap>) => {
     const listenerHandlers: ListenerHandler[] = [];
 
     const eventHandler = {
@@ -19,37 +16,48 @@ export const createEventHandler = <T extends keyof EntityEventMap>(
 
     if (!listeners) return eventHandler;
 
-    const makeKeyRemover =
-        <Key extends string | number | symbol>(keys: Key[]) =>
-        <Obj extends Partial<Record<Key, unknown>>>(obj: Obj): Omit<Obj, Key> => {
-            const result = {...obj};
-            keys.forEach(key => {
-                if (key in obj) delete result[key];
-            });
+    const keyRemover = makeKeyRemover(['startTransitionEnd', 'endTransitionEnd']);
 
-            return result;
-        };
+    const {result, copied} = keyRemover(listeners);
 
-    const keyR = makeKeyRemover(['startTransitionEnd', 'endTransitionEnd']);
+    // const {startTransitionEnd, endTransitionEnd} = listeners;
+    // if (listeners.startTransitionEnd)
 
-    const newListeners = keyR(listeners);
+    // const keyR = makeKeyRemover(['startTransitionEnd', 'endTransitionEnd']);
 
-    const ttt = <K extends keyof Omit<EntityEventMap, 'startTransitionEnd' | 'endTransitionEnd'>>(
-        listenerss?: Partial<EntityConfigListeners<K>>,
-    ) => {
-        for (const key in listenerss) {
-            const listener = listenerss[key];
+    // const result = keyR(listeners);
 
-            if (!listener) continue;
+    // const ttt = <K extends keyof Omit<EntityEventMap, 'startTransitionEnd' | 'endTransitionEnd'>>(
+    //     listenerss?: Partial<EntityConfigListeners<K>>,
+    // ) => {
+    for (const key in listeners) {
+        const listener = listeners[key];
 
-            eventHandler.setListener(key, listener);
-        }
-    };
+        if (!listener) continue;
 
-    ttt(newListeners);
+        eventHandler.setListener(key, listener);
+    }
+    // };
+
+    // ttt(newListeners);
 
     return eventHandler;
 };
+
+const makeKeyRemover =
+    <Key extends string | number | symbol>(keys: Key[]) =>
+    <Obj extends Record<Key, unknown>>(obj: Obj): {result: Omit<Obj, Key>; copied: {type: Key; value: Obj[Key]}[]} => {
+        const result = {...obj};
+        const copied: {type: Key; value: Obj[Key]}[] = [];
+        keys.forEach(key => {
+            if (key in obj) {
+                copied.push({type: key, value: result[key]});
+                delete result[key];
+            }
+        });
+
+        return {result, copied};
+    };
 
 const entityProps = {
     mousedown: {mouProp: 'asdf'},
@@ -68,13 +76,12 @@ type ListenerHandler = {type: keyof EntityEventMap; add: () => void; remove: () 
 
 const createSetListener =
     (listenerHandlers: ListenerHandler[], input: Input) =>
-    <K extends keyof Omit<EntityEventMap, 'startTransitionEnd' | 'endTransitionEnd'>>(
-        type: K,
-        listener: (evt: EntityEventMap[K]) => void,
-    ) => {
+    <K extends keyof EntityEventMap>(type: K, listener: (evt: EntityEventMap[K]) => void) => {
         const run = () => listener(entityProps[type]);
 
-        input.setInput(type, run);
+        if (type === 'endTransitionEnd' || type === 'startTransitionEnd') {
+            //
+        } else input.setInput(type, run);
 
         const add = () => {
             // canvas.addEventListener(type, nativeListener);

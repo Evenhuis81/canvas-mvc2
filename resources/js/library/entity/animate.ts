@@ -9,6 +9,7 @@ import {
     VisualProperties,
     Visuals,
 } from 'library/types/entity';
+import {Input} from 'library/types/input';
 import {createRenders} from './renders';
 
 export const createVisualsAndCallbacks = (
