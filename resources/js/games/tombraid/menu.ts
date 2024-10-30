@@ -17,7 +17,7 @@ export const goToLevelSelection = () => {
     const entityCreation = entity.create({
         listeners: {
             mouseup: evt => {
-                console.log('mouseup', evt.mouseProp);
+                entityCreation.hide();
             },
             keyup: evt => {
                 console.log('keyup', evt.keyProp);
@@ -28,11 +28,20 @@ export const goToLevelSelection = () => {
             touchmove: evt => {
                 console.log('touchmove', evt.touchProp);
             },
-            // touchstart: evt => {
-            //     console.log('touchstart', evt.touchProp);
-            // },
+            startTransitionEnd: evt => {
+                console.log('startTransitionEnd', evt.startTransitionProp);
+            },
+            endTransitionEnd: evt => {
+                console.log('endTransitionEnd', evt.endTransitionProp);
+            },
+            touchend: evt => {
+                console.log('touchend', evt.touchProp);
+            },
             // keyup: undefined,
         },
+        startType: 'fadein1',
+        endType: 'fadeout1',
+        hoverType: 'bold',
     });
 
     // entityCreation.setListener('mouseup', () => {

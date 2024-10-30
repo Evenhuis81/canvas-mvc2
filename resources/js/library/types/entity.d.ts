@@ -64,21 +64,24 @@ export type ListenerHandler = {type: keyof EntityEventMap; add: () => void; remo
 export interface EventHandler {
     addListeners: () => void;
     removeListeners: () => void;
-    startTransitionEnd: (evt: EntityTransitionEvent) => void;
-    endTransitionEnd: (evt: EntityTransitionEvent) => void;
+    // startTransitionEnd: (evt: StartEntityTransitionEvent) => void | undefined;
+    // endTransitionEnd: (evt: EndEntityTransitionEvent) => void | undefined;
+    startTransitionEnd?: () => void;
+    endTransitionEnd?: () => void;
     setListener: SetListener;
 }
 
 type EntityMouseEvent = {mouseProp: string};
 type EntityKeyboardEvent = {keyProp: string};
 type EntityTouchEvent = {touchProp: string};
-type EntityTransitionEvent = {transitionProp: string};
+type StartEntityTransitionEvent = {startTransitionProp: string};
+type EndEntityTransitionEvent = {endTransitionProp: string};
 
 export type EntityEventMap = CustomEventMap & InputEventMap;
 
 export type CustomEventMap = {
-    startTransitionEnd: EntityTransitionEvent;
-    endTransitionEnd: EntityTransitionEvent;
+    startTransitionEnd: StartEntityTransitionEvent;
+    endTransitionEnd: EndEntityTransitionEvent;
 };
 
 export type InputEventMap = {

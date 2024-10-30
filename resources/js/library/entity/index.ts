@@ -20,6 +20,7 @@ const createEntity = ({context, engine, input, canvas}: Resources, options?: Con
 
     const {setListener, addListeners, removeListeners, startTransitionEnd, endTransitionEnd} = createEventHandler(
         input,
+        sketch,
         listeners,
     );
 

@@ -30,9 +30,12 @@ type Input = {
     };
     buttonHeld: Record<number, boolean>;
     keyHeld: Record<string, boolean>;
-    setInput: <T extends InputMap>(type: T, input: (evt: HTMLElementEventMap[T]) => void) => void;
+    addListener: <T extends InputMap>(type: T, input: (evt: HTMLElementEventMap[T]) => void, rect: TVRect) => void;
+    removeListener: <T extends InputMap>(type: T) => void;
 };
 
 type InputMap = 'mousedown' | 'mousemove' | 'mouseup' | 'keydown' | 'keyup' | 'touchstart' | 'touchmove' | 'touchend';
 
-export type InputListenersMap = {[K in InputMap]: ((evt: HTMLElementEventMap[K]) => void)[]};
+export type InputListenersMap = {
+    [K in InputMap]: {type: K; listener: (evt: HTMLElementEventMap[K]) => void; rect?: TVRect}[];
+};

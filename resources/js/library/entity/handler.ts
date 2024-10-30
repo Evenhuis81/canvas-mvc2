@@ -1,31 +1,22 @@
 /* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
-import {makeObjectValueMoverPartial} from 'library/helpers';
-import {
-    CustomEventMap,
-    EntityConfigListeners,
-    EntityEventMap,
-    EntityTransitionEvent,
-    EventHandler,
-    ListenerHandler,
-} from 'library/types/entity';
-import {Input} from 'library/types/input';
-import {s} from 'vite/dist/node/types.d-aGj9QkWt';
+// import {makeObjectValueMoverPartial} from 'library/helpers';
+import type {EntityConfigListeners, EntityEventMap, EventHandler, ListenerHandler, Sketch} from 'library/types/entity';
+import type {Input} from 'library/types/input';
 
 export const createEventHandler = <T extends keyof EntityEventMap>(
     input: Input,
+    sketch: Sketch,
     listeners?: Partial<EntityConfigListeners<T>>,
 ) => {
     const listenerHandlers: ListenerHandler[] = [];
 
-    const eventHandler = {
+    const eventHandler: Omit<EventHandler, 'setListener'> = {
         addListeners: () => listenerHandlers.forEach(l => l.add()),
         removeListeners: () => listenerHandlers.forEach(l => l.remove),
-        startTransitionEnd: (evt: EntityTransitionEvent) => {},
-        endTransitionEnd: (evt: EntityTransitionEvent) => {},
     };
 
-    const setListener = createSetListener(listenerHandlers, eventHandler, input);
+    const setListener = createSetListener(listenerHandlers, eventHandler, input, sketch);
 
     if (!listeners) return {...eventHandler, setListener};
 
@@ -58,50 +49,41 @@ const entityProps = {
     touchstart: {touchProp: 'asdf'},
     touchmove: {touchProp: 'asdf'},
     touchend: {touchProp: 'asdf'},
-    startTransitionEnd: {transitionProp: 'startEndProp'},
-    endTransitionEnd: {transitionProp: 'endEndProp'},
+    startTransitionEnd: {startTransitionProp: 'startEndProp'},
+    endTransitionEnd: {endTransitionProp: 'endEndProp'},
 };
 
 const createSetListener =
-    (listenerHandlers: ListenerHandler[], eventHandler: Omit<EventHandler, 'setListener'>, input: Input) =>
+    (
+        listenerHandlers: ListenerHandler[],
+        eventHandler: Omit<EventHandler, 'setListener'>,
+        input: Input,
+        sketch: Sketch,
+    ) =>
     <K extends keyof EntityEventMap>(type: K, listener: (evt: EntityEventMap[K]) => void) => {
-        const run = () => {
-            listener(entityProps[type]);
-        };
+        const runListener = () => listener(entityProps[type]);
 
-        if (type === 'endTransitionEnd') {
-            // eventHandler.startTransitionEnd = run;
+        if (type === 'startTransitionEnd') {
+            eventHandler.startTransitionEnd = runListener;
 
             return;
-        } else if (type === 'startTransitionEnd') {
-            // eventHandler.startTransitionEnd = run;
+        } else if (type === 'endTransitionEnd') {
+            eventHandler.endTransitionEnd = runListener;
 
             return;
         }
 
-        // if (type === 'mousedown') {
-        //     const run = (evt: MouseEvent) => {
-        //         //
-        //         listener(entityProps[type]);
-        //     };
-
-        //     input.setInput(type, run);
-        // }
-
         const add = () => {
-            input.setInput(type, run);
-            // canvas.addEventListener(type, nativeListener);
+            input.addListener(type, runListener, sketch);
         };
 
         const remove = () => {
-            // canvas.removeEventListener(type, nativeListener);
+            input.removeListener(type);
         };
 
         const index = listenerHandlers.findIndex(t => t.type === type);
 
         if (index === -1) {
-            add();
-
             listenerHandlers.push({type, add, remove});
 
             return;

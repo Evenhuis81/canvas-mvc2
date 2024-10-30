@@ -2,6 +2,26 @@
 // This should become a reesource, but with different 'themes' or statistic variants. (for different kind of options)
 // Create text object according to StaticView, with calculated options (like button, possible to 'lend' those)
 
+// type KeyWithCallback<A extends object> = {
+//     [K in keyof A]: [K, (_: A[K]) => void];
+// }[keyof A];
+
+// const testTr = {
+//     startTransitionEnd: (args: ['startTransitionEnd', (evt: StartEntityTransitionEvent) => void]) => {},
+//     endTransitionEnd: (args: ['endTransitionEnd', (evt: EndEntityTransitionEvent) => void]) => {},
+// };
+
+// function on(...args: KeyWithCallback<CustomEventMap>) {
+//     testTr[args[0]](args);
+// if (args[0] === 'startTransitionEnd') {
+//     const [_, clb] = args; // destructuring inside condition
+//     clb({transitionProp: 'transition startEnd'}); // here clb allows on string only (string) => void
+// } else {
+//     const [_, clb] = args; // destructuring inside condition
+//     clb({transitionProp: 'transition endEnd'}); // here clb allows on number only (number) => void
+// }
+// }
+
 // const err = {
 //     clickdownconflict: () => {
 //         throw Error('unable set mousedown or touchstart with clickdown');

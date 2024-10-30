@@ -23,23 +23,41 @@ export const getInput = (canvas: HTMLCanvasElement) => {
     const mouse = {x: 0, y: 0, touchEnded: false};
     const touch = {x: 0, y: 0};
 
+    const addListener = <T extends keyof InputListenersMap>(
+        type: T,
+        listener: (evt: HTMLElementEventMap[T]) => void,
+        rect?: Rect,
+    ) => {
+        listeners[type].push({type, listener, rect});
+    };
+
+    const removeListener = <T extends keyof InputListenersMap>(type: T) => {
+        const index = listeners[type].findIndex(l => l.type === type);
+
+        if (index === -1) {
+            // throw error instead of console.log
+            console.log('listener with index: ' + index + ' already removed');
+        }
+
+        listeners[type].splice(index, 1);
+    };
+
     canvas.addEventListener('mousedown', evt => {
         mouse.touchEnded = false;
 
         buttonHeld[evt.button] = true;
+
+        listeners.mousedown.forEach(m => {
+            if (m.rect && insideMouseRect(m.rect)) m.listener(evt);
+        });
     });
-
-    const setInput = <T extends keyof InputListenersMap>(type: T, input: (evt: HTMLElementEventMap[T]) => void) => {
-        listeners[type].push(input);
-    };
-
     canvas.addEventListener('mousemove', evt => {
         mouse.touchEnded = false;
 
         mouse.x = +(evt.clientX - canvasRect.left).toFixed(0);
         mouse.y = +(evt.clientY - canvasRect.top).toFixed(0);
 
-        listeners.mousemove.forEach(m => m(evt));
+        listeners.mousemove.forEach(m => m.listener(evt));
     });
 
     canvas.addEventListener('mouseup', evt => {
@@ -47,7 +65,9 @@ export const getInput = (canvas: HTMLCanvasElement) => {
 
         delete buttonHeld[evt.button];
 
-        listeners.mouseup.forEach(m => m(evt));
+        listeners.mouseup.forEach(m => {
+            if (m.rect && insideMouseRect(m.rect)) m.listener(evt);
+        });
     });
 
     canvas.addEventListener('keydown', evt => {
@@ -55,7 +75,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
 
         keyHeld[evt.code] = true;
 
-        listeners.keydown.forEach(m => m(evt));
+        listeners.keydown.forEach(m => m.listener(evt));
     });
 
     canvas.addEventListener('keyup', evt => {
@@ -65,14 +85,16 @@ export const getInput = (canvas: HTMLCanvasElement) => {
 
         if (evt.code === 'F12') for (let i = 0; i < resizeCB.length; i++) consoleToggleCB[i]();
 
-        listeners.keyup.forEach(m => m(evt));
+        listeners.keyup.forEach(m => m.listener(evt));
     });
 
     canvas.addEventListener('touchstart', (evt: TouchEvent) => {
         touch.x = +(evt.touches[0].clientX - canvasRect.left).toFixed(0);
         touch.y = +(evt.touches[0].clientY - canvasRect.top).toFixed(0);
 
-        listeners.touchstart.forEach(m => m(evt));
+        listeners.touchstart.forEach(m => {
+            if (m.rect && insideTouchRect(m.rect)) m.listener(evt);
+        });
     });
 
     canvas.addEventListener('touchmove', (evt: TouchEvent) => {
@@ -81,7 +103,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         touch.x = +(evt.touches[0].clientX - canvasRect.left).toFixed(0);
         touch.y = +(evt.touches[0].clientY - canvasRect.top).toFixed(0);
 
-        listeners.touchmove.forEach(m => m(evt));
+        listeners.touchmove.forEach(m => m.listener(evt));
     });
 
     canvas.addEventListener('touchend', (evt: TouchEvent) => {
@@ -89,7 +111,9 @@ export const getInput = (canvas: HTMLCanvasElement) => {
 
         mouse.touchEnded = true;
 
-        listeners.touchend.forEach(m => m(evt));
+        listeners.touchend.forEach(m => {
+            if (m.rect && insideTouchRect(m.rect)) m.listener(evt);
+        });
     });
 
     const resize = () => {
@@ -104,19 +128,24 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         timeout = setTimeout(resize, 250);
     };
 
-    const createInsideRect =
-        (inputDevice: {x: number; y: number}) => (rect: {x: number; y: number; w: number; h: number}) =>
-            inputDevice.x >= rect.x - rect.w / 2 &&
-            inputDevice.x < rect.x + rect.w / 2 &&
-            inputDevice.y >= rect.y - rect.h / 2 &&
-            inputDevice.y < rect.y + rect.h / 2;
+    type Rect = {x: number; y: number; w: number; h: number};
+
+    const createInsideRect = (inputDevice: {x: number; y: number}) => (rect: Rect) =>
+        inputDevice.x >= rect.x - rect.w / 2 &&
+        inputDevice.x < rect.x + rect.w / 2 &&
+        inputDevice.y >= rect.y - rect.h / 2 &&
+        inputDevice.y < rect.y + rect.h / 2;
+
+    const insideMouseRect = createInsideRect(mouse);
+    const insideTouchRect = createInsideRect(touch);
 
     return {
-        mouse: Object.assign(mouse, {insideRect: createInsideRect(mouse)}),
-        touch: Object.assign(touch, {insideRect: createInsideRect(touch)}),
+        mouse: Object.assign(mouse, {insideRect: insideMouseRect}),
+        touch: Object.assign(touch, {insideRect: insideTouchRect}),
         buttonHeld,
         keyHeld,
-        setInput,
+        addListener,
+        removeListener,
     };
 };
 

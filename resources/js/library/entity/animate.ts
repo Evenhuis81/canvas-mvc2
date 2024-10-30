@@ -2,7 +2,6 @@
 import {
     Callbacks,
     Colors,
-    EntityTransitionEvent,
     GeneralProperties,
     SetEngine,
     SetVisual,
@@ -21,8 +20,8 @@ export const createVisualsAndCallbacks = (
     input: Input,
     engine: Engine,
     context: CanvasRenderingContext2D,
-    startTransitionEnd: (evt: EntityTransitionEvent) => void,
-    endTransitionEnd: (evt: EntityTransitionEvent) => void,
+    startTransitionEnd?: () => void,
+    endTransitionEnd?: () => void,
 ) => {
     const {animationType, hoverType, startType, endType} = vProps;
 
@@ -129,8 +128,8 @@ const setCallbacks = (
     vProps: VisualProperties,
     setEngine: SetEngine,
     callbacks: Callbacks,
-    startTransitionEnd: (evt: EntityTransitionEvent) => void,
-    endTransitionEnd: (evt: EntityTransitionEvent) => void,
+    startTransitionEnd?: () => void,
+    endTransitionEnd?: () => void,
 ) => {
     callbacks.start = quickShow => {
         if (quickShow) {
@@ -155,7 +154,7 @@ const setCallbacks = (
         setEngine('entity', 'on'); // This could have a (double) check
         setEngine('hover', 'on');
 
-        startTransitionEnd({transitionProp: 'callbacks.startEnd'});
+        if (startTransitionEnd) startTransitionEnd();
     };
 
     callbacks.end = quickHide => {
@@ -181,8 +180,7 @@ const setCallbacks = (
         setEngine('entity', 'off'); // This could have a (double) check
         setEngine('hover', 'off');
 
-        // endTransitionEnd(gProps.clicked);
-        endTransitionEnd({transitionProp: 'callbacks.startEnd'});
+        if (endTransitionEnd) endTransitionEnd();
     };
 };
 
