@@ -77,12 +77,13 @@ const createLevelSelectEntities = (amount: number, entity: {create: (options?: C
 
         element.setListener('touchend', clicked);
         element.setListener('mouseup', clicked);
-        element.setListener('endTransitionEnd', clicked => {
-            if (clicked) {
-                // element.hide(true); no -> (already hidden)
-                // element.destroy(); yes
-                // startLevel(i + 1);
-            }
+        element.setListener('endTransitionEnd', evt => {
+            console.log(evt.clicked, evt.clickTotal);
+            // if (clicked) {
+            // element.hide(true); no -> (already hidden)
+            // element.destroy(); yes
+            // startLevel(i + 1);
+            // }
         });
     }
 };

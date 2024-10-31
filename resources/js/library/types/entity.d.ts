@@ -69,11 +69,13 @@ export interface EventHandler {
     setListener: SetListener;
 }
 
-type EntityMouseEvent = {mouseProp: string};
+type EventProperties = {clicked: boolean; clickTotal: number};
+
+type EntityMouseEvent = EventProperties;
 type EntityKeyboardEvent = {keyProp: string};
-type EntityTouchEvent = {touchProp: string};
-type StartEntityTransitionEvent = {startTransitionProp: string};
-type EndEntityTransitionEvent = {endTransitionProp: string};
+type EntityTouchEvent = EventProperties;
+type StartEntityTransitionEvent = EventProperties;
+type EndEntityTransitionEvent = EventProperties;
 
 export type EntityEventMap = CustomEventMap & InputEventMap;
 

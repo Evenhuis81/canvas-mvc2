@@ -40,7 +40,15 @@ export const createEventHandler = <T extends keyof EntityEventMap>(
     };
 };
 
-const entityProps = {
+const eventPropertiesBase = {
+    mouse: ,
+    keyboard ,
+    touch,
+    startTransitionEnd,
+    endTransitionEnd,
+}
+
+const createEventProperties = () => ({
     mousedown: {mouseProp: 'asdf'},
     mousemove: {mouseProp: 'asdf'},
     mouseup: {mouseProp: 'asdf'},
@@ -51,7 +59,7 @@ const entityProps = {
     touchend: {touchProp: 'asdf'},
     startTransitionEnd: {startTransitionProp: 'startEndProp'},
     endTransitionEnd: {endTransitionProp: 'endEndProp'},
-};
+});
 
 const createSetListener =
     (
@@ -74,7 +82,8 @@ const createSetListener =
         }
 
         const add = () => {
-            input.addListener(type, runListener, sketch);
+            // TODO::Extract Shape from sketch
+            input.addListener(type, runListener, sketch, props);
         };
 
         const remove = () => {
@@ -96,15 +105,3 @@ const createSetListener =
 
         add();
     };
-
-// const mouseupListener = (evt: MouseEvent) => {
-//     // statistic release counter (inside or outside), can be used to check clicked (to remove clicked property)
-//     if (mouse.insideRect(sketch)) {
-//         properties.clicked = true;
-
-//         mouseup({clicked: properties.clicked, evt});
-
-//         // See below comments, until done, choose mouse or touch to call usermethod
-//         userListeners.clickup({clicked: properties.clicked, evt});
-//     }
-// };
