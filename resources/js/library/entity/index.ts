@@ -18,11 +18,10 @@ const createEntity = ({context, engine, input, canvas}: Resources, options?: Con
     canvas.tabIndex = 1; // no tabIndex = no focus, prevents listeners from working on canvas
     canvas.focus();
 
-    const {setListener, addListeners, removeListeners, startTransitionEnd, endTransitionEnd} = createEventHandler(
-        input,
-        sketch,
-        listeners,
-    );
+    // {setListener, addListeners, removeListeners, startTransitionEnd, endTransitionEnd}
+    const eventHandler = createEventHandler(input, sketch, listeners);
+
+    // console.log(startTransitionEnd, endTransitionEnd);
 
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
@@ -34,14 +33,13 @@ const createEntity = ({context, engine, input, canvas}: Resources, options?: Con
         input,
         engine,
         context,
-        startTransitionEnd,
-        endTransitionEnd,
+        eventHandler,
     ); // Also creates setEngine
 
     const userMethods: EntityMethods = {
-        setListener,
+        setListener: eventHandler.setListener,
         setVisual,
-        ...createUserMethods(visualProperties, generalProperties, callbacks, addListeners, removeListeners),
+        ...createUserMethods(visualProperties, generalProperties, callbacks, eventHandler),
     };
 
     initialize(generalProperties, userMethods);

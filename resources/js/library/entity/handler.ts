@@ -16,15 +16,11 @@ export const createEventHandler = <T extends keyof EntityEventMap>(
         removeListeners: () => listenerHandlers.forEach(l => l.remove),
     };
 
-    const setListener = createSetListener(listenerHandlers, eventHandler, input, sketch);
+    const eventProperties = createEventProperties();
 
-    if (!listeners) return {...eventHandler, setListener};
+    const setListener = createSetListener(listenerHandlers, eventHandler, eventProperties, input, sketch);
 
-    // const objectValueMover = makeObjectValueMoverPartial(['startTransitionEnd', 'endTransitionEnd']);
-
-    // const {result, copied} = objectValueMover(listeners);
-
-    // copied.forEach(copy => eventHandler[copy.type] = copy.value);
+    if (!listeners) return Object.assign(eventHandler, {setListener});
 
     for (const key in listeners) {
         const listener = listeners[key];
@@ -34,41 +30,61 @@ export const createEventHandler = <T extends keyof EntityEventMap>(
         setListener(key, listener);
     }
 
-    return {
-        ...eventHandler,
-        setListener,
-    };
+    return Object.assign(eventHandler, {setListener});
 };
 
-const entityProps = {
-    mousedown: {mouseProp: 'asdf'},
-    mousemove: {mouseProp: 'asdf'},
-    mouseup: {mouseProp: 'asdf'},
-    keydown: {keyProp: 'asdf'},
-    keyup: {keyProp: 'asdf'},
-    touchstart: {touchProp: 'asdf'},
-    touchmove: {touchProp: 'asdf'},
-    touchend: {touchProp: 'asdf'},
-    startTransitionEnd: {startTransitionProp: 'startEndProp'},
-    endTransitionEnd: {endTransitionProp: 'endEndProp'},
+const createEventProperties = () => {
+    const mouseProperties = {
+        mouseProp: 'test mouse prop',
+    };
+    const keyProperties = {
+        keyProp: 'test mouse prop',
+    };
+    const touchProperties = {
+        touchProp: 'test mouse prop',
+    };
+    const startTransitionEndProperties = {
+        startEndProp: 'test mouse prop',
+    };
+    const endTransitionEndProperties = {
+        endEndProp: 'test mouse prop',
+    };
+    const eventMap = {
+        mousedown: mouseProperties,
+        mousemove: mouseProperties,
+        mouseup: mouseProperties,
+        keydown: keyProperties,
+        keyup: keyProperties,
+        touchstart: touchProperties,
+        touchmove: touchProperties,
+        touchend: touchProperties,
+        startTransitionEnd: startTransitionEndProperties,
+        endTransitionEnd: endTransitionEndProperties,
+    };
+
+    return eventMap;
 };
 
 const createSetListener =
     (
         listenerHandlers: ListenerHandler[],
         eventHandler: Omit<EventHandler, 'setListener'>,
+        eventProperties: EntityEventMap,
         input: Input,
         sketch: Sketch,
     ) =>
     <K extends keyof EntityEventMap>(type: K, listener: (evt: EntityEventMap[K]) => void) => {
-        const runListener = () => listener(entityProps[type]);
+        const runListener = () => listener(eventProperties[type]);
 
         if (type === 'startTransitionEnd') {
             eventHandler.startTransitionEnd = runListener;
 
             return;
-        } else if (type === 'endTransitionEnd') {
+        }
+        if (type === 'endTransitionEnd') {
             eventHandler.endTransitionEnd = runListener;
+
+            // console.log(eventHandler);
 
             return;
         }
@@ -93,18 +109,4 @@ const createSetListener =
 
         // TODO::Test if overwritten listener gets handled properly
         listenerHandlers[index] = {type, add, remove};
-
-        add();
     };
-
-// const mouseupListener = (evt: MouseEvent) => {
-//     // statistic release counter (inside or outside), can be used to check clicked (to remove clicked property)
-//     if (mouse.insideRect(sketch)) {
-//         properties.clicked = true;
-
-//         mouseup({clicked: properties.clicked, evt});
-
-//         // See below comments, until done, choose mouse or touch to call usermethod
-//         userListeners.clickup({clicked: properties.clicked, evt});
-//     }
-// };

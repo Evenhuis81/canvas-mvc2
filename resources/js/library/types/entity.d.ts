@@ -72,14 +72,14 @@ export interface EventHandler {
 type EntityMouseEvent = {mouseProp: string};
 type EntityKeyboardEvent = {keyProp: string};
 type EntityTouchEvent = {touchProp: string};
-type StartEntityTransitionEvent = {startTransitionProp: string};
-type EndEntityTransitionEvent = {endTransitionProp: string};
+type StartEndEntityTransitionEvent = {startEndProp: string};
+type EndEndEntityTransitionEvent = {endEndProp: string};
 
 export type EntityEventMap = CustomEventMap & InputEventMap;
 
 export type CustomEventMap = {
-    startTransitionEnd: StartEntityTransitionEvent;
-    endTransitionEnd: EndEntityTransitionEvent;
+    startTransitionEnd: StartEndEntityTransitionEvent;
+    endTransitionEnd: EndEndEntityTransitionEvent;
 };
 
 export type InputEventMap = {
