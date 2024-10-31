@@ -1,12 +1,11 @@
-import {Callbacks, GeneralProperties, VisualProperties} from 'library/types/entity';
+import {Callbacks, EventHandler, GeneralProperties, VisualProperties} from 'library/types/entity';
 
 /* eslint-disable max-lines-per-function */
 export const createUserMethods = (
     vProps: VisualProperties,
     gProps: GeneralProperties,
     callbacks: Callbacks,
-    addListeners: () => void,
-    removeListeners: () => void,
+    eventHandler: EventHandler,
 ) => {
     // parameter default gives auto start (and end) transitions if type !undefined, manually able to set by user input
     const show = (quickShow = !vProps.startType) => {
@@ -15,7 +14,7 @@ export const createUserMethods = (
 
         gProps.show = true;
 
-        addListeners();
+        eventHandler.addListeners();
 
         callbacks.start(quickShow);
     };
@@ -26,18 +25,20 @@ export const createUserMethods = (
         const hideMe = () => {
             gProps.show = false;
 
-            removeListeners();
-
             callbacks.end(quickHide);
         };
 
         if (hideTime) {
             setTimeout(() => {
+                eventHandler.removeListeners();
+
                 hideMe();
             }, hideTime);
 
             return;
         }
+
+        eventHandler.removeListeners();
 
         hideMe();
     };

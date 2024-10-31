@@ -74,14 +74,14 @@ type EventProperties = {clicked: boolean; clickTotal: number};
 type EntityMouseEvent = EventProperties;
 type EntityKeyboardEvent = {keyProp: string};
 type EntityTouchEvent = EventProperties;
-type StartEntityTransitionEvent = EventProperties;
-type EndEntityTransitionEvent = EventProperties;
+type StartEndEntityTransitionEvent = EventProperties;
+type EndEndEntityTransitionEvent = EventProperties;
 
 export type EntityEventMap = CustomEventMap & InputEventMap;
 
 export type CustomEventMap = {
-    startTransitionEnd: StartEntityTransitionEvent;
-    endTransitionEnd: EndEntityTransitionEvent;
+    startTransitionEnd: StartEndEntityTransitionEvent;
+    endTransitionEnd: EndEndEntityTransitionEvent;
 };
 
 export type InputEventMap = {

@@ -1,11 +1,10 @@
 /* eslint-disable no-console */
 /* eslint-disable max-lines-per-function */
-import type {ConfigOptions, Entity} from 'library/types/entity';
 import createEntity from 'library/entity';
+import type {ConfigOptions, Entity} from 'library/types/entity';
 
 export const mainMenu = () => {
-    const entity = createEntity('tr');
-
+    // const entity = createEntity('tr');
     // const b = entity.create(mainButton);
 
     goToLevelSelection();
@@ -69,16 +68,18 @@ const createLevelSelectEntities = (amount: number, entity: {create: (options?: C
             row++;
         }
 
-        const clicked = () => {
+        const clicked = evt => {
+            console.log(evt);
             element.setVisual('end', 'explode');
 
-            elements.forEach(element => element.hide());
+            elements.forEach(el => el.hide());
         };
 
         element.setListener('touchend', clicked);
         element.setListener('mouseup', clicked);
         element.setListener('endTransitionEnd', evt => {
             console.log(evt.clicked, evt.clickTotal);
+            // console.log(evt.clicked, evt.clickTotal);
             // if (clicked) {
             // element.hide(true); no -> (already hidden)
             // element.destroy(); yes
