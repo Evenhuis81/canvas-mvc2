@@ -42,7 +42,7 @@
 // };
 
 // function on(...args: KeyWithCallback<CustomEventMap>) {
-//     testTr[args[0]](args);
+// testTr[args[0]](args);
 // if (args[0] === 'startTransitionEnd') {
 //     const [_, clb] = args; // destructuring inside condition
 //     clb({transitionProp: 'transition startEnd'}); // here clb allows on string only (string) => void
@@ -63,12 +63,6 @@
 
 // const throwError = (type: keyof typeof err) => err[type];
 
-// if (properties.disabled) {
-//     properties.disabled = false;
-
-//     methods.disable();
-// }
-
 // interface Entity {
 //     sketch: EntitySketch;
 //     properties: EntityProperties;
@@ -86,84 +80,6 @@
 
 // const throwError2 = (id: string | number = 'noID', subject: string = 'subject', action: string = "'noAction'") => {
 //     throw Error(`${subject} with id '${id}' already ${action}`);
-// };
-
-// interface MousedownListener {
-//     type: 'mousedown';
-//     listener: (evt: EntityEvent<MouseEvent>) => void;
-// }
-
-// interface TouchstartListener {
-//     type: 'touchstart';
-//     listener: (evt: EntityEvent<TouchEvent>) => void;
-// }
-
-// type ListenerTypes = 'mousedown' | 'touchstart';
-
-// type Listeners = MousedownListener | TouchstartListener;
-
-// const createListtener = <K extends Listeners['type']>(key: K, listener: Listeners['listener']) => {
-//     if (key === 'mousedown') {
-//         const tt = {type: key, listener}
-//     }
-// }
-
-// const testListeners: Partial<UserListeners> = {
-//     mousedown: () => {},
-//     touchstart: () => {},
-// }
-
-// let key: ListenerTypes;
-// for (const key in testListeners) {
-//     const testList = userListeners[key];
-//     if (testList)
-//     const listt = createListtener(key, testListeners[key]);
-//         listeners.push({
-//             type: key,
-//             listener: testList,
-//         });
-// }
-
-// const mousedownListener = (evt: MouseEvent) => {
-//     if (mouse.insideRect(sketch)) {
-//         if (clickdown) clickdown({clicked: properties.clicked, evt});
-//         if (mousedown) mousedown({clicked: properties.clicked, evt});
-//     }
-// };
-
-// const mouseupListener = (evt: MouseEvent) => {
-//     // statistic release counter (inside or outside), can be used to check clicked (to remove clicked property)
-//     if (mouse.insideRect(sketch)) {
-//         properties.clicked = true;
-
-//         mouseup({clicked: properties.clicked, evt});
-
-//         // See below comments, until done, choose mouse or touch to call usermethod
-//         userListeners.clickup({clicked: properties.clicked, evt});
-//     }
-// };
-
-// // To call 1 method for userListener and send both mouse and touch events on 'click', requires 1st line method TODO
-// const touchstartListener = (evt: TouchEvent) => {
-//     if (touch.insideRect(sketch)) {
-//         properties.clicked = true;
-
-//         userListeners.touchstart({clicked: properties.clicked, evt});
-//     }
-// };
-
-// const touchendListener = (evt: TouchEvent) => {
-//     if (touch.insideRect(sketch)) {
-//         properties.clicked = true;
-
-//         userListeners.touchend({clicked: properties.clicked, evt});
-//     }
-// };
-
-// const emptyUpdate = {
-//     id: 'emptyUpdate',
-//     name: 'Empty Update',
-//     fn: () => {},
 // };
 
 // const propertiesLength = [6, 5]; // [Mixed Internal Properties, Transition Properties]

@@ -10,7 +10,7 @@ const createResource = (res: Resources) => ({
     create: (options?: ConfigOptions) => createEntity(res, options),
 });
 
-const createEntity = ({context, engine, input, canvas}: Resources, options?: ConfigOptions) => {
+const createEntity = ({context, engine, input}: Resources, options?: ConfigOptions) => {
     // Extract internal properties from options
     const {generalProperties, visualProperties, listeners, sketch} = extractOptions(options);
 
