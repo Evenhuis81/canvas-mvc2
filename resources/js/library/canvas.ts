@@ -19,10 +19,17 @@ export const setCanvas = (
     setLibraryOptions(canvas, options);
 };
 
+let count = 99;
+
 export const getCanvas = (options?: Partial<CanvasOptions>) => {
     const canvasOptions = {...defaultCanvasOptions, ...options};
 
     const canvas = document.createElement('canvas');
+
+    // if (canvasOptions.focus) {
+    canvas.tabIndex = ++count; // no tabIndex = no focus, prevents listeners from working on canvas
+    canvas.focus();
+    // }
 
     if (!canvasOptions.contextMenu) {
         canvas.addEventListener('contextmenu', e => {

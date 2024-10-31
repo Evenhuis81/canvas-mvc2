@@ -60,7 +60,7 @@ export const createRenders = (
             },
         }),
         explode: () => {
-            const {update: fn, prepare} = createTransitionExplode(sketch, callbacks);
+            const {update: fn, prepare} = createTransitionExplode(sketch, colors, callbacks);
 
             return {
                 update: {
@@ -188,18 +188,33 @@ const createTransitionSlideinleft = () => () => {
     //
 };
 
+let phase = 1;
+
 const createTransitionExplode = (
     sketch: Sketch,
+    {fill, stroke, textFill}: Colors,
     callbacks: Pick<Callbacks, 'endEnd'>,
-    // {fill, stroke, textFill}: Colors,
 ) => ({
     update: () => {
-        sketch.lw += 0.1;
+        if (phase === 1) sketch.lw += 0.1;
+        else if (phase === 2) {
+            fill.a -= 0.01;
+            stroke.a -= 0.01;
+            textFill.a -= 0.01;
+
+            if (fill.a < 0) {
+                fill.a -= 0;
+                stroke.a -= 0;
+                textFill.a -= 0;
+
+                callbacks.endEnd();
+            }
+        }
 
         if (sketch.lw > 10) {
-            //
+            sketch.lw = 10;
 
-            callbacks.endEnd();
+            phase = 2;
         }
     },
     prepare: () => {

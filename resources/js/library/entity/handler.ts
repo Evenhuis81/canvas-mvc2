@@ -11,103 +11,120 @@ export const createEventHandler = <T extends keyof EntityEventMap>(
 ) => {
     const listenerHandlers: ListenerHandler[] = [];
 
-    const eventHandler: Omit<EventHandler, 'setListener'> = {
+    const eventHandler: Omit<EventHandler, 'addListener'> = {
         addListeners: () => listenerHandlers.forEach(l => l.add()),
         removeListeners: () => listenerHandlers.forEach(l => l.remove),
     };
 
     const eventProperties = createEventProperties();
 
-    const setListener = createSetListener(listenerHandlers, eventHandler, eventProperties, input, sketch);
+    const {addListener, removeListener} = createAddAndRemoveListener(
+        listenerHandlers,
+        eventHandler,
+        eventProperties,
+        input,
+        sketch,
+    );
 
-    if (!listeners) return Object.assign(eventHandler, {setListener});
+    if (!listeners) return Object.assign(eventHandler, {addListener, removeListener});
 
     for (const key in listeners) {
         const listener = listeners[key];
 
         if (!listener) continue;
 
-        setListener(key, listener);
+        addListener(key, listener);
     }
 
-    return Object.assign(eventHandler, {setListener});
+    return Object.assign(eventHandler, {addListener});
 };
 
 const createEventProperties = () => {
-    const mouseProperties = {
-        mouseProp: 'test mouse prop',
-    };
+    const baseProperties = {clicked: false, clickTotal: 0};
+
+    // const mouseProperties = {
+    //     mouseProp: 'test mouse prop',
+    // };
     const keyProperties = {
         keyProp: 'test mouse prop',
     };
-    const touchProperties = {
-        touchProp: 'test mouse prop',
-    };
-    const startTransitionEndProperties = {
-        startEndProp: 'test mouse prop',
-    };
-    const endTransitionEndProperties = {
-        endEndProp: 'test mouse prop',
-    };
-    const eventMap = {
-        mousedown: mouseProperties,
-        mousemove: mouseProperties,
-        mouseup: mouseProperties,
+    // const touchProperties = {
+    //     touchProp: 'test mouse prop',
+    // };
+    // const startTransitionEndProperties = {
+    //     startEndProp: 'test mouse prop',
+    // };
+    // const endTransitionEndProperties = {
+    //     endEndProp: 'test mouse prop',
+    // };
+
+    return {
+        mousedown: baseProperties,
+        mousemove: baseProperties,
+        mouseup: baseProperties,
         keydown: keyProperties,
         keyup: keyProperties,
-        touchstart: touchProperties,
-        touchmove: touchProperties,
-        touchend: touchProperties,
-        startTransitionEnd: startTransitionEndProperties,
-        endTransitionEnd: endTransitionEndProperties,
+        touchstart: baseProperties,
+        touchmove: baseProperties,
+        touchend: baseProperties,
+        startTransitionEnd: baseProperties,
+        endTransitionEnd: baseProperties,
     };
-
-    return eventMap;
 };
 
-const createSetListener =
-    (
-        listenerHandlers: ListenerHandler[],
-        eventHandler: Omit<EventHandler, 'setListener'>,
-        eventProperties: EntityEventMap,
-        input: Input,
-        sketch: Sketch,
-    ) =>
-    <K extends keyof EntityEventMap>(type: K, listener: (evt: EntityEventMap[K]) => void) => {
-        const runListener = () => listener(eventProperties[type]);
+const createAddAndRemoveListener = (
+    listenerHandlers: ListenerHandler[],
+    eventHandler: Omit<EventHandler, 'addListener' | 'removeListener'>,
+    eventProperties: EntityEventMap,
+    input: Input,
+    sketch: Sketch,
+) => {
+    return {
+        addListener: <K extends keyof EntityEventMap>(type: K, listener: (evt: EntityEventMap[K]) => void) => {
+            const props = eventProperties[type];
+            const runListener = () => listener(props);
 
-        if (type === 'startTransitionEnd') {
-            eventHandler.startTransitionEnd = runListener;
+            if (type === 'startTransitionEnd') {
+                eventHandler.startTransitionEnd = runListener;
 
-            return;
-        }
-        if (type === 'endTransitionEnd') {
-            eventHandler.endTransitionEnd = runListener;
+                return;
+            }
+            if (type === 'endTransitionEnd') {
+                eventHandler.endTransitionEnd = runListener;
 
-            // console.log(eventHandler);
+                return;
+            }
 
-            return;
-        }
+            const add = () => {
+                // TODO::Extract Shape from sketch (pass only needed props)
+                input.addListener(type, runListener, props, sketch);
+            };
 
-        const add = () => {
-            // TODO::Extract Shape from sketch
-            input.addListener(type, runListener, sketch, eventProperties[type]);
-        };
+            const remove = () => {
+                input.removeListener(type);
+            };
 
-        const remove = () => {
-            input.removeListener(type);
-        };
+            const index = listenerHandlers.findIndex(t => t.type === type);
 
-        const index = listenerHandlers.findIndex(t => t.type === type);
+            if (index === -1) {
+                listenerHandlers.push({type, add, remove});
 
-        if (index === -1) {
-            listenerHandlers.push({type, add, remove});
+                return;
+            }
 
-            return;
-        }
+            listenerHandlers[index].remove();
 
-        listenerHandlers[index].remove();
+            // TODO::Test if overwritten listener gets handled properly
+            listenerHandlers[index] = {type, add, remove};
+        },
+        removeListener: <K extends keyof EntityEventMap>(type: K) => {
+            const index = listenerHandlers.findIndex(t => t.type === type);
 
-        // TODO::Test if overwritten listener gets handled properly
-        listenerHandlers[index] = {type, add, remove};
+            if (index === -1) throw Error(`${type} does not exist in handler`);
+
+            listenerHandlers[index].remove();
+
+            listenerHandlers.splice(index, 1);
+        },
     };
+};
