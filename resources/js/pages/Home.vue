@@ -3,7 +3,9 @@
         <a :href="link.href">{{ link.title }}</a>
     </div>
     <div style="display: flex; justify-content: center; align-items: center">
-        <button style="font-size: 2rem; position: absolute; bottom: 200px" @click="statsPopup()">Stat Popup</button>
+        <button style="font-size: 2rem; position: absolute; bottom: 200px" @click="openWindow('statistics')">
+            Stat Popup
+        </button>
     </div>
     <div style="display: flex; justify-content: center; align-items: center">
         <button style="font-size: 2rem; position: absolute; bottom: 50px" @click="goTo('Demo')">Demo</button>
@@ -36,14 +38,4 @@ const createLinksFromRoutes = () => {
 const goTo = (routeName: string) => goToRoute(routeName);
 
 const links = reactive(createLinksFromRoutes());
-
-const statsPopup = () => {
-    const windowFeatures = 'left=200,top=100,width=480,height=320';
-    const handle = window.open('http://localhost:8000/statistics', 'statPopup', windowFeatures);
-    if (!handle) {
-        // The window wasn't allowed to open
-        // This is likely caused by built-in popup blockers.
-        console.log('popup stat failed');
-    }
-};
 </script>
