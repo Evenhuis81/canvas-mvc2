@@ -8,9 +8,7 @@
     @vite(['resources/js/app.ts'])
     <title>{{env('APP_NAME')}}</title>
 </head>
-
-<body style="background-color: black;">
-    <div id="app"></div>
+    <div id="app" />
 </body>
 
 </html>
