@@ -1,10 +1,10 @@
-type Statistic = {
+export type Statistic = {
     id: string | number;
     name: string;
     fn: () => string;
 };
 
-type StatisticResource = {
+export type StatisticResource = {
     id: string | number;
     statistics: Statistic[];
     canvas: HTMLCanvasElement;
@@ -14,7 +14,7 @@ type StatisticResource = {
     active: boolean;
 };
 
-type StatProperties = {
+export type StatProperties = {
     id: number;
     name: string;
     minY: number;

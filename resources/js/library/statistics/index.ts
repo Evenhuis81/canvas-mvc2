@@ -1,7 +1,23 @@
-import {uid} from './helpers';
-import {vector} from './vector';
-import {createDualView} from './dualview';
-import {resources} from '.';
+import {uid} from '../helpers';
+import {vector} from '../vector';
+// import {createDualView} from '../dualview';
+import {initialize, resources} from '..';
+import {Statistic, StatisticResource} from 'library/types/statistics';
+
+export const statisticMenu = {
+    setup: async () => {
+        initialize('stats', {
+            containerID: 'container',
+            full: true,
+            clear: true,
+            backgroundColor: '#000',
+        });
+
+        // mainMenu();
+    },
+    run: () => resources.stats.engine.run(),
+    runOnce: () => resources.stats.engine.runOnce(),
+};
 
 const statisticsResource: Record<string | number, StatisticResource> = {};
 const toggleKey: Record<string | number, string> = {};

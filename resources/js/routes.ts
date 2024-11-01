@@ -1,4 +1,5 @@
 import Home from 'pages/Home.vue';
+import Stats from 'library/statistics/Stats.vue';
 import type {RouteRecordRaw} from 'vue-router';
 
 export const routes: RouteRecordRaw[] = [
@@ -74,12 +75,12 @@ export const routes: RouteRecordRaw[] = [
             shouldBeLoggedIn: false,
         },
     },
-    // {
-    //     path: '/statistics',
-    //     component: () => import('./library/Statistics.vue'),
-    //     name: 'Stats',
-    //     meta: {
-    //         shouldBeLoggedIn: false,
-    //     },
-    // },
+    {
+        path: '/statistics',
+        component: Stats,
+        name: 'Stats',
+        meta: {
+            shouldBeLoggedIn: false,
+        },
+    },
 ];
