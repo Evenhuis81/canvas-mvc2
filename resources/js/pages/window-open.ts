@@ -1,5 +1,3 @@
-import {l} from 'vite/dist/node/types.d-aGj9QkWt';
-
 // TODO::Add all possible features, map feature for incoming option/change and stringify for use
 const stringifyObject = (obj: Partial<Record<string, number | string | boolean>>) => {
     let result = '';
@@ -15,7 +13,7 @@ const stringifyObject = (obj: Partial<Record<string, number | string | boolean>>
 
 const defaults: WindowOpener = {
     properties: {
-        baseUrl: `http://localhost:8000/`,
+        baseUrl: 'http://localhost:8000',
         route: '',
         window: null,
     },
@@ -50,52 +48,41 @@ export const createWindowOpener = (route: string, options?: Partial<WindowOpener
         if (options) {
             const windowFeatures = stringifyObject(features);
 
-            properties.window = window.open(`http://localhost:8000/${route}`, `${route}Window`, windowFeatures);
+            properties.window = window.open(`${properties.baseUrl}/${route}`, `${route}Window`, windowFeatures);
 
             handler(properties.window);
 
             return;
         }
 
-        properties.window = window.open(`http://localhost:8000/${route}`, `${route}Window`);
+        properties.window = window.open(`${properties.baseUrl}/${route}`, `${route}Window`);
 
         handler(properties.window);
 
         return;
     };
 
-    const openWindowCenter = (expand: boolean = false) => {
+    const openWindowCenter = (expand: boolean = false, options?: Partial<WindowOpener['features']>) => {
         // Until options gets configoptions, this is experimental/unfinished
-        // const screenHeight = window.screen.height * window.devicePixelRatio;
-        // const screenWidth = window.screen.width * window.devicePixelRatio;
-        features.left = window.screen.width / 2 - features.width / 2;
-        features.top = window.screen.height / 2 - features.height;
+        const newFeatures = {...features};
 
-        const windowFeatures = stringifyObject(features);
-
-        properties.window = window.open(`http://localhost:8000/${route}`, `${route}Window`, windowFeatures);
-
-        if (properties.window && expand) {
-            properties.window.onload = () => {
-                let inter;
-
-                const addInter = () =>
-                    (inter = setInterval(() => {
-                        resizeBy(1, 1);
-
-                        features.width++;
-                        if (features.width >= 200) {
-                            features.width = 200;
-                            features.height = 200;
-                            removeInter();
-                        }
-                    }, 16));
-
-                const removeInter = () => clearInterval(inter);
-
-                addInter();
-            };
+        if (options) {
+            newFeatures.width = options.width ?? defaults.features.width;
+            newFeatures.height = options.height ?? defaults.features.height;
         }
+
+        newFeatures.left = window.screen.width / 2 - newFeatures.width / 2;
+        newFeatures.top = window.screen.height / 2 - newFeatures.height / 2;
+
+        let parsedFeatures = stringifyObject(newFeatures);
+
+        properties.window = window.open(`${properties.baseUrl}/${route}`, `${route}Window`, parsedFeatures);
+
+        // if (properties.window && expand) {
+        //     properties.window.onload = () => {
+        //         //
+        //     };
+        // }
     };
 
     const resizeTo = (width: number, height: number) => {

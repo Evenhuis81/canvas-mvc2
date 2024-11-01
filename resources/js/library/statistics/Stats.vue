@@ -1,17 +1,15 @@
 <template>
-    <!-- <div id="container" style="width: 100px; height: 100px; background-color: gray"></div> -->
-    <!-- <canvas width="480" height="320" style="background-color: black" /> -->
+    <div id="container"></div>
 </template>
 
 <script setup lang="ts">
 import {onMounted} from 'vue';
-import {statisticMenu} from '.';
+import statisticResrouce from '.';
 
 onMounted(() => {
-    // setTimeout(() => {
-    //     window.close();
-    // }, 1500);
-    // statisticMenu.setup();
-    // statisticMenu.run();
+    statisticResrouce.setup();
+    statisticResrouce.run();
+
+    console.log('stats.vue mounted');
 });
 </script>

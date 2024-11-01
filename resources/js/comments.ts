@@ -2,6 +2,26 @@
 // This should become a reesource, but with different 'themes' or statistic variants. (for different kind of options)
 // Create text object according to StaticView, with calculated options (like button, possible to 'lend' those)
 
+// OpenWindoHandler:
+// const addInter = () =>
+//     (inter = setInterval(() => {
+//         resizeBy(1, 1);
+
+//         features.width++;
+//         if (features.width >= 200) {
+//             features.width = 200;
+//             features.height = 200;
+//             removeInter();
+//         }
+//     }, 16));
+
+// Actual screensize (scale * pixeldensity)
+// const screenHeight = window.screen.height * window.devicePixelRatio;
+// const screenWidth = window.screen.width * window.devicePixelRatio;
+// const removeInter = () => clearInterval(inter);
+
+// addInter();
+
 // const testEntity = entity.create({
 //     listeners: {
 //         mouseup: evt => {

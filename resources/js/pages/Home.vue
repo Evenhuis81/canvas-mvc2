@@ -3,7 +3,7 @@
         <a :href="link.href">{{ link.title }}</a>
     </div>
     <div style="display: flex; justify-content: center; align-items: center">
-        <button style="font-size: 2rem; position: absolute; bottom: 200px" @click="openWindowCenter(true)">
+        <button style="font-size: 2rem; position: absolute; bottom: 200px" @click="openWindowCustom()">
             Statistics
         </button>
     </div>
@@ -22,7 +22,9 @@ import {createWindowOpener} from './window-open';
 const noLinkRoutes = ['Home', 'Demo', 'Stats'];
 const condition = ({name}: RouteRecordRaw) => noLinkRoutes.find(route => route === name);
 
-const {openWindowCenter} = createWindowOpener('statistics', {width: 100, height: 100});
+const {openWindowCenter} = createWindowOpener('statistics');
+
+const openWindowCustom = () => openWindowCenter(true, {width: 480, height: 329});
 
 const createLinksFromRoutes = () => {
     const routeToLinks = [];
