@@ -1,14 +1,16 @@
 <template>
-    <div id="container" />
+    <div id="stat-container" />
 </template>
 
 <script setup lang="ts">
+import statistics from 'library/statistics';
 import {onMounted} from 'vue';
-import tombraid from './tombraid';
+// import tombraid from './tombraid';
 
 onMounted(() => {
-    tombraid.setup();
+    statistics.createPopup('keyF');
+    // tombraid.setup();
 
-    tombraid.run();
+    // tombraid.run();
 });
 </script>

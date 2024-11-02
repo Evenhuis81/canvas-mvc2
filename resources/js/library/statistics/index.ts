@@ -1,9 +1,10 @@
-import {uid} from '../helpers';
+import {counter as getCounter, uid} from '../helpers';
 import {vector} from '../vector';
 // import {createDualView} from '../dualview';
 import {initialize, resources} from '..';
 import {Statistic, StatisticResource} from 'library/types/statistics';
 import {StatisticOptions} from 'library/types';
+import {createWindowOpener} from 'pages/window-open';
 
 export const statisticMenu = {
     setup: async () => {
@@ -39,8 +40,34 @@ const toggleView = (id: string | number) => {
     engine.setDraw(draw);
 };
 
-// Popup 480 * 320, create multiple options for view
+const popupSettings = {
+    width: 480,
+    height: 320,
+    backgroundColor: 'white',
+    clear: true,
+    containerID: 'stat-container',
+};
+
+const counter = {...getCounter};
+
 export default {
+    // Popup 480 * 320, create multiple options for view
+    createPopup: (key: string) => {
+        const id = `statwindow-${counter.count}`;
+
+        counter.increase();
+
+        initialize(id, popupSettings);
+
+        const {canvas, tv} = resources[id];
+
+        const {openWindowCenter} = createWindowOpener('statistics', {width: 480, height: 320});
+
+        addEventListener('keyup', ({code}) => {
+            console.log(code, key);
+            if ((code = key)) openWindowCenter();
+        });
+    },
     create: (id: number | string, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, engine: Engine) => {
         const statistics: Statistic[] = [];
 
