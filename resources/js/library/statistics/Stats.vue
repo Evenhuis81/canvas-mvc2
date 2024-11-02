@@ -13,7 +13,7 @@ const settings = {
     width: 480,
     height: 320,
     backgroundColor: 'black',
-    center: true,
+    // center: true,
     clear: true,
     containerID: 'stat-container',
 };
@@ -25,6 +25,7 @@ onMounted(() => {
 
     const resource = resources[resourceID];
 
-    console.log(resources);
+    // console.log(resource);
+    resource.tv.strokeRect({x: 0, y: 0, w: 480, h: 320, lw: 2, stroke: 'red'});
 });
 </script>

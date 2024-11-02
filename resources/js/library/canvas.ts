@@ -15,7 +15,7 @@ export const setCanvas = (
     options?: Partial<LibraryOptions>,
 ): void => {
     // Container could/should be optional
-    setContainer(canvas, container);
+    setContainer(canvas, container, options?.flex);
 
     setLibraryOptions(canvas, options);
 };
@@ -81,11 +81,15 @@ export const getContainer = (containerID: string) => {
     return container;
 };
 
-export const setContainer = (canvas: HTMLCanvasElement, container: HTMLDivElement) => {
-    container.style.display = 'flex';
-    container.style.width = '100vw';
-    container.style.height = '100vh';
-    container.style.justifyContent = 'center';
-    container.style.alignItems = 'center';
+export const setContainer = (canvas: HTMLCanvasElement, container: HTMLDivElement, flex = false) => {
+    // TODO::Make Container optional
+    if (!flex) {
+        container.style.display = 'flex';
+        container.style.width = '100vw';
+        container.style.height = '100vh';
+        container.style.justifyContent = 'center';
+        container.style.alignItems = 'center';
+    }
+    // window.document.body.style.overflow = 'hidden';
     container.appendChild(canvas);
 };

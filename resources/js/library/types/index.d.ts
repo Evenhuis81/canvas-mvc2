@@ -34,6 +34,7 @@ interface LibraryOptions extends CanvasOptions {
     center: boolean;
     full: boolean; // full tab (innerWidth, innerHeight)
     clear: boolean;
+    flex: boolean;
     // dualView: boolean;
     // statistics: Partial<StatisticOptions>;
 }

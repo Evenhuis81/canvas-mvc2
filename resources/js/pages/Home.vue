@@ -22,9 +22,9 @@ import {createWindowOpener} from './window-open';
 const noLinkRoutes = ['Home', 'Demo', 'Stats'];
 const condition = ({name}: RouteRecordRaw) => noLinkRoutes.find(route => route === name);
 
-const {openWindowCenter} = createWindowOpener('statistics');
+const {openWindowCenter} = createWindowOpener('statistics', {width: 480, height: 320});
 
-const openWindowCustom = () => openWindowCenter(true, {width: 480, height: 329});
+const openWindowCustom = () => openWindowCenter();
 
 const createLinksFromRoutes = () => {
     const routeToLinks = [];

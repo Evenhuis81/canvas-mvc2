@@ -11,44 +11,18 @@ const stringifyObject = (obj: Partial<Record<string, number | string | boolean>>
     return result;
 };
 
-const defaults: WindowOpener = {
-    properties: {
-        baseUrl: 'http://localhost:8000',
-        route: '',
-        window: null,
-    },
-    features: {
-        left: 100,
-        top: 50,
-        width: 100,
-        height: 100,
-    },
-};
-
-type WindowOpener = {
-    properties: {
-        baseUrl: string;
-        route: string;
-        window: null | Window;
-    };
-    features: {
-        left: number;
-        top: number;
-        width: number;
-        height: number;
-    };
-};
-
 export const createWindowOpener = (route: string, options?: Partial<WindowOpener['features']>) => {
     // set custom features/options here (optional parameter user input)
     const properties = {...defaults.properties};
-    const features = {...defaults.features};
+    const features = {...defaults.features, ...options};
 
     const openWindow = () => {
         if (options) {
-            const windowFeatures = stringifyObject(features);
-
-            properties.window = window.open(`${properties.baseUrl}/${route}`, `${route}Window`, windowFeatures);
+            properties.window = window.open(
+                `${properties.baseUrl}/${route}`,
+                `${route}Window`,
+                stringifyObject(features),
+            );
 
             handler(properties.window);
 
@@ -62,21 +36,39 @@ export const createWindowOpener = (route: string, options?: Partial<WindowOpener
         return;
     };
 
-    const openWindowCenter = (expand: boolean = false, options?: Partial<WindowOpener['features']>) => {
+    // const openWindowCenter = (expand: boolean = false, options?: Partial<WindowOpener['features']>) => {
+    const openWindowCenter = (options?: Partial<WindowOpener['features']>) => {
         // Until options gets configoptions, this is experimental/unfinished
-        const newFeatures = {...features};
-
-        if (options) {
-            newFeatures.width = options.width ?? defaults.features.width;
-            newFeatures.height = options.height ?? defaults.features.height;
-        }
+        const newFeatures = {...features, ...options};
 
         newFeatures.left = window.screen.width / 2 - newFeatures.width / 2;
         newFeatures.top = window.screen.height / 2 - newFeatures.height / 2;
 
-        let parsedFeatures = stringifyObject(newFeatures);
+        properties.window = window.open(
+            `${properties.baseUrl}/${route}`,
+            `${route}Window`,
+            stringifyObject(newFeatures),
+        );
 
-        properties.window = window.open(`${properties.baseUrl}/${route}`, `${route}Window`, parsedFeatures);
+        handler(properties.window);
+
+        const setSize = (win: Window) => {
+            win.onload = () => {
+                // On Safari this might get stuck in a loop:
+                // win.resizeTo(480 + (win.outerWidth - win.innerWidth), 320 + (win.outerHeight - win.innerHeight));
+
+                const width = win.outerWidth - win.innerWidth;
+                const height = win.outerHeight - win.innerHeight;
+
+                win.resizeTo(480 + width, 320 + height);
+            };
+        };
+
+        if (properties.window) setSize(properties.window);
+        // const optionsHandler = (options: WindowOpener['features'], defaultFeatures: WindowOpener['features']) => {
+        //     const features = {defaultFeatures, ...options};
+        // }
+        // optionsHandler(options, newFeatures);
 
         // if (properties.window && expand) {
         //     properties.window.onload = () => {
@@ -110,4 +102,38 @@ const handler = (handle: Window | null) => {
 
     console.log('window open statistics succeeded');
     // set handle in properties and make rssuable
+};
+
+const defaults: WindowOpener = {
+    properties: {
+        baseUrl: 'http://localhost:8000',
+        route: '',
+        window: null,
+    },
+    features: {
+        left: 100,
+        top: 50,
+        width: 100,
+        height: 100,
+    },
+};
+
+type WindowOpenerConfig = PartialNested<WindowOpener>;
+
+type PartialNested<T> = {[P in keyof T]?: PartialNested<T[P]>};
+
+type PartialExcept<T, K extends keyof T> = PartialNested<T> & Pick<T, K>;
+
+type WindowOpener = {
+    properties: {
+        baseUrl: string;
+        route: string;
+        window: null | Window;
+    };
+    features: {
+        left: number;
+        top: number;
+        width: number;
+        height: number;
+    };
 };
