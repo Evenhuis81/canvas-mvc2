@@ -1,3 +1,5 @@
+import {Input} from './input';
+
 interface Resources {
     id: string | number;
     canvas: HTMLCanvasElement;
@@ -32,8 +34,8 @@ interface LibraryOptions extends CanvasOptions {
     center: boolean;
     full: boolean; // full tab (innerWidth, innerHeight)
     clear: boolean;
-    dualView: boolean;
-    statistics: Partial<StatisticOptions>;
+    // dualView: boolean;
+    // statistics: Partial<StatisticOptions>;
 }
 
 interface DualViewProperties {

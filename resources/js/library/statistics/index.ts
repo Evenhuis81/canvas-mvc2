@@ -3,6 +3,7 @@ import {vector} from '../vector';
 // import {createDualView} from '../dualview';
 import {initialize, resources} from '..';
 import {Statistic, StatisticResource} from 'library/types/statistics';
+import {StatisticOptions} from 'library/types';
 
 export const statisticMenu = {
     setup: async () => {
@@ -38,6 +39,7 @@ const toggleView = (id: string | number) => {
     engine.setDraw(draw);
 };
 
+// Popup 480 * 320, create multiple options for view
 export default {
     create: (id: number | string, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, engine: Engine) => {
         const statistics: Statistic[] = [];
@@ -49,7 +51,9 @@ export default {
 
         toggleKey[id] = 'KeyT'; // default
         addEventListener('keyup', ({code}) => {
-            if (code === toggleKey[id]) toggleView(id);
+            if (code === toggleKey[id]) {
+                toggleView(id);
+            }
         });
     },
     set: (id: number | string, stat: Statistic) => statisticsResource[id].statistics.push(stat),

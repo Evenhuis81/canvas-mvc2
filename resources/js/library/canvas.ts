@@ -1,4 +1,5 @@
 import {uid} from './helpers';
+import {CanvasOptions, LibraryOptions} from './types';
 
 // Make this a seperate module when enough default objects arrise
 const defaultCanvasOptions = {

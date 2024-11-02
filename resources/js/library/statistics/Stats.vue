@@ -1,15 +1,30 @@
 <template>
-    <div id="container"></div>
+    <div id="stat-container"></div>
 </template>
 
 <script setup lang="ts">
 import {onMounted} from 'vue';
-import statisticResrouce from '.';
+import {initialize, resources} from '../';
+import statistics from '.';
+
+// containerID: string;
+// full: boolean; // full tab (innerWidth, innerHeight)
+const settings = {
+    width: 480,
+    height: 320,
+    backgroundColor: 'black',
+    center: true,
+    clear: true,
+    containerID: 'stat-container',
+};
 
 onMounted(() => {
-    statisticResrouce.setup();
-    statisticResrouce.run();
+    const resourceID = 'statistics';
 
-    console.log('stats.vue mounted');
+    initialize(resourceID, settings);
+
+    const resource = resources[resourceID];
+
+    console.log(resources);
 });
 </script>

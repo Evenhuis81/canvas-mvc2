@@ -4,6 +4,7 @@ import {getTV} from './views/tv';
 import {getInput} from 'library/input';
 import {getSV} from './views/sv';
 import {uid} from './helpers';
+import {LibraryOptions, ResourcesAndTV} from './types';
 
 export const resources: Record<string | number, ResourcesAndTV> = {};
 
@@ -21,7 +22,8 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
 
     setCanvas(canvas, container, options);
 
-    const input = getInput(canvas, options?.dualView);
+    // dualView was here
+    const input = getInput(canvas);
 
     const tv = getTV(context, input);
 
