@@ -5,6 +5,7 @@ import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {resources} from '..';
 import type {ConfigOptions, EntityMethods, GeneralProperties} from 'library/types/entity';
+import {Resources} from 'library/types';
 
 const createResource = (res: Resources) => ({
     create: (options?: ConfigOptions) => createEntity(res, options),

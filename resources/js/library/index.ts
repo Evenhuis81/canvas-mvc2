@@ -5,20 +5,23 @@ import {getInput} from 'library/input';
 import {getSV} from './views/sv';
 import {uid} from './helpers';
 import {LibraryOptions, ResourcesAndTV} from './types';
+import {setStatistics} from './statistics';
 
 export const resources: Record<string | number, ResourcesAndTV> = {};
 
 export const initialize = (id?: string | number, options?: Partial<LibraryOptions>) => {
     const libraryID = id ?? uid();
 
+    const {containerID, clear, statistics} = {...options};
+
     const canvas = getCanvas(options);
     const context = getContext2D(canvas);
     const engine = getEngine();
 
     // Always first draw in engine setDraw
-    if (options?.clear) clearOn(engine, context);
+    if (clear) clearOn(engine, context);
 
-    const container = options?.containerID ? getContainer(options.containerID) : createContainer(libraryID);
+    const container = containerID ? getContainer(containerID) : createContainer(libraryID);
 
     setCanvas(canvas, container, options);
 
@@ -29,7 +32,7 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
 
     const sv = getSV(context, engine);
 
-    setStatistics(options?.statistics);
+    setStatistics(statistics);
 
     resources[libraryID] = {id: libraryID, canvas, context, engine, container, sv, tv, input};
 };

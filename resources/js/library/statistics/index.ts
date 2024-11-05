@@ -34,32 +34,59 @@ const toggleKey: Record<string | number, string> = {};
 
 const counter = {...getCounter};
 
-export const setStatistics = (options: Partial<StatisticOptions>) => {
+const defaults: Pick<StatisticOptions, 'type' | 'button'> = {
+    type: 'overlay',
+    button: false,
+    // internal properties:
+};
+
+// Make statistic properties / methods / activations etc. also part of statistics itself (to show)
+export const setStatistics = (canvas: HTMLCanvasElement, engine: Engine, options?: Partial<StatisticOptions>) => {
     if (!options) return;
 
-    const {type, button, toggleKey, ...size} = options;
+    const properties = {...defaults, ...options};
+
+    const {type, button, toggleKey} = properties;
+
+    const toggle = statisticMode[type];
+
+    const toggleKeyListener = ({code}: KeyboardEvent) => {
+        if (code === toggleKey) toggle();
+    };
+
+    if (toggleKey) addEventListener('keyup', toggleKeyListener);
+
+    const destroy = () => {
+        // AddEvent to existing input from resources:
+        if (toggleKey) removeEventListener('keyup', toggleKeyListener);
+        // remove eventlistener, remove updates/draw from engine, remove other types (popup window open methods?)
+    };
+
+    return {destroy, toggle};
 };
 
 const statisticMode = {
     popup: () => {
-        const id = `statwindow-${counter.count}`;
-
-        counter.increase();
+        // bad uid, check if multiple stat modes don't have same id
+        const id = `statwindow-${uid()}`;
 
         // initialize(id, popupSettings);
 
-        const {canvas, tv} = resources[id];
+        // const {canvas, tv} = resources[id];
 
         const {openWindowCenter} = createWindowOpener('statistics', {width: 480, height: 320});
 
-        addEventListener('keyup', ({code}) => {
-            console.log(code, key);
-            if ((code = key)) openWindowCenter();
-        });
+        return () => {};
     },
-    overlay: () => {},
-    tab: () => {},
-    dual: () => {},
+    overlay: () => {
+        return () => {};
+    },
+    tab: () => {
+        return () => {};
+    },
+    dual: () => {
+        return () => {};
+    },
     // create: (id: number | string, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, engine: Engine) => {
     //     const statistics: Statistic[] = [];
 
@@ -167,25 +194,21 @@ const createDraw = (props: Omit<StatisticResource, 'draw' | 'canvas' | 'engine' 
     };
 };
 
-// Move this to statistics module
-const setStatistics = (options: Partial<StatisticOptions>) => {
-    if (!options) return;
-    // ToggleKey default set to KeyT here, but ideally this should be optional. (this is outside the statistics module and default
-    // should be set inside the module.)
-    // const statResources = {
-    //     id,
-    //     engine,
-    //     context,
-    //     canvas,
-    //     container,
-    //     toggleKey: options.statistics.toggleKey ?? 'KeyT',
-    // };
-    // let key: keyof StatisticOptions;
+// ToggleKey default set to KeyT here, but ideally this should be optional. (this is outside the statistics module and default
+// should be set inside the module.)
+// const statResources = {
+//     id,
+//     engine,
+//     context,
+//     canvas,
+//     container,
+//     toggleKey: options.statistics.toggleKey ?? 'KeyT',
+// };
+// let key: keyof StatisticOptions;
 
-    // for (key in options.statistics) {
-    //     statSwitch[key](statResources);
-    // }
-};
+// for (key in options.statistics) {
+//     statSwitch[key](statResources);
+// }
 
 // StatisticOptions (create interface)
 // popup: boolean;
@@ -222,22 +245,22 @@ const setStatistics = (options: Partial<StatisticOptions>) => {
 //     toggleKey: ({id, toggleKey}) => statistics.setToggleKey(id, toggleKey),
 // });
 
-addEventListener('keyup', ({code}) => {
-    if (code === 'KeyZ') {
-        const source = '/statistics';
-        const source2 = '/';
-        const target = 'dsank';
-        // const options = 'popup, width=300, height=300';
+// addEventListener('keyup', ({code}) => {
+//     if (code === 'KeyZ') {
+//         const source = '/statistics';
+//         const source2 = '/';
+//         const target = 'dsank';
+//         // const options = 'popup, width=300, height=300';
 
-        const handler = window.open(source, target);
+//         const handler = window.open(source, target);
 
-        setTimeout(() => window.open(source2, target), 2000);
+//         setTimeout(() => window.open(source2, target), 2000);
 
-        // setTimeout(() => handler?.close(), 2000);
-        // console.log('no error', handler);
+//         // setTimeout(() => handler?.close(), 2000);
+//         // console.log('no error', handler);
 
-        // if (!handler) {
-        //     console.log('error', handler);
-        // }
-    }
-});
+//         // if (!handler) {
+//         //     console.log('error', handler);
+//         // }
+//     }
+// });
