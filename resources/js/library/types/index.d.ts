@@ -14,12 +14,16 @@ interface ResourcesAndTV extends Resources {
     tv: TransformedView;
 }
 
+type StatisticViewTypes = 'popup' | 'overlay' | 'tab' | 'dual';
+
 interface StatisticOptions {
-    popup: boolean;
-    overlay: boolean;
-    tab: boolean;
-    dualView: boolean;
-    toggleKey: string;
+    type: StatisticViewTypes;
+    toggleKey: string; // create default when no toggleKey or button is provided and log/warning to user
+    button: boolean; // expand with options (position, ...)
+    width: number; // width & height | top & left -> autoset type to popup
+    height: number;
+    top: number;
+    left: number;
 }
 
 interface CanvasOptions {
@@ -35,8 +39,7 @@ interface LibraryOptions extends CanvasOptions {
     full: boolean; // full tab (innerWidth, innerHeight)
     clear: boolean;
     flex: boolean;
-    // dualView: boolean;
-    // statistics: Partial<StatisticOptions>;
+    statistics: Partial<StatisticOptions>;
 }
 
 interface DualViewProperties {

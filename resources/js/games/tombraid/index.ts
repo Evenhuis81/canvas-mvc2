@@ -8,6 +8,13 @@ export default {
             full: true,
             clear: true,
             backgroundColor: '#000',
+            statistics: {
+                type: 'popup',
+                toggleKey: 'KeyF',
+                // button: true,
+                // width: 400,
+                // height: 300,
+            },
         });
 
         mainMenu();

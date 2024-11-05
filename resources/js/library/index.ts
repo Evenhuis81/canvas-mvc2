@@ -29,6 +29,8 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
 
     const sv = getSV(context, engine);
 
+    setStatistics(options?.statistics);
+
     resources[libraryID] = {id: libraryID, canvas, context, engine, container, sv, tv, input};
 };
 

@@ -6,9 +6,8 @@ import {startLevel} from './initiatize';
 
 export const mainMenu = () => {
     // const entity = createEntity('tr');
-    // const b = entity.create(mainButton);
-
-    goToLevelSelection();
+    // const b = entity.create(mainButton)
+    // goToLevelSelection();
 };
 
 export const goToLevelSelection = () => {

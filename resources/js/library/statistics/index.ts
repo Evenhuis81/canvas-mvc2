@@ -6,58 +6,47 @@ import {Statistic, StatisticResource} from 'library/types/statistics';
 import {StatisticOptions} from 'library/types';
 import {createWindowOpener} from 'pages/window-open';
 
-export const statisticMenu = {
-    setup: async () => {
-        initialize('stats', {
-            containerID: 'container',
-            full: true,
-            clear: true,
-            backgroundColor: '#000',
-        });
+// export const statisticMenu = {
+//     setup: async () => {
+//         initialize('stats', {
+//             containerID: 'container',
+//             full: true,
+//             clear: true,
+//             backgroundColor: '#000',
+//         });
 
-        // mainMenu();
-    },
-    run: () => resources.stats.engine.run(),
-    runOnce: () => resources.stats.engine.runOnce(),
-};
+//         // mainMenu();
+//     },
+//     run: () => resources.stats.engine.run(),
+//     runOnce: () => resources.stats.engine.runOnce(),
+// };
 
 const statisticsResource: Record<string | number, StatisticResource> = {};
 const toggleKey: Record<string | number, string> = {};
 
-const toggleView = (id: string | number) => {
-    const {engine, draw, active} = statisticsResource[id];
-
-    if (active) {
-        statisticsResource[id].active = false;
-
-        engine.removeDraw(`${id}-statistic-draw`);
-
-        return;
-    }
-
-    statisticsResource[id].active = true;
-
-    engine.setDraw(draw);
-};
-
-const popupSettings = {
-    width: 480,
-    height: 320,
-    backgroundColor: 'white',
-    clear: true,
-    containerID: 'stat-container',
-};
+// const popupSettings = {
+//     width: 480,
+//     height: 320,
+//     backgroundColor: 'white',
+//     clear: true,
+//     containerID: 'stat-container',
+// };
 
 const counter = {...getCounter};
 
-export default {
-    // Popup 480 * 320, create multiple options for view
-    createPopup: (key: string) => {
+export const setStatistics = (options: Partial<StatisticOptions>) => {
+    if (!options) return;
+
+    const {type, button, toggleKey, ...size} = options;
+};
+
+const statisticMode = {
+    popup: () => {
         const id = `statwindow-${counter.count}`;
 
         counter.increase();
 
-        initialize(id, popupSettings);
+        // initialize(id, popupSettings);
 
         const {canvas, tv} = resources[id];
 
@@ -68,56 +57,75 @@ export default {
             if ((code = key)) openWindowCenter();
         });
     },
-    create: (id: number | string, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, engine: Engine) => {
-        const statistics: Statistic[] = [];
+    overlay: () => {},
+    tab: () => {},
+    dual: () => {},
+    // create: (id: number | string, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, engine: Engine) => {
+    //     const statistics: Statistic[] = [];
 
-        const draw = createDraw({id, context});
+    //     const draw = createDraw({id, context});
 
-        // These contain objects/modules from main resources, so they don't need to be set here aswell
-        statisticsResource[id] = {id, canvas, context, statistics, draw, engine, active: false};
+    //     // These contain objects/modules from main resources, so they don't need to be set here aswell
+    //     statisticsResource[id] = {id, canvas, context, statistics, draw, engine, active: false};
 
-        toggleKey[id] = 'KeyT'; // default
-        addEventListener('keyup', ({code}) => {
-            if (code === toggleKey[id]) {
-                toggleView(id);
-            }
-        });
-    },
-    set: (id: number | string, stat: Statistic) => statisticsResource[id].statistics.push(stat),
-    setFn: (id: number | string, fn: () => string) => {
-        const statID = uid();
+    //     toggleKey[id] = 'KeyT'; // default
+    //     addEventListener('keyup', ({code}) => {
+    //         if (code === toggleKey[id]) {
+    //             toggleView(id);
+    //         }
+    //     });
+    // },
+    // set: (id: number | string, stat: Statistic) => statisticsResource[id].statistics.push(stat),
+    // setFn: (id: number | string, fn: () => string) => {
+    //     const statID = uid();
 
-        statisticsResource[id].statistics.push({
-            id: statID,
-            name: `${statID}-statistic-setFn`, // make order or something accounting for above method
-            fn,
-        });
+    //     statisticsResource[id].statistics.push({
+    //         id: statID,
+    //         name: `${statID}-statistic-setFn`, // make order or something accounting for above method
+    //         fn,
+    //     });
 
-        return statID;
-    },
-    remove: (id: string | number, statID: number | string) => {
-        const index = statisticsResource[id].statistics.findIndex(stat => stat.id === statID);
+    //     return statID;
+    // },
+    // remove: (id: string | number, statID: number | string) => {
+    //     const index = statisticsResource[id].statistics.findIndex(stat => stat.id === statID);
 
-        if (index === -1) throw Error(`statistic with id '${id}' not found, nothing to remove`);
+    //     if (index === -1) throw Error(`statistic with id '${id}' not found, nothing to remove`);
 
-        statisticsResource[id].statistics.splice(index, 1);
-    },
-    run: (id: number | string) => {
-        statisticsResource[id].active = true;
-        statisticsResource[id].engine.setDraw(statisticsResource[id].draw);
-    },
-    halt: (id: string | number) => {
-        // take screenshot and display as static image?
-    },
-    destroy: (id: string | number) => {
-        statisticsResource[id].engine.removeDraw(`${id}-statistic-show`);
+    //     statisticsResource[id].statistics.splice(index, 1);
+    // },
+    // run: (id: number | string) => {
+    //     statisticsResource[id].active = true;
+    //     statisticsResource[id].engine.setDraw(statisticsResource[id].draw);
+    // },
+    // halt: (id: string | number) => {
+    //     // take screenshot and display as static image?
+    // },
+    // destroy: (id: string | number) => {
+    //     statisticsResource[id].engine.removeDraw(`${id}-statistic-show`);
 
-        delete statisticsResource[id];
-    },
-    setToggleKey: (id: string | number, key: string) => {
-        toggleKey[id] = key;
-    },
+    //     delete statisticsResource[id];
+    // },
+    // setToggleKey: (id: string | number, key: string) => {
+    //     toggleKey[id] = key;
+    // },
 };
+
+// const toggleView = (id: string | number) => {
+//     const {engine, draw, active} = statisticsResource[id];
+
+//     if (active) {
+//         statisticsResource[id].active = false;
+
+//         engine.removeDraw(`${id}-statistic-draw`);
+
+//         return;
+//     }
+
+//     statisticsResource[id].active = true;
+
+//     engine.setDraw(draw);
+// };
 
 const createDraw = (props: Omit<StatisticResource, 'draw' | 'canvas' | 'engine' | 'statistics' | 'active'>) => {
     const {id, context: ctx} = props;
