@@ -32,7 +32,7 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
 
     const sv = getSV(context, engine);
 
-    setStatistics(statistics);
+    setStatistics(canvas, engine, statistics); // existing or new resource depend on statMode (type)
 
     resources[libraryID] = {id: libraryID, canvas, context, engine, container, sv, tv, input};
 };

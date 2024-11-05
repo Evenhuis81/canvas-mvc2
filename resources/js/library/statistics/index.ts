@@ -21,8 +21,8 @@ import {createWindowOpener} from 'pages/window-open';
 //     runOnce: () => resources.stats.engine.runOnce(),
 // };
 
-const statisticsResource: Record<string | number, StatisticResource> = {};
-const toggleKey: Record<string | number, string> = {};
+// const statisticsResource: Record<string | number, StatisticResource> = {};
+// const toggleKey: Record<string | number, string> = {};
 
 // const popupSettings = {
 //     width: 480,
@@ -65,14 +65,19 @@ export const setStatistics = (canvas: HTMLCanvasElement, engine: Engine, options
     return {destroy, toggle};
 };
 
+// popup: create new resource and use vue template to load
+// overlay: use existing resource, portrait or landscape according to aspect ratio existing canvas
+// dual: almost entirely implemented, use existing code (reactivation)
+// tab: almost same as popup, create new resource and use vue template to load
 const statisticMode = {
     popup: () => {
         // bad uid, check if multiple stat modes don't have same id
         const id = `statwindow-${uid()}`;
 
-        // initialize(id, popupSettings);
+        // create resource settings ?
+        initialize(id);
 
-        // const {canvas, tv} = resources[id];
+        const {canvas, tv} = resources[id];
 
         const {openWindowCenter} = createWindowOpener('statistics', {width: 480, height: 320});
 

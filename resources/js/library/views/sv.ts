@@ -10,6 +10,7 @@ export const getSV = (context: CanvasRenderingContext2D, engine: Engine) => {
     return {paint};
 };
 
+// Create base methods, extend with color, lw, other shape properties
 const createPaintMethods: (context: CanvasRenderingContext2D) => {
     [K in keyof Shapes]: (obj: FullShape<Shapes[K]>) => () => void;
 } = ctx => ({

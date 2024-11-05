@@ -4,6 +4,7 @@
 import {getPaintMethods} from './paint';
 import {setTVEvents} from './input';
 import {vec, vector, vector2} from '../vector';
+import {Input} from 'library/types/input';
 
 export const getTV = (context: CanvasRenderingContext2D, input: Input) => {
     const paintMethods = getPaintMethods(properties, methods, context);
