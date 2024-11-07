@@ -1,27 +1,10 @@
-import {counter as getCounter, uid} from '../helpers';
 import {vector} from '../vector';
-// import {createDualView} from '../dualview';
 import {initialize, resources} from '..';
-import {Statistic, StatisticResource} from 'library/types/statistics';
-import {StatisticOptions} from 'library/types';
-import {createWindowOpener} from 'pages/window-open';
+import {StatisticOptions, StatisticResource, StatisticViewType} from 'library/types/statistics';
+// import {createWindowOpener} from 'pages/window-open';
+// import {createDualView} from '../dualview';
 
-// export const statisticMenu = {
-//     setup: async () => {
-//         initialize('stats', {
-//             containerID: 'container',
-//             full: true,
-//             clear: true,
-//             backgroundColor: '#000',
-//         });
-
-//         // mainMenu();
-//     },
-//     run: () => resources.stats.engine.run(),
-//     runOnce: () => resources.stats.engine.runOnce(),
-// };
-
-// const statisticsResource: Record<string | number, StatisticResource> = {};
+const statisticsResource: Record<string | number, StatisticResource> = {};
 // const toggleKey: Record<string | number, string> = {};
 
 // const popupSettings = {
@@ -32,33 +15,39 @@ import {createWindowOpener} from 'pages/window-open';
 //     containerID: 'stat-container',
 // };
 
-const counter = {...getCounter};
-
-const defaults: Pick<StatisticOptions, 'type' | 'button'> = {
+const defaults: {type: StatisticViewType; ctrl: boolean} = {
     type: 'overlay',
-    button: false,
     // internal properties:
+    ctrl: false,
 };
+// toggleKey: 'KeyF',
+// button: true,
 
 // Make statistic properties / methods / activations etc. also part of statistics itself (to show)
-export const setStatistics = (canvas: HTMLCanvasElement, engine: Engine, options?: Partial<StatisticOptions>) => {
+export const setStatistics = (libraryID: number | string, options?: StatisticOptions) => {
     if (!options) return;
+
+    const {input} = resources[libraryID];
 
     const properties = {...defaults, ...options};
 
-    const {type, button, toggleKey} = properties;
+    if (!options.button && !options.toggleKey) {
+        properties.toggleKey = 'KeyQ';
+        properties.ctrl = true;
 
-    const toggle = statisticMode[type];
+        // Make warning / error / throw module and also put this in statistics itself (with counter etc)
+        console.log('setStatistics: no toggleKey and no button given: default toggle key set: ctrl-Q');
+    }
 
-    const toggleKeyListener = ({code}: KeyboardEvent) => {
-        if (code === toggleKey) toggle();
-    };
+    // const {type, button, toggleKey: key, ctrl} = properties;
 
-    if (toggleKey) addEventListener('keyup', toggleKeyListener);
+    const statisticType = createStatisticType(libraryID);
+
+    const toggle = statisticType[properties.type];
 
     const destroy = () => {
         // AddEvent to existing input from resources:
-        if (toggleKey) removeEventListener('keyup', toggleKeyListener);
+        // if (key) removeEventListener('keyup', toggleKeyListener);
         // remove eventlistener, remove updates/draw from engine, remove other types (popup window open methods?)
     };
 
@@ -69,79 +58,93 @@ export const setStatistics = (canvas: HTMLCanvasElement, engine: Engine, options
 // overlay: use existing resource, portrait or landscape according to aspect ratio existing canvas
 // dual: almost entirely implemented, use existing code (reactivation)
 // tab: almost same as popup, create new resource and use vue template to load
-const statisticMode = {
-    popup: () => {
-        // bad uid, check if multiple stat modes don't have same id
-        const id = `statwindow-${uid()}`;
+const createStatisticType = (libraryID: string | number) => ({
+    overlay: () => {
+        return () => {
+            console.log('toggle call on overlay');
 
-        // create resource settings ?
+            const {canvas} = resources[libraryID];
+
+            const toggleKeyListener = (evt: KeyboardEvent) => {
+                if (evt.code === key && evt.ctrlKey === ctrl) toggle();
+            };
+
+            // // This depends on stat type (only overlay uses same canvas)
+            // if (key) input.addListener('keyup', toggleKeyListener);
+        };
+    },
+    popup: () => {
+        const id = `statwindow-${libraryID}`;
+
         initialize(id);
 
-        const {canvas, tv} = resources[id];
+        // const {openWindowCenter} = createWindowOpener('statistics', {width: 480, height: 320});
 
-        const {openWindowCenter} = createWindowOpener('statistics', {width: 480, height: 320});
-
-        return () => {};
-    },
-    overlay: () => {
-        return () => {};
+        return () => {
+            console.log('toggle call on popup');
+        };
     },
     tab: () => {
-        return () => {};
+        return () => {
+            console.log('toggle call on tab');
+        };
     },
     dual: () => {
-        return () => {};
+        return () => {
+            console.log('toggle call on dual');
+        };
     },
-    // create: (id: number | string, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, engine: Engine) => {
-    //     const statistics: Statistic[] = [];
+});
 
-    //     const draw = createDraw({id, context});
+// create: (id: number | string, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, engine: Engine) => {
+//     const statistics: Statistic[] = [];
 
-    //     // These contain objects/modules from main resources, so they don't need to be set here aswell
-    //     statisticsResource[id] = {id, canvas, context, statistics, draw, engine, active: false};
+//     const draw = createDraw({id, context});
 
-    //     toggleKey[id] = 'KeyT'; // default
-    //     addEventListener('keyup', ({code}) => {
-    //         if (code === toggleKey[id]) {
-    //             toggleView(id);
-    //         }
-    //     });
-    // },
-    // set: (id: number | string, stat: Statistic) => statisticsResource[id].statistics.push(stat),
-    // setFn: (id: number | string, fn: () => string) => {
-    //     const statID = uid();
+//     // These contain objects/modules from main resources, so they don't need to be set here aswell
+//     statisticsResource[id] = {id, canvas, context, statistics, draw, engine, active: false};
 
-    //     statisticsResource[id].statistics.push({
-    //         id: statID,
-    //         name: `${statID}-statistic-setFn`, // make order or something accounting for above method
-    //         fn,
-    //     });
+//     toggleKey[id] = 'KeyT'; // default
+//     addEventListener('keyup', ({code}) => {
+//         if (code === toggleKey[id]) {
+//             toggleView(id);
+//         }
+//     });
+// },
+// set: (id: number | string, stat: Statistic) => statisticsResource[id].statistics.push(stat),
+// setFn: (id: number | string, fn: () => string) => {
+//     const statID = uid();
 
-    //     return statID;
-    // },
-    // remove: (id: string | number, statID: number | string) => {
-    //     const index = statisticsResource[id].statistics.findIndex(stat => stat.id === statID);
+//     statisticsResource[id].statistics.push({
+//         id: statID,
+//         name: `${statID}-statistic-setFn`, // make order or something accounting for above method
+//         fn,
+//     });
 
-    //     if (index === -1) throw Error(`statistic with id '${id}' not found, nothing to remove`);
+//     return statID;
+// },
+// remove: (id: string | number, statID: number | string) => {
+//     const index = statisticsResource[id].statistics.findIndex(stat => stat.id === statID);
 
-    //     statisticsResource[id].statistics.splice(index, 1);
-    // },
-    // run: (id: number | string) => {
-    //     statisticsResource[id].active = true;
-    //     statisticsResource[id].engine.setDraw(statisticsResource[id].draw);
-    // },
-    // halt: (id: string | number) => {
-    //     // take screenshot and display as static image?
-    // },
-    // destroy: (id: string | number) => {
-    //     statisticsResource[id].engine.removeDraw(`${id}-statistic-show`);
+//     if (index === -1) throw Error(`statistic with id '${id}' not found, nothing to remove`);
 
-    //     delete statisticsResource[id];
-    // },
-    // setToggleKey: (id: string | number, key: string) => {
-    //     toggleKey[id] = key;
-    // },
-};
+//     statisticsResource[id].statistics.splice(index, 1);
+// },
+// run: (id: number | string) => {
+//     statisticsResource[id].active = true;
+//     statisticsResource[id].engine.setDraw(statisticsResource[id].draw);
+// },
+// halt: (id: string | number) => {
+//     // take screenshot and display as static image?
+// },
+// destroy: (id: string | number) => {
+//     statisticsResource[id].engine.removeDraw(`${id}-statistic-show`);
+
+//     delete statisticsResource[id];
+// },
+// setToggleKey: (id: string | number, key: string) => {
+//     toggleKey[id] = key;
+// },
 
 // const toggleView = (id: string | number) => {
 //     const {engine, draw, active} = statisticsResource[id];

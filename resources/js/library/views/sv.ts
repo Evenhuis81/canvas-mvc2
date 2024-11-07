@@ -1,19 +1,15 @@
 export const getSV = (context: CanvasRenderingContext2D, engine: Engine) => {
     const paintMethods = createPaintMethods(context);
 
-    const paint: Paint = (type, shape) => {
-        const fn = paintMethods[type](shape);
-
-        engine.setDraw({fn});
-    };
+    const paint: Paint = (type, shape) => engine.setDraw({fn: paintMethods[type](shape)});
 
     return {paint};
 };
 
-// Create base methods, extend with color, lw, other shape properties
-const createPaintMethods: (context: CanvasRenderingContext2D) => {
-    [K in keyof Shapes]: (obj: FullShape<Shapes[K]>) => () => void;
-} = ctx => ({
+// type Paint = <K extends keyof Shapes>(type: K, shape: Shapes[K]) => void;
+// [K in keyof Shapes]: (obj: FullShape<Shapes[K]>) => () => void;
+
+const createPaintMethods = (ctx: CanvasRenderingContext2D) => ({
     circle: circle => () => {
         if (circle.lw) ctx.lineWidth = circle.lw;
 

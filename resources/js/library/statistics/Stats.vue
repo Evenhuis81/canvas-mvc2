@@ -4,10 +4,11 @@
 
 <script setup lang="ts">
 import {onMounted} from 'vue';
-import {initialize, resources} from '../';
-import statistics from '.';
+// import {initialize, resources} from '../';
+// import statistics from '.';
 
 onMounted(() => {
+    console.log('stats.vue mounted');
     // statistics.createPopup();
     // const resourceID = 'statistics';
     // initialize(resourceID, settings);

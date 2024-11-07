@@ -1,4 +1,5 @@
 import {Input} from './input';
+import {StatisticOptions} from './statistics';
 
 interface Resources {
     id: string | number;
@@ -6,24 +7,7 @@ interface Resources {
     context: CanvasRenderingContext2D;
     container: HTMLDivElement;
     engine: Engine;
-    sv: StaticView;
     input: Input;
-}
-
-interface ResourcesAndTV extends Resources {
-    tv: TransformedView;
-}
-
-type StatisticViewType = 'popup' | 'overlay' | 'tab' | 'dual';
-
-interface StatisticOptions {
-    type: StatisticViewType;
-    toggleKey: string; // create default when no toggleKey or button is provided and log/warning to user
-    button: boolean; // expand with options (position, ...)
-    width: number; // width & height | top & left -> autoset type to popup
-    height: number;
-    top: number;
-    left: number;
 }
 
 interface CanvasOptions {
@@ -39,7 +23,7 @@ interface LibraryOptions extends CanvasOptions {
     full: boolean; // full tab (innerWidth, innerHeight)
     clear: boolean;
     flex: boolean;
-    statistics: Partial<StatisticOptions>;
+    statistics?: StatisticOptions;
 }
 
 interface DualViewProperties {
@@ -54,9 +38,9 @@ interface DualViewProperties {
     onDeactivation: () => void;
 }
 
-interface CRUD {
-    create: () => {};
-    read: () => {};
-    update: () => {};
-    delete: () => {};
-}
+// interface CRUD {
+//     create: () => {};
+//     read: () => {};
+//     update: () => {};
+//     delete: () => {};
+// }

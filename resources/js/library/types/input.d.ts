@@ -1,4 +1,5 @@
 import type {InputEventMap} from './entity';
+import {Rect} from './paint';
 
 type MouseDown = 'mousedown';
 type MouseMove = 'mousemove';
@@ -16,9 +17,9 @@ interface Events {
     wheel: Wheel;
 }
 
-type InsideRect = (rect: TVRect) => boolean;
+type InsideRect = (rect: Rect) => boolean;
 
-type Input = {
+export type Input = {
     mouse: {
         x: number;
         y: number;
@@ -35,8 +36,8 @@ type Input = {
     addListener: <T extends InputMap>(
         type: T,
         input: (evt: HTMLElementEventMap[T]) => void,
-        props: InputEventMap[T],
-        rect?: TVRect,
+        props?: InputEventMap[T], // entity specific?
+        rect?: Rect, // entity specific?
     ) => void;
     removeListener: <T extends InputMap>(type: T) => void;
 };
@@ -47,7 +48,7 @@ export type InputListenersMap = {
     [K in InputMap]: {
         type: K;
         listener: (evt: HTMLElementEventMap[K]) => void;
-        props: InputEventMap[K];
-        rect?: TVRect;
+        props?: InputEventMap[K];
+        rect?: Rect;
     }[];
 };

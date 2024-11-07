@@ -1,3 +1,15 @@
+export type StatisticViewType = 'popup' | 'overlay' | 'tab' | 'dual';
+
+export interface StatisticOptions {
+    type: StatisticViewType;
+    toggleKey?: string; // create default when no toggleKey or button is provided and log/warning to user
+    button?: boolean; // expand with options (position, ...)
+    width?: number; // width & height | top & left -> autoset type to popup
+    height?: number;
+    top?: number;
+    left?: number;
+}
+
 export type Statistic = {
     id: string | number;
     name: string;

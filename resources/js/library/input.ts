@@ -1,5 +1,5 @@
 import type {InputEventMap} from './types/entity';
-import type {InputListenersMap} from './types/input';
+import type {Input, InputListenersMap} from './types/input';
 
 /* eslint-disable max-lines-per-function */
 const resizeCB: (() => void)[] = [];
@@ -24,19 +24,17 @@ export const getInput = (canvas: HTMLCanvasElement) => {
     const mouse = {x: 0, y: 0, touchEnded: false};
     const touch = {x: 0, y: 0};
 
-    const addListener = <T extends keyof InputListenersMap>(
-        type: T,
-        listener: (evt: HTMLElementEventMap[T]) => void,
-        props: InputEventMap[T],
-        rect?: Rect,
-    ) => {
+    const addListener: Input['addListener'] = (type, listener, props?, rect?) =>
         listeners[type].push({type, listener, props, rect});
-    };
 
     const removeListener = <T extends keyof InputListenersMap>(type: T) => {
         const index = listeners[type].findIndex(l => l.type === type);
 
-        if (index === -1) console.log('listener with index: ' + index + ' already removed');
+        if (index === -1) {
+            console.log('listener with index: ' + index + ' already removed');
+
+            return;
+        }
 
         listeners[type].splice(index, 1);
     };
@@ -65,7 +63,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         delete buttonHeld[evt.button];
 
         listeners.mouseup.forEach(m => {
-            if (m.rect && insideMouseRect(m.rect)) {
+            if (m.rect && m.props && insideMouseRect(m.rect)) {
                 m.props.clicked = true;
                 m.props.clickTotal++;
                 m.listener(evt);
@@ -115,7 +113,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         mouse.touchEnded = true;
 
         listeners.touchend.forEach(m => {
-            if (m.rect && insideTouchRect(m.rect)) {
+            if (m.rect && m.props && insideTouchRect(m.rect)) {
                 m.props.clicked = true;
                 m.props.clickTotal++;
                 m.listener(evt);

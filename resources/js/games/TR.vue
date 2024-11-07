@@ -1,5 +1,5 @@
 <template>
-    <div id="stat-container" />
+    <div id="container" />
 </template>
 
 <script setup lang="ts">

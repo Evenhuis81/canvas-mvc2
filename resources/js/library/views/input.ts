@@ -1,3 +1,5 @@
+import {Input} from 'library/types/input';
+
 const mousedownHandler =
     ({startPan}: PropertiesTV, methods: MethodsTV) =>
     ({button, offsetX, offsetY}: MouseEvent) => {

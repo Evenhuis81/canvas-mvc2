@@ -1,13 +1,11 @@
 import {createContainer, getCanvas, getContainer, getContext2D, setCanvas} from './canvas';
 import {getEngine} from './engine';
-import {getTV} from './views/tv';
 import {getInput} from 'library/input';
-import {getSV} from './views/sv';
 import {uid} from './helpers';
-import {LibraryOptions, ResourcesAndTV} from './types';
+import {LibraryOptions, Resources} from './types';
 import {setStatistics} from './statistics';
 
-export const resources: Record<string | number, ResourcesAndTV> = {};
+export const resources: Record<string | number, Resources> = {};
 
 export const initialize = (id?: string | number, options?: Partial<LibraryOptions>) => {
     const libraryID = id ?? uid();
@@ -26,15 +24,14 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
     setCanvas(canvas, container, options);
 
     // dualView was here
+
     const input = getInput(canvas);
 
-    const tv = getTV(context, input);
+    resources[libraryID] = {id: libraryID, canvas, context, engine, container, input};
 
-    const sv = getSV(context, engine);
+    setStatistics(libraryID, statistics); // existing or new resource depend on statMode (type)
 
-    setStatistics(canvas, engine, statistics); // existing or new resource depend on statMode (type)
-
-    resources[libraryID] = {id: libraryID, canvas, context, engine, container, sv, tv, input};
+    return libraryID;
 };
 
 export const getLibraryOptions = (context: CanvasRenderingContext2D, engine: Engine) => {

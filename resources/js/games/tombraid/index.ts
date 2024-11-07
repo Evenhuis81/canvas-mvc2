@@ -9,8 +9,8 @@ export default {
             clear: true,
             backgroundColor: '#000',
             statistics: {
-                type: 'popup',
-                toggleKey: 'KeyF',
+                type: 'overlay',
+                // toggleKey: 'KeyF',
                 // button: true,
                 // width: 400,
                 // height: 300,
