@@ -27,9 +27,9 @@ const defaults: {type: StatisticViewType; ctrl: boolean} = {
 export const setStatistics = (libraryID: number | string, options?: StatisticOptions) => {
     if (!options) return;
 
-    const {input} = resources[libraryID];
-
     const properties = {...defaults, ...options};
+
+    const {input} = resources[libraryID];
 
     if (!options.button && !options.toggleKey) {
         properties.toggleKey = 'KeyQ';
@@ -39,11 +39,11 @@ export const setStatistics = (libraryID: number | string, options?: StatisticOpt
         console.log('setStatistics: no toggleKey and no button given: default toggle key set: ctrl-Q');
     }
 
-    // const {type, button, toggleKey: key, ctrl} = properties;
+    if (properties.button) createButton(libraryID);
 
     const statisticType = createStatisticType(libraryID);
 
-    const toggle = statisticType[properties.type];
+    const activate = statisticType[properties.type];
 
     const destroy = () => {
         // AddEvent to existing input from resources:
@@ -51,7 +51,41 @@ export const setStatistics = (libraryID: number | string, options?: StatisticOpt
         // remove eventlistener, remove updates/draw from engine, remove other types (popup window open methods?)
     };
 
-    return {destroy, toggle};
+    return {destroy, activate};
+};
+
+const createButton = (libraryID: string | number) => {
+    const {
+        canvas: {width, height},
+        engine,
+        context: ctx,
+    } = resources[libraryID];
+
+    const size = width / 40; // make this a non-arbitrary number based on size option for button
+    const pos = {x: width - size * 2, y: size};
+
+    const draw = {
+        id: `stat-button-${libraryID}`,
+        name: 'stat-activation-button',
+        fn: () => {
+            ctx.beginPath();
+
+            ctx.strokeStyle = 'red';
+            ctx.strokeRect(pos.x, pos.y, size, size);
+
+            ctx.strokeStyle = 'blue';
+            ctx.lineWidth = 1;
+            ctx.moveTo(pos.x + 0.1 * size, pos.y + size / 2);
+            ctx.lineTo(pos.x + 0.9 * size, pos.y + size / 2);
+            ctx.moveTo(pos.x + 0.2 * size, pos.y + size * 0.25);
+            ctx.lineTo(pos.x + 0.8 * size, pos.y + size * 0.25);
+            ctx.moveTo(pos.x + 0.2 * size, pos.y + size * 0.75);
+            ctx.lineTo(pos.x + 0.8 * size, pos.y + size * 0.75);
+            ctx.stroke();
+        },
+    };
+    // console.log('button creation');
+    engine.setDraw(draw);
 };
 
 // popup: create new resource and use vue template to load
@@ -65,9 +99,9 @@ const createStatisticType = (libraryID: string | number) => ({
 
             const {canvas} = resources[libraryID];
 
-            const toggleKeyListener = (evt: KeyboardEvent) => {
-                if (evt.code === key && evt.ctrlKey === ctrl) toggle();
-            };
+            // const toggleKeyListener = (evt: KeyboardEvent) => {
+            //     if (evt.code === key && evt.ctrlKey === ctrl) toggle();
+            // };
 
             // // This depends on stat type (only overlay uses same canvas)
             // if (key) input.addListener('keyup', toggleKeyListener);

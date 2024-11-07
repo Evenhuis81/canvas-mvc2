@@ -11,7 +11,7 @@ export default {
             statistics: {
                 type: 'overlay',
                 // toggleKey: 'KeyF',
-                // button: true,
+                button: true,
                 // width: 400,
                 // height: 300,
             },
