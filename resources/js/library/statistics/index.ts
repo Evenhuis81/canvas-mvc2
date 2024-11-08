@@ -15,35 +15,44 @@ const statisticsResource: Record<string | number, StatisticResource> = {};
 //     containerID: 'stat-container',
 // };
 
-const defaults: {type: StatisticViewType; ctrl: boolean} = {
-    type: 'overlay',
-    // internal properties:
-    ctrl: false,
-};
+// const defaults: {type: StatisticViewType; ctrl: boolean} = {
+//     type: 'overlay',
+// internal properties:
+// ctrl: false,
+// };
 // toggleKey: 'KeyF',
 // button: true,
+
+const properties = {
+    // type: 'overlay',
+    // button: false,
+    // ctrl: false,
+    // code: 'KeyJ',
+};
 
 // Make statistic properties / methods / activations etc. also part of statistics itself (to show)
 export const setStatistics = (libraryID: number | string, options?: StatisticOptions) => {
     if (!options) return;
 
-    const properties = {...defaults, ...options};
+    // const properties = {...defaults, ...options};
 
-    const {input} = resources[libraryID];
+    // const {input} = resources[libraryID];
 
-    if (!options.button && !options.toggleKey) {
-        properties.toggleKey = 'KeyQ';
-        properties.ctrl = true;
+    // if (!options.button && !options.code) {
+    //     properties.toggleKey = 'KeyQ';
+    //     properties.ctrl = true;
 
-        // Make warning / error / throw module and also put this in statistics itself (with counter etc)
-        console.log('setStatistics: no toggleKey and no button given: default toggle key set: ctrl-Q');
-    }
+    //     // Make warning / error / throw module and also put this in statistics itself (with counter etc)
+    //     console.log('setStatistics: no toggleKey and no button given: default toggle key set: ctrl-J');
+    // }
 
-    if (properties.button) createButton(libraryID);
+    // if (properties.button) createButton(libraryID);
 
     const statisticType = createStatisticType(libraryID);
 
-    const activate = statisticType[properties.type];
+    const activate = statisticType[options.type];
+
+    // const deactivate = () => {};
 
     const destroy = () => {
         // AddEvent to existing input from resources:

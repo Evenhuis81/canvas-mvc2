@@ -6,9 +6,18 @@ import {LibraryOptions, Resources} from './types';
 import {setStatistics} from './statistics';
 
 export const resources: Record<string | number, Resources> = {};
+const registeredIds: Array<string | number> = [];
 
 export const initialize = (id?: string | number, options?: Partial<LibraryOptions>) => {
     const libraryID = id ?? uid();
+
+    if (registeredIds.find(rID => rID === id)) {
+        console.log('id for initialization library already exists!');
+
+        return;
+    }
+
+    registeredIds.push(libraryID);
 
     const {containerID, clear, statistics} = {...options};
 
@@ -29,7 +38,7 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
 
     resources[libraryID] = {id: libraryID, canvas, context, engine, container, input};
 
-    setStatistics(libraryID, statistics); // existing or new resource depend on statMode (type)
+    setStatistics(libraryID, statistics); // existing or new resource depend on type (=statMode)
 
     return libraryID;
 };

@@ -1,5 +1,5 @@
 import {initialize, resources} from 'library/index';
-import {mainMenu} from './menu';
+// import {mainMenu} from './menu';
 
 export default {
     setup: async () => {
@@ -10,14 +10,17 @@ export default {
             backgroundColor: '#000',
             statistics: {
                 type: 'overlay',
-                // toggleKey: 'KeyF',
-                button: true,
+                // button: true,
+                // code: 'KeyJ',
+                // ctrl: true,
+                // top: 50,
+                // left: 75,
                 // width: 400,
                 // height: 300,
             },
         });
 
-        mainMenu();
+        // mainMenu();
     },
     run: () => resources.tr.engine.run(),
     runOnce: () => resources.tr.engine.runOnce(),
