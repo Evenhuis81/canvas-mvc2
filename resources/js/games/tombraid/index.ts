@@ -9,8 +9,8 @@ export default {
             clear: true,
             backgroundColor: '#000',
             statistics: {
-                type: 'overlay',
-                // button: true,
+                type: 'popup',
+                button: true,
                 // code: 'KeyJ',
                 // ctrl: true,
                 // top: 50,

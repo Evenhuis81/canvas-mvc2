@@ -1,38 +1,46 @@
 import {vector} from '../vector';
 import {initialize, resources} from '..';
 import {StatisticOptions, StatisticResource, StatisticViewType} from 'library/types/statistics';
-// import {createWindowOpener} from 'pages/window-open';
-// import {createDualView} from '../dualview';
+import { Resources } from 'library/types';
+import { Draw } from 'library/types/engine';
 
-const statisticsResource: Record<string | number, StatisticResource> = {};
-// const toggleKey: Record<string | number, string> = {};
-
-// const popupSettings = {
-//     width: 480,
-//     height: 320,
-//     backgroundColor: 'white',
-//     clear: true,
-//     containerID: 'stat-container',
-// };
-
-// const defaults: {type: StatisticViewType; ctrl: boolean} = {
-//     type: 'overlay',
-// internal properties:
-// ctrl: false,
-// };
-// toggleKey: 'KeyF',
-// button: true,
-
-const properties = {
+const defaults = {
     // type: 'overlay',
     // button: false,
     // ctrl: false,
     // code: 'KeyJ',
 };
 
+const popupDefaults = {
+    width: 300,
+    height: 150,
+    backgroundColor: 'white',
+    clear: true,
+    containerID: 'stat-container',
+};
+
 // Make statistic properties / methods / activations etc. also part of statistics itself (to show)
 export const setStatistics = (libraryID: number | string, options?: StatisticOptions) => {
     if (!options) return;
+
+    const {canvas, context} = resources[libraryID];
+
+    const properties: {button: undefined | boolean | Draw} = {
+        button: undefined,
+    }
+
+    if (options.button) {
+        const buttonDraw = createButtonDraw(canvas, context);
+        const buttonUpdate = createButtonUpdate();
+    }
+
+    const createButtonUpdate = () => ({
+        id: 'stat-button-update',
+        name: 'stat-button-update',
+        fn: () => {
+
+        }
+    });
 
     // const properties = {...defaults, ...options};
 
@@ -48,34 +56,74 @@ export const setStatistics = (libraryID: number | string, options?: StatisticOpt
 
     // if (properties.button) createButton(libraryID);
 
-    const statisticType = createStatisticType(libraryID);
+    const statisticType = createStatisticType();
 
-    const activate = statisticType[options.type];
+    statisticType[options.type];
 
-    // const deactivate = () => {};
+    const on = () => {
+        if (properties)
+    }
 
-    const destroy = () => {
+    // const deactivate = () => {
+    //         console.log( 'deactivation');
+    // };
+
+    // const destroy = () => {
         // AddEvent to existing input from resources:
         // if (key) removeEventListener('keyup', toggleKeyListener);
         // remove eventlistener, remove updates/draw from engine, remove other types (popup window open methods?)
-    };
+    // };
 
-    return {destroy, activate};
+    // return {destroy, activate};
 };
 
-const createButton = (libraryID: string | number) => {
-    const {
-        canvas: {width, height},
-        engine,
-        context: ctx,
-    } = resources[libraryID];
+const statisticsResource: Record<string | number, StatisticResource> = {};
 
-    const size = width / 40; // make this a non-arbitrary number based on size option for button
+// overlay: use existing resource, portrait or landscape according to aspect ratio existing canvas
+// popup: create new resource and use vue template to load
+// dual: almost entirely implemented, use existing code (reactivation)
+// tab: almost same as popup, create new resource and use vue template to load
+const createStatisticType = (res?: Resources) => ({
+    overlay: () => {
+        //
+
+        return () => {
+            console.log('toggle call on overlay');
+        };
+    },
+    popup: () => {
+        return () => {
+            console.log('toggle call on popup');
+
+
+        };
+        // const id = `statwindow-${libraryID}`;
+
+        // initialize(id);
+
+        // const {openWindowCenter} = createWindowOpener('statistics', {width: 480, height: 320});
+    },
+    tab: () => {
+        return () => {
+            console.log('toggle call on tab');
+        };
+    },
+    dual: () => {
+        return () => {
+            console.log('toggle call on dual');
+        };
+    },
+});
+
+// TODO::Create this as an entity
+const createButtonDraw = ({width}: HTMLCanvasElement, ctx: CanvasRenderingContext2D, scale: number = 40) => {
+    const size = width / scale;
     const pos = {x: width - size * 2, y: size};
+    const id = `stat-button-draw`; // beware duplication
 
     const draw = {
-        id: `stat-button-${libraryID}`,
-        name: 'stat-activation-button',
+        id,
+        name: id,
         fn: () => {
             ctx.beginPath();
 
@@ -93,51 +141,9 @@ const createButton = (libraryID: string | number) => {
             ctx.stroke();
         },
     };
-    // console.log('button creation');
-    engine.setDraw(draw);
+
+    return draw;
 };
-
-// popup: create new resource and use vue template to load
-// overlay: use existing resource, portrait or landscape according to aspect ratio existing canvas
-// dual: almost entirely implemented, use existing code (reactivation)
-// tab: almost same as popup, create new resource and use vue template to load
-const createStatisticType = (libraryID: string | number) => ({
-    overlay: () => {
-        return () => {
-            console.log('toggle call on overlay');
-
-            const {canvas} = resources[libraryID];
-
-            // const toggleKeyListener = (evt: KeyboardEvent) => {
-            //     if (evt.code === key && evt.ctrlKey === ctrl) toggle();
-            // };
-
-            // // This depends on stat type (only overlay uses same canvas)
-            // if (key) input.addListener('keyup', toggleKeyListener);
-        };
-    },
-    popup: () => {
-        const id = `statwindow-${libraryID}`;
-
-        initialize(id);
-
-        // const {openWindowCenter} = createWindowOpener('statistics', {width: 480, height: 320});
-
-        return () => {
-            console.log('toggle call on popup');
-        };
-    },
-    tab: () => {
-        return () => {
-            console.log('toggle call on tab');
-        };
-    },
-    dual: () => {
-        return () => {
-            console.log('toggle call on dual');
-        };
-    },
-});
 
 // create: (id: number | string, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, engine: Engine) => {
 //     const statistics: Statistic[] = [];

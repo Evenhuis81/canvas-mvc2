@@ -1,10 +1,10 @@
-type Update = {
+export type Update = {
     id?: number | string;
     name?: string;
     fn: (deltaTime: number) => void;
 };
 
-type Draw = Omit<Update, 'fn'> & {
+export type Draw = Omit<Update, 'fn'> & {
     fn: () => void;
 };
 
