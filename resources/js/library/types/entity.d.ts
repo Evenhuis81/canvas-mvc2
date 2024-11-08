@@ -1,24 +1,3 @@
-// TODO::MultiType with generic objects
-export type SketchRect = {
-    type: 'rect';
-    x: number;
-    y: number;
-    w: number;
-    h: number;
-    lw: number;
-    r: number;
-    stroke: string;
-    fill: string;
-    textFill: string;
-    text: string;
-    font: string;
-    fontSize: number;
-    textAlign: CanvasTextAlign;
-    textBaseLine: CanvasTextBaseline;
-};
-
-type Sketches = SketchRect;
-
 export interface GeneralProperties {
     id: number | string;
     name: string;

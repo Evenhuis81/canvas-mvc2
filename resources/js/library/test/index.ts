@@ -12,7 +12,12 @@ export default {
 
         const entity = createEntity('test');
 
-        console.log(entity);
+        const statButton = entity.create({
+            sketch: {
+                type: 'rect',
+                x: 12,
+            },
+        });
     },
     run: () => resources.test.engine.run(),
     runOnce: () => resources.test.engine.runOnce(),

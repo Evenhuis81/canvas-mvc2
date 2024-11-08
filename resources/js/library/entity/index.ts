@@ -80,6 +80,8 @@ const extractOptions = (options: ConfigOptions = {}) => {
 
     const {listeners, ...sketch} = rest2;
 
+    console.log(sketch);
+
     return {generalProperties, visualProperties, listeners, sketch};
 };
 

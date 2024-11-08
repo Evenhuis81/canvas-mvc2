@@ -18,12 +18,12 @@ type Paint = <K extends keyof Shapes>(type: K, shape: Shapes[K]) => void;
 //     shape: S,
 // ) => S extends {fill: string} ? PaintShapes[keyof PaintShapes] & Fill : PaintShapes[keyof PaintShapes];
 
-interface Shapes {
-    circle: TVCircle;
-    // rectangle: TVRectangle;
-    // line: TVLine;
-    // text: TVFullFont<Txt>;
-}
+// interface Shapes {
+//     circle: TVCircle;
+// rectangle: TVRectangle;
+// line: TVLine;
+// text: TVFullFont<Txt>;
+// }
 
 // type ShapeKeys = Shapes[keyof Shapes];
 
