@@ -1,5 +1,6 @@
 // TODO::MultiType with generic objects
-export type Sketch = {
+export type SketchRect = {
+    type: 'rect';
     x: number;
     y: number;
     w: number;
@@ -15,6 +16,8 @@ export type Sketch = {
     textAlign: CanvasTextAlign;
     textBaseLine: CanvasTextBaseline;
 };
+
+type Sketches = SketchRect;
 
 export interface GeneralProperties {
     id: number | string;
@@ -103,8 +106,7 @@ export type EntityConfigListeners<Type extends keyof EntityEventMap> = {
 };
 
 export type ConfigOptions = Partial<
-    Sketch &
-        GeneralProperties &
+    {sketch: Sketches} & GeneralProperties &
         VisualProperties & {
             listeners: Partial<EntityConfigListeners<keyof EntityEventMap>>;
         }
