@@ -1,38 +1,47 @@
-type Position = {
+export type Position = {
     x: number;
     y: number;
 };
 
-type Fill = {
+export type Position2 = {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+};
+
+export type Fill = {
     fill: string;
 };
 
-type Stroke = {
-    lw: number;
+export type Stroke = {
     stroke: string;
 };
 
-// TODO::Create abbreviations for some of these properties
-type BaseCircle = {
-    radius: number;
-    startAngle: number;
-    endAngle: number;
-    counterclockwise: number;
+export type Circle = {
+    type: 'circle';
+    r: number;
+    // startAngle: number;
+    // endAngle: number;
+    // counterclockwise: number;
+} & Position;
+
+type BaseShape = {type: string};
+
+export type ConfigShape<T extends BaseShape> = Partial<Omit<T, 'type'>> & {type: T['type']};
+
+export type ConfigSketch = {
+    []: ConfigShape<Sketch>;
 };
 
-type BaseRect = {
+export type Rect = {
+    type: 'rect';
     w: number;
     h: number;
-    round: number;
-};
+} & Position;
 
-type BaseSketch<T, U> = {
-    [K in keyof T]?: T[K];
-} & {
-    type: U;
-};
-
-type BaseText = {
+export type Text = {
+    type: 'text';
     // textStroke?
     textFill: string;
     text: string;
@@ -40,15 +49,25 @@ type BaseText = {
     fontSize: number;
     textAlign: CanvasTextAlign;
     textBaseLine: CanvasTextBaseline;
-};
+} & Position;
 
-type Shape = {
-    rect: Rect;
-    circle: Circle;
-};
+export type Line = {
+    type: 'line';
+} & Position2;
 
-type Shapes = {
-    [K in keyof Shape]: Position & BaseSketch<Shape[K], K>;
-};
+export type Shapes = Rect | Circle | Text;
 
-type Sketches = Rect | Circle;
+export type Sketch = Shapes & {text: string};
+
+// export type ConfigShapes = Partial<Shapes>;
+
+export type FillShapes = Shapes & Fill;
+// export type ShapeMap = {
+//     rect: Rect;
+//     circle: Circle;
+//     line: Line;
+// };
+
+// export type Shapes = {
+//     [K in keyof ShapeMap]: Sketch<ShapeMap[K], K>;
+// };

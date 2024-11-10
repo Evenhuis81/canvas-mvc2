@@ -1,4 +1,5 @@
 import type {InputEventMap} from './entity';
+import {Shapes} from './entityShapes';
 
 type MouseDown = 'mousedown';
 type MouseMove = 'mousemove';
@@ -36,7 +37,8 @@ type Input = {
         type: T,
         input: (evt: HTMLElementEventMap[T]) => void,
         props: InputEventMap[T],
-        rect?: TVRect,
+        // This needs to be adjusted in time to fit all kind of shapes and extract the right one based on input type given
+        rect?: Shapes,
     ) => void;
     removeListener: <T extends InputMap>(type: T) => void;
 };

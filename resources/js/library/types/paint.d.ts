@@ -10,7 +10,7 @@ type TVStrokeCircle = TVCircle & {stroke: string; lw: number; rS: number; rE: nu
 type TVFillCircle = TVCircle & {fill: string};
 type TVFillStrokeCircle = TVStrokeCircle & {fill: string};
 
-type Paint = <K extends keyof Shapes>(type: K, shape: Shapes[K]) => void;
+// type Paint = <K extends keyof Shapes>(type: K, shape: Shapes[K]) => void;
 
 // type NewPaintKey<T extends keyof PaintShapes> = `${T}fill`;
 

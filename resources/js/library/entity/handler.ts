@@ -1,7 +1,7 @@
 /* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
-// import {makeObjectValueMoverPartial} from 'library/helpers';
-import type {EntityConfigListeners, EntityEventMap, EventHandler, ListenerHandler, Sketch} from 'library/types/entity';
+import type {EntityConfigListeners, EntityEventMap, EventHandler, ListenerHandler} from 'library/types/entity';
+import type {Sketch} from 'library/types/entityShapes';
 import type {Input} from 'library/types/input';
 
 export const createEventHandler = <T extends keyof EntityEventMap>(

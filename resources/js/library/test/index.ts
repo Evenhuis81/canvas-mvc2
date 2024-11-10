@@ -13,9 +13,18 @@ export default {
         const entity = createEntity('test');
 
         const statButton = entity.create({
+            // text: 'Entity Sketch Test',
+            // sketch: {
+            //     type: 'rect',
+            //     x: 12,
+            // },
             sketch: {
-                type: 'rect',
-                x: 12,
+                //     text: 'sadf',
+                type: 'circle',
+                y: 12,
+                // w: 100,
+                // h: 50,
+                r: 12,
             },
         });
     },

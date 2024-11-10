@@ -14,7 +14,9 @@ const createEntity = ({context, engine, input}: Resources, options?: ConfigOptio
     // Extract internal properties from options
     const {generalProperties, visualProperties, listeners, sketch} = extractOptions(options);
 
-    const eventHandler = createEventHandler(input, sketch, listeners);
+    const shape = handleSketch(sketch);
+
+    const eventHandler = createEventHandler(input, shape, listeners);
 
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
@@ -78,9 +80,7 @@ const extractOptions = (options: ConfigOptions = {}) => {
         animateAtEnd,
     };
 
-    const {listeners, ...sketch} = rest2;
-
-    console.log(sketch);
+    const {listeners, sketch} = rest2;
 
     return {generalProperties, visualProperties, listeners, sketch};
 };
@@ -88,7 +88,7 @@ const extractOptions = (options: ConfigOptions = {}) => {
 const defaultProperties = {
     // generalProperties (mixed internal properties + id set in abstractOptions)
     name: 'noName', // + counter/uid?
-    type: 'default',
+    // type: 'default',
     disabled: false,
     show: true,
     showDelay: 0,
@@ -100,20 +100,24 @@ const defaultProperties = {
     startSpeed: 3,
     endSpeed: 3,
     // Sketch
-    x: 300,
-    y: 200,
-    w: 100,
-    h: 50,
-    lw: 2,
-    r: 5,
-    stroke: '#f00',
-    fill: '#000',
-    textFill: '#fff',
-    text: 'Entity',
-    font: 'monospace',
-    fontSize: 16,
-    textAlign: 'center',
-    textBaseLine: 'middle',
+    // sketch: {
+    //     type: 'rect',
+    //     x: 300,
+    //     y: 200,
+    //     w: 100,
+    //     h: 50,
+    // }
+    // lw: 2,
+    // r: 5,
+    // stroke: '#f00',
+    // fill: '#000',
+    // Text
+    // textFill: '#fff',
+    // text: 'Entity',
+    // font: 'monospace',
+    // fontSize: 16,
+    // textAlign: 'center',
+    // textBaseLine: 'middle',
 };
 
 // TODO::Resource availability check

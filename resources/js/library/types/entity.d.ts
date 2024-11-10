@@ -1,3 +1,5 @@
+import {ConfigSketch, Sketch} from './entityShapes';
+
 export interface GeneralProperties {
     id: number | string;
     name: string;
@@ -85,7 +87,7 @@ export type EntityConfigListeners<Type extends keyof EntityEventMap> = {
 };
 
 export type ConfigOptions = Partial<
-    {sketch: Sketches} & GeneralProperties &
+    {sketch: ConfigSketch} & GeneralProperties &
         VisualProperties & {
             listeners: Partial<EntityConfigListeners<keyof EntityEventMap>>;
         }
