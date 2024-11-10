@@ -28,11 +28,11 @@ export type Circle = {
 
 type BaseShape = {type: string};
 
-export type ConfigShape<T extends BaseShape> = Partial<Omit<T, 'type'>> & {type: T['type']};
+// export type ConfigShape<T extends BaseShape> = Partial<Omit<T, 'type'>> & {type: T['type']};
 
-export type ConfigSketch = {
-    []: ConfigShape<Sketch>;
-};
+// export type ConfigSketch = {
+//     []: ConfigShape<Sketch>;
+// };
 
 export type Rect = {
     type: 'rect';
@@ -55,19 +55,26 @@ export type Line = {
     type: 'line';
 } & Position2;
 
-export type Shapes = Rect | Circle | Text;
+export type MS<Type> = {
+    [Property in keyof Type extends 'type' ? ]: Property extends 'type' ? Type[Property] : Type[Property];
+};
+
+export type Shapes = MS<Rect | Circle | Text>;
 
 export type Sketch = Shapes & {text: string};
 
-// export type ConfigShapes = Partial<Shapes>;
-
 export type FillShapes = Shapes & Fill;
-// export type ShapeMap = {
-//     rect: Rect;
-//     circle: Circle;
-//     line: Line;
-// };
 
-// export type Shapes = {
-//     [K in keyof ShapeMap]: Sketch<ShapeMap[K], K>;
-// };
+export type ShapeMap = {
+    rect: Rect;
+    circle: Circle;
+    line: Line;
+};
+
+// export type ShapeTypes = keyof ShapeMap;
+
+// export type ConfigShape<S extends {type: Shapes['type']}> = Omit<Partial<S>, 'type'> & Pick<S, 'type'>;
+
+// export type ConfigShapes = {
+//     [K in ShapeMap]
+// }
