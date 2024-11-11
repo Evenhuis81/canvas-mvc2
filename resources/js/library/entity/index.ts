@@ -5,25 +5,17 @@ import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {resources} from '..';
 import type {EntityConfig, EntityMethods, GeneralProperties} from 'library/types/entity';
-import {Shapes} from 'library/types/entityShapes';
+import {createSketch} from './sketch';
 
 const createResource = (res: Resources) => ({
     create: (options?: EntityConfig) => createEntity(res, options),
 });
 
-const createSketch = (shape?: Shapes) => {
-    // if (!shape) return; // set default sketch here
-
-    // const sketch = {...defaultSketch, ...shape};
-
-    return {...defaultSketch};
-};
-
 const createEntity = ({context, engine, input}: Resources, options?: EntityConfig) => {
     // Extract internal properties from options
     const {generalProperties, visualProperties, listeners, shape} = extractOptions(options);
 
-    const sketch = createSketch(shape);
+    const sketch = createSketch(shape?.type ?? 'rect', shape);
 
     const eventHandler = createEventHandler(input, sketch, listeners);
 
@@ -92,26 +84,6 @@ const extractOptions = (options: EntityConfig = {}) => {
     const {listeners, sketch: shape} = rest2;
 
     return {generalProperties, visualProperties, listeners, shape};
-};
-
-const defaultSketch = {
-    // Shape
-    type: 'rect',
-    x: 300,
-    y: 200,
-    w: 100,
-    h: 50,
-    lw: 2,
-    r: 5,
-    stroke: '#f00',
-    fill: '#000',
-    // Text
-    textFill: '#fff',
-    text: 'Entity',
-    font: 'monospace',
-    fontSize: 16,
-    textAlign: 'center',
-    textBaseLine: 'middle',
 };
 
 const defaultProperties = {

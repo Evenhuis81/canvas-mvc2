@@ -1,12 +1,12 @@
 /* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
 import type {EntityConfigListeners, EntityEventMap, EventHandler, ListenerHandler} from 'library/types/entity';
-import type {Sketch} from 'library/types/entityShapes';
+import type {Shapes, Sketch} from 'library/types/entityShapes';
 import type {Input} from 'library/types/input';
 
 export const createEventHandler = <T extends keyof EntityEventMap>(
     input: Input,
-    sketch: Sketch,
+    sketch: Shapes,
     listeners?: Partial<EntityConfigListeners<T>>,
 ) => {
     const listenerHandlers: ListenerHandler[] = [];
@@ -77,7 +77,7 @@ const createAddAndRemoveListener = (
     eventHandler: Omit<EventHandler, 'addListener' | 'removeListener'>,
     eventProperties: EntityEventMap,
     input: Input,
-    sketch: Sketch,
+    sketch: Shapes,
 ) => {
     return {
         addListener: <K extends keyof EntityEventMap>(type: K, listener: (evt: EntityEventMap[K]) => void) => {
@@ -97,7 +97,17 @@ const createAddAndRemoveListener = (
 
             const add = () => {
                 // TODO::Extract Shape from sketch (pass only needed props)
-                input.addListener(type, runListener, props, sketch);
+                if (sketch.type === 'rect') {
+                    const {x, y, w, h} = sketch;
+
+                    const rect = {type: sketch.type, x, y, w, h};
+
+                    input.addListener(type, runListener, props, rect);
+
+                    return;
+                }
+
+                input.addListener(type, runListener, props);
             };
 
             const remove = () => {

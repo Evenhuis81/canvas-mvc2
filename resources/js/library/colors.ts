@@ -1,3 +1,5 @@
+import {Shapes} from './types/entityShapes';
+
 // https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
 export const hexToRgb = (hex: string) => {
     // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
@@ -16,7 +18,8 @@ export const hexToRgb = (hex: string) => {
     };
 };
 
-export const getSketchRGBAColorsFromHexString = (sketch: EntitySketch) => ({
+// TODO:: Colors shouldn't be a required part of the entity shape, make this optional
+export const getSketchRGBAColorsFromHexString = (sketch: Shapes) => ({
     fill: {a: 1, ...hexToRgb(sketch.fill)},
     stroke: {a: 1, ...hexToRgb(sketch.stroke)},
     textFill: {a: 1, ...hexToRgb(sketch.textFill)},
