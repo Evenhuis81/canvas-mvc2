@@ -14,6 +14,8 @@ export type Fill = {fill: string};
 
 export type Stroke = {stroke: string};
 
+export type TextFill = {textFill: string};
+
 export type Circle = {
     type: 'circle';
     r?: number;
@@ -30,7 +32,6 @@ export type Rect = {
 
 export type Text = {
     type: 'text';
-    textFill?: string;
     text?: string;
     font?: string;
     fontSize?: number;
@@ -45,7 +46,9 @@ export type Line = {
 
 export type ShapesBase = Rect | Circle | Line | Text;
 
-export type Shapes = ShapesBase & Partial<Fill>;
+export type Shapes = ShapesBase & Partial<Fill> & Partial<Stroke> & Partial<TextFill>;
+
+export type SketchShapes = Required<ShapesBase> & Fill & Stroke & TextFill;
 
 export type ShapeMap = {
     rect: Rect;
@@ -61,4 +64,5 @@ export type Sketch = {
 } & Required<Omit<Rect, 'type'>> &
     Required<Omit<Text, 'type'>> &
     Fill &
-    Stroke;
+    Stroke &
+    TextFill;

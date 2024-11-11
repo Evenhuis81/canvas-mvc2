@@ -1,20 +1,24 @@
-import {ShapeMap, Shapes, Sketch} from 'library/types/entityShapes';
+import {ShapeMap, Shapes, Sketch, SketchShapes} from 'library/types/entityShapes';
 
-export const createSketch = <K extends keyof ShapeMap>(type: K, shape?: ShapeMap[K]) => {
+export type CreateSketch = <K extends keyof ShapeMap>(type: K, shape?: ShapeMap[K]) => SketchShapes;
+
+export const createSketch: CreateSketch = (type, shape) => {
     if (!shape) return {...defaultSketch};
 
     // const shapeCreator = createShapeCreator(shape.type, shape);
 
-    const sketch = {...shapeCreator[type]};
+    const sketch = {...shapeCreator[type], ...shape};
 
     return sketch;
     // return {...defaultSketch};
 };
 
-const shapeCreator: Record<string, Shapes> = {
+const shapeCreator: Record<string, SketchShapes> = {
     rect: {
         type: 'rect',
         fill: '#000',
+        stroke: '#f00',
+        textFill: '#000',
         x: 50,
         y: 50,
         w: 60,
@@ -23,6 +27,8 @@ const shapeCreator: Record<string, Shapes> = {
     circle: {
         type: 'circle',
         fill: '#000',
+        stroke: '#f00',
+        textFill: '#000',
         x: 50,
         y: 50,
         r: 25,
@@ -30,6 +36,8 @@ const shapeCreator: Record<string, Shapes> = {
     line: {
         type: 'line',
         fill: '#000',
+        stroke: '#f00',
+        textFill: '#000',
         x1: 50,
         y1: 50,
         x2: 100,
@@ -37,6 +45,7 @@ const shapeCreator: Record<string, Shapes> = {
     },
     text: {
         fill: '#000', // no fill = no part of Shape
+        stroke: '#f00',
         type: 'text',
         textFill: '#f51',
         text: 'Default Text Text',

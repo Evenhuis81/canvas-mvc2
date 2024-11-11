@@ -21,6 +21,8 @@ const createEntity = ({context, engine, input}: Resources, options?: EntityConfi
 
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
+    console.log(sketch);
+
     const {callbacks, setVisual} = createVisualsAndCallbacks(
         generalProperties,
         visualProperties,
