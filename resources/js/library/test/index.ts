@@ -20,11 +20,13 @@ export default {
             // },
             sketch: {
                 //     text: 'sadf',
-                type: 'rect',
-                x: 12,
+                type: 'line',
+                // x: 12,
                 // y: 12,
-                w: 100,
-                h: 50,
+                x1: 12,
+                y2: 12,
+                // w: 100,
+                // h: 50,
                 // r: 12,
             },
         });

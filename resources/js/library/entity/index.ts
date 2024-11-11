@@ -4,19 +4,28 @@ import {createVisualsAndCallbacks} from './animate';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {resources} from '..';
-import type {ConfigOptions, EntityMethods, GeneralProperties} from 'library/types/entity';
+import type {EntityConfig, EntityMethods, GeneralProperties} from 'library/types/entity';
+import {Shapes} from 'library/types/entityShapes';
 
 const createResource = (res: Resources) => ({
-    create: (options?: ConfigOptions) => createEntity(res, options),
+    create: (options?: EntityConfig) => createEntity(res, options),
 });
 
-const createEntity = ({context, engine, input}: Resources, options?: ConfigOptions) => {
+const createSketch = (shape?: Shapes) => {
+    // if (!shape) return; // set default sketch here
+
+    // const sketch = {...defaultSketch, ...shape};
+
+    return {...defaultSketch};
+};
+
+const createEntity = ({context, engine, input}: Resources, options?: EntityConfig) => {
     // Extract internal properties from options
-    const {generalProperties, visualProperties, listeners, sketch} = extractOptions(options);
+    const {generalProperties, visualProperties, listeners, shape} = extractOptions(options);
 
-    const shape = handleSketch(sketch);
+    const sketch = createSketch(shape);
 
-    const eventHandler = createEventHandler(input, shape, listeners);
+    const eventHandler = createEventHandler(input, sketch, listeners);
 
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
@@ -58,7 +67,7 @@ const initialize = (gProps: GeneralProperties, methods: EntityMethods) => {
 };
 
 // TODO::Set defaults for options if no options is provided (empty entity default)
-const extractOptions = (options: ConfigOptions = {}) => {
+const extractOptions = (options: EntityConfig = {}) => {
     const {id, name, disabled, show, showDelay, clicked, hideTime, ...rest} = {
         id: options.id ?? `entity-${uid()}`,
         ...getProperties(defaultProperties, options),
@@ -80,9 +89,29 @@ const extractOptions = (options: ConfigOptions = {}) => {
         animateAtEnd,
     };
 
-    const {listeners, sketch} = rest2;
+    const {listeners, sketch: shape} = rest2;
 
-    return {generalProperties, visualProperties, listeners, sketch};
+    return {generalProperties, visualProperties, listeners, shape};
+};
+
+const defaultSketch = {
+    // Shape
+    type: 'rect',
+    x: 300,
+    y: 200,
+    w: 100,
+    h: 50,
+    lw: 2,
+    r: 5,
+    stroke: '#f00',
+    fill: '#000',
+    // Text
+    textFill: '#fff',
+    text: 'Entity',
+    font: 'monospace',
+    fontSize: 16,
+    textAlign: 'center',
+    textBaseLine: 'middle',
 };
 
 const defaultProperties = {
@@ -99,25 +128,6 @@ const defaultProperties = {
     animateAtEnd: false,
     startSpeed: 3,
     endSpeed: 3,
-    // Sketch
-    // sketch: {
-    //     type: 'rect',
-    //     x: 300,
-    //     y: 200,
-    //     w: 100,
-    //     h: 50,
-    // }
-    // lw: 2,
-    // r: 5,
-    // stroke: '#f00',
-    // fill: '#000',
-    // Text
-    // textFill: '#fff',
-    // text: 'Entity',
-    // font: 'monospace',
-    // fontSize: 16,
-    // textAlign: 'center',
-    // textBaseLine: 'middle',
 };
 
 // TODO::Resource availability check
