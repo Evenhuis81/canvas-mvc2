@@ -1,4 +1,4 @@
-import {Shapes, ShapesConfig} from './entityShapes';
+import {ShapesConfig} from './entityShapes';
 
 export interface GeneralProperties {
     id: number | string;

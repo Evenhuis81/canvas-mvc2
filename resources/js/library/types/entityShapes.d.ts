@@ -25,7 +25,7 @@ export type Rect = {
 } & Pos;
 
 export type EntityText = {
-    type: 'text'; // usless?
+    // type: 'text'; // usless?
     text: string;
     textFill: string;
     // textStroke?
@@ -33,7 +33,10 @@ export type EntityText = {
     fontSize: number; // part of font (string literal)
     textAlign: CanvasTextAlign;
     textBaseLine: CanvasTextBaseline;
-} & Pos;
+    // Additional non-text properties
+    lw: number;
+    r: number; // for roundRect
+};
 
 export type Line = {
     type: 'line';
@@ -41,16 +44,18 @@ export type Line = {
 
 export type Shapes = Rect | Circle | Line;
 
-export type ShapesConfig = Partial<Shapes & Fill & Stroke>;
+export type WithRequired<T, K extends keyof T> = T & {[Key in K]-?: T[Key]};
+
+export type ShapesConfig = WithRequired<Partial<Shapes & Fill & Stroke>, 'type'>;
 
 export type ShapeMap = {
-    rect: Rect;
-    circle: Circle;
-    line: Line;
+    rect: Rect & Fill & Stroke;
+    circle: Circle & Fill & Stroke;
+    line: Line & Stroke;
     // text: Text;
 };
 
-// export type SketchShapes = Required<ShapesBase> & Fill & Stroke & TextFill;
+export type Sketch = Rect & EntityText & Fill & Stroke;
 
 // export type Sketch = {
 //     type: keyof ShapeMap;

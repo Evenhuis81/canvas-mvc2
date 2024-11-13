@@ -15,14 +15,12 @@ const createEntity = ({context, engine, input}: Resources, options?: EntityConfi
     // Extract internal properties from options
     const {generalProperties, visualProperties, listeners, shape} = extractOptions(options);
 
-    //
-    const sketch = createSketch(shape?.type ?? 'rect', shape);
+    const sketch = createSketch(shape);
+    console.log(sketch);
 
     const eventHandler = createEventHandler(input, sketch, listeners);
 
     const colors = getSketchRGBAColorsFromHexString(sketch);
-
-    console.log(sketch);
 
     const {callbacks, setVisual} = createVisualsAndCallbacks(
         generalProperties,

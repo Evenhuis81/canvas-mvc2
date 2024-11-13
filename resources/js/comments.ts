@@ -2,6 +2,28 @@
 // This should become a reesource, but with different 'themes' or statistic variants. (for different kind of options)
 // Create text object according to StaticView, with calculated options (like button, possible to 'lend' those)
 
+// type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
+// interface Person {
+//     name: string;
+//     hometown: string;
+//     nickname: string;
+// }
+
+// export type MakePersonInput = PartialBy<Person, 'nickname'>;
+
+// export type WithRequired<T, K extends keyof T> = T & {[Key in K]-?: T[Key]};
+
+// export type RectWithRequired = WithRequired<Rect, 'type'>;
+
+// export type ShapesWithRequired = unknown;
+
+// const person: MakePersonInput = {
+//     name: 'testName',
+//     hometown: 'testCity',
+//     nickname: 'testNickName',
+// };
+
 // const testEntity = entity.create({
 //     listeners: {
 //         mouseup: evt => {
