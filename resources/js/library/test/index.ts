@@ -20,15 +20,15 @@ export default {
             // },
             sketch: {
                 //     text: 'sadf',
-                type: 'rect',
+                type: 'circle',
                 x: 12,
                 y: 12,
                 // fill: '#fa0',
                 // x1: 12,
                 // y2: 12,
-                w: 100,
+                // w: 100,
                 // h: 50,
-                // r: 12,
+                r: 12,
             },
         });
     },

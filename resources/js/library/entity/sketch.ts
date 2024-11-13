@@ -1,19 +1,21 @@
-import {ShapeMap, Shapes, Sketch, SketchShapes} from 'library/types/entityShapes';
+import {ShapeMap, Shapes, ShapesConfig} from 'library/types/entityShapes';
 
-export type CreateSketch = <K extends keyof ShapeMap>(type: K, shape?: ShapeMap[K]) => SketchShapes;
+export type CreateSketch = <K extends keyof ShapeMap>(type: K, shape?: ShapeMap[K]) => Sketch;
 
+// export const createSketch: CreateSketch = (type, shape) => {
 export const createSketch: CreateSketch = (type, shape) => {
     if (!shape) return {...defaultSketch};
 
     // const shapeCreator = createShapeCreator(shape.type, shape);
 
-    const sketch = {...shapeCreator[type], ...shape};
+    // const sketch = {...shapeCreator[type], ...shape};
 
-    return sketch;
-    // return {...defaultSketch};
+    // return sketch;
+    return {...defaultSketch};
 };
 
-const shapeCreator: Record<string, SketchShapes> = {
+// Combine in 1 object or several?
+const shapeDefaults: Record<keyof ShapeMap, Shapes> = {
     rect: {
         type: 'rect',
         fill: '#000',
@@ -44,6 +46,8 @@ const shapeCreator: Record<string, SketchShapes> = {
         y2: 100,
     },
     text: {
+        x: 50,
+        y: 50,
         fill: '#000', // no fill = no part of Shape
         stroke: '#f00',
         type: 'text',
