@@ -100,7 +100,7 @@ export const createRenders = (
 
 const createHoverBold = (sketch: Sketch) => {
     const origin = {
-        lw: sketch.lw,
+        lineWidth: sketch.lineWidth,
         f: sketch.fontSize,
     };
 
@@ -111,21 +111,21 @@ const createHoverBold = (sketch: Sketch) => {
     const fRange = lwRange / 2;
 
     const forward = () => {
-        sketch.lw += lwAdj;
+        sketch.lineWidth += lwAdj;
         sketch.fontSize += fAdj;
 
-        if (sketch.lw > origin.lw + lwRange) {
-            sketch.lw = origin.lw + lwRange;
+        if (sketch.lineWidth > origin.lineWidth + lwRange) {
+            sketch.lineWidth = origin.lineWidth + lwRange;
             sketch.fontSize = origin.f + fRange;
         }
     };
 
     const reverse = () => {
-        sketch.lw -= lwAdj;
+        sketch.lineWidth -= lwAdj;
         sketch.fontSize -= fAdj;
 
-        if (sketch.lw < origin.lw) {
-            sketch.lw = origin.lw;
+        if (sketch.lineWidth < origin.lineWidth) {
+            sketch.lineWidth = origin.lineWidth;
             sketch.fontSize = origin.f;
         }
     };
@@ -197,7 +197,7 @@ const createTransitionExplode = (
     callbacks: Pick<Callbacks, 'endEnd'>,
 ) => ({
     update: () => {
-        if (phase === 1) sketch.lw += 0.1;
+        if (phase === 1) sketch.lineWidth += 0.1;
         else if (phase === 2) {
             fill.a -= 0.01;
             stroke.a -= 0.01;
@@ -212,8 +212,8 @@ const createTransitionExplode = (
             }
         }
 
-        if (sketch.lw > 10) {
-            sketch.lw = 10;
+        if (sketch.lineWidth > 10) {
+            sketch.lineWidth = 10;
 
             phase = 2;
         }
@@ -261,10 +261,10 @@ const createDraw =
     () => {
         c.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
         c.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
-        c.lineWidth = sketch.lw;
+        c.lineWidth = sketch.lineWidth;
 
         c.beginPath();
-        c.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.r);
+        c.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.radii);
         c.fill();
         c.stroke();
 

@@ -19,9 +19,9 @@ export default {
             //     x: 12,
             // },
             sketch: {
-                // text: 'sadf',
-                // type: 'circle',
-                type: 'rect',
+                // type: 'text',
+                type: 'circle',
+                // type: 'rect',
                 x: 12,
                 // y: 12,
                 fill: '#fa0',
@@ -30,7 +30,9 @@ export default {
                 // y2: 12,
                 // w: 100,
                 // h: 50,
-                // r: 12,
+                // radius: 12,
+                textFill: '#ff0',
+                fontSize: 24,
             },
         });
     },

@@ -16,7 +16,6 @@ const createEntity = ({context, engine, input}: Resources, options?: EntityConfi
     const {generalProperties, visualProperties, listeners, shape} = extractOptions(options);
 
     const sketch = createSketch(shape);
-    console.log(sketch);
 
     const eventHandler = createEventHandler(input, sketch, listeners);
 

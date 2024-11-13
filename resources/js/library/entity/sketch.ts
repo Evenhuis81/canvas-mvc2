@@ -1,26 +1,26 @@
-import {ShapeMap, Shapes, ShapesConfig, Sketch} from 'library/types/entityShapes';
+import {EntityText, ShapeMap, ShapesConfig, Sketch} from 'library/types/entityShapes';
 
-// export type CreateSketch = <K extends keyof ShapeMap>(type: K, shape?: ShapeMap[K]) => Sketch;
-
-// export const createSketch: CreateSketch = (type, shape) => {
 export const createSketch = (shape?: ShapesConfig) => {
-    if (!shape) return {...defaultSketch};
+    if (!shape) return {...shapeDefaults.text, ...shapeDefaults.rect};
 
     // const shapeCreator = createShapeCreator(shape.type, shape);
 
-    // const sketch = {...shapeDefaults[shape.type], ...shape};
+    const sketch = {...shapeDefaults[shape.type], ...shapeDefaults.text, ...shape};
 
-    // return sketch;
-    return {...defaultSketch};
+    return sketch;
+    // return {...shapeDefaults.text, ...shapeDefaults.rect};
 };
 
+type ShapeDefaults = {[Key in keyof ShapeMap]: ShapeMap[Key]} & {text: EntityText};
+
 // Combine in 1 object or several?
-const shapeDefaults: Record<keyof ShapeMap, ShapeMap[keyof ShapeMap]> = {
+const shapeDefaults: ShapeDefaults = {
     rect: {
         type: 'rect',
         fill: '#000',
         stroke: '#f00',
-        // textFill: '#000',
+        radii: 5,
+        lineWidth: 2,
         x: 50,
         y: 50,
         w: 60,
@@ -30,20 +30,28 @@ const shapeDefaults: Record<keyof ShapeMap, ShapeMap[keyof ShapeMap]> = {
         type: 'circle',
         fill: '#000',
         stroke: '#f00',
-        // textFill: '#000',
         x: 50,
         y: 50,
-        r: 25,
+        radius: 25,
+        lineWidth: 2,
     },
     line: {
         type: 'line',
-        // fill: '#000',
         stroke: '#f00',
-        // textFill: '#000',
         x1: 50,
         y1: 50,
         x2: 100,
         y2: 100,
+        lineWidth: 2,
+    },
+    text: {
+        type: 'text',
+        text: 'Entity',
+        textFill: '#fff',
+        font: 'monospace',
+        fontSize: 16,
+        textAlign: 'center',
+        textBaseLine: 'middle',
     },
     // text: {
     //     x: 50,
@@ -67,8 +75,8 @@ const defaultSketch: Sketch = {
     y: 200,
     w: 100,
     h: 50,
-    lw: 2,
-    r: 5,
+    lineWidth: 2,
+    radii: 5,
     stroke: '#f00',
     fill: '#000',
     // Text
