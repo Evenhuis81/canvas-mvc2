@@ -1,22 +1,22 @@
 /* eslint-disable max-lines-per-function */
-import {
+import {createRenders} from './renders';
+import type {
     Callbacks,
     Colors,
     EventHandler,
     GeneralProperties,
     SetEngine,
     SetVisual,
-    Sketch,
     VisualProperties,
     Visuals,
 } from 'library/types/entity';
-import {Input} from 'library/types/input';
-import {createRenders} from './renders';
+import type {Input} from 'library/types/input';
+import type {Shapes} from 'library/types/entityShapes';
 
 export const createVisualsAndCallbacks = (
     gProps: GeneralProperties,
     vProps: VisualProperties,
-    sketch: Sketch,
+    sketch: Shapes,
     colors: Colors,
     input: Input,
     engine: Engine,

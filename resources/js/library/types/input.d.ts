@@ -1,5 +1,5 @@
 import type {InputEventMap} from './entity';
-import {BaseRect} from './entityShapes';
+import {BaseRect, Shapes} from './entityShapes';
 
 type MouseDown = 'mousedown';
 type MouseMove = 'mousemove';
@@ -17,7 +17,7 @@ interface Events {
     wheel: Wheel;
 }
 
-type InsideRect = (rect: TVRect) => boolean;
+type InsideRect = (rect: BaseRect) => boolean;
 
 type Input = {
     mouse: {
@@ -38,7 +38,7 @@ type Input = {
         input: (evt: HTMLElementEventMap[T]) => void,
         props: InputEventMap[T],
         // This needs to be adjusted in time to fit all kind of shapes and extract the right one based on input type given
-        rect?: BaseRect,
+        shape?: Shapes,
     ) => void;
     removeListener: <T extends InputMap>(type: T) => void;
 };
@@ -50,6 +50,6 @@ export type InputListenersMap = {
         type: K;
         listener: (evt: HTMLElementEventMap[K]) => void;
         props: InputEventMap[K];
-        rect?: TVRect;
+        shape?: Shapes;
     }[];
 };

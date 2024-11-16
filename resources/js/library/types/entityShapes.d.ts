@@ -16,6 +16,8 @@ export type Stroke = {
     lineWidth: number;
 };
 
+export type BaseCircle = Omit<Circle, 'type'>;
+
 export type Circle = {
     type: 'circle';
     radius: number;
@@ -42,6 +44,8 @@ export type EntityText = {
     textBaseLine: CanvasTextBaseline;
 };
 
+export type BaseLine = Omit<Line, 'type'>;
+
 export type Line = {
     type: 'line';
 } & Pos2;
@@ -60,4 +64,4 @@ export type ShapeMap = {
     line: Line & Stroke;
 };
 
-type ShapeDefaults = {[Key in keyof ShapeMap]: ShapeMap[Key]} & {text: EntityText};
+type ShapeDefaults = {[Key in keyof ShapeMap]: ShapeMap[Key]};

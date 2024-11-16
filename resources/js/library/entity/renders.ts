@@ -1,11 +1,11 @@
 /* eslint-disable max-lines-per-function */
-import {Callbacks, Colors, GeneralProperties, VisualProperties} from 'library/types/entity';
-import {Sketch} from 'library/types/entityShapes';
-import {Input} from 'library/types/input';
+import type {Callbacks, Colors, GeneralProperties, VisualProperties} from 'library/types/entity';
+import type {Shapes} from 'library/types/entityShapes';
+import type {Input} from 'library/types/input';
 
 export const createRenders = (
     props: GeneralProperties,
-    sketch: Sketch,
+    sketch: Shapes,
     colors: Colors,
     vProps: VisualProperties,
     input: Input,
@@ -98,7 +98,7 @@ export const createRenders = (
     };
 };
 
-const createHoverBold = (sketch: Sketch) => {
+const createHoverBold = (sketch: Shapes) => {
     const origin = {
         lineWidth: sketch.lineWidth,
         f: sketch.fontSize,
@@ -192,7 +192,7 @@ const createTransitionSlideinleft = () => () => {
 let phase = 1;
 
 const createTransitionExplode = (
-    sketch: Sketch,
+    sketch: Shapes,
     {fill, stroke, textFill}: Colors,
     callbacks: Pick<Callbacks, 'endEnd'>,
 ) => ({
@@ -226,7 +226,7 @@ const createTransitionExplode = (
 const createTransitionUpdate =
     (
         {mouse}: Input,
-        sketch: Sketch,
+        sketch: Shapes,
         transition: {
             forward: () => void;
             reverse: () => void;
@@ -242,7 +242,7 @@ const createTransitionUpdate =
         transition.reverse();
     };
 
-const createAnimationNoise = (sketch: Sketch) => () => {
+const createAnimationNoise = (sketch: Shapes) => () => {
     sketch.x += upd.adj.x;
     sketch.y += upd.adj.y;
 

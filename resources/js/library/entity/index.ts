@@ -18,13 +18,9 @@ const createEntity = ({context, engine, input}: Resources, options?: EntityConfi
 
     const sketch = createSketch(shape);
 
-    // console.log(sketch);
-    // if (sketch.type === 'rect') {
-    //     context.rect(sketch.x, sketch.y, sketch.w, sketch.h)
-    // }
-
     const eventHandler = createEventHandler(input, sketch, listeners);
 
+    // @type Rect, Circle, Line does not have fill color, make overload function or rehaul colors entirely
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
     const {callbacks, setVisual} = createVisualsAndCallbacks(

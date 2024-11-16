@@ -1,9 +1,13 @@
-import {ShapeDefaults, ShapesConfig} from 'library/types/entityShapes';
+import {EntityText, ShapeDefaults, ShapesConfig} from 'library/types/entityShapes';
 
 export const createSketch = (shape?: ShapesConfig) => {
-    if (!shape) return {...shapeDefaults.text, ...shapeDefaults.rect};
+    if (!shape) return {...shapeDefaults.rect, ...textDefault};
 
-    const sketch = {...shapeDefaults[shape.type], ...shapeDefaults.text, ...shape};
+    const sketch = {
+        ...shapeDefaults[shape.type],
+        ...textDefault,
+        ...Object.fromEntries(Object.entries(shape).filter(item => Boolean(item[1]))),
+    };
 
     return sketch;
 };
@@ -39,13 +43,13 @@ const shapeDefaults: ShapeDefaults = {
         y2: 100,
         lineWidth: 2,
     },
-    text: {
-        type: 'text',
-        text: 'Entity',
-        textFill: '#fff',
-        font: 'monospace',
-        fontSize: 16,
-        textAlign: 'center',
-        textBaseLine: 'middle',
-    },
+};
+
+const textDefault: Omit<EntityText, 'type'> = {
+    text: 'Entity',
+    textFill: '#fff',
+    font: 'monospace',
+    fontSize: 16,
+    textAlign: 'center',
+    textBaseLine: 'middle',
 };

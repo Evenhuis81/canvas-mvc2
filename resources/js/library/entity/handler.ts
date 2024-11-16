@@ -97,15 +97,8 @@ const createAddAndRemoveListener = (
 
             const add = () => {
                 // TODO::Extract Shape from sketch (pass only needed props)
-                if (sketch.type === 'rect') {
-                    const {x, y, w, h} = sketch;
-
-                    const rect = {type: sketch.type, x, y, w, h};
-
-                    input.addListener(type, runListener, props, rect);
-
-                    return;
-                }
+                if (sketch.type === 'rect' || sketch.type === 'circle')
+                    input.addListener(type, runListener, props, sketch);
 
                 input.addListener(type, runListener, props);
             };

@@ -1,4 +1,5 @@
 import type {InputEventMap} from './types/entity';
+import {BaseCircle, BaseRect, Pos, Shapes} from './types/entityShapes';
 import type {InputListenersMap} from './types/input';
 
 /* eslint-disable max-lines-per-function */
@@ -28,9 +29,9 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         type: T,
         listener: (evt: HTMLElementEventMap[T]) => void,
         props: InputEventMap[T],
-        rect?: Rect,
+        shape?: Shapes,
     ) => {
-        listeners[type].push({type, listener, props, rect});
+        listeners[type].push({type, listener, props, shape});
     };
 
     const removeListener = <T extends keyof InputListenersMap>(type: T) => {
@@ -47,7 +48,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         buttonHeld[evt.button] = true;
 
         listeners.mousedown.forEach(m => {
-            if (m.rect && insideMouseRect(m.rect)) m.listener(evt);
+            if (clickedInsideMouse(m.shape)) m.listener(evt);
         });
     });
     canvas.addEventListener('mousemove', evt => {
@@ -65,13 +66,31 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         delete buttonHeld[evt.button];
 
         listeners.mouseup.forEach(m => {
-            if (m.rect && insideMouseRect(m.rect)) {
+            if (clickedInsideMouse(m.shape)) {
                 m.props.clicked = true;
                 m.props.clickTotal++;
                 m.listener(evt);
             }
         });
     });
+
+    // TODO::Make prettier when scaled enough
+    const clickedInsideMouse = (shape?: Shapes) => {
+        if (!shape) return false;
+
+        if (shape.type === 'rect' && insideMouseRect(shape)) return true;
+        if (shape.type === 'circle' && insideMouseCircle(shape)) return true;
+
+        return false;
+    };
+    const clickedInsideTouch = (shape?: Shapes) => {
+        if (!shape) return false;
+
+        if (shape.type === 'rect' && insideTouchRect(shape)) return true;
+        if (shape.type === 'circle' && insideTouchCircle(shape)) return true;
+
+        return false;
+    };
 
     canvas.addEventListener('keydown', evt => {
         mouse.touchEnded = false;
@@ -96,7 +115,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         touch.y = +(evt.touches[0].clientY - canvasRect.top).toFixed(0);
 
         listeners.touchstart.forEach(m => {
-            if (m.rect && insideTouchRect(m.rect)) m.listener(evt);
+            if (clickedInsideTouch(m.shape)) m.listener(evt);
         });
     });
 
@@ -115,7 +134,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         mouse.touchEnded = true;
 
         listeners.touchend.forEach(m => {
-            if (m.rect && insideTouchRect(m.rect)) {
+            if (clickedInsideTouch(m.shape)) {
                 m.props.clicked = true;
                 m.props.clickTotal++;
                 m.listener(evt);
@@ -135,20 +154,33 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         timeout = setTimeout(resize, 250);
     };
 
-    type Rect = {x: number; y: number; w: number; h: number};
+    const distanceShape = (pos1: Pos, pos2: Pos) => {
+        const pos1sq = Math.sqrt(pos1.x * pos1.x + pos1.y * pos1.y);
+        const pos2sq = Math.sqrt(pos2.x * pos2.x + pos2.y * pos2.y);
 
-    const createInsideRect = (inputDevice: {x: number; y: number}) => (rect: Rect) =>
+        return pos1sq - pos2sq;
+    };
+
+    const createInsideCircle = (inputDevice: Pos) => (circle: BaseCircle) => {
+        const distance = distanceShape(inputDevice, circle);
+
+        return distance <= circle.radius;
+    };
+
+    const createInsideRect = (inputDevice: {x: number; y: number}) => (rect: BaseRect) =>
         inputDevice.x >= rect.x - rect.w / 2 &&
         inputDevice.x < rect.x + rect.w / 2 &&
         inputDevice.y >= rect.y - rect.h / 2 &&
         inputDevice.y < rect.y + rect.h / 2;
 
+    const insideMouseCircle = createInsideCircle(mouse);
+    const insideTouchCircle = createInsideCircle(mouse);
     const insideMouseRect = createInsideRect(mouse);
     const insideTouchRect = createInsideRect(touch);
 
     return {
-        mouse: Object.assign(mouse, {insideRect: insideMouseRect}),
-        touch: Object.assign(touch, {insideRect: insideTouchRect}),
+        mouse: Object.assign(mouse, {insideRect: insideMouseRect, insideCircle: insideMouseCircle}),
+        touch: Object.assign(touch, {insideRect: insideTouchRect, insideCircle: insideTouchCircle}),
         buttonHeld,
         keyHeld,
         addListener,
