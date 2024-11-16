@@ -17,6 +17,8 @@ const createEntity = ({context, engine, input}: Resources, options?: EntityConfi
 
     const sketch = createSketch(shape);
 
+    console.log(sketch);
+
     const eventHandler = createEventHandler(input, sketch, listeners);
 
     const colors = getSketchRGBAColorsFromHexString(sketch);

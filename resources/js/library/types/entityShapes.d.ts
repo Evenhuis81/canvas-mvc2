@@ -46,7 +46,7 @@ export type Line = {
     type: 'line';
 } & Pos2;
 
-export type Shapes = ShapeMap[keyof ShapeMap];
+export type Shapes = ShapeMap[keyof ShapeMap] & Omit<EntityText, 'type'>;
 
 export type WithRequired<T, K extends keyof T> = T & {[Key in K]-?: T[Key]};
 
@@ -59,4 +59,11 @@ export type ShapeMap = {
     // text: EntityText;
 };
 
-export type Sketch = Omit<EntityText, 'type'> & Rect & Fill & Stroke;
+// Create base Shapes completely naked and all required props, add type with type property in seperate Type
+// Use ShapeConfig for incoming entityOptions (to create Sketch)
+// Convert ShapeConfig to defaultSketches and userInput sketch
+// Add seperate input for text 'entity' (?), use this entity to put on top of existing default and user input sketches
+
+type ShapeDefaults = {[Key in keyof ShapeMap]: ShapeMap[Key]} & {text: EntityText};
+
+// export type Sketch = Omit<EntityText, 'type'> & Rect & Fill & Stroke;
