@@ -161,6 +161,12 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         return pos1sq - pos2sq;
     };
 
+    // TODO::Make generic when growing
+    const insideMouse = (shape: Shapes) => {
+        if (shape.type === 'rect') insideMouseRect(shape);
+        else if (shape.type === 'circle') insideMouseCircle(shape);
+    };
+
     const createInsideCircle = (inputDevice: Pos) => (circle: BaseCircle) => {
         const distance = distanceShape(inputDevice, circle);
 
@@ -179,7 +185,11 @@ export const getInput = (canvas: HTMLCanvasElement) => {
     const insideTouchRect = createInsideRect(touch);
 
     return {
-        mouse: Object.assign(mouse, {insideRect: insideMouseRect, insideCircle: insideMouseCircle}),
+        mouse: Object.assign(mouse, {
+            insideRect: insideMouseRect,
+            insideCircle: insideMouseCircle,
+            inside: insideMouse,
+        }),
         touch: Object.assign(touch, {insideRect: insideTouchRect, insideCircle: insideTouchCircle}),
         buttonHeld,
         keyHeld,

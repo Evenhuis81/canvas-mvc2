@@ -225,7 +225,7 @@ const createTransitionExplode = (
 
 const createTransitionUpdate =
     (
-        {mouse}: Input,
+        {mouse}: Input, // only mouse, no hover on touch
         sketch: Shapes,
         transition: {
             forward: () => void;
@@ -233,7 +233,8 @@ const createTransitionUpdate =
         },
     ) =>
     () => {
-        if (mouse.insideRect(sketch)) {
+        // if (mouse.insideRect(sketch)) {
+        if (mouse.inside(sketch)) {
             transition.forward();
 
             return;
@@ -243,39 +244,63 @@ const createTransitionUpdate =
     };
 
 const createAnimationNoise = (sketch: Shapes) => () => {
-    sketch.x += upd.adj.x;
-    sketch.y += upd.adj.y;
+    if (sketch.type === 'rect') {
+        sketch.x += upd.adj.x;
+        sketch.y += upd.adj.y;
 
-    upd.count++;
+        upd.count++;
 
-    if (upd.count > 60) {
-        upd.adj.x *= -1;
-        upd.adj.y *= -1;
+        if (upd.count > 60) {
+            upd.adj.x *= -1;
+            upd.adj.y *= -1;
 
-        upd.count = 0;
+            upd.count = 0;
+        }
     }
 };
 
+// TODO::Create seperate module and abstract this one into multiple shape renders
 const createDraw =
-    (sketch: Sketch, c: CanvasRenderingContext2D, {fill, stroke, textFill}: Colors) =>
+    (sketch: Shapes, c: CanvasRenderingContext2D, {fill, stroke, textFill}: Colors) =>
     () => {
-        c.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
-        c.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
-        c.lineWidth = sketch.lineWidth;
+        if (sketch.type === 'rect') {
+            c.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
+            c.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
+            c.lineWidth = sketch.lineWidth;
 
-        c.beginPath();
-        c.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.radii);
-        c.fill();
-        c.stroke();
+            c.beginPath();
+            c.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.radii);
+            c.fill();
+            c.stroke();
 
-        c.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
-        c.font = `${sketch.fontSize}px ${sketch.font}`;
+            c.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
+            c.font = `${sketch.fontSize}px ${sketch.font}`;
 
-        c.textAlign = sketch.textAlign;
-        c.textBaseline = sketch.textBaseLine;
+            c.textAlign = sketch.textAlign;
+            c.textBaseline = sketch.textBaseLine;
 
-        c.beginPath();
-        c.fillText(sketch.text, sketch.x, sketch.y + 1.5);
+            c.beginPath();
+            c.fillText(sketch.text, sketch.x, sketch.y + 1.5);
+        } else if (sketch.type === 'circle') {
+            c.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
+            c.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
+            c.lineWidth = sketch.lineWidth;
+
+            c.beginPath();
+            // c.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.radii);
+            c.arc(sketch.x, sketch.y, sketch.radius, 0, Math.PI * 2);
+            c.fill();
+            c.stroke();
+
+            c.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
+            c.font = `${sketch.fontSize}px ${sketch.font}`;
+
+            c.textAlign = sketch.textAlign;
+            c.textBaseline = sketch.textBaseLine;
+
+            c.beginPath();
+            c.fillText(sketch.text, sketch.x, sketch.y + 1.5);
+        }
     };
 
 // max property is default 60, need for deltaTime, adj is change in property

@@ -1,5 +1,5 @@
 import type {InputEventMap} from './entity';
-import {BaseRect, Shapes} from './entityShapes';
+import {BaseCircle, BaseRect, Shapes} from './entityShapes';
 
 type MouseDown = 'mousedown';
 type MouseMove = 'mousemove';
@@ -18,18 +18,23 @@ interface Events {
 }
 
 type InsideRect = (rect: BaseRect) => boolean;
+type InsideCircle = (circle: BaseCircle) => boolean;
+type Inside = (shape: Shapes) => boolean | undefined;
 
 type Input = {
     mouse: {
         x: number;
         y: number;
+        inside: Inside;
         insideRect: InsideRect;
+        insideCircle: InsideCircle;
         touchEnded: boolean;
     };
     touch: {
         x: number;
         y: number;
         insideRect: InsideRect;
+        insideCircle: InsideCircle;
     };
     buttonHeld: Record<number, boolean>;
     keyHeld: Record<string, boolean>;

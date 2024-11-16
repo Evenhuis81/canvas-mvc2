@@ -30,6 +30,8 @@ export const createVisualsAndCallbacks = (
     // callbacks: Pick<Callbacks, 'startEnd' | 'endEnd'>,
     const renders = createRenders(gProps, sketch, colors, vProps, input, context, callbacks);
 
+    // console.log(sketch);
+
     const visuals = {
         entity: animationType ? renders.animations[animationType]() : undefined,
         hover: hoverType ? renders.hovers[hoverType]() : undefined,

@@ -3,6 +3,8 @@ import {EntityText, ShapeDefaults, ShapesConfig} from 'library/types/entityShape
 export const createSketch = (shape?: ShapesConfig) => {
     if (!shape) return {...shapeDefaults.rect, ...textDefault};
 
+    console.log(shape.type);
+
     const sketch = {
         ...shapeDefaults[shape.type],
         ...textDefault,
