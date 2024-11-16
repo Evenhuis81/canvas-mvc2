@@ -6,6 +6,7 @@ import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {resources} from '..';
 import type {EntityConfig, EntityMethods, GeneralProperties} from 'library/types/entity';
 import {createSketch} from './sketch';
+import {defaultProperties} from './defaults';
 
 const createResource = (res: Resources) => ({
     create: (options?: EntityConfig) => createEntity(res, options),
@@ -17,7 +18,10 @@ const createEntity = ({context, engine, input}: Resources, options?: EntityConfi
 
     const sketch = createSketch(shape);
 
-    console.log(sketch);
+    // console.log(sketch);
+    // if (sketch.type === 'rect') {
+    //     context.rect(sketch.x, sketch.y, sketch.w, sketch.h)
+    // }
 
     const eventHandler = createEventHandler(input, sketch, listeners);
 
@@ -86,22 +90,6 @@ const extractOptions = (options: EntityConfig = {}) => {
     const {listeners, sketch: shape} = rest2;
 
     return {generalProperties, visualProperties, listeners, shape};
-};
-
-const defaultProperties = {
-    // generalProperties (mixed internal properties + id set in abstractOptions)
-    name: 'noName', // + counter/uid?
-    // type: 'default',
-    disabled: false,
-    show: true,
-    showDelay: 0,
-    clicked: false,
-    hideTime: 0,
-    // visualProperties (types can be undefined)
-    animateAtStart: false,
-    animateAtEnd: false,
-    startSpeed: 3,
-    endSpeed: 3,
 };
 
 // TODO::Resource availability check

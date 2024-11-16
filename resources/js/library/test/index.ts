@@ -2,7 +2,7 @@ import {initialize, resources} from 'library/index';
 import createEntity from '../entity/';
 
 export default {
-    setup: async () => {
+    setup: () => {
         initialize('test', {
             containerID: 'test-container',
             full: true,
@@ -18,22 +18,24 @@ export default {
             //     type: 'rect',
             //     x: 12,
             // },
-            // sketch: {
-            // type: 'text',
-            // type: 'circle',
-            // type: 'rect',
-            // x: 12,
-            // y: 12,
-            // fill: '#fa0',
-            // stroke: '#00f',
-            // x1: 12,
-            // y2: 12,
-            // w: 100,
-            // h: 50,
-            // radius: 12,
-            // textFill: '#ff0',
-            // fontSize: 24,
-            // },
+            sketch: {
+                // type: 'text',
+                // type: 'circle',
+                type: 'rect',
+                x: 12,
+                // y: 12,
+                // fill: '#fa0',
+                // stroke: '#00f',
+                // x1: 12,
+                // y2: 12,
+                // w: 100,
+                // h: 50,
+                // radius: 12,
+                radii: 5,
+                textFill: '#ff0',
+                textAlign: 'center',
+                // fontSize: 24,
+            },
         });
     },
     run: () => resources.test.engine.run(),
