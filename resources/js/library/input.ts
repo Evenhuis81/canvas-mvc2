@@ -1,5 +1,5 @@
 import type {InputEventMap} from './types/entity';
-import {BaseCircle, BaseRect, Pos, Shapes} from './types/entityShapes';
+import {BaseCircle, BaseRect, Pos, Shapes} from './types/shapes';
 import type {InputListenersMap} from './types/input';
 
 /* eslint-disable max-lines-per-function */
@@ -163,8 +163,10 @@ export const getInput = (canvas: HTMLCanvasElement) => {
 
     // TODO::Make generic when growing
     const insideMouse = (shape: Shapes) => {
-        if (shape.type === 'rect') insideMouseRect(shape);
-        else if (shape.type === 'circle') insideMouseCircle(shape);
+        if (shape.type === 'rect') return insideMouseRect(shape);
+        else if (shape.type === 'circle') return insideMouseCircle(shape);
+
+        return;
     };
 
     const createInsideCircle = (inputDevice: Pos) => (circle: BaseCircle) => {

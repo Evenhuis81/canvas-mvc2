@@ -1,4 +1,4 @@
-import {EntityText, ShapeDefaults, ShapesConfig} from 'library/types/entityShapes';
+import {EntityText, ShapeDefaults, ShapesConfig} from 'library/types/shapes';
 
 export const createSketch = (shape?: ShapesConfig) => {
     if (!shape) return {...shapeDefaults.rect, ...textDefault};

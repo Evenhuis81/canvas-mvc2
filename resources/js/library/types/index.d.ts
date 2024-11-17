@@ -1,16 +1,18 @@
-interface Resources {
+import {LibraryInput} from './input';
+
+export interface LibraryResources {
     id: string | number;
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
     container: HTMLDivElement;
     engine: Engine;
-    sv: StaticView;
-    input: Input;
+    sv: StaticView; // empty
+    input: LibraryInput;
 }
 
-interface ResourcesAndTV extends Resources {
-    tv: TransformedView;
-}
+// interface ResourcesAndTV extends Resources {
+//     tv: TransformedView;
+// }
 
 interface StatisticOptions {
     popup: boolean;
@@ -27,7 +29,7 @@ interface CanvasOptions {
     contextMenu: boolean;
 }
 
-interface LibraryOptions extends CanvasOptions {
+export interface LibraryOptions extends CanvasOptions {
     containerID: string;
     center: boolean;
     full: boolean; // full tab (innerWidth, innerHeight)

@@ -1,4 +1,4 @@
-import {Shapes} from './types/entityShapes';
+import {Shapes} from './types/shapes';
 
 // https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
 export const hexToRgb = (hex: string) => {

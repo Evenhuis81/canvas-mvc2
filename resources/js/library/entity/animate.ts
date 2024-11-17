@@ -11,7 +11,7 @@ import type {
     Visuals,
 } from 'library/types/entity';
 import type {Input} from 'library/types/input';
-import type {Shapes} from 'library/types/entityShapes';
+import type {Shapes} from 'library/types/shapes';
 
 export const createVisualsAndCallbacks = (
     gProps: GeneralProperties,

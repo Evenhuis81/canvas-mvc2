@@ -11,6 +11,14 @@ export const routes: RouteRecordRaw[] = [
         },
     },
     {
+        path: '/hello',
+        component: () => import('./games/Hello.vue'),
+        name: 'Hello',
+        meta: {
+            shouldBeLoggedIn: false,
+        },
+    },
+    {
         path: '/test',
         component: () => import('./library/test/Test.vue'),
         name: 'Test',

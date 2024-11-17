@@ -1,5 +1,5 @@
 import type {InputEventMap} from './entity';
-import {BaseCircle, BaseRect, Shapes} from './entityShapes';
+import {BaseCircle, BaseRect, Shapes} from './shapes';
 
 type MouseDown = 'mousedown';
 type MouseMove = 'mousemove';
@@ -21,7 +21,7 @@ type InsideRect = (rect: BaseRect) => boolean;
 type InsideCircle = (circle: BaseCircle) => boolean;
 type Inside = (shape: Shapes) => boolean | undefined;
 
-type Input = {
+export type LibraryInput = {
     mouse: {
         x: number;
         y: number;
@@ -47,6 +47,19 @@ type Input = {
     ) => void;
     removeListener: <T extends InputMap>(type: T) => void;
 };
+
+// return {
+//     mouse: Object.assign(mouse, {
+//         insideRect: insideMouseRect,
+//         insideCircle: insideMouseCircle,
+//         inside: insideMouse,
+//     }),
+//     touch: Object.assign(touch, {insideRect: insideTouchRect, insideCircle: insideTouchCircle}),
+//     buttonHeld,
+//     keyHeld,
+//     addListener,
+//     removeListener,
+// };
 
 type InputMap = 'mousedown' | 'mousemove' | 'mouseup' | 'keydown' | 'keyup' | 'touchstart' | 'touchmove' | 'touchend';
 

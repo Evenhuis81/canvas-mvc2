@@ -1,7 +1,7 @@
 /* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
 import type {EntityConfigListeners, EntityEventMap, EventHandler, ListenerHandler} from 'library/types/entity';
-import type {Shapes} from 'library/types/entityShapes';
+import type {Shapes} from 'library/types/shapes';
 import type {Input} from 'library/types/input';
 
 export const createEventHandler = <T extends keyof EntityEventMap>(
