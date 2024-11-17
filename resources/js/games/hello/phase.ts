@@ -6,13 +6,11 @@ export const initiatePhase = (phase: number) => {
 
     const circy = getCircy();
 
-    resources.hello.engine.setDraw(circy.draw);
-    resources.hello.engine.setDraw(circy.drawStats);
-    resources.hello.engine.setUpdate(circy.update);
+    circy.start();
 };
 
 const phases: Record<number, Function> = {
     1: () => {
-        console.log('phase 1 initiatied');
+        // console.log('phase 1 initiatied');
     },
 };

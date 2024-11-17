@@ -3,17 +3,41 @@ import {resources} from 'library/index';
 export const getCircy = () => {
     const {context: ctx, canvas, engine} = resources.hello;
 
-    const props = {
-        x: canvas.width / 2,
-        y: canvas.height / 2,
-        lineWidth: 0,
-        fillStyle: '#000',
-        strokeStyle: '#fff',
-        radius: 0,
-        startAngle: 0,
-        endAngle: Math.PI * 2,
-        counterclockwise: false,
+    const start = () => {
+        resources.hello.engine.setDraw(draw);
+        resources.hello.engine.setDraw(drawStats);
+        resources.hello.engine.setUpdate(update);
     };
+
+    const props = {
+        sketch: {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            lineWidth: 0,
+            fillStyle: '#000',
+            strokeStyle: '#fff',
+            radius: 0,
+            startAngle: 0,
+            endAngle: Math.PI * 2,
+            counterclockwise: false,
+        },
+        // Calculate time passed on each frame and total time for each phase and divide those for each update
+        timer: {
+            time: 0,
+            lastTime: 0,
+            timePassed: 0,
+        },
+        phaser: {
+            number: 0,
+            end: 4,
+            shifts: [0],
+        },
+    };
+
+    props.phaser.shifts.length = 0;
+    props.phaser.shifts = [2000, 5000, 8000, 10000, 999999999999];
+
+    const {sketch, phaser, timer} = props;
 
     const drawStats = {
         id: 'stats-circy-phases',
@@ -27,12 +51,12 @@ export const getCircy = () => {
             ctx.fillStyle = '#fff';
 
             ctx.fillText(
-                `phase: ${phaseNumber}, timer: ${engine.info.time.last().toFixed(0)}`,
+                `phase: ${phaser.number}, timer: ${engine.info.time.last().toFixed(0)}`,
                 canvas.width / 2,
                 canvas.height - 100,
             );
 
-            ctx.fillText(`shifting phase at: ${phaseShift[phaseNumber]}ms`, canvas.width / 2, canvas.height - 75);
+            ctx.fillText(`shifting phase at: ${phaser.shifts[phaser.number]}ms`, canvas.width / 2, canvas.height - 75);
 
             ctx.fillText(
                 `engine updates: ${engine.info.updates.length()}, draws: ${engine.info.draws.length()}`,
@@ -48,36 +72,28 @@ export const getCircy = () => {
         fn: () => {
             ctx.beginPath();
 
-            ctx.fillStyle = props.fillStyle;
-            ctx.strokeStyle = props.strokeStyle;
-            ctx.lineWidth = props.lineWidth;
+            ctx.fillStyle = sketch.fillStyle;
+            ctx.strokeStyle = sketch.strokeStyle;
+            ctx.lineWidth = sketch.lineWidth;
 
-            ctx.arc(props.x, props.y, props.radius, props.startAngle, props.endAngle, props.counterclockwise);
+            ctx.arc(sketch.x, sketch.y, sketch.radius, sketch.startAngle, sketch.endAngle, sketch.counterclockwise);
             ctx.fill();
             ctx.stroke();
         },
     };
 
-    // Calculate time passed on each frame and total time for each phase and divide those for each update into the actual
-    // Transition methods
-    let timer = 0;
-    let phaseNumber = 0;
-
-    const phaseShift = [2000, 5000, 8000, 10000, 999999999999];
-    // const phaseShift = [500, 1000, 1500, 2000, 999999999999];
-
     const update = {
         id: 'phases-update',
         name: 'update Phases',
         fn: (evt: UpdateEvent) => {
-            timer = evt.lastTime;
+            timer.time = evt.lastTime;
 
-            if (phaseShift[phaseNumber] < evt.lastTime) {
-                engine.removeUpdate(phases[phaseNumber][0]);
+            if (phaser.shifts[phaser.number] < evt.lastTime) {
+                engine.removeUpdate(phases[phaser.number][0]);
 
-                phaseNumber++;
+                phaser.number++;
 
-                if (phaseNumber === 4) {
+                if (phaser.number === phaser.end) {
                     engine.removeUpdate('phases-update');
 
                     engine.removeDraw('demo-circy');
@@ -91,14 +107,25 @@ export const getCircy = () => {
 
                 // Name property for update needed?
                 engine.setUpdate({
-                    id: phases[phaseNumber][0],
-                    fn: phases[phaseNumber][1],
+                    id: phases[phaser.number][0],
+                    fn: phases[phaser.number][1],
                 });
             }
         },
     };
 
-    const update1 = () => {};
+    const timerProperties = {
+        timeDistance: 0,
+        timeLast: 0,
+    };
+
+    // const prepareTest = () => {
+
+    // }
+
+    const update1 = () => {
+        console.log('phase 1 running');
+    };
 
     const update2 = () => {
         console.log('phase 2 running');
@@ -116,6 +143,7 @@ export const getCircy = () => {
         console.log('phase 5 running');
     };
 
+    // TOOD::Pre- and postpare for phase method, tuple 3rd and 4th entry
     const phases: Record<number, [string, () => void]> = {
         0: ['phase0', () => {}],
         1: ['phase1', update1],
@@ -126,9 +154,9 @@ export const getCircy = () => {
     };
 
     engine.setUpdate({
-        id: phases[phaseNumber][0],
-        fn: phases[phaseNumber][1],
+        id: phases[phaser.number][0],
+        fn: phases[phaser.number][1],
     });
 
-    return {draw, drawStats, update};
+    return {draw, drawStats, update, start};
 };
