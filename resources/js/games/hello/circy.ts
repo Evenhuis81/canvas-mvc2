@@ -58,6 +58,8 @@ export const getCircy = () => {
         },
     };
 
+    // Calculate time passed on each frame and total time for each phase and divide those for each update into the actual
+    // Transition methods
     let timer = 0;
     let phaseNumber = 0;
 
