@@ -1,7 +1,7 @@
 type Zoom = 'in' | 'out';
 
-interface StaticView {
-    paint: Paint;
+export interface StaticView {
+    // paint: Paint;
 }
 
 type TransformedView = PropertiesTV & MethodsTV & PaintTV;

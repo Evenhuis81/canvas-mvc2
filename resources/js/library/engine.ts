@@ -36,13 +36,16 @@ export const getEngine = () => {
 
 const createLoop = (properties: EngineProperties) => {
     const loop = (time: DOMHighResTimeStamp) => {
-        properties.timePassed = properties.lastTime - time;
+        properties.timePassed = time - properties.lastTime;
 
         properties.lastTime = time;
 
-        for (const update of properties.updates) update.fn(properties.timePassed);
+        // if (properties.lastTime < 2000) {
+        for (const update of properties.updates)
+            update.fn({timePassed: properties.timePassed, lastTime: properties.lastTime});
 
         for (const draw of properties.draws) draw.fn();
+        // }
 
         properties.requestID = requestAnimationFrame(loop);
 
@@ -97,13 +100,17 @@ const createSetAndRemoveUpdatesAndDraws = (properties: EngineProperties) => {
     };
 };
 
-const createInfo = (properties: EngineProperties) => ({
+const createInfo = (props: EngineProperties) => ({
     updates: {
-        length: () => properties.updates.length,
-        ids: () => properties.draws.map(draw => draw.id),
+        length: () => props.updates.length,
+        ids: () => props.draws.map(draw => draw.id),
     },
     draws: {
-        length: () => properties.draws.length,
-        ids: () => properties.updates.map(update => update.id),
+        length: () => props.draws.length,
+        ids: () => props.updates.map(update => update.id),
+    },
+    time: {
+        passed: () => props.timePassed,
+        last: () => props.lastTime,
     },
 });

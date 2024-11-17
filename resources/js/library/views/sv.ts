@@ -1,4 +1,6 @@
-export const getSV = (context: CanvasRenderingContext2D, engine: Engine) => {
+export const getSV = (context: CanvasRenderingContext2D, engine: Engine) => {};
+
+export const getSVTemp = (context: CanvasRenderingContext2D, engine: Engine) => {
     const paintMethods = createPaintMethods(context);
 
     // TODO::Create PaintTV and PaintSV interfaces (only PaintTV exists at the moment)

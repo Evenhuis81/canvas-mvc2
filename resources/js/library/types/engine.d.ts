@@ -1,7 +1,13 @@
 type Update = {
     id?: number | string;
     name?: string;
-    fn: (deltaTime: number) => void;
+    // fn: (deltaTime: number) => void;
+    fn: (evt: UpdateEvent) => void;
+};
+
+type UpdateEvent = {
+    timePassed: number;
+    lastTime: number;
 };
 
 type Draw = Omit<Update, 'fn'> & {
@@ -24,6 +30,10 @@ interface Engine {
         draws: {
             length: () => number;
             ids: () => (string | number | undefined)[];
+        };
+        time: {
+            passed: () => number;
+            last: () => number;
         };
     };
 }

@@ -1,10 +1,10 @@
 import {createContainer, getCanvas, getContainer, getContext2D, setCanvas} from './canvas';
 import {getEngine} from './engine';
-import {getTV} from './views/tv';
+// import {getTV} from './views/tv';
 import {getInput} from 'library/input';
 import {getSV} from './views/sv';
 import {uid} from './helpers';
-import {LibraryOptions, LibraryResources} from './types';
+import type {LibraryOptions, LibraryResources} from './types';
 
 export const resources: Record<string | number, LibraryResources> = {};
 
@@ -23,10 +23,9 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
     setCanvas(canvas, container, options);
 
     const input = getInput(canvas);
+
     // const input = getInput(canvas, options?.dualView);
-
     // const tv = getTV(context, input);
-
     const sv = getSV(context, engine);
 
     resources[libraryID] = {id: libraryID, canvas, context, engine, container, sv, input};

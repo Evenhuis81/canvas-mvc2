@@ -12,5 +12,6 @@ export default {
     },
     runEngine: () => resources.hello.engine.run(),
     runEngineOnce: () => resources.hello.engine.runOnce(),
+
     startPhase: (phase: number) => initiatePhase(phase),
 };
