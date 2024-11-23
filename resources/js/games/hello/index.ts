@@ -1,17 +1,20 @@
 import {initialize, resources} from 'library/index';
 import {initiatePhase} from './phase';
 
+const libraryID = 'hello';
+const phase = 1;
+
 export default {
     setup: () => {
-        initialize('hello', {
+        initialize(libraryID, {
             containerID: 'hello-container',
             full: true,
             clear: true,
             backgroundColor: '#000',
         });
     },
-    runEngine: () => resources.hello.engine.run(),
-    runEngineOnce: () => resources.hello.engine.runOnce(),
+    run: () => resources[libraryID].engine.run(),
+    runOnce: () => resources[libraryID].engine.runOnce(),
 
-    startPhase: (phase: number) => initiatePhase(phase),
+    start: () => initiatePhase(phase),
 };

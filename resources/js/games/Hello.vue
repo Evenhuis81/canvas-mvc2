@@ -9,8 +9,8 @@ import hello from './hello';
 onMounted(() => {
     hello.setup();
 
-    hello.runEngine();
+    hello.run();
 
-    hello.startPhase(1);
+    hello.start();
 });
 </script>
