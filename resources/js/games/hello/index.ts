@@ -1,5 +1,5 @@
 import {initialize, resources} from 'library/index';
-import {initiatePhase} from './phase';
+import {getCircy} from './circy';
 
 const libraryID = 'hello';
 const phase = 1;
@@ -16,5 +16,9 @@ export default {
     run: () => resources[libraryID].engine.run(),
     runOnce: () => resources[libraryID].engine.runOnce(),
 
-    start: () => initiatePhase(phase),
+    start: () => {
+        const circy = getCircy();
+
+        circy.start();
+    },
 };

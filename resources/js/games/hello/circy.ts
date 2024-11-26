@@ -1,6 +1,6 @@
 import {resources} from 'library/index';
-import { createUpdate } from './update';
-import { createDrawStats, createDraw } from './draw';
+import {createUpdate} from './update';
+import {createDrawStats, createDraw} from './draw';
 
 export const getCircy = () => {
     const {context: ctx, canvas, engine} = resources.hello;
@@ -50,16 +50,16 @@ export type Phaser = {
     number: number;
     end: number;
     shifts: number[];
-}
+};
 
 export type CircySketch = {
-    x: number,
-    y: number,
-    lineWidth: number,
-    fillStyle: string,
-    strokeStyle: string,
-    radius: number,
-    startAngle: number,
-    endAngle: number,
-    counterclockwise: boolean,
-},
+    x: number;
+    y: number;
+    lineWidth: number;
+    fillStyle: string;
+    strokeStyle: string;
+    radius: number;
+    startAngle: number;
+    endAngle: number;
+    counterclockwise: boolean;
+};
