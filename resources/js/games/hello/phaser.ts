@@ -1,57 +1,68 @@
-import {Phaser} from './types';
+import {Phaser, PhaserPhases, SetPhase} from './types';
 
-const createProps: () => Phaser = () => ({
-    // Calculate time passed on each frame and total time for each phase and divide those for each update
-    // timer: {
-    //     last: 0,
-    // passed: 0,
-    // distance: 0,
-    // },
-    time: 0,
-    number: 0,
-    end: 4, // make optional, default 0 (or 1)
-    shifts: [],
-    // TOOD::Pre- and postpare for phase method, tuple 3rd and 4th entry
-    phases: {0: ['phase0']},
-    start: () => {},
-});
+// const createProps = () => ({
+//     time: 0,
+//     number: 0,
+// end: 4, // make optional, default 0 (or 1)
+// shifts: [0],
+// TOOD::Pre- and postpare for phase method, tuple 3rd and 4th entry
+// });
 
 export const createPhaser = (engine: Engine) => {
-    const props = createProps();
+    const props = {
+        time: 0,
+        number: 0,
+        id: 1,
+    };
 
-    props.shifts = [0, 4000, 7000, 11000];
+    // id = number only for engine, set name only and ids auto-generate, set type from SetPhase parameter
+    const phases: PhaserPhases = {};
 
-    const setPhase = () => {
-        //
+    const setPhase: SetPhase = phase => {
+        const update = phase[2];
+        const draw = phase[3];
+
+        phases[props.id++] = [phase[0], phase[1], update, draw];
     };
 
     const update = createUpdate(engine, props);
 
-    props.start = () => {
+    const start = () => {
+        const noop = () => {};
+
         engine.setUpdate(update);
 
-        engine.setUpdate({
-            id: props.phases[props.number][0],
-            fn: props.phases[props.number][1],
-        });
+        const updateOrDraw = {
+            id: props.number,
+            name: phases[props.number][0],
+            fn: phases[props.number][2] ?? phases[props.number][3] ?? noop,
+        };
+
+        if (phases[props.number][2]) engine.setUpdate(updateOrDraw);
+        else if (phases[props.number][3]) engine.setDraw(updateOrDraw);
+        // engine.setUpdate({
+        //     id: props.number,
+        //     name: phases[props.number][0],
+        //     fn: phases[props.number][2],
+        // });
     };
 
-    return props;
+    return Object.assign(props, {start});
 };
 
-const createUpdate = (engine: Engine, phaser: Phaser) => ({
+const createUpdate = (engine: Engine, props: Phaser, phases: PhaserPhases) => ({
     id: 'phases-update',
     name: 'update Phases',
     fn: (evt: UpdateEvent) => {
-        phaser.time += evt.timePassed;
+        props.time += evt.timePassed;
 
-        if (phaser.shifts[phaser.number] < phaser.time) {
-            engine.removeUpdate(phaser.phases[phaser.number][0]);
+        if (props.shifts[props.number] < props.time) {
+            engine.removeUpdate(phases[props.number][0]);
 
-            phaser.number++;
+            props.number++;
 
             // if (phaser.number === phaser.end) {
-            if (!phaser.phases[phaser.number + 1]) {
+            if (!phases[props.number + 1]) {
                 engine.removeUpdate('phases-update');
 
                 engine.removeDraw('demo-circy');
@@ -63,8 +74,8 @@ const createUpdate = (engine: Engine, phaser: Phaser) => ({
             }
 
             engine.setUpdate({
-                id: phaser.phases[phaser.number][0],
-                fn: phaser.phases[phaser.number][1],
+                id: phases[props.number][0],
+                fn: phases[props.number][1],
             });
         }
     },
