@@ -1,20 +1,22 @@
 import {resources} from 'library/index';
-import {createUpdate} from './update';
 import {createDrawStats, createDraw} from './draw';
 import {createPhaser} from './phaser';
 
 export const getCircy = () => {
     const {context: ctx, canvas, engine} = resources.hello;
 
-    const phaser = createPhaser();
-    const update = createUpdate(engine, phaser);
+    const phaser = createPhaser(engine);
+    // const update = createUpdate(engine, phaser);
     const draw = createDraw(ctx, sketch);
     const drawStats = createDrawStats(ctx, engine, phaser, canvas.width / 2, canvas.height);
 
     const start = () => {
         resources.hello.engine.setDraw(draw);
         resources.hello.engine.setDraw(drawStats);
-        resources.hello.engine.setUpdate(update);
+
+        // resources.hello.engine.setUpdate(update);
+
+        phaser.start();
     };
 
     sketch.x = canvas.width / 2;

@@ -1,14 +1,15 @@
 export type Phaser = {
-    timer: {
-        time: number;
-        last: number;
-        passed: number;
-        distance: number;
-    };
+    // timer: {
+    //     last: number;
+    //     passed: number;
+    //     distance: number;
+    // };
+    time: number;
     number: number;
     end: number;
     shifts: number[];
     phases: Record<number, [string, () => void]>;
+    start: () => void;
 };
 
 export type CircySketch = {

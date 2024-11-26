@@ -62,15 +62,16 @@ const createLoop = (properties: EngineProperties) => {
 // TODO::Create a set/remove update/draw that orders according to id number (lower = first, higher = last)
 const createSetAndRemoveUpdatesAndDraws = (properties: EngineProperties) => {
     const setUpdate = (update: Update) => {
-        if (!update.id) update.id = 'noID';
-        if (!update.name) update.name = 'noName';
+        // prevents id 0 getting noID
+        if (update.id === undefined) update.id = 'noUpdateID';
+        if (!update.name) update.name = 'noUpdateName';
 
         properties.updates.push(update);
     };
 
     const setDraw = (draw: Draw) => {
-        if (!draw.id) draw.id = 'noID';
-        if (!draw.name) draw.name = 'noName';
+        if (draw.id === undefined) draw.id = 'noDrawID';
+        if (!draw.name) draw.name = 'noDrawName';
 
         properties.draws.push(draw);
     };
@@ -103,11 +104,11 @@ const createSetAndRemoveUpdatesAndDraws = (properties: EngineProperties) => {
 const createInfo = (props: EngineProperties) => ({
     updates: {
         length: () => props.updates.length,
-        ids: () => props.draws.map(draw => draw.id),
+        ids: () => props.updates.map(update => update.id),
     },
     draws: {
         length: () => props.draws.length,
-        ids: () => props.updates.map(update => update.id),
+        ids: () => props.draws.map(draw => draw.id),
     },
     time: {
         passed: () => props.timePassed,
