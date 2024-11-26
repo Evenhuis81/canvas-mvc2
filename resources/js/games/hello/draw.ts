@@ -1,4 +1,4 @@
-import type {CircySketch, Phaser} from './circy';
+import {CircySketch, Phaser} from './types';
 
 export const createDrawStats = (
     ctx: CanvasRenderingContext2D,

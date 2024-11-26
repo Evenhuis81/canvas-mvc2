@@ -1,13 +1,13 @@
-import type {CircyTimer, Phaser} from './circy';
+import {Phaser} from './types';
 
-export const createUpdate = (engine: Engine, phaser: Phaser, timer: CircyTimer) => ({
+export const createUpdate = (engine: Engine, phaser: Phaser) => ({
     id: 'phases-update',
     name: 'update Phases',
     fn: (evt: UpdateEvent) => {
-        timer.time = evt.lastTime;
+        // timer.time = evt.lastTime;
 
         if (phaser.shifts[phaser.number] < evt.lastTime) {
-            engine.removeUpdate(phases[phaser.number][0]);
+            engine.removeUpdate(phaser.phases[phaser.number][0]);
 
             phaser.number++;
 
@@ -25,8 +25,8 @@ export const createUpdate = (engine: Engine, phaser: Phaser, timer: CircyTimer) 
 
             // Name property for update needed?
             engine.setUpdate({
-                id: phases[phaser.number][0],
-                fn: phases[phaser.number][1],
+                id: phaser.phases[phaser.number][0],
+                fn: phaser.phases[phaser.number][1],
             });
         }
     },
