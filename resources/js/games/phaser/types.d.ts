@@ -9,8 +9,10 @@ export type Phaser = {
     // setPhase: SetPhase;
 };
 
-// [name, startTime, optional update, optional draw], id = auto-set;
-export type SetPhase = (phase: [string, number, Update['fn']?, Draw['fn']?]) => void;
+// [name, startTime, optional update, optional draw]
+export type Phase = [string, number, Update['fn']?, Draw['fn']?];
+
+export type SetPhase = (phase: Phase) => void;
 
 export type PhaserPhases = Record<number, [string, number, Update['fn']?, Draw['fn']?]>;
 

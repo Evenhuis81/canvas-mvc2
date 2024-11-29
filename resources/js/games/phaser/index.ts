@@ -1,13 +1,12 @@
 import {initialize, resources} from 'library/index';
 import {getCircy} from './circy';
 
-const libraryID = 'hello';
-const phase = 1;
+const libraryID = 'phaser';
 
 export default {
     setup: () => {
         initialize(libraryID, {
-            containerID: 'hello-container',
+            containerID: 'phaser-container',
             full: true,
             clear: true,
             backgroundColor: '#000',

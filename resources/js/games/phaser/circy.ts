@@ -6,8 +6,10 @@ export const getCircy = () => {
     const {context: ctx, canvas, engine} = resources.hello;
 
     const phaser = createPhaser(engine);
-    // const update = createUpdate(engine, phaser);
+
     const draw = createDraw(ctx, sketch);
+
+    // TODO::Use library statistics
     const drawStats = createDrawStats(ctx, engine, phaser, canvas.width / 2, canvas.height);
 
     const start = () => {

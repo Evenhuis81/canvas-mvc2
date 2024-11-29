@@ -1,4 +1,5 @@
-import {Phaser, PhaserPhases, SetPhase} from './types';
+import {resources} from 'library/index';
+import {Phase, Phaser, PhaserPhases, SetPhase} from './types';
 
 // const createProps = () => ({
 //     time: 0,
@@ -8,15 +9,16 @@ import {Phaser, PhaserPhases, SetPhase} from './types';
 // TOOD::Pre- and postpare for phase method, tuple 3rd and 4th entry
 // });
 
-export const createPhaser = (engine: Engine) => {
-    const props = {
-        time: 0,
-        number: 0,
-        id: 1,
-    };
+export const createPhaser = (resourceID: string | number) => {
+    const {engine} = resources[resourceID];
+    let id = 0;
 
-    // id = number only for engine, set name only and ids auto-generate, set type from SetPhase parameter
-    const phases: PhaserPhases = {};
+    // const props = {
+    //     time: 0,
+    //     number: 0,
+    // };
+
+    // const phases: Phase = {};
 
     const setPhase: SetPhase = phase => {
         const update = phase[2];
@@ -52,7 +54,7 @@ export const createPhaser = (engine: Engine) => {
 
 const createUpdate = (engine: Engine, props: Phaser, phases: PhaserPhases) => ({
     id: 'phases-update',
-    name: 'update Phases',
+    name: 'Update phases',
     fn: (evt: UpdateEvent) => {
         props.time += evt.timePassed;
 
@@ -63,10 +65,10 @@ const createUpdate = (engine: Engine, props: Phaser, phases: PhaserPhases) => ({
 
             // if (phaser.number === phaser.end) {
             if (!phases[props.number + 1]) {
-                engine.removeUpdate('phases-update');
+                // engine.removeUpdate('phases-update');
 
-                engine.removeDraw('demo-circy');
-                engine.removeDraw('stats-circy-phases');
+                // engine.removeDraw('demo-circy');
+                // engine.removeDraw('stats-circy-phases');
 
                 console.log('phaser ended');
 
