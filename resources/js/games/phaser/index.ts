@@ -16,7 +16,7 @@ export default {
     runOnce: () => resources[libraryID].engine.runOnce(),
 
     start: () => {
-        const circy = getCircy();
+        const circy = getCircy(libraryID);
 
         circy.start();
     },

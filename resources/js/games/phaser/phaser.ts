@@ -9,23 +9,39 @@ import {Phase, Phaser, PhaserPhases, SetPhase} from './types';
 // TOOD::Pre- and postpare for phase method, tuple 3rd and 4th entry
 // });
 
+type BasePhase = {
+    name: string;
+    timeStart: number;
+};
+
+type UpdatePhase = {
+    type: 'update';
+    fn: Update['fn'];
+} & BasePhase;
+
+type DrawPhase = {
+    type: 'draw';
+    fn: Draw['fn'];
+} & BasePhase;
+
+// [type, name, timeStart, draw/update(fn)]
+type Phase = UpdatePhase | DrawPhase;
+
 export const createPhaser = (resourceID: string | number) => {
     const {engine} = resources[resourceID];
     let id = 0;
 
-    // const props = {
-    //     time: 0,
-    //     number: 0,
-    // };
+    type SetPhase = (phase: Phase) => number;
 
-    const phases: Phase = {};
+    const phases: Record<number, Phase> = {};
 
     const setPhase: SetPhase = phase => {
         const update = phase[2];
         const draw = phase[3];
 
-        // [name, timeStart]
         phases[id++] = [phase[0], phase[1], update, draw];
+
+        return id;
     };
 
     const update = createUpdate(engine, props);
@@ -50,7 +66,7 @@ export const createPhaser = (resourceID: string | number) => {
         // });
     };
 
-    return Object.assign(props, {start});
+    return Object.assign(start, setPhase);
 };
 
 const createUpdate = (engine: Engine, props: Phaser, phases: PhaserPhases) => ({

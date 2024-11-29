@@ -2,19 +2,32 @@ import {resources} from 'library/index';
 import {createDrawStats, createDraw} from './draw';
 import {createPhaser} from './phaser';
 
-export const getCircy = () => {
-    const {context: ctx, canvas, engine} = resources.;
+export const getCircy = (libraryID: string | number) => {
+    const {context: ctx, canvas, engine} = resources[libraryID];
 
-    const phaser = createPhaser(engine);
+    const phaser = createPhaser(libraryID);
 
     const draw = createDraw(ctx, sketch);
 
+    // const phase1draw = () => {
+    //     ctx.beginPath();
+
+    //     ctx.fillStyle = 'red';
+    //     ctx.fillRect(100, 100, 80, 40);
+
+    //     console.log('test phase1draw');
+    // }
+
+    const phase1 = ['draw', 'phase1draw', 2000, draw];
+
+    phaser.setPhase(phase1);
+
     // TODO::Use library statistics
-    const drawStats = createDrawStats(ctx, engine, phaser, canvas.width / 2, canvas.height);
+    // const drawStats = createDrawStats(ctx, engine, phaser, canvas.width / 2, canvas.height);
 
     const start = () => {
-        resources.hello.engine.setDraw(draw);
-        resources.hello.engine.setDraw(drawStats);
+        // engine.setDraw(draw);
+        // engine.setDraw(drawStats);
 
         // resources.hello.engine.setUpdate(update);
 
