@@ -9,12 +9,12 @@ export type Phaser = {
     // setPhase: SetPhase;
 };
 
-// [name, startTime, optional update, optional draw]
+// [name, timeStart, optional update, optional draw]
 export type Phase = [string, number, Update['fn']?, Draw['fn']?];
 
 export type SetPhase = (phase: Phase) => void;
 
-export type PhaserPhases = Record<number, [string, number, Update['fn']?, Draw['fn']?]>;
+export type PhaserPhases = Record<number, Phase>;
 
 export type CircySketch = {
     x: number;

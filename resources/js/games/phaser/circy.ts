@@ -3,7 +3,7 @@ import {createDrawStats, createDraw} from './draw';
 import {createPhaser} from './phaser';
 
 export const getCircy = () => {
-    const {context: ctx, canvas, engine} = resources.hello;
+    const {context: ctx, canvas, engine} = resources.;
 
     const phaser = createPhaser(engine);
 

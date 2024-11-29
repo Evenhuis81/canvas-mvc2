@@ -18,13 +18,14 @@ export const createPhaser = (resourceID: string | number) => {
     //     number: 0,
     // };
 
-    // const phases: Phase = {};
+    const phases: Phase = {};
 
     const setPhase: SetPhase = phase => {
         const update = phase[2];
         const draw = phase[3];
 
-        phases[props.id++] = [phase[0], phase[1], update, draw];
+        // [name, timeStart]
+        phases[id++] = [phase[0], phase[1], update, draw];
     };
 
     const update = createUpdate(engine, props);
