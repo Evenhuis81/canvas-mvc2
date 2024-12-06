@@ -11,13 +11,11 @@ export default {
             clear: true,
             backgroundColor: '#000',
         });
-    },
-    run: () => resources[libraryID].engine.run(),
-    runOnce: () => resources[libraryID].engine.runOnce(),
 
-    start: () => {
         const circy = getCircy(libraryID);
 
         circy.start();
     },
+    run: () => resources[libraryID].engine.run(),
+    runOnce: () => resources[libraryID].engine.runOnce(),
 };

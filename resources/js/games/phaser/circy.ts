@@ -6,60 +6,51 @@ export const getCircy = (libraryID: string | number) => {
 
     const phaser = createPhaser(libraryID);
 
-    const draw = createDraw(ctx, sketch);
+    const drawCircy = createDrawCircy(ctx);
+
+    console.log(drawCircy);
 
     const phase1 = {
         type: 'draw',
-        name: '',
+        // name: '',
         timeStart: 0,
+        // duration: 3000,
         fn: () => {},
     };
 
-    // phaser.setPhase(phase1);
-
-    // TODO::Use library statistics
-    // const drawStats = createDrawStats(ctx, engine, phaser, canvas.width / 2, canvas.height);
+    phaser.setPhase(phase1);
 
     const start = () => {
-        // engine.setDraw(draw);
+        engine.setDraw(drawCircy);
         // engine.setDraw(drawStats);
         // resources.hello.engine.setUpdate(update);
+
         // phaser.start();
     };
 
     sketch.x = canvas.width / 2;
     sketch.y = canvas.height / 2;
+    sketch.lineWidth = 2;
+    sketch.radius = 50;
 
     return {start};
 };
 
-const createDraw = (ctx: CanvasRenderingContext2D, sketch: CircySketch) => {
-    // id: 'demo-circy',
-    // name: 'Circy Demo Draw',
-    // fn: () => {
+const createDrawCircy = (ctx: CanvasRenderingContext2D) => ({
+    id: 'demo-circy',
+    name: 'Circy Demo Draw',
+    fn: () => {
+        ctx.beginPath();
 
-    ctx.beginPath();
+        ctx.fillStyle = sketch.fillStyle;
+        ctx.strokeStyle = sketch.strokeStyle;
+        ctx.lineWidth = sketch.lineWidth;
 
-    ctx.fillStyle = sketch.fillStyle;
-    ctx.strokeStyle = sketch.strokeStyle;
-    ctx.lineWidth = sketch.lineWidth;
-
-    ctx.arc(sketch.x, sketch.y, sketch.radius, sketch.startAngle, sketch.endAngle, sketch.counterclockwise);
-    ctx.fill();
-    ctx.stroke();
-};
-
-type CircySketch = {
-    x: number;
-    y: number;
-    lineWidth: number;
-    fillStyle: string;
-    strokeStyle: string;
-    radius: number;
-    startAngle: number;
-    endAngle: number;
-    counterclockwise: boolean;
-};
+        ctx.arc(sketch.x, sketch.y, sketch.radius, sketch.startAngle, sketch.endAngle, sketch.counterclockwise);
+        ctx.fill();
+        ctx.stroke();
+    },
+});
 
 const sketch = {
     x: 0,
