@@ -18,6 +18,10 @@ export const getCircy = (libraryID: string | number) => {
         fn: () => {},
     };
 
+    // [type, timeStart, draw/update fn]
+    const phase1Draw = ['draw', 0, () => console.log('testPhase1 draw')];
+    const phase1Update = ['update', 0, () => console.log('testPhase1 update')];
+
     phaser.setPhase(phase1);
 
     const start = () => {

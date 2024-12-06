@@ -35,17 +35,15 @@ export const getEngine = () => {
 };
 
 const createLoop = (properties: EngineProperties) => {
-    const loop = (time: DOMHighResTimeStamp) => {
-        properties.timePassed = time - properties.lastTime;
+    const loop = (timeStamp: DOMHighResTimeStamp) => {
+        properties.timePassed = timeStamp - properties.lastTime;
 
-        properties.lastTime = time;
+        properties.lastTime = timeStamp;
 
-        // if (properties.lastTime < 2000) {
         for (const update of properties.updates)
             update.fn({timePassed: properties.timePassed, lastTime: properties.lastTime});
 
         for (const draw of properties.draws) draw.fn();
-        // }
 
         properties.requestID = requestAnimationFrame(loop);
 
