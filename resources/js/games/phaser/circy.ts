@@ -1,5 +1,4 @@
 import {resources} from 'library/index';
-import {createDrawStats, createDraw} from './draw';
 import {createPhaser} from './phaser';
 
 export const getCircy = (libraryID: string | number) => {
@@ -9,18 +8,14 @@ export const getCircy = (libraryID: string | number) => {
 
     const draw = createDraw(ctx, sketch);
 
-    // const phase1draw = () => {
-    //     ctx.beginPath();
+    const phase1 = {
+        type: 'draw',
+        name: '',
+        timeStart: 0,
+        fn: () => {},
+    };
 
-    //     ctx.fillStyle = 'red';
-    //     ctx.fillRect(100, 100, 80, 40);
-
-    //     console.log('test phase1draw');
-    // }
-
-    const phase1 = ['draw', 'phase1draw', 2000, draw];
-
-    phaser.setPhase(phase1);
+    // phaser.setPhase(phase1);
 
     // TODO::Use library statistics
     // const drawStats = createDrawStats(ctx, engine, phaser, canvas.width / 2, canvas.height);
@@ -28,16 +23,42 @@ export const getCircy = (libraryID: string | number) => {
     const start = () => {
         // engine.setDraw(draw);
         // engine.setDraw(drawStats);
-
         // resources.hello.engine.setUpdate(update);
-
-        phaser.start();
+        // phaser.start();
     };
 
     sketch.x = canvas.width / 2;
     sketch.y = canvas.height / 2;
 
     return {start};
+};
+
+const createDraw = (ctx: CanvasRenderingContext2D, sketch: CircySketch) => {
+    // id: 'demo-circy',
+    // name: 'Circy Demo Draw',
+    // fn: () => {
+
+    ctx.beginPath();
+
+    ctx.fillStyle = sketch.fillStyle;
+    ctx.strokeStyle = sketch.strokeStyle;
+    ctx.lineWidth = sketch.lineWidth;
+
+    ctx.arc(sketch.x, sketch.y, sketch.radius, sketch.startAngle, sketch.endAngle, sketch.counterclockwise);
+    ctx.fill();
+    ctx.stroke();
+};
+
+type CircySketch = {
+    x: number;
+    y: number;
+    lineWidth: number;
+    fillStyle: string;
+    strokeStyle: string;
+    radius: number;
+    startAngle: number;
+    endAngle: number;
+    counterclockwise: boolean;
 };
 
 const sketch = {

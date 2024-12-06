@@ -1,5 +1,5 @@
 import {resources} from 'library/index';
-import {Phase, Phaser, PhaserPhases, SetPhase} from './types';
+// import {Phase, Phaser, PhaserPhases, SetPhase} from './types';
 
 // const createProps = () => ({
 //     time: 0,
@@ -9,37 +9,46 @@ import {Phase, Phaser, PhaserPhases, SetPhase} from './types';
 // TOOD::Pre- and postpare for phase method, tuple 3rd and 4th entry
 // });
 
-type BasePhase = {
+type Phaser = {
+    time: number;
+    number: number;
+    id: number;
+    // end: number;
+    // shifts: number[];
+    // phases: Record<number, [string, () => void]>;
+    // start: () => void;
+    // setPhase: SetPhase;
+};
+
+type PhaseBase = {
     name: string;
     timeStart: number;
 };
 
-type UpdatePhase = {
+type PhaseUpdate = {
     type: 'update';
     fn: Update['fn'];
-} & BasePhase;
+} & PhaseBase;
 
-type DrawPhase = {
+type PhaseDraw = {
     type: 'draw';
     fn: Draw['fn'];
-} & BasePhase;
+} & PhaseBase;
 
-// [type, name, timeStart, draw/update(fn)]
-type Phase = UpdatePhase | DrawPhase;
+type PhaseConfig = PhaseUpdate | PhaseDraw;
+
+type Phase = [PhaseConfig['type'], PhaseConfig['timeStart'], PhaseConfig['fn']];
+
+type SetPhase = (phase: PhaseConfig) => number;
 
 export const createPhaser = (resourceID: string | number) => {
     const {engine} = resources[resourceID];
     let id = 0;
 
-    type SetPhase = (phase: Phase) => number;
-
     const phases: Record<number, Phase> = {};
 
     const setPhase: SetPhase = phase => {
-        const update = phase[2];
-        const draw = phase[3];
-
-        phases[id++] = [phase[0], phase[1], update, draw];
+        phases[id++] = [phase.type, phase.timeStart, phase.fn];
 
         return id;
     };
@@ -47,18 +56,15 @@ export const createPhaser = (resourceID: string | number) => {
     const update = createUpdate(engine, props);
 
     const start = () => {
-        const noop = () => {};
-
-        engine.setUpdate(update);
-
-        const updateOrDraw = {
-            id: props.number,
-            name: phases[props.number][0],
-            fn: phases[props.number][2] ?? phases[props.number][3] ?? noop,
-        };
-
-        if (phases[props.number][2]) engine.setUpdate(updateOrDraw);
-        else if (phases[props.number][3]) engine.setDraw(updateOrDraw);
+        // const noop = () => {};
+        // engine.setUpdate(update);
+        // const updateOrDraw = {
+        //     id: props.number,
+        //     name: phases[props.number][0],
+        //     fn: phases[props.number][2] ?? phases[props.number][3] ?? noop,
+        // };
+        // if (phases[props.number][2]) engine.setUpdate(updateOrDraw);
+        // else if (phases[props.number][3]) engine.setDraw(updateOrDraw);
         // engine.setUpdate({
         //     id: props.number,
         //     name: phases[props.number][0],
@@ -99,3 +105,32 @@ const createUpdate = (engine: Engine, props: Phaser, phases: PhaserPhases) => ({
         }
     },
 });
+
+export const createDrawStats = (
+    ctx: CanvasRenderingContext2D,
+    engine: Engine,
+    props: PhaserProperties,
+    halfWidth: number,
+    height: number,
+) => {
+    // ) => ({
+    //     id: 'stats-circy-phases',
+    //     name: 'Phases Statistics for Circy',
+    //     fn: () => {
+    ctx.beginPath();
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = '16px monospace';
+    ctx.fillStyle = '#fff';
+
+    ctx.fillText(`phase: ${phaser.number}, timer: ${engine.info.time.last().toFixed(0)}`, halfWidth, height - 100);
+
+    // ctx.fillText(`shifting phase at: ${phaser.shifts[phaser.number]}ms`, halfWidth, height - 75);
+
+    ctx.fillText(
+        `engine updates: ${engine.info.updates.length()}, draws: ${engine.info.draws.length()}`,
+        halfWidth,
+        height - 50,
+    );
+};
