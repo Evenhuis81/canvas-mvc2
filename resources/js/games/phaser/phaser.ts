@@ -37,25 +37,14 @@ type PhaseConfigTuple = PhaseUpdateTuple | PhaseDrawTuple;
 
 type PhaseConfig = PhaseUpdate | PhaseDraw;
 
-type Phase = [PhaseConfig['type'], PhaseConfig['timeStart'], PhaseConfig['fn']];
+// [type, duration, timeStart, draw/update fn]
+export type Phase = ['draw' | 'update', number, number, Draw['fn'] | Update['fn']];
 
-type Phases = Record<number, Phase>;
+type PhaseInternal = ['draw' | 'update', number, number, Draw['fn'] | Update['fn'], string]; // +internal ID
 
-type SetPhase = (phase: PhaseConfig) => void;
+type Phases = Record<number, PhaseInternal>;
 
-// const phase1 = {
-//     type: 'draw',
-//     // name: '',
-//     timeStart: 0,
-//     // duration: 3000,
-//     fn: () => {},
-// };
-
-// [type, timeStart, draw/update fn]
-// const phase1Draw = ['draw', 0, () => console.log('testPhase1 draw')];
-// const phase1Update = ['update', 0, () => console.log('testPhase1 update')];
-
-// phaser.setPhase(phase1);
+type SetPhases = (phases: Phase[]) => void;
 
 export const createPhaser = (resourceID: string | number) => {
     const props: PhaserProperties = {
@@ -69,10 +58,14 @@ export const createPhaser = (resourceID: string | number) => {
     const phases: Phases = {};
 
     let id = 0;
-    const setPhase: SetPhase = phase => {
+    const setPhase: SetPhases = phasesInc => {
         props.setIDs.push(id);
 
-        phases[id++] = [phase.type, phase.timeStart, phase.fn];
+        phasesInc.forEach((phase, index) => {
+            phases[id++] = [phase[0], phase[1], phase[2], phase[3], `phase-${index}`];
+        });
+
+        console.log(phases);
     };
 
     const resetPhases = () => {
@@ -82,6 +75,8 @@ export const createPhaser = (resourceID: string | number) => {
     const phaserBaseUpdate = createUpdate(engine, props, phases);
 
     const start = () => {
+        props.timer = 0;
+
         if (!Object.keys(phases).length) {
             console.log('no phases set, aborting...');
 
@@ -118,24 +113,23 @@ const createUpdate = (engine: Engine, props: PhaserProperties, phases: Phases) =
     fn: (evt: UpdateEvent) => {
         props.timer += evt.timePassed;
 
-        // if (props.shifts[props.number] < props.time) {
-        //     engine.removeUpdate(phases[props.number][0]);
-        //     props.number++;
-        // if (phaser.number === phaser.end) {
-        // if (!phases[props.number + 1]) {
+        if (phases[props.currentPhase][2] < props.timer) {
+            engine.removeUpdate(phases[props.currentPhase][4]);
 
-        stop(); // removes this update from engine
+            props.currentPhase++;
+            // if (phaser.number === phaser.end) {
+            if (!phases[props.currentPhase + 1]) stop(); // removes this update from engine
 
-        // engine.removeDraw('demo-circy');
-        // engine.removeDraw('stats-circy-phases');
-        // console.log('phaser ended');
-        // return;
-        // }
-        // engine.setUpdate({
-        //     id: phases[props.number][0],
-        //     fn: phases[props.number][1],
-        // });
-        // }
+            // engine.removeDraw('demo-circy');
+            // engine.removeDraw('stats-circy-phases');
+            // console.log('phaser ended');
+            // return;
+            // }
+            // engine.setUpdate({
+            //     id: phases[props.number][0],
+            //     fn: phases[props.number][1],
+            // });
+        }
     },
 });
 

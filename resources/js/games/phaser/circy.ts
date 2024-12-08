@@ -1,22 +1,18 @@
 import {resources} from 'library/index';
-// import {createPhaser} from './phaser';
+import {Phase, createPhaser} from './phaser';
 import statistics from 'library/statistics';
 
 export const getCircy = (libraryID: string | number) => {
     const {context: ctx, canvas, engine} = resources[libraryID];
 
-    // const phaser = createPhaser(libraryID);
+    const phaser = createPhaser(libraryID);
 
     const drawCircy = createDrawCircy(ctx);
 
     const run = () => {
-        engine.setDraw(drawCircy);
-        engine.setUpdate({id: 'upd1', fn: update1});
-
-        statistics.run(libraryID);
-        // engine.setDraw(drawStats);
-        // resources.hello.engine.setUpdate(update);
-
+        // engine.setDraw(drawCircy);
+        // engine.setUpdate({id: 'upd1', fn: update1});
+        // statistics.run(libraryID);
         // phaser.start();
     };
 
@@ -24,7 +20,7 @@ export const getCircy = (libraryID: string | number) => {
     let phaseTime = 5000;
 
     statistics.create(libraryID, canvas, ctx, engine);
-    statistics.setFn(libraryID, () => `${sketch.strokeStyle.a.toFixed(2)}`);
+    // statistics.setFn(libraryID, () => `${sketch.strokeStyle.a.toFixed(2)}`);
 
     const update1 = (evt: UpdateEvent) => {
         timeAcc += evt.timePassed;
@@ -89,6 +85,13 @@ export const getCircy = (libraryID: string | number) => {
     sketch.y = canvas.height / 2;
     sketch.lineWidth = 4;
     sketch.radius = 25;
+
+    const phases: Phase[] = [
+        ['draw', 0, 5000, drawCircy.fn],
+        ['update', 0, 5000, update1],
+        ['update', 0, 3000, update2],
+        ['update', 0, 10000, update3],
+    ];
 
     return {run};
 };
