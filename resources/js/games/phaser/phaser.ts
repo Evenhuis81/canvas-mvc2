@@ -43,6 +43,20 @@ type Phases = Record<number, Phase>;
 
 type SetPhase = (phase: PhaseConfig) => void;
 
+// const phase1 = {
+//     type: 'draw',
+//     // name: '',
+//     timeStart: 0,
+//     // duration: 3000,
+//     fn: () => {},
+// };
+
+// [type, timeStart, draw/update fn]
+// const phase1Draw = ['draw', 0, () => console.log('testPhase1 draw')];
+// const phase1Update = ['update', 0, () => console.log('testPhase1 update')];
+
+// phaser.setPhase(phase1);
+
 export const createPhaser = (resourceID: string | number) => {
     const props: PhaserProperties = {
         setIDs: [],
@@ -61,7 +75,6 @@ export const createPhaser = (resourceID: string | number) => {
         phases[id++] = [phase.type, phase.timeStart, phase.fn];
     };
 
-    // This could possibly use an identifier or theme
     const resetPhases = () => {
         for (let i = 0; i < props.setIDs.length; i++) delete phases[i];
     };

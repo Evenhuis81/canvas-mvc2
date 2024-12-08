@@ -4,27 +4,11 @@ import {createPhaser} from './phaser';
 export const getCircy = (libraryID: string | number) => {
     const {context: ctx, canvas, engine} = resources[libraryID];
 
-    const phaser = createPhaser(libraryID);
+    // const phaser = createPhaser(libraryID);
 
     const drawCircy = createDrawCircy(ctx);
 
-    console.log(drawCircy);
-
-    const phase1 = {
-        type: 'draw',
-        // name: '',
-        timeStart: 0,
-        // duration: 3000,
-        fn: () => {},
-    };
-
-    // [type, timeStart, draw/update fn]
-    const phase1Draw = ['draw', 0, () => console.log('testPhase1 draw')];
-    const phase1Update = ['update', 0, () => console.log('testPhase1 update')];
-
-    phaser.setPhase(phase1);
-
-    const start = () => {
+    const run = () => {
         engine.setDraw(drawCircy);
         // engine.setDraw(drawStats);
         // resources.hello.engine.setUpdate(update);
@@ -35,9 +19,9 @@ export const getCircy = (libraryID: string | number) => {
     sketch.x = canvas.width / 2;
     sketch.y = canvas.height / 2;
     sketch.lineWidth = 2;
-    sketch.radius = 50;
+    sketch.radius = 20;
 
-    return {start};
+    return {run};
 };
 
 const createDrawCircy = (ctx: CanvasRenderingContext2D) => ({
@@ -46,8 +30,8 @@ const createDrawCircy = (ctx: CanvasRenderingContext2D) => ({
     fn: () => {
         ctx.beginPath();
 
-        ctx.fillStyle = sketch.fillStyle;
-        ctx.strokeStyle = sketch.strokeStyle;
+        ctx.fillStyle = `rbba(${sketch.fillStyle.r}, ${sketch.fillStyle.g}, ${sketch.fillStyle.b}, ${sketch.fillStyle.a})`;
+        ctx.strokeStyle = `rbba(${sketch.strokeStyle.r}, ${sketch.strokeStyle.g}, ${sketch.strokeStyle.b}, ${sketch.strokeStyle.a})`;
         ctx.lineWidth = sketch.lineWidth;
 
         ctx.arc(sketch.x, sketch.y, sketch.radius, sketch.startAngle, sketch.endAngle, sketch.counterclockwise);
@@ -59,9 +43,19 @@ const createDrawCircy = (ctx: CanvasRenderingContext2D) => ({
 const sketch = {
     x: 0,
     y: 0,
-    lineWidth: 0,
-    fillStyle: '#000',
-    strokeStyle: '#fff',
+    lineWidth: 2,
+    fillStyle: {
+        r: 0,
+        g: 0,
+        b: 0,
+        a: 0,
+    },
+    strokeStyle: {
+        r: 255,
+        g: 255,
+        b: 255,
+        a: 0,
+    },
     radius: 0,
     startAngle: 0,
     endAngle: Math.PI * 2,
