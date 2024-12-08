@@ -34,16 +34,21 @@ export const getEngine = () => {
     };
 };
 
+// TODO::Fix this with updateloop from https://isaacsukin.com/news/2015/01/detailed-explanation-javascript-game-loops-and-timing#starting-stopping
+let frame = 0;
+
 const createLoop = (properties: EngineProperties) => {
     const loop = (timeStamp: DOMHighResTimeStamp) => {
         properties.timePassed = timeStamp - properties.lastTime;
 
         properties.lastTime = timeStamp;
 
-        for (const update of properties.updates)
-            update.fn({timePassed: properties.timePassed, lastTime: properties.lastTime});
+        if (frame++ > 2) {
+            for (const update of properties.updates)
+                update.fn({timePassed: properties.timePassed, lastTime: properties.lastTime});
 
-        for (const draw of properties.draws) draw.fn();
+            for (const draw of properties.draws) draw.fn();
+        }
 
         properties.requestID = requestAnimationFrame(loop);
 

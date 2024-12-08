@@ -14,7 +14,7 @@ export default {
 
         const circy = getCircy(libraryID);
 
-        circy.start();
+        circy.run();
     },
     run: () => resources[libraryID].engine.run(),
     runOnce: () => resources[libraryID].engine.runOnce(),

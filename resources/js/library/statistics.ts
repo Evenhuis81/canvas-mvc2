@@ -113,24 +113,24 @@ const createDraw = (props: Omit<StatisticResource, 'draw' | 'canvas' | 'engine' 
 };
 
 // Move this to statistics module
-const setStatistics = (options: Partial<StatisticOptions>) => {
-    if (!options) return;
-    // ToggleKey default set to KeyT here, but ideally this should be optional. (this is outside the statistics module and default
-    // should be set inside the module.)
-    // const statResources = {
-    //     id,
-    //     engine,
-    //     context,
-    //     canvas,
-    //     container,
-    //     toggleKey: options.statistics.toggleKey ?? 'KeyT',
-    // };
-    // let key: keyof StatisticOptions;
+// const setStatistics = (options: Partial<StatisticOptions>) => {
+// if (!options) return;
+// ToggleKey default set to KeyT here, but ideally this should be optional. (this is outside the statistics module and default
+// should be set inside the module.)
+// const statResources = {
+//     id,
+//     engine,
+//     context,
+//     canvas,
+//     container,
+//     toggleKey: options.statistics.toggleKey ?? 'KeyT',
+// };
+// let key: keyof StatisticOptions;
 
-    // for (key in options.statistics) {
-    //     statSwitch[key](statResources);
-    // }
-};
+// for (key in options.statistics) {
+//     statSwitch[key](statResources);
+// }
+// };
 
 // StatisticOptions (create interface)
 // popup: boolean;
