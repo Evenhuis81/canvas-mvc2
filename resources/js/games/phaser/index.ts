@@ -8,10 +8,11 @@ export default {
         initialize(libraryID, {
             containerID: 'phaser-container',
             full: true,
-            clear: true,
+            clear: true, // Display draw in statistics
             backgroundColor: '#000',
         });
 
+        // Demo module for Phaser
         const circy = getCircy(libraryID);
 
         circy.run();

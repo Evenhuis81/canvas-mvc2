@@ -1,5 +1,5 @@
 import {resources} from 'library/index';
-import {Phase, createPhaser} from './phaser';
+import {createPhaser} from './phaser';
 import statistics from 'library/statistics';
 
 export const getCircy = (libraryID: string | number) => {
@@ -8,6 +8,13 @@ export const getCircy = (libraryID: string | number) => {
     const phaser = createPhaser(libraryID);
 
     const drawCircy = createDrawCircy(ctx);
+
+    const phases = [
+        ['draw', 0, 5000, drawCircy.fn],
+        ['update', 0, 5000, update1],
+        ['update', 0, 3000, update2],
+        ['update', 0, 10000, update3],
+    ];
 
     const run = () => {
         // engine.setDraw(drawCircy);
@@ -85,13 +92,6 @@ export const getCircy = (libraryID: string | number) => {
     sketch.y = canvas.height / 2;
     sketch.lineWidth = 4;
     sketch.radius = 25;
-
-    const phases: Phase[] = [
-        ['draw', 0, 5000, drawCircy.fn],
-        ['update', 0, 5000, update1],
-        ['update', 0, 3000, update2],
-        ['update', 0, 10000, update3],
-    ];
 
     return {run};
 };

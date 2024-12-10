@@ -1,8 +1,5 @@
 import {resources} from 'library/index';
 
-// end: 4, // make optional, default 0 (or 1)
-// shifts: [0],
-
 type PhaserProperties = {
     currentPhase: number;
     timer: number;
@@ -15,36 +12,19 @@ type PhaserProperties = {
     // setPhase: SetPhase; // seperate method return (Object assign)
 };
 
-type PhaseBase = {
-    name?: string;
-    timeStart: number;
-};
+// [_ , internalID]
+type PhaseInternal = [...PhaseConfig, string];
 
-type PhaseUpdate = {
-    type: 'update';
-    fn: Update['fn'];
-} & PhaseBase;
+type PhasePrepare = () => void;
+type PhasePostpare = () => void;
 
-type PhaseDraw = {
-    type: 'draw';
-    fn: Draw['fn'];
-} & PhaseBase;
-
-type PhaseUpdateTuple = [];
-type PhaseDrawTuple = [];
-
-type PhaseConfigTuple = PhaseUpdateTuple | PhaseDrawTuple;
-
-type PhaseConfig = PhaseUpdate | PhaseDraw;
-
-// [type, duration, timeStart, draw/update fn]
-export type Phase = ['draw' | 'update', number, number, Draw['fn'] | Update['fn']];
-
-type PhaseInternal = ['draw' | 'update', number, number, Draw['fn'] | Update['fn'], string]; // +internal ID
+// [type, duration, timeStart, draw/update fn, prepare fn?, postpare fn?]
+type PhaseConfig = ['draw' | 'update', number, number, Draw['fn'] | Update['fn'], PhasePrepare?, PhasePostpare?];
 
 type Phases = Record<number, PhaseInternal>;
 
-type SetPhases = (phases: Phase[]) => void;
+type SetPhase = (phase: PhaseConfig) => void;
+type SetPhases = (phases: PhaseConfig[]) => void;
 
 export const createPhaser = (resourceID: string | number) => {
     const props: PhaserProperties = {
@@ -58,14 +38,20 @@ export const createPhaser = (resourceID: string | number) => {
     const phases: Phases = {};
 
     let id = 0;
-    const setPhase: SetPhases = phasesInc => {
-        props.setIDs.push(id);
-
+    const setPhases: SetPhases = phasesInc => {
         phasesInc.forEach((phase, index) => {
-            phases[id++] = [phase[0], phase[1], phase[2], phase[3], `phase-${index}`];
+            const phaseID = `phase-${index}`;
+
+            phases[id++] = [...phase, phaseID];
+
+            props.setIDs.push(id);
         });
 
         console.log(phases);
+    };
+
+    const setPhase: SetPhase = phase => {
+        //
     };
 
     const resetPhases = () => {
@@ -104,7 +90,7 @@ export const createPhaser = (resourceID: string | number) => {
         props.active = false;
     };
 
-    return {start, stop, setPhase, resetPhases};
+    return {start, stop, setPhases, resetPhases};
 };
 
 const createUpdate = (engine: Engine, props: PhaserProperties, phases: Phases) => ({
