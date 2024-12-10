@@ -127,12 +127,16 @@ const createPhases = (canvas: HTMLCanvasElement, drawCircy: Draw) => {
         sketch.x = xOrig + (timeAcc / phaseTime) * xMove;
     };
 
+    const testPrepareUpdate = () => {
+        console.log('triggered prepareUpdate');
+    };
+
     const phases: PhaseConfig = [
         drawCircy,
         prepareDraw,
         postpareDraw,
         [5000, update1, undefined, postUpdate1],
-        [3000, update2, undefined, postUpdate2],
+        [3000, update2, testPrepareUpdate, postUpdate2],
         [10000, update3, undefined, postUpdate3],
     ];
 
