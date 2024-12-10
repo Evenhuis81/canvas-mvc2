@@ -11,15 +11,17 @@ export const getCircy = (libraryID: string | number) => {
 
     const phases = createPhases(canvas, drawCircy);
 
-    phaser.setPhases(phases);
+    phaser.set(phases);
 
     const run = () => {
         // engine.setDraw(drawCircy);
         // engine.setUpdate({id: 'upd1', fn: update1});
-        // statistics.run(libraryID);
-        // phaser.start();
+        statistics.run(libraryID);
+
+        phaser.start();
     };
 
+    // Move this to phaser
     statistics.create(libraryID, canvas, ctx, engine);
     // statistics.setFn(libraryID, () => `${sketch.strokeStyle.a.toFixed(2)}`);
 
@@ -66,11 +68,17 @@ const sketch = {
 
 const createPhases = (canvas: HTMLCanvasElement, drawCircy: Draw) => {
     // Start using Lerp on updates?
-    const preparePhase0 = () => {
+    const prepareDraw = () => {
         sketch.x = canvas.width / 2;
         sketch.y = canvas.height / 2;
         sketch.lineWidth = 4;
         sketch.radius = 25;
+
+        console.log('triggered prepare draw');
+    };
+
+    const postpareDraw = () => {
+        console.log('triggered postpare draw');
     };
 
     let timeAcc = 0.1;
@@ -80,6 +88,8 @@ const createPhases = (canvas: HTMLCanvasElement, drawCircy: Draw) => {
         sketch.strokeStyle.a = 1;
         phaseTime = 3000;
         timeAcc = 0;
+
+        console.log('triggered postUpdate1');
     };
 
     const update1 = (evt: UpdateEvent) => {
@@ -92,6 +102,8 @@ const createPhases = (canvas: HTMLCanvasElement, drawCircy: Draw) => {
         sketch.fillStyle.r = 255;
         timeAcc = 0;
         phaseTime = 10000;
+
+        console.log('triggered postUpdate2');
     };
 
     const update2 = (evt: UpdateEvent) => {
@@ -105,6 +117,8 @@ const createPhases = (canvas: HTMLCanvasElement, drawCircy: Draw) => {
 
     const postUpdate3 = () => {
         sketch.x = xOrig + xMove;
+
+        console.log('triggered postUpdate3');
     };
 
     const update3 = (evt: UpdateEvent) => {
@@ -113,11 +127,13 @@ const createPhases = (canvas: HTMLCanvasElement, drawCircy: Draw) => {
         sketch.x = xOrig + (timeAcc / phaseTime) * xMove;
     };
 
-    const phases: PhaseConfig[] = [
-        ['draw', 0, 5000, drawCircy.fn, preparePhase0],
-        ['update', 0, 5000, update1, undefined, postUpdate1],
-        ['update', 0, 3000, update2, undefined, postUpdate2],
-        ['update', 0, 10000, update3, undefined, postUpdate3],
+    const phases: PhaseConfig = [
+        drawCircy,
+        prepareDraw,
+        postpareDraw,
+        [5000, update1, undefined, postUpdate1],
+        [3000, update2, undefined, postUpdate2],
+        [10000, update3, undefined, postUpdate3],
     ];
 
     return phases;
