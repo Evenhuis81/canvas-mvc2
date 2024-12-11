@@ -23,7 +23,7 @@ export const getCircy = (libraryID: string | number) => {
 
     // Move this to phaser
     statistics.create(libraryID, canvas, ctx, engine);
-    // statistics.setFn(libraryID, () => `${sketch.strokeStyle.a.toFixed(2)}`);
+    statistics.setFn(libraryID, () => `${sketch.strokeStyle.a.toFixed(2)}`);
 
     return {run};
 };
