@@ -14,8 +14,6 @@ export const getCircy = (libraryID: string | number) => {
     phaser.set(phases);
 
     const run = () => {
-        // engine.setDraw(drawCircy);
-        // engine.setUpdate({id: 'upd1', fn: update1});
         statistics.run(libraryID);
 
         phaser.start();
@@ -23,7 +21,9 @@ export const getCircy = (libraryID: string | number) => {
 
     // Move this to phaser
     statistics.create(libraryID, canvas, ctx, engine);
-    statistics.setFn(libraryID, () => `${sketch.strokeStyle.a.toFixed(2)}`);
+    statistics.setFn(libraryID, () => `${engine.info.draws.length()}`);
+    statistics.setFn(libraryID, () => `${engine.info.updates.length()}`);
+    statistics.setFn(libraryID, () => `${engine.info.draws.ids()}`);
 
     return {run};
 };
@@ -131,10 +131,13 @@ const createPhases = (canvas: HTMLCanvasElement, drawCircy: Draw) => {
         console.log('triggered prepareUpdate');
     };
 
+    const removeDraw = true;
+
     const phases: PhaseConfig = [
         drawCircy,
         prepareDraw,
         postpareDraw,
+        removeDraw,
         [5000, update1, undefined, postUpdate1],
         [3000, update2, testPrepareUpdate, postUpdate2],
         [10000, update3, undefined, postUpdate3],

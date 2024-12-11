@@ -4,68 +4,49 @@ type PhaserProperties = {
     currentPhase: number;
     timer: number;
     active: boolean;
-    // setIDs: number[];
-    // end: number; // auto-calucuate
-    // shifts: number[]; // seperation from properties / obsolete
-    // phases: Record<number, [string, () => void]>; // see shifts
-    // start: () => void; see shofts
-    // setPhase: SetPhase; // seperate method return (Object assign)
+    baseDraw: Draw;
+    removeDraw: boolean;
+    postpare: Function | undefined;
 };
-
-// type DrawID = string;
-
-// type PhaseInternal = [DrawID, PhaseConfig]; // [internalID, ]
-
-// type Phases = Record<string, PhaseInternal[]>;
 
 type PhasePrepare = () => void;
 type PhasePostpare = () => void;
+type RemoveDraw = boolean;
 
 // [duration, update fn, prepare fn?, postpare fn?]
 type Phase = [number, Update['fn'], PhasePrepare?, PhasePostpare?];
 
-export type PhaseConfig = [Draw, PhasePrepare?, PhasePostpare?, ...{[K in keyof Phase]: Phase[K]}[]];
+export type PhaseConfig = [Draw, PhasePrepare?, PhasePostpare?, RemoveDraw?, ...{[K in keyof Phase]: Phase[K]}[]];
 
 type SetPhaser = (phaseConfig: PhaseConfig) => void;
 
 export const createPhaser = (resourceID: string | number) => {
-    const props = {
+    const props: PhaserProperties = {
         currentPhase: 0,
         timer: 0,
         active: false,
+        baseDraw: {fn: () => {}},
+        removeDraw: true,
+        postpare: undefined,
     };
     const {engine} = resources[resourceID];
 
-    // props.setIDs.push(id);
-    // const setPhases: SetPhases = phasesInc => {
-    //     phasesInc.forEach((phase, index) => {
-    //         const phaseID = `phase-${index}`;
-
-    //         phases['test1'].push([phaseID, ...phase]);
-    //     });
-
-    //     console.log(phases);
-    // };
-
     const phaseConfigs: PhaseConfig[] = [];
 
-    // let id = 0;
-    const set: SetPhaser = phaseConfig => {
-        // const phaseID = `phase-${id++}`;
-
-        phaseConfigs.push(phaseConfig);
-    };
+    const set: SetPhaser = phaseConfig => phaseConfigs.push(phaseConfig);
 
     const startPhaser = () => {
         // Test return console statement
         if (!phaseConfigs.length) return console.log('no phases set, aborting...');
         else if (props.active) return console.log('phaser already active');
 
+        const [baseDraw, prepareDraw, postpareDraw, removeDraw, ...phases] = phaseConfigs[0];
+
         props.currentPhase = 0;
         props.timer = 0;
         props.active = true;
-
-        const [baseDraw, prepareDraw, postpareDraw, ...phases] = phaseConfigs[0];
+        props.baseDraw = baseDraw;
+        props.postpare = postpareDraw;
 
         const phaserBaseUpdate = createUpdate(engine, props, phases, stopPhaser);
 
@@ -74,7 +55,7 @@ export const createPhaser = (resourceID: string | number) => {
         engine.setDraw(baseDraw);
         engine.setUpdate(phaserBaseUpdate);
 
-        const [phaseDuration, phaseUpdate, phasePrepare, phasePostpare] = phases[0];
+        const [_, phaseUpdate, phasePrepare] = phases[0];
 
         // Set 1st phase (could use a check on its availability)
         if (phasePrepare) phasePrepare();
@@ -92,9 +73,11 @@ export const createPhaser = (resourceID: string | number) => {
 
         engine.removeUpdate('phases-update');
 
-        // postPare here (phases[0][3])
+        if (props.postpare) props.postpare();
 
-        // Reset props?
+        props.timer = 0;
+        // reset more props
+
         props.active = false;
     };
 
@@ -118,9 +101,11 @@ const createUpdate = (engine: Engine, props: PhaserProperties, phases: Phase[], 
             props.currentPhase++;
             props.timer = 0;
 
-            if (!phases[props.currentPhase]) return stopPhaser(); // removes this update from engine
+            if (!phases[props.currentPhase]) {
+                stopPhaser(); // removes this update from engine
 
-            // remove baseDraw?
+                if (props.removeDraw && props.baseDraw.id) engine.removeDraw(props.baseDraw.id);
+            }
 
             const [duration, update, prepare] = phases[props.currentPhase];
 
