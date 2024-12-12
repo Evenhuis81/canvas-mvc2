@@ -1,20 +1,21 @@
-type Statistic = {
+export type Statistic = {
     id: string | number;
     name: string;
     fn: () => string;
 };
 
-type StatisticResource = {
-    id: string | number;
+export type StatisticResource = {
+    libraryID: string | number;
     statistics: Statistic[];
-    canvas: HTMLCanvasElement;
-    context: CanvasRenderingContext2D;
-    engine: Engine;
-    draw: Draw;
+    setDraw: Function;
+    removeDraw: Function;
     active: boolean;
+    // canvas: HTMLCanvasElement;
+    // context: CanvasRenderingContext2D;
+    // engine: Engine;
 };
 
-type StatProperties = {
+export type StatProperties = {
     id: number;
     name: string;
     minY: number;

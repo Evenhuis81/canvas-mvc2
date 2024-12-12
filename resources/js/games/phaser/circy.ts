@@ -20,10 +20,10 @@ export const getCircy = (libraryID: string | number) => {
     };
 
     // Move this to phaser
-    statistics.create(libraryID, canvas, ctx, engine);
-    statistics.setFn(libraryID, () => `${engine.info.draws.length()}`);
-    statistics.setFn(libraryID, () => `${engine.info.updates.length()}`);
-    statistics.setFn(libraryID, () => `${engine.info.draws.ids()}`);
+    statistics.create(libraryID);
+    statistics.setFn(libraryID, () => `Engine draws: ${engine.info.draws.length()}`);
+    statistics.setFn(libraryID, () => `Engine updates: ${engine.info.updates.length()}`);
+    statistics.setFn(libraryID, () => `Engine IDs: ${engine.info.draws.ids()}`);
 
     return {run};
 };

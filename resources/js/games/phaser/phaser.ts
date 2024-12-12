@@ -29,6 +29,7 @@ export const createPhaser = (resourceID: string | number) => {
         removeDraw: true,
         postpare: undefined,
     };
+
     const {engine} = resources[resourceID];
 
     const phaseConfigs: PhaseConfig[] = [];
@@ -105,6 +106,8 @@ const createUpdate = (engine: Engine, props: PhaserProperties, phases: Phase[], 
                 stopPhaser(); // removes this update from engine
 
                 if (props.removeDraw && props.baseDraw.id) engine.removeDraw(props.baseDraw.id);
+
+                return;
             }
 
             const [duration, update, prepare] = phases[props.currentPhase];
