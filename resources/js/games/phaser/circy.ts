@@ -1,17 +1,19 @@
 import {resources} from 'library/index';
-import {PhaseConfig, createPhaser} from './phaser';
+import {DrawPhase, UpdatePhases, createPhaser} from './phaser';
 import statistics from 'library/statistics';
 
 export const getCircy = (libraryID: string | number) => {
     const {context: ctx, canvas, engine} = resources[libraryID];
 
-    const drawCircy = createDrawCircy(ctx);
-
     const phaser = createPhaser(libraryID);
 
-    const phases = createPhases(canvas, drawCircy);
+    // const drawCircy = createDrawCircy(ctx);
+    // const phases = createCircyPhases(canvas, drawCircy);
 
-    phaser.set(phases);
+    const {phaseDraw, updatePhases} = createTriyPhases(canvas, ctx);
+
+    phaser.setDraw(phaseDraw);
+    phaser.setUpdates(updatePhases);
 
     const run = () => {
         statistics.run(libraryID);
@@ -23,28 +25,88 @@ export const getCircy = (libraryID: string | number) => {
     statistics.create(libraryID);
     statistics.setFn(libraryID, () => `Engine draws: ${engine.info.draws.length()}`);
     statistics.setFn(libraryID, () => `Engine updates: ${engine.info.updates.length()}`);
-    statistics.setFn(libraryID, () => `Engine IDs: ${engine.info.draws.ids()}`);
+    statistics.setFn(libraryID, () => `Engine draw IDs: ${engine.info.draws.ids()}`);
+    statistics.setFn(libraryID, () => `Engine update IDs: ${engine.info.updates.ids()}`);
 
     return {run};
+};
+
+const createDrawTriy = (ctx: CanvasRenderingContext2D) => ({
+    id: 'demo-triy',
+    name: 'Triy Demo Draw',
+    fn: () => {
+        ctx.strokeStyle = `rgba(${triySketch.strokeStyle1.r}, ${triySketch.strokeStyle1.g}, ${triySketch.strokeStyle1.b}, ${triySketch.strokeStyle1.a})`;
+        // ctx.strokeStyle = `rgba(${triySketch.strokeStyle2.r}, ${triySketch.strokeStyle2.g}, ${triySketch.strokeStyle2.b}, ${triySketch.strokeStyle2.a})`;
+        // ctx.strokeStyle = `rgba(${triySketch.strokeStyle3.r}, ${triySketch.strokeStyle3.g}, ${triySketch.strokeStyle3.b}, ${triySketch.strokeStyle3.a})`;
+
+        ctx.beginPath();
+        ctx.moveTo(triySketch.x1, triySketch.y1);
+        ctx.lineTo(triySketch.x2, triySketch.y2);
+        ctx.lineTo(triySketch.x3, triySketch.y3);
+        ctx.closePath();
+        ctx.lineWidth = triySketch.lineWidth;
+        ctx.stroke();
+    },
+});
+
+const triySketch = {
+    x1: 0,
+    y1: 0,
+    x2: 0,
+    y2: 0,
+    x3: 0,
+    y3: 0,
+    lineWidth: 2,
+    strokeStyle1: {
+        r: 255,
+        g: 255,
+        b: 255,
+        a: 1,
+    },
+    strokeStyle2: {
+        r: 255,
+        g: 255,
+        b: 255,
+        a: 1,
+    },
+    strokeStyle3: {
+        r: 255,
+        g: 255,
+        b: 255,
+        a: 1,
+    },
+    fillStyle: {
+        r: 0,
+        g: 0,
+        b: 0,
+        a: 1,
+    },
 };
 
 const createDrawCircy = (ctx: CanvasRenderingContext2D) => ({
     id: 'demo-circy',
     name: 'Circy Demo Draw',
     fn: () => {
+        ctx.lineWidth = circySketch.lineWidth;
+        ctx.fillStyle = `rgba(${circySketch.fillStyle.r}, ${circySketch.fillStyle.g}, ${circySketch.fillStyle.b}, ${circySketch.fillStyle.a})`;
+        ctx.strokeStyle = `rgba(${circySketch.strokeStyle.r}, ${circySketch.strokeStyle.g}, ${circySketch.strokeStyle.b}, ${circySketch.strokeStyle.a})`;
+
         ctx.beginPath();
 
-        ctx.fillStyle = `rgba(${sketch.fillStyle.r}, ${sketch.fillStyle.g}, ${sketch.fillStyle.b}, ${sketch.fillStyle.a})`;
-        ctx.strokeStyle = `rgba(${sketch.strokeStyle.r}, ${sketch.strokeStyle.g}, ${sketch.strokeStyle.b}, ${sketch.strokeStyle.a})`;
-        ctx.lineWidth = sketch.lineWidth;
-
-        ctx.arc(sketch.x, sketch.y, sketch.radius, sketch.startAngle, sketch.endAngle, sketch.counterclockwise);
+        ctx.arc(
+            circySketch.x,
+            circySketch.y,
+            circySketch.radius,
+            circySketch.startAngle,
+            circySketch.endAngle,
+            circySketch.counterclockwise,
+        );
         ctx.fill();
         ctx.stroke();
     },
 });
 
-const sketch = {
+const circySketch = {
     x: 0,
     y: 0,
     lineWidth: 2,
@@ -66,74 +128,102 @@ const sketch = {
     counterclockwise: false,
 };
 
-const createPhases = (canvas: HTMLCanvasElement, drawCircy: Draw) => {
+const createTriyPhases = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
     // Start using Lerp on updates?
+
+    const xHalf = canvas.width / 2;
+    const yHalf = canvas.height / 2;
+    const radius = 25;
+
+    const preDraw = () => {
+        triySketch.x1 = xHalf;
+        triySketch.y1 = yHalf - radius;
+        triySketch.x2 = xHalf + radius;
+        triySketch.y2 = yHalf + radius;
+        triySketch.x3 = xHalf - radius;
+        triySketch.y3 = yHalf + radius;
+    };
+
+    const postDraw = () => {};
+    const update1 = () => {
+        //
+    };
+
+    const removeDraw = false;
+
+    const drawTriy = createDrawTriy(ctx);
+
+    const phaseDraw: DrawPhase = [drawTriy, preDraw, postDraw, removeDraw];
+
+    const updatePhases: UpdatePhases = [
+        // [5000, update1, undefined, postUpdate1],
+    ];
+
+    // const phases: PhaseConfig = [
+    //     drawTriy,
+    //     preDraw,
+    //     undefined,
+    //     removeDraw,
+    // ];
+
+    return {phaseDraw, updatePhases};
+};
+
+const createCircyPhases = (canvas: HTMLCanvasElement, drawCircy: Draw) => {
     const prepareDraw = () => {
-        sketch.x = canvas.width / 2;
-        sketch.y = canvas.height / 2;
-        sketch.lineWidth = 4;
-        sketch.radius = 25;
-
-        console.log('triggered prepare draw');
+        circySketch.x = canvas.width / 2;
+        circySketch.y = canvas.height / 2;
+        circySketch.lineWidth = 4;
+        circySketch.radius = 25;
     };
 
-    const postpareDraw = () => {
-        console.log('triggered postpare draw');
-    };
+    const postpareDraw = () => {};
 
     let timeAcc = 0.1;
     let phaseTime = 5000;
 
     const postUpdate1 = () => {
-        sketch.strokeStyle.a = 1;
+        circySketch.strokeStyle.a = 1;
         phaseTime = 3000;
         timeAcc = 0;
-
-        console.log('triggered postUpdate1');
     };
 
     const update1 = (evt: UpdateEvent) => {
         timeAcc += evt.timePassed;
 
-        sketch.strokeStyle.a = timeAcc / phaseTime;
+        circySketch.strokeStyle.a = timeAcc / phaseTime;
     };
 
     const postUpdate2 = () => {
-        sketch.fillStyle.r = 255;
+        circySketch.fillStyle.r = 255;
         timeAcc = 0;
         phaseTime = 10000;
-
-        console.log('triggered postUpdate2');
     };
 
     const update2 = (evt: UpdateEvent) => {
         timeAcc += evt.timePassed;
 
-        sketch.fillStyle.r = 255 * (timeAcc / phaseTime);
+        circySketch.fillStyle.r = 255 * (timeAcc / phaseTime);
     };
 
     const xOrig = canvas.width / 2;
     const xMove = -200;
 
     const postUpdate3 = () => {
-        sketch.x = xOrig + xMove;
-
-        console.log('triggered postUpdate3');
+        circySketch.x = xOrig + xMove;
     };
 
     const update3 = (evt: UpdateEvent) => {
         timeAcc += evt.timePassed;
 
-        sketch.x = xOrig + (timeAcc / phaseTime) * xMove;
+        circySketch.x = xOrig + (timeAcc / phaseTime) * xMove;
     };
 
-    const testPrepareUpdate = () => {
-        console.log('triggered prepareUpdate');
-    };
+    const testPrepareUpdate = () => {};
 
     const removeDraw = true;
 
-    const phases: PhaseConfig = [
+    const phases = [
         drawCircy,
         prepareDraw,
         postpareDraw,

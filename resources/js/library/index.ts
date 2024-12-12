@@ -73,7 +73,7 @@ const dotMiddle = (context: CanvasRenderingContext2D) => ({
 });
 
 const clear = (context: CanvasRenderingContext2D) => ({
-    id: 0,
+    id: 'library-clearRect',
     name: 'clearRect',
     fn: () => context.clearRect(0, 0, context.canvas.width, context.canvas.height),
 });

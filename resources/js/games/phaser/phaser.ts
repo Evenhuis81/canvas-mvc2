@@ -3,60 +3,78 @@ import {resources} from 'library/index';
 type PhaserProperties = {
     currentPhase: number;
     timer: number;
-    active: boolean;
-    baseDraw: Draw;
+    active: string[];
+    draw: Draw;
     removeDraw: boolean;
-    postpare: Function | undefined;
+    postDraw: Function | undefined;
 };
 
-type PhasePrepare = () => void;
-type PhasePostpare = () => void;
+type PreDraw = Function;
+type PostDraw = Function;
 type RemoveDraw = boolean;
+type PrePhase = Function;
+type PostPhase = Function;
 
 // [duration, update fn, prepare fn?, postpare fn?]
-type Phase = [number, Update['fn'], PhasePrepare?, PhasePostpare?];
+type Phase = [number, Update['fn'], PrePhase?, PostPhase?];
 
-export type PhaseConfig = [Draw, PhasePrepare?, PhasePostpare?, RemoveDraw?, ...{[K in keyof Phase]: Phase[K]}[]];
+export type UpdatePhases = {[K in keyof Phase]: Phase[K]}[];
 
-type SetPhaser = (phaseConfig: PhaseConfig) => void;
+export type DrawPhase = [Draw, PreDraw?, PostDraw?, RemoveDraw?];
+
+// export type PhaseConfig = [Draw, PhasePrepare?, PhasePostpare?, RemoveDraw?, ...UpdatePhases];
+
+// type SetPhaserOld = (phaseConfig: PhaseConfig) => void;
+// type SetPhaser = (incPhases: Phases) => void;
 
 export const createPhaser = (resourceID: string | number) => {
     const props: PhaserProperties = {
         currentPhase: 0,
         timer: 0,
-        active: false,
-        baseDraw: {fn: () => {}},
+        active: [],
+        draw: {fn: () => {}},
         removeDraw: true,
-        postpare: undefined,
+        postDraw: undefined,
     };
 
     const {engine} = resources[resourceID];
 
-    const phaseConfigs: PhaseConfig[] = [];
+    const draws: Record<string, DrawPhase> = {};
+    const updates: Record<string, UpdatePhases> = {};
 
-    const set: SetPhaser = phaseConfig => phaseConfigs.push(phaseConfig);
+    // Implement identification for multiple draws and phases
+    const setDraw = (phaseDraw: DrawPhase) => {
+        draws['test'] = phaseDraw;
+    };
+    const setUpdates = (phaseUpdates: UpdatePhases) => {
+        updates['test'] = phaseUpdates;
+    };
 
-    const startPhaser = () => {
+    const startPhaser = (id?: string) => {
+        const phaseID = id ?? 'test';
+
         // Test return console statement
-        if (!phaseConfigs.length) return console.log('no phases set, aborting...');
-        else if (props.active) return console.log('phaser already active');
+        const active = props.active.find(act => act === phaseID);
+        if (active) return console.log(`Phaser with ID: ${phaseID} already active`);
 
-        const [baseDraw, prepareDraw, postpareDraw, removeDraw, ...phases] = phaseConfigs[0];
+        const [draw, preDraw, postDraw, removeDraw] = draws[phaseID];
 
         props.currentPhase = 0;
         props.timer = 0;
-        props.active = true;
-        props.baseDraw = baseDraw;
-        props.postpare = postpareDraw;
+        props.active.push(phaseID);
+        props.draw = draw;
+        props.postDraw = postDraw;
 
-        const phaserBaseUpdate = createUpdate(engine, props, phases, stopPhaser);
+        if (preDraw) preDraw();
+        engine.setDraw(draw);
 
-        if (prepareDraw) prepareDraw();
+        if (!updates[phaseID]) return console.log('No phases set');
 
-        engine.setDraw(baseDraw);
-        engine.setUpdate(phaserBaseUpdate);
+        const phaserUpdate = createUpdate(engine, props, updates[phaseID], stopPhaser);
 
-        const [_, phaseUpdate, phasePrepare] = phases[0];
+        engine.setUpdate(phaserUpdate);
+
+        const [duration, phaseUpdate, phasePrepare] = updates[phaseID][0];
 
         // Set 1st phase (could use a check on its availability)
         if (phasePrepare) phasePrepare();
@@ -64,7 +82,7 @@ export const createPhaser = (resourceID: string | number) => {
         engine.setUpdate({id: `phase-${props.currentPhase}`, fn: phaseUpdate});
     };
 
-    const stopPhaser = () => {
+    const stopPhaser = (id?: string) => {
         // TODO::Cleanup last phaserun?
         if (!props.active) {
             console.log('phaser is not active!');
@@ -74,15 +92,15 @@ export const createPhaser = (resourceID: string | number) => {
 
         engine.removeUpdate('phases-update');
 
-        if (props.postpare) props.postpare();
+        if (props.postDraw) props.postDraw();
 
         props.timer = 0;
         // reset more props
 
-        props.active = false;
+        props.active.findIndex(id);
     };
 
-    return {start: startPhaser, stop: stopPhaser, set};
+    return {start: startPhaser, stop: stopPhaser, setDraw, setUpdates};
 };
 
 const createUpdate = (engine: Engine, props: PhaserProperties, phases: Phase[], stopPhaser: Function) => ({
