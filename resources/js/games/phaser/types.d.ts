@@ -10,6 +10,29 @@ type CircySketch = {
     counterclockwise: boolean;
 };
 
+type PhaserProperties = {
+    currentPhase: number;
+    currentPhaseID: string;
+    timer: number;
+    active: string[];
+    draw: Draw;
+    removeDraw: boolean;
+    postDraw: Function | undefined;
+};
+
+type PreDraw = Function;
+type PostDraw = Function;
+type RemoveDraw = boolean;
+type PrePhase = Function;
+type PostPhase = Function;
+
+// [duration, update fn, prepare fn?, postpare fn?]
+type Phase = [number, Update['fn'], PrePhase?, PostPhase?];
+
+export type UpdatePhases = {[K in keyof Phase]: Phase[K]}[];
+
+export type DrawPhase = [Draw, PreDraw?, PostDraw?, RemoveDraw?];
+
 // type PhaseBase = {
 //     name?: string;
 //     timeStart: number;

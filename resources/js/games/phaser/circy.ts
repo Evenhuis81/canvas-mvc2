@@ -1,6 +1,7 @@
 import {resources} from 'library/index';
-import {DrawPhase, UpdatePhases, createPhaser} from './phaser';
+import {createPhaser} from './phaser';
 import statistics from 'library/statistics';
+import type {DrawPhase, UpdatePhases} from './types';
 
 export const getCircy = (libraryID: string | number) => {
     const {context: ctx, canvas, engine} = resources[libraryID];
@@ -61,19 +62,19 @@ const triySketch = {
         r: 255,
         g: 255,
         b: 255,
-        a: 1,
+        a: 0,
     },
     strokeStyle2: {
         r: 255,
         g: 255,
         b: 255,
-        a: 1,
+        a: 0,
     },
     strokeStyle3: {
         r: 255,
         g: 255,
         b: 255,
-        a: 1,
+        a: 0,
     },
     fillStyle: {
         r: 0,
@@ -135,36 +136,32 @@ const createTriyPhases = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext
     const yHalf = canvas.height / 2;
     const radius = 25;
 
+    const t = triySketch;
+
     const preDraw = () => {
-        triySketch.x1 = xHalf;
-        triySketch.y1 = yHalf - radius;
-        triySketch.x2 = xHalf + radius;
-        triySketch.y2 = yHalf + radius;
-        triySketch.x3 = xHalf - radius;
-        triySketch.y3 = yHalf + radius;
+        t.x1 = xHalf;
+        t.y1 = yHalf - radius;
+        t.x2 = xHalf + radius;
+        t.y2 = yHalf + radius;
+        t.x3 = xHalf - radius;
+        t.y3 = yHalf + radius;
+        t.strokeStyle1.a = 1;
+        t.strokeStyle2.a = 1;
+        t.strokeStyle3.a = 1;
     };
 
-    const postDraw = () => {};
+    // const postDraw = () => {};
     const update1 = () => {
-        //
+        console.log('update 1 running');
     };
 
-    const removeDraw = false;
+    const removeDraw = true;
 
     const drawTriy = createDrawTriy(ctx);
 
-    const phaseDraw: DrawPhase = [drawTriy, preDraw, postDraw, removeDraw];
+    const phaseDraw: DrawPhase = [drawTriy, preDraw, undefined, removeDraw];
 
-    const updatePhases: UpdatePhases = [
-        // [5000, update1, undefined, postUpdate1],
-    ];
-
-    // const phases: PhaseConfig = [
-    //     drawTriy,
-    //     preDraw,
-    //     undefined,
-    //     removeDraw,
-    // ];
+    const updatePhases: UpdatePhases = [[1000, update1, undefined, undefined]];
 
     return {phaseDraw, updatePhases};
 };

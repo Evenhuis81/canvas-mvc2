@@ -1,35 +1,15 @@
 import {resources} from 'library/index';
-
-type PhaserProperties = {
-    currentPhase: number;
-    timer: number;
-    active: string[];
-    draw: Draw;
-    removeDraw: boolean;
-    postDraw: Function | undefined;
-};
-
-type PreDraw = Function;
-type PostDraw = Function;
-type RemoveDraw = boolean;
-type PrePhase = Function;
-type PostPhase = Function;
-
-// [duration, update fn, prepare fn?, postpare fn?]
-type Phase = [number, Update['fn'], PrePhase?, PostPhase?];
-
-export type UpdatePhases = {[K in keyof Phase]: Phase[K]}[];
-
-export type DrawPhase = [Draw, PreDraw?, PostDraw?, RemoveDraw?];
+import {DrawPhase, Phase, PhaserProperties, UpdatePhases} from './types';
 
 // export type PhaseConfig = [Draw, PhasePrepare?, PhasePostpare?, RemoveDraw?, ...UpdatePhases];
 
 // type SetPhaserOld = (phaseConfig: PhaseConfig) => void;
 // type SetPhaser = (incPhases: Phases) => void;
 
-export const createPhaser = (resourceID: string | number) => {
+export const createPhaser = (libraryID: string | number, id?: string) => {
     const props: PhaserProperties = {
         currentPhase: 0,
+        currentPhaseID: id || 'test',
         timer: 0,
         active: [],
         draw: {fn: () => {}},
@@ -37,17 +17,21 @@ export const createPhaser = (resourceID: string | number) => {
         postDraw: undefined,
     };
 
-    const {engine} = resources[resourceID];
+    const {engine} = resources[libraryID];
 
     const draws: Record<string, DrawPhase> = {};
     const updates: Record<string, UpdatePhases> = {};
 
     // Implement identification for multiple draws and phases
-    const setDraw = (phaseDraw: DrawPhase) => {
-        draws['test'] = phaseDraw;
+    const setDraw = (phaseDraw: DrawPhase, phaseID?: string) => {
+        const id = phaseID ?? 'test';
+
+        draws[id] = phaseDraw;
     };
-    const setUpdates = (phaseUpdates: UpdatePhases) => {
-        updates['test'] = phaseUpdates;
+    const setUpdates = (phaseUpdates: UpdatePhases, phaseID?: string) => {
+        const id = phaseID ?? 'test';
+
+        updates[id] = phaseUpdates;
     };
 
     const startPhaser = (id?: string) => {
@@ -68,62 +52,70 @@ export const createPhaser = (resourceID: string | number) => {
         if (preDraw) preDraw();
         engine.setDraw(draw);
 
-        if (!updates[phaseID]) return console.log('No phases set');
+        if (!updates[phaseID] || !updates[phaseID].length) return console.log('No phases set, but draw is set');
 
         const phaserUpdate = createUpdate(engine, props, updates[phaseID], stopPhaser);
 
         engine.setUpdate(phaserUpdate);
 
-        const [duration, phaseUpdate, phasePrepare] = updates[phaseID][0];
+        console.log(updates[phaseID][0]);
 
-        // Set 1st phase (could use a check on its availability)
-        if (phasePrepare) phasePrepare();
+        const [duration, phaseUpdate, prePhase, postPhase] = updates[phaseID][0];
+
+        if (prePhase) prePhase();
 
         engine.setUpdate({id: `phase-${props.currentPhase}`, fn: phaseUpdate});
     };
 
     const stopPhaser = (id?: string) => {
+        const phaseID = id ?? 'test';
+
         // TODO::Cleanup last phaserun?
-        if (!props.active) {
-            console.log('phaser is not active!');
+        const active = props.active.find(act => act === phaseID);
+        if (active) return console.log('phaser is not active!');
 
-            return;
-        }
-
-        engine.removeUpdate('phases-update');
+        engine.removeUpdate(`phases-update-${phaseID}`);
 
         if (props.postDraw) props.postDraw();
 
         props.timer = 0;
         // reset more props
 
-        props.active.findIndex(id);
+        console.log(props.active);
+
+        const index = props.active.findIndex(pID => pID === phaseID);
+
+        if (index === -1) props.active.splice(index, 1);
+
+        console.log(props.active);
     };
 
     return {start: startPhaser, stop: stopPhaser, setDraw, setUpdates};
 };
 
 const createUpdate = (engine: Engine, props: PhaserProperties, phases: Phase[], stopPhaser: Function) => ({
-    id: 'phases-update',
-    name: 'Update phases',
+    id: `phases-update-${props.currentPhaseID}`,
+    name: `Update phases--${props.currentPhaseID}`,
     fn: (evt: UpdateEvent) => {
         props.timer += evt.timePassed;
 
-        // [duration, update fn, prepare fn?, postpare fn?]
+        // [duration, update fn, preUpdate fn?, 3-postUpdate fn?]
         if (phases[props.currentPhase][0] < props.timer) {
             const currentPhase = phases[props.currentPhase];
 
             engine.removeUpdate(`phase-${props.currentPhase}`);
 
-            if (currentPhase[3]) currentPhase[3](); // postpare
+            if (currentPhase[3]) currentPhase[3](); // postUpdate
 
             props.currentPhase++;
             props.timer = 0;
 
+            // Needs testing in case of empty array
             if (!phases[props.currentPhase]) {
+                console.log('next phase missing, stop');
                 stopPhaser(); // removes this update from engine
 
-                if (props.removeDraw && props.baseDraw.id) engine.removeDraw(props.baseDraw.id);
+                if (props.removeDraw && props.draw.id) engine.removeDraw(props.draw.id);
 
                 return;
             }
