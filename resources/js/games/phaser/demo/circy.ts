@@ -31,7 +31,7 @@ export const createCircyPhases = (canvas: HTMLCanvasElement, drawCircy: Draw) =>
 
     const postpareDraw = () => {};
 
-    let timeAcc = 0.1;
+    let timeAcc = 0.01;
     let phaseTime = 5000;
 
     const postUpdate1 = () => {

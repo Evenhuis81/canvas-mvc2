@@ -78,9 +78,8 @@ export const createPhaser = (libraryID: string | number, id?: string) => {
         if (props.postDraw) props.postDraw();
 
         props.timer = 0;
-        // reset more props
-
-        console.log(props.active);
+        props.currentPhase = 0;
+        props.timer = 0;
 
         const index = props.active.findIndex(pID => pID === phaseID);
 
@@ -112,13 +111,13 @@ const createUpdate = (engine: Engine, props: PhaserProperties, phases: Phase[], 
             // Needs testing in case of empty array
             if (!phases[props.currentPhase]) {
                 if (props.removeDraw && props.draw.id) engine.removeDraw(props.draw.id);
-                console.log('next phase missing, stop');
-                stopPhaser(); // removes this update from engine
+
+                stopPhaser(); // removes this update from engine and runs postDraw if set
 
                 return;
             }
 
-            const [duration, update, prepare] = phases[props.currentPhase];
+            const [_, update, prepare] = phases[props.currentPhase];
 
             if (prepare) prepare();
 
