@@ -16,7 +16,7 @@ type PhaserProperties = {
     timer: number;
     active: string[];
     draw: Draw;
-    removeDraw: boolean;
+    removeDraw: boolean | undefined;
     postDraw: Function | undefined;
 };
 

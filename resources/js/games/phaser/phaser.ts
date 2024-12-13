@@ -48,6 +48,7 @@ export const createPhaser = (libraryID: string | number, id?: string) => {
         props.active.push(phaseID);
         props.draw = draw;
         props.postDraw = postDraw;
+        props.removeDraw = removeDraw;
 
         if (preDraw) preDraw();
         engine.setDraw(draw);
@@ -57,8 +58,6 @@ export const createPhaser = (libraryID: string | number, id?: string) => {
         const phaserUpdate = createUpdate(engine, props, updates[phaseID], stopPhaser);
 
         engine.setUpdate(phaserUpdate);
-
-        console.log(updates[phaseID][0]);
 
         const [duration, phaseUpdate, prePhase, postPhase] = updates[phaseID][0];
 
@@ -72,7 +71,7 @@ export const createPhaser = (libraryID: string | number, id?: string) => {
 
         // TODO::Cleanup last phaserun?
         const active = props.active.find(act => act === phaseID);
-        if (active) return console.log('phaser is not active!');
+        if (!active) return console.log('phaser is not active!');
 
         engine.removeUpdate(`phases-update-${phaseID}`);
 
@@ -85,9 +84,9 @@ export const createPhaser = (libraryID: string | number, id?: string) => {
 
         const index = props.active.findIndex(pID => pID === phaseID);
 
-        if (index === -1) props.active.splice(index, 1);
+        if (index === -1) return console.log('current active phaseID not found.');
 
-        console.log(props.active);
+        props.active.splice(index, 1);
     };
 
     return {start: startPhaser, stop: stopPhaser, setDraw, setUpdates};
@@ -95,7 +94,7 @@ export const createPhaser = (libraryID: string | number, id?: string) => {
 
 const createUpdate = (engine: Engine, props: PhaserProperties, phases: Phase[], stopPhaser: Function) => ({
     id: `phases-update-${props.currentPhaseID}`,
-    name: `Update phases--${props.currentPhaseID}`,
+    name: `Update phases-${props.currentPhaseID}`,
     fn: (evt: UpdateEvent) => {
         props.timer += evt.timePassed;
 
@@ -112,10 +111,9 @@ const createUpdate = (engine: Engine, props: PhaserProperties, phases: Phase[], 
 
             // Needs testing in case of empty array
             if (!phases[props.currentPhase]) {
+                if (props.removeDraw && props.draw.id) engine.removeDraw(props.draw.id);
                 console.log('next phase missing, stop');
                 stopPhaser(); // removes this update from engine
-
-                if (props.removeDraw && props.draw.id) engine.removeDraw(props.draw.id);
 
                 return;
             }
