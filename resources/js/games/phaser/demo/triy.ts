@@ -34,7 +34,8 @@ export const createTriyPhases = (canvas: HTMLCanvasElement, ctx: CanvasRendering
     };
     const postPhase1 = () => {
         console.log('postphase 1');
-        console.log(t.x2, t.y2, t.x4, t.x6);
+
+        // console.log(t.x2, t.y2, t.x4, t.x6);
     };
 
     let phaseTime = 2000;
