@@ -2,12 +2,14 @@ import {EngineDraw, EngineUpdate} from 'library/types/engine';
 
 type PhaserProperties = {
     currentPhase: number;
-    currentPhaseID: string;
+    phaseID: string;
+    defaultSet: boolean;
     timer: number;
     active: string[];
     draw: EngineDraw;
     removeDraw?: boolean;
     postDraw?: Function;
+    statistics?: boolean;
 };
 
 type PreDraw = Function;

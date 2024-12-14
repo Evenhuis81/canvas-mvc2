@@ -6,12 +6,14 @@ import type {Engine, EngineUpdateEvent} from 'library/types/engine';
 export const createPhaser = (libraryID: string | number, id?: string) => {
     const props: PhaserProperties = {
         currentPhase: 0,
-        currentPhaseID: id || 'default',
+        phaseID: id || 'default',
+        defaultSet: false,
         timer: 0,
         active: [],
         draw: {fn: () => {}},
         removeDraw: true,
         postDraw: undefined,
+        statistics: false,
     };
 
     const {engine} = resources[libraryID];
@@ -20,26 +22,17 @@ export const createPhaser = (libraryID: string | number, id?: string) => {
     const phases: Record<string, UpdatePhases> = {};
 
     // Implement identification for multiple draws and phases
-    const setDraw = (phaseDraw: DrawPhase, phaseID?: string) => {
-        const id = phaseID ?? 'default';
+    const setDraw = (phaseDraw: DrawPhase, phaseID?: string) => (draws[phaseID ?? 'default'] = phaseDraw);
 
-        draws[id] = phaseDraw;
-    };
-
-    const setUpdates = (phaseUpdates: UpdatePhases, phaseID?: string) => {
-        const id = phaseID ?? 'default';
-
-        phases[id] = phaseUpdates;
-    };
+    const setPhases = (phaseUpdates: UpdatePhases, phaseID?: string) => (phases[phaseID ?? 'default'] = phaseUpdates);
 
     const setPhase = (phase: Phase, phaseID?: string) => {
-        const id = phaseID ?? 'default';
+        phases[phaseID ?? 'default'] = [phase];
     };
 
     const startPhaser = (id?: string) => {
         const phaseID = id ?? 'default';
 
-        // Test return console statement
         const active = props.active.find(act => act === phaseID);
         if (active) return console.log(`Phaser with ID: ${phaseID} already active`);
 
@@ -55,19 +48,19 @@ export const createPhaser = (libraryID: string | number, id?: string) => {
         if (preDraw) preDraw();
         engine.setDraw(draw);
 
-        if (!updates[phaseID] || !updates[phaseID].length) return console.log('No phases set, but draw is set');
+        if (!phases[phaseID] || !phases[phaseID].length) return console.log('No phases set, but draw is set');
 
-        const phaserUpdate = createUpdate(engine, props, updates[phaseID], stopPhaser);
+        const phaserUpdate = createUpdate(engine, props, phases[phaseID], stopPhaser);
 
         engine.setUpdate(phaserUpdate);
 
-        const [duration, phaseUpdate, prePhase, postPhase] = updates[phaseID][0];
+        const [duration, phaseUpdate, prePhase, postPhase] = phases[phaseID][0];
 
         if (prePhase) prePhase();
 
         engine.setUpdate({id: `phase-${props.currentPhase}`, fn: phaseUpdate});
 
-        statistics.run(libraryID);
+        if (props.statistics) statistics.run(libraryID);
     };
 
     const stopPhaser = (id?: string) => {
@@ -90,21 +83,36 @@ export const createPhaser = (libraryID: string | number, id?: string) => {
         if (index === -1) return console.log('current active phaseID not found.');
 
         props.active.splice(index, 1);
+
+        if (props.statistics) statistics.halt(libraryID);
     };
 
-    // Move this to phaser
-    statistics.create(libraryID);
-    statistics.setFn(libraryID, () => `Engine draws: ${engine.info.draws.length()}`);
-    statistics.setFn(libraryID, () => `Engine updates: ${engine.info.updates.length()}`);
-    statistics.setFn(libraryID, () => `Engine draw IDs: ${engine.info.draws.ids()}`);
-    statistics.setFn(libraryID, () => `Engine update IDs: ${engine.info.updates.ids()}`);
+    const setStatistics = () => {
+        statistics.create(libraryID);
+        statistics.setFn(libraryID, () => `Engine draws: ${engine.info.draws.length()}`);
+        statistics.setFn(libraryID, () => `Engine updates: ${engine.info.updates.length()}`);
+        statistics.setFn(libraryID, () => `Engine draw IDs: ${engine.info.draws.ids()}`);
+        statistics.setFn(libraryID, () => `Engine update IDs: ${engine.info.updates.ids()}`);
+    };
 
-    return {start: startPhaser, stop: stopPhaser, setDraw, setUpdates};
+    const statsOn = () => {
+        props.statistics = true;
+
+        setStatistics();
+    };
+
+    const statsOff = () => {
+        props.statistics = false;
+
+        statistics.destroy(libraryID);
+    };
+
+    return {start: startPhaser, stop: stopPhaser, setDraw, setPhases, setPhase, statsOn, statsOff};
 };
 
 const createUpdate = (engine: Engine, props: PhaserProperties, phases: Phase[], stopPhaser: Function) => ({
-    id: `phases-update-${props.currentPhaseID}`,
-    name: `Update phases-${props.currentPhaseID}`,
+    id: `phases-update-${props.phaseID}`,
+    name: `Update phases-${props.phaseID}`,
     fn: (evt: EngineUpdateEvent) => {
         props.timer += evt.timePassed;
 

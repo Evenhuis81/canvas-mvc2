@@ -1,5 +1,6 @@
 import {resources} from 'library/index';
 import {DrawPhase, UpdatePhases} from '../types';
+import {EngineUpdateEvent} from 'library/types/engine';
 
 export const createTriyPhasesDemo = (libraryID: string | number) => {
     const {context: ctx, canvas} = resources[libraryID];
@@ -60,7 +61,7 @@ export const createTriyPhasesDemo = (libraryID: string | number) => {
     const xDist3 = xHalf - radius / 2; // (x2 -> left +, right -)
     const yDist3 = yHalf;
 
-    const update1 = (evt: UpdateEvent) => {
+    const update1 = (evt: EngineUpdateEvent) => {
         timeAcc += evt.timePassed;
         perc = timeAcc / phaseTime;
 

@@ -1,3 +1,5 @@
+import {EngineDraw, EngineUpdateEvent} from 'library/types/engine';
+
 export const createDrawCircy = (ctx: CanvasRenderingContext2D) => ({
     id: 'demo-circy',
     name: 'Circy Demo Draw',
@@ -21,7 +23,7 @@ export const createDrawCircy = (ctx: CanvasRenderingContext2D) => ({
     },
 });
 
-export const createCircyPhases = (canvas: HTMLCanvasElement, drawCircy: Draw) => {
+export const createCircyPhases = (canvas: HTMLCanvasElement, drawCircy: EngineDraw) => {
     const prepareDraw = () => {
         circySketch.x = canvas.width / 2;
         circySketch.y = canvas.height / 2;
@@ -40,7 +42,7 @@ export const createCircyPhases = (canvas: HTMLCanvasElement, drawCircy: Draw) =>
         timeAcc = 0;
     };
 
-    const update1 = (evt: UpdateEvent) => {
+    const update1 = (evt: EngineUpdateEvent) => {
         timeAcc += evt.timePassed;
 
         circySketch.strokeStyle.a = timeAcc / phaseTime;
@@ -52,7 +54,7 @@ export const createCircyPhases = (canvas: HTMLCanvasElement, drawCircy: Draw) =>
         phaseTime = 10000;
     };
 
-    const update2 = (evt: UpdateEvent) => {
+    const update2 = (evt: EngineUpdateEvent) => {
         timeAcc += evt.timePassed;
 
         circySketch.fillStyle.r = 255 * (timeAcc / phaseTime);
@@ -65,7 +67,7 @@ export const createCircyPhases = (canvas: HTMLCanvasElement, drawCircy: Draw) =>
         circySketch.x = xOrig + xMove;
     };
 
-    const update3 = (evt: UpdateEvent) => {
+    const update3 = (evt: EngineUpdateEvent) => {
         timeAcc += evt.timePassed;
 
         circySketch.x = xOrig + (timeAcc / phaseTime) * xMove;

@@ -8,7 +8,7 @@ const toggleKey: Record<string | number, string> = {};
 
 export default {
     create: (libraryID: number | string) => {
-        const {canvas, context, engine} = resources[libraryID];
+        const {context, engine} = resources[libraryID];
 
         const statistics: Statistic[] = [];
 
@@ -44,6 +44,8 @@ export default {
     },
     halt: (id: string | number) => {
         // take screenshot and display as static image?
+        statisticsResource[id].active = false;
+        statisticsResource[id].removeDraw();
     },
     destroy: (id: string | number) => {
         statisticsResource[id].removeDraw();
