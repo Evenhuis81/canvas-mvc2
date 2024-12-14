@@ -88,6 +88,8 @@ export const createCircyPhases = (canvas: HTMLCanvasElement, drawCircy: Draw) =>
     return phases;
 };
 
+export type CircySketch = typeof circySketch;
+
 export const circySketch = {
     x: 0,
     y: 0,

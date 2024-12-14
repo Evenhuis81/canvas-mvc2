@@ -1,11 +1,6 @@
 import {resources} from 'library/index';
 import {DrawPhase, Phase, PhaserProperties, UpdatePhases} from './types';
 
-// export type PhaseConfig = [Draw, PhasePrepare?, PhasePostpare?, RemoveDraw?, ...UpdatePhases];
-
-// type SetPhaserOld = (phaseConfig: PhaseConfig) => void;
-// type SetPhaser = (incPhases: Phases) => void;
-
 export const createPhaser = (libraryID: string | number, id?: string) => {
     const props: PhaserProperties = {
         currentPhase: 0,
@@ -108,8 +103,7 @@ const createUpdate = (engine: Engine, props: PhaserProperties, phases: Phase[], 
             props.currentPhase++;
             props.timer = 0;
 
-            // Needs testing in case of empty array
-            if (!phases[props.currentPhase]) {
+            if (!phases[props.currentPhase] || !phases[props.currentPhase].length) {
                 if (props.removeDraw && props.draw.id) engine.removeDraw(props.draw.id);
 
                 stopPhaser(); // removes this update from engine and runs postDraw if set

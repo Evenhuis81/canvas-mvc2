@@ -1,23 +1,11 @@
-type CircySketch = {
-    x: number;
-    y: number;
-    lineWidth: number;
-    fillStyle: string;
-    strokeStyle: string;
-    radius: number;
-    startAngle: number;
-    endAngle: number;
-    counterclockwise: boolean;
-};
-
 type PhaserProperties = {
     currentPhase: number;
     currentPhaseID: string;
     timer: number;
     active: string[];
     draw: Draw;
-    removeDraw: boolean | undefined;
-    postDraw: Function | undefined;
+    removeDraw?: boolean;
+    postDraw?: Function;
 };
 
 type PreDraw = Function;
@@ -32,6 +20,8 @@ type Phase = [number, Update['fn'], PrePhase?, PostPhase?];
 export type UpdatePhases = {[K in keyof Phase]: Phase[K]}[];
 
 export type DrawPhase = [Draw, PreDraw?, PostDraw?, RemoveDraw?];
+
+// export type PhaseConfig = [Draw, PhasePrepare?, PhasePostpare?, RemoveDraw?, ...UpdatePhases];
 
 // type PhaseBase = {
 //     name?: string;

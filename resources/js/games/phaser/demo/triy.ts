@@ -1,7 +1,6 @@
 import {DrawPhase, UpdatePhases} from '../types';
 
 export const createTriyPhases = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
-    // Lerp on updates?
     const xHalf = canvas.width / 2;
     const yHalf = canvas.height / 2;
     const radius = 25;
@@ -35,6 +34,7 @@ export const createTriyPhases = (canvas: HTMLCanvasElement, ctx: CanvasRendering
     };
     const postPhase1 = () => {
         console.log('postphase 1');
+        console.log(t.x2, t.y2, t.x4, t.x6);
     };
 
     let phaseTime = 2000;
@@ -107,14 +107,7 @@ const createDrawStroke1LargeToThin = (ctx: CanvasRenderingContext2D) => ({
     },
 });
 
-// const targetPositions = (t: typeof triySketch) => {
-//     t.x1 = xHalf;
-//     t.y1 = yHalf - radius;
-//     t.x2 = xHalf + radius;
-//     t.y2 = yHalf + radius;
-//     t.x3 = xHalf - radius;
-//     t.y3 = yHalf + radius;
-// }
+export type TirySketch = typeof triySketch;
 
 export const triySketch = {
     x1: 0,
@@ -161,8 +154,6 @@ const createDrawTriy = (ctx: CanvasRenderingContext2D) => ({
     name: 'Triy Demo Draw',
     fn: () => {
         ctx.strokeStyle = `rgba(${triySketch.strokeStyle1.r}, ${triySketch.strokeStyle1.g}, ${triySketch.strokeStyle1.b}, ${triySketch.strokeStyle1.a})`;
-        // ctx.strokeStyle = `rgba(${triySketch.strokeStyle2.r}, ${triySketch.strokeStyle2.g}, ${triySketch.strokeStyle2.b}, ${triySketch.strokeStyle2.a})`;
-        // ctx.strokeStyle = `rgba(${triySketch.strokeStyle3.r}, ${triySketch.strokeStyle3.g}, ${triySketch.strokeStyle3.b}, ${triySketch.strokeStyle3.a})`;
 
         ctx.beginPath();
         ctx.moveTo(triySketch.x1, triySketch.y1);

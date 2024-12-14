@@ -6,7 +6,7 @@ export const getSVTemp = (context: CanvasRenderingContext2D, engine: Engine) => 
     const paintMethods = createPaintMethods(context);
 
     // TODO::Create PaintTV and PaintSV interfaces (only PaintTV exists at the moment)
-    const paint: Paint = (type, shape) => {
+    const paint: PaintTV = (type, shape) => {
         const fn = paintMethods[type](shape);
 
         engine.setDraw({fn});
