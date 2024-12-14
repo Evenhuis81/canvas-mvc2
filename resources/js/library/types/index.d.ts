@@ -1,4 +1,5 @@
 import {LibraryInput} from './input';
+import {StaticView} from './views';
 
 export interface LibraryResources {
     id: string | number;
@@ -34,6 +35,7 @@ export interface LibraryOptions extends CanvasOptions {
     center: boolean;
     full: boolean; // full tab (innerWidth, innerHeight)
     clear: boolean;
+    dotMiddle: boolean;
     dualView: boolean;
     statistics: Partial<StatisticOptions>;
 }

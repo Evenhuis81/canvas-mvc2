@@ -35,30 +35,42 @@ export const createTriyPhases = (canvas: HTMLCanvasElement, ctx: CanvasRendering
     };
     const postPhase1 = () => {
         console.log('postphase 1');
-        console.log(t.x4, t.y4); // 3rd stroke left @ end phase
-        console.log(t.x2, t.y2); // right side
     };
 
     let phaseTime = 2000;
-    let timeAcc = 0.01;
+    let timeAcc = 0.001;
+    let perc = 0;
+
     const x2O = canvas.width + xHalf;
     const y1O = -xHalf;
     const x4O = -xHalf;
     const y3O = -xHalf;
-    const x5O =
-    const xDist1 = -canvas.width + radius /2;
+    const x5O = 0;
+    const x6O = canvas.width;
+    const y5O = canvas.height;
+    const y6O = canvas.height;
+    const xDist1 = -canvas.width + radius / 2;
     const yDist1 = yHalf + xHalf - radius;
-    const xDist2 = canvas.width - radius /2;
+    const xDist2 = canvas.width - radius / 2;
     const yDist2 = yHalf + xHalf - radius;
+    const xDist3 = xHalf - radius / 2; // (x2 -> left +, right -)
+    const yDist3 = yHalf;
 
     const update1 = (evt: UpdateEvent) => {
         timeAcc += evt.timePassed;
+        perc = timeAcc / phaseTime;
 
-        t.x2 = x2O + (timeAcc / phaseTime) * xDist1;
-        t.y1 = y1O + (timeAcc / phaseTime) * yDist1;
+        t.x2 = x2O + perc * xDist1;
+        t.y1 = y1O + perc * yDist1;
 
-        t.x4 = x4O + (timeAcc / phaseTime) * xDist2;
-        t.y3 = y3O + (timeAcc / phaseTime) * yDist2;
+        t.x4 = x4O + perc * xDist2;
+        t.y3 = y3O + perc * yDist2;
+
+        // Incosistent (distance not set for left or right / up or down -> comment xDist3)
+        t.x5 = x5O + perc * xDist3;
+        t.x6 = x6O - perc * xDist3;
+        t.y5 = y5O - perc * yDist3;
+        t.y6 = y6O - perc * yDist3;
     };
 
     const removeDraw = false;
@@ -95,24 +107,6 @@ const createDrawStroke1LargeToThin = (ctx: CanvasRenderingContext2D) => ({
     },
 });
 
-const createDrawTriy = (ctx: CanvasRenderingContext2D) => ({
-    id: 'demo-triy',
-    name: 'Triy Demo Draw',
-    fn: () => {
-        ctx.strokeStyle = `rgba(${triySketch.strokeStyle1.r}, ${triySketch.strokeStyle1.g}, ${triySketch.strokeStyle1.b}, ${triySketch.strokeStyle1.a})`;
-        // ctx.strokeStyle = `rgba(${triySketch.strokeStyle2.r}, ${triySketch.strokeStyle2.g}, ${triySketch.strokeStyle2.b}, ${triySketch.strokeStyle2.a})`;
-        // ctx.strokeStyle = `rgba(${triySketch.strokeStyle3.r}, ${triySketch.strokeStyle3.g}, ${triySketch.strokeStyle3.b}, ${triySketch.strokeStyle3.a})`;
-
-        ctx.beginPath();
-        ctx.moveTo(triySketch.x1, triySketch.y1);
-        ctx.lineTo(triySketch.x2, triySketch.y2);
-        ctx.lineTo(triySketch.x3, triySketch.y3);
-        ctx.closePath();
-        ctx.lineWidth = triySketch.lineWidth;
-        ctx.stroke();
-    },
-});
-
 // const targetPositions = (t: typeof triySketch) => {
 //     t.x1 = xHalf;
 //     t.y1 = yHalf - radius;
@@ -133,8 +127,8 @@ export const triySketch = {
     y4: 0,
     x5: 0,
     y5: 0,
-    y6: 0,
     x6: 0,
+    y6: 0,
     lineWidth: 2,
     strokeStyle1: {
         r: 255,
@@ -161,3 +155,21 @@ export const triySketch = {
         a: 1,
     },
 };
+
+const createDrawTriy = (ctx: CanvasRenderingContext2D) => ({
+    id: 'demo-triy',
+    name: 'Triy Demo Draw',
+    fn: () => {
+        ctx.strokeStyle = `rgba(${triySketch.strokeStyle1.r}, ${triySketch.strokeStyle1.g}, ${triySketch.strokeStyle1.b}, ${triySketch.strokeStyle1.a})`;
+        // ctx.strokeStyle = `rgba(${triySketch.strokeStyle2.r}, ${triySketch.strokeStyle2.g}, ${triySketch.strokeStyle2.b}, ${triySketch.strokeStyle2.a})`;
+        // ctx.strokeStyle = `rgba(${triySketch.strokeStyle3.r}, ${triySketch.strokeStyle3.g}, ${triySketch.strokeStyle3.b}, ${triySketch.strokeStyle3.a})`;
+
+        ctx.beginPath();
+        ctx.moveTo(triySketch.x1, triySketch.y1);
+        ctx.lineTo(triySketch.x2, triySketch.y2);
+        ctx.lineTo(triySketch.x3, triySketch.y3);
+        ctx.closePath();
+        ctx.lineWidth = triySketch.lineWidth;
+        ctx.stroke();
+    },
+});
