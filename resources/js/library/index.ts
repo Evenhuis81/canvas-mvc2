@@ -19,9 +19,6 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
     if (options?.clear) clearOn(engine, context);
     if (options?.dotMiddle) dotOn(engine, context);
 
-    // Temp dotOn hardcored true
-    dotOn(engine, context);
-
     const container = options?.containerID ? getContainer(options.containerID) : createContainer(libraryID);
 
     setCanvas(canvas, container, options);

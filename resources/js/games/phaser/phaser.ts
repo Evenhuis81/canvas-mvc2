@@ -1,10 +1,12 @@
 import {resources} from 'library/index';
-import {DrawPhase, Phase, PhaserProperties, UpdatePhases} from './types';
+import statistics from 'library/statistics';
+import type {DrawPhase, Phase, PhaserProperties, UpdatePhases} from './types';
+import type {Engine, EngineUpdateEvent} from 'library/types/engine';
 
 export const createPhaser = (libraryID: string | number, id?: string) => {
     const props: PhaserProperties = {
         currentPhase: 0,
-        currentPhaseID: id || 'test',
+        currentPhaseID: id || 'default',
         timer: 0,
         active: [],
         draw: {fn: () => {}},
@@ -15,22 +17,27 @@ export const createPhaser = (libraryID: string | number, id?: string) => {
     const {engine} = resources[libraryID];
 
     const draws: Record<string, DrawPhase> = {};
-    const updates: Record<string, UpdatePhases> = {};
+    const phases: Record<string, UpdatePhases> = {};
 
     // Implement identification for multiple draws and phases
     const setDraw = (phaseDraw: DrawPhase, phaseID?: string) => {
-        const id = phaseID ?? 'test';
+        const id = phaseID ?? 'default';
 
         draws[id] = phaseDraw;
     };
-    const setUpdates = (phaseUpdates: UpdatePhases, phaseID?: string) => {
-        const id = phaseID ?? 'test';
 
-        updates[id] = phaseUpdates;
+    const setUpdates = (phaseUpdates: UpdatePhases, phaseID?: string) => {
+        const id = phaseID ?? 'default';
+
+        phases[id] = phaseUpdates;
+    };
+
+    const setPhase = (phase: Phase, phaseID?: string) => {
+        const id = phaseID ?? 'default';
     };
 
     const startPhaser = (id?: string) => {
-        const phaseID = id ?? 'test';
+        const phaseID = id ?? 'default';
 
         // Test return console statement
         const active = props.active.find(act => act === phaseID);
@@ -59,10 +66,12 @@ export const createPhaser = (libraryID: string | number, id?: string) => {
         if (prePhase) prePhase();
 
         engine.setUpdate({id: `phase-${props.currentPhase}`, fn: phaseUpdate});
+
+        statistics.run(libraryID);
     };
 
     const stopPhaser = (id?: string) => {
-        const phaseID = id ?? 'test';
+        const phaseID = id ?? 'default';
 
         // TODO::Cleanup last phaserun?
         const active = props.active.find(act => act === phaseID);
@@ -83,13 +92,20 @@ export const createPhaser = (libraryID: string | number, id?: string) => {
         props.active.splice(index, 1);
     };
 
+    // Move this to phaser
+    statistics.create(libraryID);
+    statistics.setFn(libraryID, () => `Engine draws: ${engine.info.draws.length()}`);
+    statistics.setFn(libraryID, () => `Engine updates: ${engine.info.updates.length()}`);
+    statistics.setFn(libraryID, () => `Engine draw IDs: ${engine.info.draws.ids()}`);
+    statistics.setFn(libraryID, () => `Engine update IDs: ${engine.info.updates.ids()}`);
+
     return {start: startPhaser, stop: stopPhaser, setDraw, setUpdates};
 };
 
 const createUpdate = (engine: Engine, props: PhaserProperties, phases: Phase[], stopPhaser: Function) => ({
     id: `phases-update-${props.currentPhaseID}`,
     name: `Update phases-${props.currentPhaseID}`,
-    fn: (evt: UpdateEvent) => {
+    fn: (evt: EngineUpdateEvent) => {
         props.timer += evt.timePassed;
 
         // [duration, update fn, preUpdate fn?, 3-postUpdate fn?]

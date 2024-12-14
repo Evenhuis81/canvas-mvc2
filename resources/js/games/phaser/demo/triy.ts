@@ -1,6 +1,9 @@
+import {resources} from 'library/index';
 import {DrawPhase, UpdatePhases} from '../types';
 
-export const createTriyPhases = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
+export const createTriyPhasesDemo = (libraryID: string | number) => {
+    const {context: ctx, canvas} = resources[libraryID];
+
     const xHalf = canvas.width / 2;
     const yHalf = canvas.height / 2;
     const radius = 25;

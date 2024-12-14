@@ -1,9 +1,11 @@
+import {EngineDraw, EngineUpdate} from 'library/types/engine';
+
 type PhaserProperties = {
     currentPhase: number;
     currentPhaseID: string;
     timer: number;
     active: string[];
-    draw: Draw;
+    draw: EngineDraw;
     removeDraw?: boolean;
     postDraw?: Function;
 };
@@ -15,11 +17,11 @@ type PrePhase = Function;
 type PostPhase = Function;
 
 // [duration, update fn, prepare fn?, postpare fn?]
-type Phase = [number, Update['fn'], PrePhase?, PostPhase?];
+export type Phase = [number, EngineUpdate['fn'], PrePhase?, PostPhase?];
 
 export type UpdatePhases = {[K in keyof Phase]: Phase[K]}[];
 
-export type DrawPhase = [Draw, PreDraw?, PostDraw?, RemoveDraw?];
+export type DrawPhase = [EngineDraw, PreDraw?, PostDraw?, RemoveDraw?];
 
 // export type PhaseConfig = [Draw, PhasePrepare?, PhasePostpare?, RemoveDraw?, ...UpdatePhases];
 

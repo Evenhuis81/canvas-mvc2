@@ -1,25 +1,23 @@
-type Update = {
+export type EngineUpdate = {
     id?: number | string;
     name?: string;
     // fn: (deltaTime: number) => void;
-    fn: (evt: UpdateEvent) => void;
+    fn: (evt: EngineUpdateEvent) => void;
 };
 
-type UpdateEvent = {
+export type EngineUpdateEvent = {
     timePassed: number;
     lastTime: number;
 };
 
-type Draw = Omit<Update, 'fn'> & {
-    fn: () => void;
-};
+export type EngineDraw = Omit<EngineUpdate, 'fn'> & {fn: () => void};
 
-interface Engine {
+export interface Engine {
     run: () => void;
     runOnce: () => void;
     halt: () => void;
-    setUpdate: (update: Update) => void;
-    setDraw: (draw: Draw) => void;
+    setUpdate: (update: EngineUpdate) => void;
+    setDraw: (draw: EngineDraw) => void;
     removeUpdate: (id: number | string) => void;
     removeDraw: (id: number | string) => void;
     info: {
@@ -38,9 +36,9 @@ interface Engine {
     };
 }
 
-type EngineProperties = {
-    updates: Update[];
-    draws: Draw[];
+export type EngineProperties = {
+    updates: EngineUpdate[];
+    draws: EngineDraw[];
     requestID: number;
     stop: boolean;
     timePassed: number;
