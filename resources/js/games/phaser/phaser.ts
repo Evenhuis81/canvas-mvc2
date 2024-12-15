@@ -59,8 +59,6 @@ export const createPhaser = (libraryID: string | number, id?: string) => {
         if (prePhase) prePhase();
 
         engine.setUpdate({id: `phase-${props.currentPhase}`, fn: phaseUpdate});
-
-        if (props.statistics) statistics.run(libraryID);
     };
 
     const stopPhaser = (id?: string) => {
@@ -83,8 +81,6 @@ export const createPhaser = (libraryID: string | number, id?: string) => {
         if (index === -1) return console.log('current active phaseID not found.');
 
         props.active.splice(index, 1);
-
-        if (props.statistics) statistics.halt(libraryID);
     };
 
     const setStatistics = () => {
@@ -96,12 +92,18 @@ export const createPhaser = (libraryID: string | number, id?: string) => {
     };
 
     const statsOn = () => {
+        if (props.statistics) return console.log('stats already ON!');
+
         props.statistics = true;
 
         setStatistics();
+
+        statistics.run(libraryID);
     };
 
     const statsOff = () => {
+        if (!props.statistics) return console.log('stats already OFF!');
+
         props.statistics = false;
 
         statistics.destroy(libraryID);

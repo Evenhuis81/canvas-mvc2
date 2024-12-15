@@ -1,29 +1,41 @@
 import {resources} from 'library/index';
 import {createPhaser} from '../phaser';
+import {EngineUpdateEvent} from 'library/types/engine';
 
 export const startDotDemoPhaser = (libraryID: string | number) => {
-    const {context: ctx, canvas} = resources[libraryID];
+    const {context, canvas} = resources[libraryID];
+
+    // const {draw, sketch, fill, stroke} = dotDraw(canvas, context);
 
     const phaser = createPhaser(libraryID);
 
     phaser.statsOn();
 
-    const {draw, preDraw, postDraw, removeDraw} = createDotPhaserDraw(canvas, ctx);
-    // [duration, update fn, prepare fn?, postpare fn?]
-    const {duration, update, prePhase, postPhase} = createDotPhase1();
+    const {draw, preDraw, postDraw, removeDraw} = createDotPhaserDraw(canvas, context);
 
-    phaser.setDraw([draw, preDraw, postDraw, removeDraw]);
+    const {draw: dotDraw, sketch} = draw;
+
+    sketch.x = canvas.width / 2;
+    sketch.y = canvas.height / 2;
+
+    // [duration, update fn, prepare fn?, postpare fn?]
+    const {duration, update, prePhase, postPhase} = createDotPhase1(sketch);
+
+    phaser.setDraw([dotDraw, preDraw, postDraw, removeDraw]);
     phaser.setPhase([duration, update, prePhase, postPhase]);
 
     phaser.start();
-};
 
+    const statOff = 20000;
+
+    setTimeout(() => {
+        phaser.statsOff();
+
+        console.log('phaser stats off');
+    }, statOff);
+};
 const createDotPhaserDraw = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => ({
-    draw: {
-        fn: () => {
-            console.log('drawPhase running');
-        },
-    },
+    draw: dotDraw(canvas, ctx),
     preDraw: () => {
         console.log('preDraw trigger');
     },
@@ -33,15 +45,56 @@ const createDotPhaserDraw = (canvas: HTMLCanvasElement, ctx: CanvasRenderingCont
     removeDraw: true,
 });
 
-const createDotPhase1 = () => ({
+const createDotPhase1 = (sketch: DotSketch) => ({
     duration: 2000,
-    update: () => {
-        console.log('prePhase trigger');
+    update: (evt: EngineUpdateEvent) => {
+        // console.log('prePhase trigger');
     },
     prePhase: () => {
-        console.log('prePhase trigger');
+        // console.log('prePhase trigger');
     },
     postPhase: () => {
-        console.log('postPhase trigger');
+        // console.log('postPhase trigger');
     },
 });
+
+export type DotSketch = typeof dotSketch;
+
+const dotDraw = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
+    const sketch = {...dotSketch};
+    const fill = {...dotSketch.fill};
+    const stroke = {...dotSketch.stroke};
+
+    return {
+        draw: {
+            id: 'dot-draw',
+            name: 'Dot Draw Sketch',
+            fn: () => {
+                ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
+
+                ctx.beginPath();
+                ctx.arc(sketch.x, sketch.y, sketch.radius, 0, Math.PI * 2);
+                ctx.fill();
+            },
+        },
+        sketch: Object.assign(sketch, {fill, stroke}),
+    };
+};
+
+const dotSketch = {
+    x: 0,
+    y: 0,
+    radius: 0,
+    stroke: {
+        r: 255,
+        g: 255,
+        b: 255,
+        a: 1,
+    },
+    fill: {
+        r: 255,
+        g: 255,
+        b: 255,
+        a: 1,
+    },
+};

@@ -7,7 +7,7 @@ type PhaserProperties = {
     timer: number;
     active: string[];
     draw: EngineDraw;
-    removeDraw?: boolean;
+    removeDraw?: RemoveDraw;
     postDraw?: Function;
     statistics?: boolean;
 };
