@@ -5,8 +5,6 @@ import {EngineUpdateEvent} from 'library/types/engine';
 export const startDotDemoPhaser = (libraryID: string | number) => {
     const {context, canvas} = resources[libraryID];
 
-    // const {draw, sketch, fill, stroke} = dotDraw(canvas, context);
-
     const phaser = createPhaser(libraryID);
 
     phaser.statsOn();
