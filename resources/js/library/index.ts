@@ -1,5 +1,5 @@
 import {createContainer, getCanvas, getContainer, getContext2D, setCanvas} from './canvas';
-import {createEngineStats, getEngine} from './engine';
+import {createEngine} from './engine';
 // import {getTV} from './views/tv';
 import {getInput} from 'library/input';
 import {getSV} from './views/sv';
@@ -14,7 +14,9 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
 
     const canvas = getCanvas(options);
     const context = getContext2D(canvas);
-    const engine = getEngine();
+    const engine = createEngine(libraryID);
+
+    // if !options, skip all that uses options!
 
     // Always first draw in engine setDraw
     if (options?.clear) clearOn(engine, context);
@@ -28,9 +30,10 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
 
     // const input = getInput(canvas, options?.dualView);
     // const tv = getTV(context, input);
+
     const sv = getSV(context, engine);
 
-    const stats = createEngineStats(libraryID, options?.engineStats, engine.info);
+    const stats = createLibraryStatistics(engine, context, options?.engineStats);
 
     resources[libraryID] = {id: libraryID, canvas, context, engine, container, sv, input, stats};
 };
@@ -47,6 +50,20 @@ export const getLibraryOptions = (context: CanvasRenderingContext2D, engine: Eng
         removeClear,
         removeDot,
     };
+};
+
+const createLibraryStatistics = (engine: Engine, context: CanvasRenderingContext2D, activate?: boolean) => {
+    const engineStatistics = activate
+        ? engine.createStats(context)
+        : {
+              on: () => {},
+              off: () => {},
+          };
+
+    // wether activate is true or false, always run on, if activate it will run the createStats on, else NOOP on
+    engineStatistics.on();
+
+    return {engine: engineStatistics};
 };
 
 const clearOn = (engine: Engine, context: CanvasRenderingContext2D) => {

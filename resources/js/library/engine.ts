@@ -1,4 +1,5 @@
-import {Engine, EngineDraw, EngineProperties, EngineUpdate} from './types/engine';
+import statistics from './statistics';
+import type {EngineDraw, EngineInfo, EngineProperties, EngineUpdate} from './types/engine';
 
 const createProperties: () => EngineProperties = () => ({
     updates: [],
@@ -7,9 +8,11 @@ const createProperties: () => EngineProperties = () => ({
     stop: false,
     timePassed: 0,
     lastTime: 0,
+    stats: false,
+    statsActive: false,
 });
 
-export const getEngine = () => {
+export const createEngine = (libraryID: number | string) => {
     const properties = createProperties();
 
     const loop = createLoop(properties);
@@ -26,13 +29,23 @@ export const getEngine = () => {
         properties.stop = true;
     };
 
-    const drawAndUpdateMethods = createSetAndRemoveUpdatesAndDraws(properties);
+    const {setUpdate, setDraw, removeUpdate, removeDraw} = createSetAndRemoveUpdatesAndDraws(properties);
+
+    const info = createInfo(properties);
+
+    const createStats = (context: CanvasRenderingContext2D) =>
+        createEngineStats(libraryID, info, properties, context, setDraw, removeDraw);
 
     return {
         run,
         runOnce,
         halt,
-        ...drawAndUpdateMethods,
+        info,
+        setUpdate,
+        setDraw,
+        removeUpdate,
+        removeDraw,
+        createStats,
     };
 };
 
@@ -102,7 +115,6 @@ const createSetAndRemoveUpdatesAndDraws = (properties: EngineProperties) => {
         setDraw,
         removeUpdate,
         removeDraw,
-        info: createInfo(properties),
     };
 };
 
@@ -121,39 +133,39 @@ const createInfo = (props: EngineProperties) => ({
     },
 });
 
-export const createEngineStats = (libraryID: string | number, info: Engine['info']) => {
-    // const setStatistics = () => {
-    //     statistics.create(libraryID);
-    //     statistics.setFn(libraryID, () => `Engine draws: ${engine.info.draws.length()}`);
-    //     statistics.setFn(libraryID, () => `Engine updates: ${engine.info.updates.length()}`);
-    //     statistics.setFn(libraryID, () => `Engine draw IDs: ${engine.info.draws.ids()}`);
-    //     statistics.setFn(libraryID, () => `Engine update IDs: ${engine.info.updates.ids()}`);
-    // };
-
-    // const statsOn = () => {
-    //     if (props.statistics) return console.log('stats already ON!');
-
-    //     props.statistics = true;
-
-    //     setStatistics();
-
-    //     statistics.run(libraryID);
-    // };
-
-    // const statsOff = () => {
-    //     if (!props.statistics) return console.log('stats already OFF!');
-
-    //     props.statistics = false;
-
-    //     statistics.destroy(libraryID);
-    // };
-
-    return {
-        engineOn: () => {
-            //
-        },
-        engineOff: () => {
-            //
-        },
+export const createEngineStats = (
+    libraryID: string | number,
+    {draws, updates}: EngineInfo,
+    props: EngineProperties,
+    context: CanvasRenderingContext2D,
+    setDraw: (draw: EngineDraw) => void,
+    removeDraw: (id: number | string) => void,
+) => {
+    const setStatistics = () => {
+        statistics.create(libraryID, context, setDraw, removeDraw); // This uses libraryID for resources, refactor to use unique-stat-ID ?
+        statistics.setFn(libraryID, () => `Engine draws: ${draws.length()}`);
+        statistics.setFn(libraryID, () => `Engine updates: ${updates.length()}`);
+        statistics.setFn(libraryID, () => `Engine draw IDs: ${draws.ids()}`);
+        statistics.setFn(libraryID, () => `Engine update IDs: ${updates.ids()}`);
     };
+
+    const on = () => {
+        if (props.statsActive) return console.log('Engine statistics are already on.');
+
+        setStatistics();
+
+        statistics.run(libraryID);
+
+        props.statsActive = true;
+    };
+
+    const off = () => {
+        if (props.statsActive) return console.log('Engine statistics are already off.');
+
+        props.statsActive = false;
+
+        statistics.destroy(libraryID);
+    };
+
+    return {on, off};
 };

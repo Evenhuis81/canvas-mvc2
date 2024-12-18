@@ -1,4 +1,4 @@
-import {Engine} from './engine';
+import {Engine, EngineStatistics} from './engine';
 import {LibraryInput} from './input';
 import {StaticView} from './views';
 
@@ -10,6 +10,9 @@ export interface LibraryResources {
     engine: Engine;
     sv: StaticView; // empty
     input: LibraryInput;
+    stats: {
+        engine: EngineStatistics;
+    };
 }
 
 export interface StatisticOptions {

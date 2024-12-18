@@ -20,21 +20,29 @@ export interface Engine {
     setDraw: (draw: EngineDraw) => void;
     removeUpdate: (id: number | string) => void;
     removeDraw: (id: number | string) => void;
-    info: {
-        updates: {
-            length: () => number;
-            ids: () => (string | number | undefined)[];
-        };
-        draws: {
-            length: () => number;
-            ids: () => (string | number | undefined)[];
-        };
-        time: {
-            passed: () => number;
-            last: () => number;
-        };
-    };
+    info: EngineInfo;
+    createStats: (context: CanvasRenderingContext2D) => EngineStatistics;
 }
+
+export type EngineStatistics = {
+    on: Function;
+    off: Function;
+};
+
+export type EngineInfo = {
+    updates: {
+        length: () => number;
+        ids: () => (string | number | undefined)[];
+    };
+    draws: {
+        length: () => number;
+        ids: () => (string | number | undefined)[];
+    };
+    time: {
+        passed: () => number;
+        last: () => number;
+    };
+};
 
 export type EngineProperties = {
     updates: EngineUpdate[];
@@ -43,4 +51,6 @@ export type EngineProperties = {
     stop: boolean;
     timePassed: number;
     lastTime: number;
+    stats: boolean;
+    statsActive: boolean;
 };

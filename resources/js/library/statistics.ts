@@ -1,23 +1,32 @@
 import {uid} from './helpers';
 import {vector} from './vector';
-import {resources} from '.';
 import {Statistic, StatisticResource} from './types/statistics';
+import {Engine, EngineDraw} from './types/engine';
 
 const statisticsResource: Record<string | number, StatisticResource> = {};
 const toggleKey: Record<string | number, string> = {};
 
 export default {
-    create: (libraryID: number | string) => {
-        const {context, engine} = resources[libraryID];
-
+    create: (
+        libraryID: number | string,
+        context: CanvasRenderingContext2D,
+        setDraw: (draw: EngineDraw) => void,
+        removeDraw: (id: number | string) => void,
+    ) => {
         const statistics: Statistic[] = [];
 
         const draw = createDraw(libraryID, context);
 
-        const setDraw = () => engine.setDraw(draw);
-        const removeDraw = () => engine.removeDraw(draw.id);
+        const setStatDraw = () => setDraw(draw);
+        const removeStatDraw = () => removeDraw(draw.id);
 
-        statisticsResource[libraryID] = {libraryID, statistics, setDraw, removeDraw, active: false};
+        statisticsResource[libraryID] = {
+            libraryID,
+            statistics,
+            setDraw: setStatDraw,
+            removeDraw: removeStatDraw,
+            active: false,
+        };
     },
     set: (id: number | string, stat: Statistic) => statisticsResource[id].statistics.push(stat),
     setFn: (id: number | string, fn: () => string) => {
