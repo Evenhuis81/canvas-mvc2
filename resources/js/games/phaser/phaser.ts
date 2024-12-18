@@ -1,9 +1,9 @@
 import {resources} from 'library/index';
-import statistics from 'library/statistics';
 import type {DrawPhase, Phase, PhaserProperties, UpdatePhases} from './types';
 import type {Engine, EngineUpdateEvent} from 'library/types/engine';
 
 export const createPhaser = (libraryID: string | number, id?: string) => {
+    // TODO::Make completely stand-alone (for multi-phaser creation)
     const props: PhaserProperties = {
         currentPhase: 0,
         phaseID: id || 'default',
@@ -82,34 +82,7 @@ export const createPhaser = (libraryID: string | number, id?: string) => {
 
         props.active.splice(index, 1);
     };
-
-    const setStatistics = () => {
-        statistics.create(libraryID);
-        statistics.setFn(libraryID, () => `Engine draws: ${engine.info.draws.length()}`);
-        statistics.setFn(libraryID, () => `Engine updates: ${engine.info.updates.length()}`);
-        statistics.setFn(libraryID, () => `Engine draw IDs: ${engine.info.draws.ids()}`);
-        statistics.setFn(libraryID, () => `Engine update IDs: ${engine.info.updates.ids()}`);
-    };
-
-    const statsOn = () => {
-        if (props.statistics) return console.log('stats already ON!');
-
-        props.statistics = true;
-
-        setStatistics();
-
-        statistics.run(libraryID);
-    };
-
-    const statsOff = () => {
-        if (!props.statistics) return console.log('stats already OFF!');
-
-        props.statistics = false;
-
-        statistics.destroy(libraryID);
-    };
-
-    return {start: startPhaser, stop: stopPhaser, setDraw, setPhases, setPhase, statsOn, statsOff};
+    return {start: startPhaser, stop: stopPhaser, setDraw, setPhases, setPhase};
 };
 
 const createUpdate = (engine: Engine, props: PhaserProperties, phases: Phase[], stopPhaser: Function) => ({

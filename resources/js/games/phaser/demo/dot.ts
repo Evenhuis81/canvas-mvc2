@@ -1,14 +1,11 @@
 import {resources} from 'library/index';
 import {createPhaser} from '../phaser';
-import {EngineUpdateEvent} from 'library/types/engine';
+import type {EngineUpdateEvent} from 'library/types/engine';
 
 export const startDotDemoPhaser = (libraryID: string | number) => {
     const {context, canvas} = resources[libraryID];
 
     const phaser = createPhaser(libraryID);
-
-    phaser.statsOn();
-
     const {draw, preDraw, postDraw, removeDraw} = createDotPhaserDraw(canvas, context);
 
     const {draw: dotDraw, sketch} = draw;
@@ -16,21 +13,12 @@ export const startDotDemoPhaser = (libraryID: string | number) => {
     sketch.x = canvas.width / 2;
     sketch.y = canvas.height / 2;
 
-    // [duration, update fn, prepare fn?, postpare fn?]
     const {duration, update, prePhase, postPhase} = createDotPhase1(sketch);
 
     phaser.setDraw([dotDraw, preDraw, postDraw, removeDraw]);
     phaser.setPhase([duration, update, prePhase, postPhase]);
 
     phaser.start();
-
-    const statOff = 20000;
-
-    setTimeout(() => {
-        phaser.statsOff();
-
-        console.log('phaser stats off');
-    }, statOff);
 };
 const createDotPhaserDraw = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => ({
     draw: dotDraw(canvas, ctx),

@@ -8,9 +8,10 @@ export default {
         initialize(libraryID, {
             containerID: 'phaser-container',
             full: true,
-            clear: true, // Display draw in statistics
+            clear: true,
             backgroundColor: '#000',
-            // dotMiddle: true,
+            dotMiddle: true,
+            engineStats: true,
         });
 
         startDotDemoPhaser(libraryID);

@@ -1,10 +1,11 @@
 import {createContainer, getCanvas, getContainer, getContext2D, setCanvas} from './canvas';
-import {getEngine} from './engine';
+import {createEngineStats, getEngine} from './engine';
 // import {getTV} from './views/tv';
 import {getInput} from 'library/input';
 import {getSV} from './views/sv';
 import {uid} from './helpers';
 import type {LibraryOptions, LibraryResources} from './types';
+import {Engine} from './types/engine';
 
 export const resources: Record<string | number, LibraryResources> = {};
 
@@ -29,7 +30,9 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
     // const tv = getTV(context, input);
     const sv = getSV(context, engine);
 
-    resources[libraryID] = {id: libraryID, canvas, context, engine, container, sv, input};
+    const stats = createEngineStats(libraryID, options?.engineStats, engine.info);
+
+    resources[libraryID] = {id: libraryID, canvas, context, engine, container, sv, input, stats};
 };
 
 export const getLibraryOptions = (context: CanvasRenderingContext2D, engine: Engine) => {

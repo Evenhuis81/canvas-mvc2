@@ -1,3 +1,4 @@
+import {Engine} from './engine';
 import {LibraryInput} from './input';
 import {StaticView} from './views';
 
@@ -11,11 +12,7 @@ export interface LibraryResources {
     input: LibraryInput;
 }
 
-// interface ResourcesAndTV extends Resources {
-//     tv: TransformedView;
-// }
-
-interface StatisticOptions {
+export interface StatisticOptions {
     popup: boolean;
     overlay: boolean;
     tab: boolean;
@@ -37,10 +34,11 @@ export interface LibraryOptions extends CanvasOptions {
     clear: boolean;
     dotMiddle: boolean;
     dualView: boolean;
-    statistics: Partial<StatisticOptions>;
+    // statistics: Partial<StatisticOptions>;
+    engineStats: boolean;
 }
 
-interface DualViewProperties {
+export interface DualViewProperties {
     id: number | string;
     canvas1: HTMLCanvasElement;
     canvas2: HTMLCanvasElement;

@@ -1,3 +1,5 @@
+import {Engine, EngineDraw, EngineProperties, EngineUpdate} from './types/engine';
+
 const createProperties: () => EngineProperties = () => ({
     updates: [],
     draws: [],
@@ -64,7 +66,7 @@ const createLoop = (properties: EngineProperties) => {
 
 // TODO::Create a set/remove update/draw that orders according to id number (lower = first, higher = last)
 const createSetAndRemoveUpdatesAndDraws = (properties: EngineProperties) => {
-    const setUpdate = (update: Update) => {
+    const setUpdate = (update: EngineUpdate) => {
         // prevents id 0 getting noID
         if (update.id === undefined) update.id = 'noUpdateID';
         if (!update.name) update.name = 'noUpdateName';
@@ -72,7 +74,7 @@ const createSetAndRemoveUpdatesAndDraws = (properties: EngineProperties) => {
         properties.updates.push(update);
     };
 
-    const setDraw = (draw: Draw) => {
+    const setDraw = (draw: EngineDraw) => {
         if (draw.id === undefined) draw.id = 'noDrawID';
         if (!draw.name) draw.name = 'noDrawName';
 
@@ -118,3 +120,40 @@ const createInfo = (props: EngineProperties) => ({
         last: () => props.lastTime,
     },
 });
+
+export const createEngineStats = (libraryID: string | number, info: Engine['info']) => {
+    // const setStatistics = () => {
+    //     statistics.create(libraryID);
+    //     statistics.setFn(libraryID, () => `Engine draws: ${engine.info.draws.length()}`);
+    //     statistics.setFn(libraryID, () => `Engine updates: ${engine.info.updates.length()}`);
+    //     statistics.setFn(libraryID, () => `Engine draw IDs: ${engine.info.draws.ids()}`);
+    //     statistics.setFn(libraryID, () => `Engine update IDs: ${engine.info.updates.ids()}`);
+    // };
+
+    // const statsOn = () => {
+    //     if (props.statistics) return console.log('stats already ON!');
+
+    //     props.statistics = true;
+
+    //     setStatistics();
+
+    //     statistics.run(libraryID);
+    // };
+
+    // const statsOff = () => {
+    //     if (!props.statistics) return console.log('stats already OFF!');
+
+    //     props.statistics = false;
+
+    //     statistics.destroy(libraryID);
+    // };
+
+    return {
+        engineOn: () => {
+            //
+        },
+        engineOff: () => {
+            //
+        },
+    };
+};
