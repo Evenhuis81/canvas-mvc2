@@ -9,7 +9,7 @@ export const createPhaser = (libraryID: string | number, id?: string) => {
         phaseID: id || 'default',
         defaultSet: false,
         timer: 0,
-        amount: 0, // Lerp amount (% of phase completion / 100)
+        perc: 0, // (% of phase completion / 100)
         active: [],
         draw: {fn: () => {}},
         removeDraw: true,
@@ -101,7 +101,7 @@ const createUpdate = (engine: Engine, props: PhaserProperties, phases: Phase[], 
     fn: (evt: EngineUpdateEvent) => {
         props.timer += evt.timePassed;
 
-        props.amount = props.timer / phases[props.currentPhase][0];
+        props.perc = props.timer / phases[props.currentPhase][0];
 
         // [duration, update fn, preUpdate fn?, 3-postUpdate fn?]
         if (phases[props.currentPhase][0] < props.timer) {

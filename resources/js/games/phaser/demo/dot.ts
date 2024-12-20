@@ -14,7 +14,7 @@ export const startDotDemoPhaser = (libraryID: string | number) => {
 
     const preDraw = () => preDrawTemp(sketch);
 
-    const {duration1, update1, prePhase1, postPhase1} = createDotPhase1(sketch, phaser.props);
+    const {duration1, update1, prePhase1, postPhase1} = createDotPhase1(canvas, sketch, phaser.props);
     const {duration2, update2, prePhase2, postPhase2} = createDotPhase2(sketch, phaser.props);
 
     phaser.setDraw([dotDraw, preDraw, postDraw, removeDraw]);
@@ -24,9 +24,8 @@ export const startDotDemoPhaser = (libraryID: string | number) => {
     phaser.start();
 };
 const createDotPhaserDraw = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => ({
-    draw: dotDraw(canvas, ctx),
+    draw: getDotDraw(ctx),
     preDraw: (sketch: DotSketch) => {
-        console.log('preDraw trigger');
         sketch.x = canvas.width / 2;
         sketch.y = canvas.height / 2;
     },
@@ -36,23 +35,37 @@ const createDotPhaserDraw = (canvas: HTMLCanvasElement, ctx: CanvasRenderingCont
     removeDraw: false,
 });
 
-const createDotPhase1 = (sketch: DotSketch, props: PhaserProperties) => ({
-    duration1: 2000,
-    update1: (evt: EngineUpdateEvent) => {
-        sketch.radius = 200 * props.amount;
-    },
-    prePhase1: () => {
-        console.log('prePhase trigger');
-    },
-    postPhase1: () => {
-        sketch.radius = 200;
-    },
-});
+const createDotPhase1 = (canvas: HTMLCanvasElement, sketch: DotSketch, props: PhaserProperties) => {
+    const target = {
+        radius: 20,
+    };
+
+    type PhaserUpdateEvent = {
+        perc: number;
+    };
+
+    return {
+        duration1: 2000,
+        update1: (evt: PhaserUpdateEvent) => {
+            sketch.radius = 20 * evt.perc;
+        },
+        prePhase1: () => {
+            sketch.radius = 0;
+
+            console.log('prePhase-1 trigger');
+        },
+        postPhase1: () => {
+            sketch.radius = target.radius;
+
+            console.log('postPhase-1 trigger');
+        },
+    };
+};
 
 const createDotPhase2 = (sketch: DotSketch, props: PhaserProperties) => ({
     duration2: 1000,
     update2: (evt: EngineUpdateEvent) => {
-        console.log(props.amount);
+        console.log(props.perc);
         // sketch.radius = 200 - 200 * props.amount;
     },
     prePhase2: () => {
@@ -65,7 +78,7 @@ const createDotPhase2 = (sketch: DotSketch, props: PhaserProperties) => ({
 
 export type DotSketch = typeof dotSketch;
 
-const dotDraw = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
+const getDotDraw = (ctx: CanvasRenderingContext2D) => {
     const sketch = {...dotSketch};
     const fill = {...dotSketch.fill};
     const stroke = {...dotSketch.stroke};
@@ -89,7 +102,7 @@ const dotDraw = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
 const dotSketch = {
     x: 0,
     y: 0,
-    radius: 0,
+    radius: 20,
     stroke: {
         r: 255,
         g: 255,
