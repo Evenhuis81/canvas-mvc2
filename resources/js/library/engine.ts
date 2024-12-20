@@ -3,11 +3,15 @@ import type {EngineDraw, EngineInfo, EngineProperties, EngineUpdate} from './typ
 
 const createProperties: () => EngineProperties = () => ({
     updates: [],
+    updateEvent: {
+        timePassed: 0,
+        lastTime: 0,
+        phasePercentage: 0,
+        phasePercentageReverse: 1,
+    },
     draws: [],
     requestID: 0,
     stop: false,
-    timePassed: 0,
-    lastTime: 0,
     stats: false,
     statsActive: false,
 });
@@ -54,15 +58,14 @@ let frame = 0;
 
 const createLoop = (properties: EngineProperties) => {
     const loop = (timeStamp: DOMHighResTimeStamp) => {
-        properties.timePassed = timeStamp - properties.lastTime;
+        properties.updateEvent.timePassed = timeStamp - properties.updateEvent.lastTime;
 
-        properties.lastTime = timeStamp;
+        properties.updateEvent.lastTime = timeStamp;
 
         if (frame++ > 2) {
-            for (const update of properties.updates)
-                update.fn({timePassed: properties.timePassed, lastTime: properties.lastTime});
+            for (const update of properties.updates) update.fn(properties.updateEvent);
 
-            for (const draw of properties.draws) draw.fn();
+            for (const draw of properties.draws) draw.fn(timeStamp);
         }
 
         properties.requestID = requestAnimationFrame(loop);
@@ -128,8 +131,9 @@ const createInfo = (props: EngineProperties) => ({
         ids: () => props.draws.map(draw => draw.id),
     },
     time: {
-        passed: () => props.timePassed,
-        last: () => props.lastTime,
+        passed: () => props.updateEvent.timePassed,
+        last: () => props.updateEvent.lastTime,
+        phasePercentage: () => props.updateEvent.phasePercentage,
     },
 });
 

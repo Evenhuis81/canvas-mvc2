@@ -1,16 +1,17 @@
 export type EngineUpdate = {
     id?: number | string;
     name?: string;
-    // fn: (deltaTime: number) => void;
     fn: (evt: EngineUpdateEvent) => void;
 };
 
 export type EngineUpdateEvent = {
     timePassed: number;
     lastTime: number;
+    phasePercentage: number;
+    phasePercentageReverse: number;
 };
 
-export type EngineDraw = Omit<EngineUpdate, 'fn'> & {fn: () => void};
+export type EngineDraw = Omit<EngineUpdate, 'fn'> & {fn: (deltaTime: DOMHighResTimeStamp) => void};
 
 export interface Engine {
     run: () => void;
@@ -46,11 +47,10 @@ export type EngineInfo = {
 
 export type EngineProperties = {
     updates: EngineUpdate[];
+    updateEvent: EngineUpdateEvent;
     draws: EngineDraw[];
     requestID: number;
     stop: boolean;
-    timePassed: number;
-    lastTime: number;
     stats: boolean;
     statsActive: boolean;
 };
