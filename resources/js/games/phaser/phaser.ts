@@ -9,6 +9,7 @@ export const createPhaser = (libraryID: string | number, id?: string) => {
         phaseID: id || 'default',
         defaultSet: false,
         timer: 0,
+        amount: 0, // Lerp amount (% of phase completion / 100)
         active: [],
         draw: {fn: () => {}},
         removeDraw: true,
@@ -27,7 +28,9 @@ export const createPhaser = (libraryID: string | number, id?: string) => {
     const setPhases = (phaseUpdates: UpdatePhases, phaseID?: string) => (phases[phaseID ?? 'default'] = phaseUpdates);
 
     const setPhase = (phase: Phase, phaseID?: string) => {
-        phases[phaseID ?? 'default'] = [phase];
+        const id = phaseID ?? 'default';
+        if (phases[id]) phases[id].push(phase);
+        else phases[id] = [phase];
     };
 
     const startPhaser = (id?: string) => {
@@ -82,7 +85,14 @@ export const createPhaser = (libraryID: string | number, id?: string) => {
 
         props.active.splice(index, 1);
     };
-    return {start: startPhaser, stop: stopPhaser, setDraw, setPhases, setPhase};
+    return {
+        start: startPhaser,
+        stop: stopPhaser,
+        setDraw,
+        setPhases,
+        setPhase,
+        props,
+    };
 };
 
 const createUpdate = (engine: Engine, props: PhaserProperties, phases: Phase[], stopPhaser: Function) => ({
@@ -90,6 +100,8 @@ const createUpdate = (engine: Engine, props: PhaserProperties, phases: Phase[], 
     name: `Update phases-${props.phaseID}`,
     fn: (evt: EngineUpdateEvent) => {
         props.timer += evt.timePassed;
+
+        props.amount = props.timer / phases[props.currentPhase][0];
 
         // [duration, update fn, preUpdate fn?, 3-postUpdate fn?]
         if (phases[props.currentPhase][0] < props.timer) {

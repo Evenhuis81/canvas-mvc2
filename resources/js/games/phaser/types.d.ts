@@ -5,6 +5,7 @@ type PhaserProperties = {
     phaseID: string;
     defaultSet: boolean;
     timer: number;
+    amount: number;
     active: string[];
     draw: EngineDraw;
     removeDraw?: RemoveDraw;

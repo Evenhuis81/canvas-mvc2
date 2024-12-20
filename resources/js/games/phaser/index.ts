@@ -10,7 +10,7 @@ export default {
             full: true,
             clear: true,
             backgroundColor: '#000',
-            dotMiddle: true,
+            // dotMiddle: true,
             engineStats: true,
         });
 
