@@ -1,27 +1,29 @@
 import {EngineDraw, EngineUpdate} from 'library/types/engine';
 
-type PhaserProperties = {
+export type PhaserProperties = {
+    id: string;
     currentPhase: number;
-    phaserID: string;
-    defaultSet: boolean;
     timer: number;
-    active: string[];
-    draw: EngineDraw;
-    removeDraw?: RemoveDraw;
-    postDraw?: PostDraw;
-    statistics?: boolean;
+    active: boolean;
+    atEnd: PhaserAtEnd;
+    draw: PhaserDraw;
+    phases: PhaserPhases;
 };
 
-type PreDraw = Function;
-type PostDraw = Function;
-type RemoveDraw = boolean;
-type PrePhase = Function;
-type PostPhase = Function;
+export type PhaserAtEnd = 'stop' | 'destroy' | 'repeat';
 
-type Duration = number;
+export type PhaserDraw = [EngineDraw['fn'], PreDraw?, PostDraw?, RemoveDraw?];
 
-export type Phase = [Duration, EngineUpdate['fn']?, PrePhase?, PostPhase?];
+export type PhaserPhase = [PhaseDuration, EngineUpdate['fn']?, PrePhase?, PostPhase?];
 
-export type UpdatePhases = {[K in keyof Phase]: Phase[K]}[];
+export type PhaserPhases = {[K in keyof PhaserPhase]: PhaserPhase[K]}[];
 
-export type DrawPhase = [EngineDraw, PreDraw?, PostDraw?, RemoveDraw?];
+export type PhaserEvent = {destroyPhaser: () => void};
+
+export type PreDraw = Function;
+export type PostDraw = (evt: PhaserEvent) => void;
+export type RemoveDraw = boolean;
+export type PrePhase = Function;
+export type PostPhase = Function;
+
+export type PhaseDuration = number;
