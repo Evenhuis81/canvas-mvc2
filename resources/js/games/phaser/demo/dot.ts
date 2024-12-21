@@ -1,6 +1,6 @@
 import {resources} from 'library/index';
 import {createPhaser} from '../phaser';
-import {EngineUpdateEvent} from 'library/types/engine';
+import type {EngineUpdateEvent} from 'library/types/engine';
 
 export const startDotDemoPhaser = (libraryID: string | number) => {
     const {context, canvas} = resources[libraryID];
@@ -11,25 +11,11 @@ export const startDotDemoPhaser = (libraryID: string | number) => {
 
     phaser.setDraw([draw, preDraw, postDraw, removeDraw]);
 
-    const dotPhases = createDotPhases();
-
-    // dotPhases.forEach(phase => {
-
-    // })
+    createDotPhases(sketch).forEach(phase => {
+        phaser.setPhase([phase.duration, phase.update, phase.pre, phase.post]);
+    });
 
     phaser.start();
-};
-
-const createDotPhases = () => {
-    // const {duration1, update1, prePhase1, postPhase1} = createDotPhase1(sketch);
-    // const {duration2, update2, prePhase2, postPhase2} = createDotPhase2(sketch);
-    // const {duration3, update3, prePhase3, postPhase3} = createDotPhase3(sketch);
-    // const {duration4, update4, prePhase4, postPhase4} = createDotPhase4(sketch);
-    // phaser.setDraw([draw, preDraw, postDraw, removeDraw]);
-    // phaser.setPhase([duration1, update1, prePhase1, postPhase1]);
-    // phaser.setPhase([duration2, update2, prePhase2, postPhase2]);
-    // phaser.setPhase([duration3, update3, prePhase3, postPhase3]);
-    // phaser.setPhase([duration4, update4, prePhase4, postPhase4]);
 };
 
 const createDotPhaserDraw = (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) => {
@@ -39,97 +25,63 @@ const createDotPhaserDraw = (canvas: HTMLCanvasElement, context: CanvasRendering
         preDraw: () => {
             sketch.x = canvas.width / 2;
             sketch.y = canvas.height / 2;
-
-            console.log('preDraw trigger');
         },
-        postDraw: () => {
-            console.log('postDraw trigger');
-        },
+        postDraw: () => {},
         removeDraw: false,
         draw,
         sketch,
     };
 };
 
-const target = {
-    one: {
-        radius: 20,
-    },
-    two: {
-        strokeAlpha: 0,
-    },
-    three: {
-        strokeAlpha: 1,
-    },
-    four: {
-        radius: 0,
-    },
+const dotOrigin = {
+    radius: 20,
+    lineWidth: 4,
 };
 
-const createDotPhase1 = (sketch: DotSketch) => ({
-    duration1: 2000,
-    update1: (evt: EngineUpdateEvent) => {
-        sketch.radius = target.one.radius * evt.phasePercentage;
+const createDotPhases: (sketch: DotSketch) => DotPhases = sketch => [
+    {
+        duration: 2000,
+        update: (evt: EngineUpdateEvent) => {
+            sketch.radius = dotOrigin.radius * evt.phasePercentage;
+            sketch.lineWidth = (dotOrigin.lineWidth - 1) * evt.phasePercentage + 1;
+        },
+        pre: () => (sketch.lineWidth = 1),
+        post: () => {
+            sketch.radius = dotOrigin.radius;
+            sketch.lineWidth = dotOrigin.lineWidth;
+        },
     },
-    prePhase1: () => {
-        // No fill, just stroke, this could also be set in preDraw, not sure which spot is better
-        sketch.lineWidth = 4;
-        sketch.radius = 0;
-        sketch.stroke.a = 1;
-
-        console.log('prePhase-1 trigger');
+    {
+        duration: 1000,
+        update: (evt: EngineUpdateEvent) => {
+            sketch.stroke.a = evt.phasePercentageReverse;
+            sketch.fill.a = evt.phasePercentage;
+        },
+        post: () => {
+            sketch.stroke.a = 0;
+            sketch.fill.a = 1;
+        },
     },
-    postPhase1: () => {
-        sketch.radius = target.one.radius;
-
-        console.log('postPhase-1 trigger');
+    {
+        duration: 500,
+        update: (evt: EngineUpdateEvent) => (sketch.stroke.a = evt.phasePercentage),
+        post: () => (sketch.stroke.a = 1),
     },
-});
-
-const createDotPhase2 = (sketch: DotSketch) => ({
-    duration2: 1000,
-    update2: (evt: EngineUpdateEvent) => {
-        sketch.stroke.a = evt.phasePercentageReverse;
+    {
+        duration: 500,
+        update: (evt: EngineUpdateEvent) => (sketch.fill.a = evt.phasePercentageReverse),
+        post: () => (sketch.fill.a = 0),
     },
-    prePhase2: () => {
-        console.log('prePhase-2 trigger');
+    {
+        duration: 3000,
+        update: (evt: EngineUpdateEvent) => {
+            sketch.radius = dotOrigin.radius * evt.phasePercentageReverse;
+            sketch.lineWidth = sketch.lineWidth = (dotOrigin.lineWidth - 1) * evt.phasePercentageReverse + 1;
+            console.log(sketch.lineWidth);
+        },
+        post: () => (sketch.radius = 0),
     },
-    postPhase2: () => {
-        sketch.stroke.a = 0;
-
-        console.log('postPhase-2 trigger');
-    },
-});
-
-const createDotPhase3 = (sketch: DotSketch) => ({
-    duration3: 500,
-    update3: (evt: EngineUpdateEvent) => {
-        sketch.stroke.a = evt.phasePercentage;
-    },
-    prePhase3: () => {
-        console.log('prePhase-3 trigger');
-    },
-    postPhase3: () => {
-        sketch.stroke.a = 1;
-
-        console.log('postPhase-3 trigger');
-    },
-});
-
-const createDotPhase4 = (sketch: DotSketch) => ({
-    duration4: 10000,
-    update4: (evt: EngineUpdateEvent) => {
-        sketch.radius = target.one.radius * evt.phasePercentageReverse;
-    },
-    prePhase4: () => {
-        console.log('prePhase-2 trigger');
-    },
-    postPhase4: () => {
-        sketch.radius = 0;
-
-        console.log('postPhase-2 trigger');
-    },
-});
+];
 
 const createDotDrawBucket = (ctx: CanvasRenderingContext2D) => {
     const sketch = {...dotSketch};
@@ -143,9 +95,11 @@ const createDotDrawBucket = (ctx: CanvasRenderingContext2D) => {
             fn: () => {
                 ctx.lineWidth = sketch.lineWidth;
                 ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
+                ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
 
                 ctx.beginPath();
                 ctx.arc(sketch.x, sketch.y, sketch.radius, 0, Math.PI * 2);
+                ctx.fill();
                 ctx.stroke();
             },
         },
@@ -155,11 +109,18 @@ const createDotDrawBucket = (ctx: CanvasRenderingContext2D) => {
 
 export type DotSketch = typeof dotSketch;
 
+export type DotPhases = {
+    duration: number;
+    update: (evt: EngineUpdateEvent) => void;
+    pre?: Function;
+    post?: Function;
+}[];
+
 const dotSketch = {
     x: 0,
     y: 0,
-    radius: 20,
-    lineWidth: 1,
+    radius: 0,
+    lineWidth: 0,
     stroke: {
         r: 255,
         g: 255,
@@ -167,9 +128,9 @@ const dotSketch = {
         a: 1,
     },
     fill: {
-        r: 255,
-        g: 255,
-        b: 255,
-        a: 1,
+        r: 175,
+        g: 175,
+        b: 0,
+        a: 0,
     },
 };

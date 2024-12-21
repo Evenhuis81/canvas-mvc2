@@ -12,18 +12,15 @@ type PhaserProperties = {
     statistics?: boolean;
 };
 
-// export type PhaserUpdateEvent = {
-//     perc: number;
-// };
-
 type PreDraw = Function;
 type PostDraw = Function;
 type RemoveDraw = boolean;
 type PrePhase = Function;
 type PostPhase = Function;
 
-// [duration, update fn, prepare fn?, postpare fn?]
-export type Phase = [number, EngineUpdate['fn'], PrePhase?, PostPhase?];
+type Duration = number;
+
+export type Phase = [Duration, EngineUpdate['fn'], PrePhase?, PostPhase?];
 
 export type UpdatePhases = {[K in keyof Phase]: Phase[K]}[];
 
