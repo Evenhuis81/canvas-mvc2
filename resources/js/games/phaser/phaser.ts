@@ -87,7 +87,7 @@ const createStartPhaser =
 
         engine.setUpdate(phaserUpdate);
 
-        engine.setUpdate({id: `phase-${props.currentPhase}`, fn: phaseUpdate});
+        if (phaseUpdate) engine.setUpdate({id: `phase-${props.currentPhase}`, fn: phaseUpdate});
     };
 
 const createStopPhaser = (props: PhaserProperties, engine: Engine, id?: string) => () => {
@@ -146,7 +146,7 @@ const createUpdate = (engine: Engine, props: PhaserProperties, phases: Phase[], 
 
             if (prepare) prepare();
 
-            engine.setUpdate({id: `phase-${props.currentPhase}`, fn: update});
+            if (update) engine.setUpdate({id: `phase-${props.currentPhase}`, fn: update});
 
             console.log('next phase set');
         }

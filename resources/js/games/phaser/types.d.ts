@@ -20,7 +20,7 @@ type PostPhase = Function;
 
 type Duration = number;
 
-export type Phase = [Duration, EngineUpdate['fn'], PrePhase?, PostPhase?];
+export type Phase = [Duration, EngineUpdate['fn']?, PrePhase?, PostPhase?];
 
 export type UpdatePhases = {[K in keyof Phase]: Phase[K]}[];
 

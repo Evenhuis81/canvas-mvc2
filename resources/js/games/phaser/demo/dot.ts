@@ -111,7 +111,7 @@ export type DotSketch = typeof dotSketch;
 
 export type DotPhases = {
     duration: number;
-    update: (evt: EngineUpdateEvent) => void;
+    update?: (evt: EngineUpdateEvent) => void;
     pre?: Function;
     post?: Function;
 }[];
