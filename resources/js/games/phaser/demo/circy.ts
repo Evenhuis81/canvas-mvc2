@@ -1,4 +1,5 @@
-import {EngineDraw, EngineUpdateEvent} from 'library/types/engine';
+import {Engine, EngineDraw, EngineUpdateEvent} from 'library/types/engine';
+import {PhaserProperties} from '../types';
 
 export const createDrawCircy = (ctx: CanvasRenderingContext2D) => ({
     id: 'demo-circy',
@@ -20,6 +21,38 @@ export const createDrawCircy = (ctx: CanvasRenderingContext2D) => ({
         );
         ctx.fill();
         ctx.stroke();
+    },
+});
+const createDrawStats = (
+    ctx: CanvasRenderingContext2D,
+    engine: Engine,
+    props: PhaserProperties,
+    halfWidth: number,
+    height: number,
+) => ({
+    id: 'stats-circy-phases',
+    name: 'Phases Statistics for Circy',
+    fn: () => {
+        ctx.beginPath();
+
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = '16px monospace';
+        ctx.fillStyle = '#fff';
+
+        ctx.fillText(
+            `phase: ${props.currentPhase}, timer: ${engine.info.time.last().toFixed(0)}`,
+            halfWidth,
+            height - 100,
+        );
+
+        // ctx.fillText(`shifting phase at: ${phaser.shifts[phaser.number]}ms`, halfWidth, height - 75);
+
+        ctx.fillText(
+            `engine updates: ${engine.info.updates.length()}, draws: ${engine.info.draws.length()}`,
+            halfWidth,
+            height - 50,
+        );
     },
 });
 
