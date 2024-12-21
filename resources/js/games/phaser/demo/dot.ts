@@ -9,18 +9,27 @@ export const startDotDemoPhaser = (libraryID: string | number) => {
 
     const {draw, preDraw, postDraw, removeDraw, sketch} = createDotPhaserDraw(canvas, context);
 
-    const {duration1, update1, prePhase1, postPhase1} = createDotPhase1(sketch);
-    const {duration2, update2, prePhase2, postPhase2} = createDotPhase2(sketch);
-    const {duration3, update3, prePhase3, postPhase3} = createDotPhase3(sketch);
-    const {duration4, update4, prePhase4, postPhase4} = createDotPhase4(sketch);
-
     phaser.setDraw([draw, preDraw, postDraw, removeDraw]);
-    phaser.setPhase([duration1, update1, prePhase1, postPhase1]);
-    phaser.setPhase([duration2, update2, prePhase2, postPhase2]);
-    phaser.setPhase([duration3, update3, prePhase3, postPhase3]);
-    phaser.setPhase([duration4, update4, prePhase4, postPhase4]);
+
+    const dotPhases = createDotPhases();
+
+    // dotPhases.forEach(phase => {
+
+    // })
 
     phaser.start();
+};
+
+const createDotPhases = () => {
+    // const {duration1, update1, prePhase1, postPhase1} = createDotPhase1(sketch);
+    // const {duration2, update2, prePhase2, postPhase2} = createDotPhase2(sketch);
+    // const {duration3, update3, prePhase3, postPhase3} = createDotPhase3(sketch);
+    // const {duration4, update4, prePhase4, postPhase4} = createDotPhase4(sketch);
+    // phaser.setDraw([draw, preDraw, postDraw, removeDraw]);
+    // phaser.setPhase([duration1, update1, prePhase1, postPhase1]);
+    // phaser.setPhase([duration2, update2, prePhase2, postPhase2]);
+    // phaser.setPhase([duration3, update3, prePhase3, postPhase3]);
+    // phaser.setPhase([duration4, update4, prePhase4, postPhase4]);
 };
 
 const createDotPhaserDraw = (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) => {
@@ -110,7 +119,6 @@ const createDotPhase3 = (sketch: DotSketch) => ({
 const createDotPhase4 = (sketch: DotSketch) => ({
     duration4: 10000,
     update4: (evt: EngineUpdateEvent) => {
-        // sketch.stroke.a = evt.phasePercentageReverse;
         sketch.radius = target.one.radius * evt.phasePercentageReverse;
     },
     prePhase4: () => {

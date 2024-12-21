@@ -2,7 +2,7 @@ import {EngineDraw, EngineUpdate} from 'library/types/engine';
 
 type PhaserProperties = {
     currentPhase: number;
-    phaseID: string;
+    phaserID: string;
     defaultSet: boolean;
     timer: number;
     active: string[];

@@ -6,7 +6,7 @@ const createProperties: () => EngineProperties = () => ({
     updateEvent: {
         timePassed: 0,
         lastTime: 0,
-        phasePercentage: 0,
+        phasePercentage: 0, // Linear
         phasePercentageReverse: 1,
     },
     draws: [],
