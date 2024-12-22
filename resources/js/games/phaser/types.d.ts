@@ -12,7 +12,14 @@ export type PhaserProperties = {
     stopDraw: (id: string, draw: PhaserDraw, evt: PhaserEvent) => void;
     stopPhase: (phaseNr: number, phase: PhaserPhase) => void;
     startPhase: (phaseNr: number, phase: PhaserPhase) => void;
-    phaserEnd: (atEnd: PhaserAtEnd) => void;
+    // Remove self-reference
+    phaserEnd: (
+        id: string,
+        atEnd: PhaserAtEnd,
+        draw: PhaserDraw,
+        stopDraw: PhaserProperties['stopDraw'],
+        evt: PhaserEvent,
+    ) => void;
 };
 
 export type PhaserAtEnd = 'stop' | 'destroy' | 'repeat';
