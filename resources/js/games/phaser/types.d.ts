@@ -10,9 +10,9 @@ export type PhaserProperties = {
     phases: PhaserPhases;
     startDraw: (id: string, draw: PhaserDraw) => void;
     stopDraw: (id: string, draw: PhaserDraw, evt: PhaserEvent) => void;
-    stopPhase: (phase: number) => void;
-    startPhase: (phase: number) => void;
-    endPhases: (atEnd: PhaserAtEnd) => void;
+    stopPhase: (phaseNr: number, phase: PhaserPhase) => void;
+    startPhase: (phaseNr: number, phase: PhaserPhase) => void;
+    phaserEnd: (atEnd: PhaserAtEnd) => void;
 };
 
 export type PhaserAtEnd = 'stop' | 'destroy' | 'repeat';
