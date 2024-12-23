@@ -6,6 +6,7 @@ const createDefaultProperties: (engine: Engine) => PhaserProperties = engine => 
     id: `phaser-${idCount++}`,
     phase: 0,
     timer: 0,
+    totalTime: 0,
     active: false,
     atEnd: 'stop',
     draw: [() => {}],
@@ -23,7 +24,7 @@ const createDefaultProperties: (engine: Engine) => PhaserProperties = engine => 
         if (phase[1]) engine.setUpdate({id: `phase-${phaseNr}`, fn: phase[1]});
     },
     stopPhase: (phaseNr, phase) => {
-        engine.removeUpdate(`phase-${phaseNr}`);
+        if (phase[1]) engine.removeUpdate(`phase-${phaseNr}`);
         if (phase[3]) phase[3](); // PostPhase
     },
     phaserEnd: (id, atEnd, draw, evt) => {
@@ -55,7 +56,9 @@ export const createPhaser = (engine: Engine) => {
     const setPhases = (phases: PhaserPhases) => phases.forEach(phase => phases.push(phase));
 
     const destroyPhaser = () => console.log('destroy Phaser initiated');
-    const repeatPhaser = () => console.log('repeat Phaser initiated');
+
+    // const repeatPhaser = () => console.log('repeat Phaser initiated');
+
     const phaserEvent = {
         destroyPhaser,
     };
@@ -93,6 +96,7 @@ const createPhaserUpdate = (props: PhaserProperties, phaserEvent: PhaserEvent) =
     name: `Main Update ${props.id}`,
     fn: (evt: EngineUpdateEvent) => {
         props.timer += evt.timePassed;
+        props.totalTime += evt.timePassed;
 
         evt.phasePercentage = props.timer / props.phases[props.phase][0];
         evt.phasePercentageReverse = 1 - evt.phasePercentage;
