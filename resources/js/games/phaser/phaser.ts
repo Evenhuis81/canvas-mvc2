@@ -26,10 +26,13 @@ const createDefaultProperties: (engine: Engine) => PhaserProperties = engine => 
         engine.removeUpdate(`phase-${phaseNr}`);
         if (phase[3]) phase[3](); // PostPhase
     },
-    phaserEnd: (phaseNr, atEnd, draw) => {
+    phaserEnd: (id, atEnd, draw) => {
         // phaserAtEnd[atEnd]
         if (atEnd === 'stop') {
-            engine.removeUpdate(`${phaseNr}-main-update`);
+            engine.removeUpdate(`${id}-main-update`);
+
+            // Temp, apply according to RemoveDraw
+            engine.removeDraw();
         }
     },
 });

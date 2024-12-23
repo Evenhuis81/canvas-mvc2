@@ -6,15 +6,30 @@ import {PhaserEvent} from '../types';
 export const startDotDemoPhaser = (libraryID: string | number) => {
     const {context, canvas, engine} = resources[libraryID];
 
-    const phaser = createPhaser(engine);
+    setInterval(() => {
+        const phaser = createPhaser(engine);
 
-    const {draw, preDraw, postDraw, removeDraw, sketch} = createDotPhaserDraw(canvas, context);
+        const {draw, preDraw, postDraw, removeDraw, sketch} = createDotPhaserDraw(canvas, context);
 
-    phaser.setDraw([draw, preDraw, postDraw, removeDraw]);
+        phaser.setDraw([draw, preDraw, postDraw, removeDraw]);
 
-    createDotPhases(sketch).forEach(phase => phaser.setPhase([phase.duration, phase.update, phase.pre, phase.post]));
+        const durations = createRandomDurations();
+        createDotPhases(sketch).forEach((phase, index) => {
+            phase.duration = durations[index];
+            phaser.setPhase([phase.duration, phase.update, phase.pre, phase.post]);
+        });
 
-    phaser.start();
+        phaser.start();
+    }, 1000);
+};
+
+const createRandomDurations = () => {
+    const durations = [250, 125, 50, 50, 500];
+    const factor = Math.random() + 0.5;
+    const newDurations: number[] = [];
+    durations.forEach(duration => newDurations.push(duration * factor));
+
+    return newDurations;
 };
 
 const createDotPhaserDraw = (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) => {
@@ -22,42 +37,44 @@ const createDotPhaserDraw = (canvas: HTMLCanvasElement, context: CanvasRendering
 
     return {
         preDraw: () => {
-            sketch.x = canvas.width / 2;
-            sketch.y = canvas.height / 2;
+            sketch.x = canvas.width * Math.random();
+            sketch.y = canvas.height * Math.random();
+            sketch.origin.radius = Math.random() * 10 + 5;
+            sketch.origin.lineWidth = Math.random() * 4 + 2;
+            sketch.fill.r = Math.random() * 255;
+            sketch.fill.g = Math.random() * 255;
+            sketch.fill.b = Math.random() * 255;
+            sketch.stroke.r = Math.random() * 255;
+            sketch.stroke.g = Math.random() * 255;
+            sketch.stroke.b = Math.random() * 255;
         },
-        postDraw: (evt: PhaserEvent) => {
-            evt.destroyPhaser();
+        postDraw: undefined,
+        // postDraw: (evt: PhaserEvent) => {
+        //     evt.destroyPhaser();
 
-            console.log('postDraw destroyPhaser triggered');
-        },
+        //     console.log('postDraw destroyPhaser triggered');
+        // },
         removeDraw: true,
         draw,
         sketch,
     };
 };
 
-const dotOrigin = {
-    radius: 20,
-    lineWidth: 4,
-};
-
-const durations = [2000, 1000, 500, 500, 3000];
-
 const createDotPhases: (sketch: DotSketch) => DotPhases = sketch => [
     {
-        duration: durations[0],
+        duration: 0,
         update: (evt: EngineUpdateEvent) => {
-            sketch.radius = dotOrigin.radius * evt.phasePercentage;
-            sketch.lineWidth = (dotOrigin.lineWidth - 1) * evt.phasePercentage + 1;
+            sketch.radius = sketch.origin.radius * evt.phasePercentage;
+            sketch.lineWidth = (sketch.origin.lineWidth - 1) * evt.phasePercentage + 1;
         },
         pre: () => (sketch.lineWidth = 1),
         post: () => {
-            sketch.radius = dotOrigin.radius;
-            sketch.lineWidth = dotOrigin.lineWidth;
+            sketch.radius = sketch.origin.radius;
+            sketch.lineWidth = sketch.origin.lineWidth;
         },
     },
     {
-        duration: durations[1],
+        duration: 0,
         update: (evt: EngineUpdateEvent) => {
             sketch.stroke.a = evt.phasePercentageReverse;
             sketch.fill.a = evt.phasePercentage;
@@ -68,20 +85,20 @@ const createDotPhases: (sketch: DotSketch) => DotPhases = sketch => [
         },
     },
     {
-        duration: durations[2],
+        duration: 0,
         update: (evt: EngineUpdateEvent) => (sketch.stroke.a = evt.phasePercentage),
         post: () => (sketch.stroke.a = 1),
     },
     {
-        duration: durations[3],
+        duration: 0,
         update: (evt: EngineUpdateEvent) => (sketch.fill.a = evt.phasePercentageReverse),
         post: () => (sketch.fill.a = 0),
     },
     {
-        duration: durations[4],
+        duration: 0,
         update: (evt: EngineUpdateEvent) => {
-            sketch.radius = dotOrigin.radius * evt.phasePercentageReverse;
-            sketch.lineWidth = sketch.lineWidth = (dotOrigin.lineWidth - 1) * evt.phasePercentageReverse + 1;
+            sketch.radius = sketch.origin.radius * evt.phasePercentageReverse;
+            sketch.lineWidth = sketch.lineWidth = (sketch.origin.lineWidth - 1) * evt.phasePercentageReverse + 1;
         },
         post: () => {
             sketch.radius = 0;
@@ -135,5 +152,9 @@ const dotSketch = {
         g: 175,
         b: 0,
         a: 0,
+    },
+    origin: {
+        radius: 20,
+        lineWidth: 4,
     },
 };

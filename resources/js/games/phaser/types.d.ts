@@ -15,10 +15,11 @@ export type PhaserProperties = {
     // Remove self-reference
     phaserEnd: (
         id: string,
+        // phase: number,
         atEnd: PhaserAtEnd,
         draw: PhaserDraw,
-        stopDraw: PhaserProperties['stopDraw'],
-        evt: PhaserEvent,
+        // stopDraw: PhaserProperties['stopDraw'],
+        // evt: PhaserEvent,
     ) => void;
 };
 
