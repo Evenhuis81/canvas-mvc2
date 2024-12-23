@@ -11,7 +11,7 @@ export default {
             clear: true,
             backgroundColor: '#000',
             // dotMiddle: true,
-            engineStats: true,
+            engineStats: false,
         });
 
         startDotDemoPhaser(libraryID);

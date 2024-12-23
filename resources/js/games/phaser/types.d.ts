@@ -19,7 +19,7 @@ export type PhaserProperties = {
         atEnd: PhaserAtEnd,
         draw: PhaserDraw,
         // stopDraw: PhaserProperties['stopDraw'],
-        // evt: PhaserEvent,
+        evt: PhaserEvent,
     ) => void;
 };
 

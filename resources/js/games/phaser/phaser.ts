@@ -26,13 +26,13 @@ const createDefaultProperties: (engine: Engine) => PhaserProperties = engine => 
         engine.removeUpdate(`phase-${phaseNr}`);
         if (phase[3]) phase[3](); // PostPhase
     },
-    phaserEnd: (id, atEnd, draw) => {
+    phaserEnd: (id, atEnd, draw, evt) => {
         // phaserAtEnd[atEnd]
         if (atEnd === 'stop') {
             engine.removeUpdate(`${id}-main-update`);
 
-            // Temp, apply according to RemoveDraw
-            engine.removeDraw();
+            if (draw[2]) draw[2](evt); // PostDraw
+            if (draw[3]) engine.removeDraw(`${id}-draw`); // RemoveDraw
         }
     },
 });
@@ -106,8 +106,7 @@ const createPhaserUpdate = (props: PhaserProperties, phaserEvent: PhaserEvent) =
             evt.phasePercentageReverse = 1;
 
             // phaserEnd.stop: postDraw, removeDraw, remove main update
-            if (!props.phases[++props.phase])
-                return props.phaserEnd(props.id, props.atEnd, props.draw, props.stopDraw, phaserEvent);
+            if (!props.phases[++props.phase]) return props.phaserEnd(props.id, props.atEnd, props.draw, phaserEvent);
 
             props.startPhase(props.phase, props.phases[props.phase]);
         }

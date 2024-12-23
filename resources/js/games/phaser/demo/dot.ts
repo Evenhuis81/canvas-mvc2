@@ -1,12 +1,23 @@
 import {resources} from 'library/index';
 import {createPhaser} from '../phaser';
 import type {EngineUpdateEvent} from 'library/types/engine';
-import {PhaserEvent} from '../types';
 
 export const startDotDemoPhaser = (libraryID: string | number) => {
     const {context, canvas, engine} = resources[libraryID];
 
-    setInterval(() => {
+    let interval = Math.random() * 500 + 100; // 250 - 750 ms;
+
+    const dotTimeout = () => {
+        setTimeout(() => {
+            startDemo();
+            dotTimeout();
+        }, interval);
+
+        interval = Math.random() * 500 + 100;
+    };
+    dotTimeout();
+
+    const startDemo = () => {
         const phaser = createPhaser(engine);
 
         const {draw, preDraw, postDraw, removeDraw, sketch} = createDotPhaserDraw(canvas, context);
@@ -20,7 +31,7 @@ export const startDotDemoPhaser = (libraryID: string | number) => {
         });
 
         phaser.start();
-    }, 1000);
+    };
 };
 
 const createRandomDurations = () => {
@@ -39,7 +50,7 @@ const createDotPhaserDraw = (canvas: HTMLCanvasElement, context: CanvasRendering
         preDraw: () => {
             sketch.x = canvas.width * Math.random();
             sketch.y = canvas.height * Math.random();
-            sketch.origin.radius = Math.random() * 10 + 5;
+            sketch.origin.radius = Math.random() * 8 + 2;
             sketch.origin.lineWidth = Math.random() * 4 + 2;
             sketch.fill.r = Math.random() * 255;
             sketch.fill.g = Math.random() * 255;
