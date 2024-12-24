@@ -1,11 +1,11 @@
 /* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
 import type {EntityConfigListeners, EntityEventMap, EventHandler, ListenerHandler} from 'library/types/entity';
+import {LibraryInput} from 'library/types/input';
 import type {Shapes} from 'library/types/shapes';
-import type {Input} from 'library/types/input';
 
 export const createEventHandler = <T extends keyof EntityEventMap>(
-    input: Input,
+    input: LibraryInput,
     sketch: Shapes,
     listeners?: Partial<EntityConfigListeners<T>>,
 ) => {
@@ -42,6 +42,8 @@ export const createEventHandler = <T extends keyof EntityEventMap>(
 const createEventProperties = () => {
     const baseProperties = {clicked: false, clickTotal: 0};
 
+    const testBase = {clicked: false, clickTotal: 0, testKey: 'testKey'};
+
     // const mouseProperties = {
     //     mouseProp: 'test mouse prop',
     // };
@@ -67,8 +69,8 @@ const createEventProperties = () => {
         touchstart: baseProperties,
         touchmove: baseProperties,
         touchend: baseProperties,
-        startTransitionEnd: baseProperties,
-        endTransitionEnd: baseProperties,
+        startTransitionEnd: testBase,
+        endTransitionEnd: testBase,
     };
 };
 
@@ -76,7 +78,7 @@ const createAddAndRemoveListener = (
     listenerHandlers: ListenerHandler[],
     eventHandler: Omit<EventHandler, 'addListener' | 'removeListener'>,
     eventProperties: EntityEventMap,
-    input: Input,
+    input: LibraryInput,
     sketch: Shapes,
 ) => {
     return {

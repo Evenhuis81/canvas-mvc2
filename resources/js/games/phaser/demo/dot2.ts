@@ -12,11 +12,11 @@ export const startDotDemoPhaser2 = (libraryID: string | number) => {
 
     phaser.setDraw([draw, preDraw, postDraw, removeDraw]);
 
-    createDotPhases(sketch).forEach(phase =>
-        phaser.setPhase([phase.duration, phase.update, phase.pre, phase.post, phase.startAt]),
-    );
+    // createDotPhases(sketch).forEach(phase =>
+    // phaser.setPhase([phase.duration, phase.update, phase.pre, phase.post, phase.startAt]),
+    // );
 
-    phaser.start();
+    // phaser.start();
 };
 
 const createDotPhaserDraw = (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) => {
@@ -39,7 +39,7 @@ const createDotPhaserDraw = (canvas: HTMLCanvasElement, context: CanvasRendering
 
 const createDotPhases: (sketch: DotSketch) => DotPhases = sketch => [
     {
-        duration: 2000, // just duration acts like a pauze
+        duration: 2000, // only duration acts like a pauze
     },
     {
         duration: 5000,
@@ -68,7 +68,7 @@ const createDotDrawBucket = (ctx: CanvasRenderingContext2D) => {
 
             ctx.beginPath();
             ctx.arc(sketch.x, sketch.y, sketch.radius, 0, Math.PI * 2);
-            ctx.fill();
+            // ctx.fill();
             ctx.stroke();
         },
         // sketch: Object.assign(sketch, {fill, stroke}),

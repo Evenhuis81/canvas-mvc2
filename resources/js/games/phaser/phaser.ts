@@ -46,12 +46,21 @@ const phaserAtEnd = {
     destroy: () => {},
 };
 
+export type PhaseType = {
+    draw: PhaserDraw;
+    phase: PhaserPhase;
+};
+
 export const createPhaser = (engine: Engine) => {
     const props = createDefaultProperties(engine);
 
     const setDraw = (draw: PhaserDraw) => (props.draw = draw);
 
-    const setPhase = (phase: PhaserPhase) => props.phases.push(phase);
+    const setPhase = <T extends keyof PhaseType>() => {
+        //
+    };
+
+    // const setPhase = (phase: PhaserPhase) => props.phases.push(phase);
 
     const setPhases = (phases: PhaserPhases) => phases.forEach(phase => phases.push(phase));
 
@@ -77,6 +86,7 @@ export const createPhaser = (engine: Engine) => {
         setDraw,
         setPhases,
         setPhase,
+        set: setPhase,
     };
 };
 

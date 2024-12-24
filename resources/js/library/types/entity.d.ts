@@ -61,7 +61,7 @@ type EventProperties = {clicked: boolean; clickTotal: number};
 type EntityMouseEvent = EventProperties;
 type EntityKeyboardEvent = {keyProp: string};
 type EntityTouchEvent = EventProperties;
-type StartEndEntityTransitionEvent = EventProperties;
+type StartEndEntityTransitionEvent = EventProperties & {testKey: string};
 type EndEndEntityTransitionEvent = EventProperties;
 
 export type EntityEventMap = CustomEventMap & InputEventMap;

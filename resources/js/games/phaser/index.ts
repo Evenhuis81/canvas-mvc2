@@ -12,7 +12,7 @@ export default {
             clear: true,
             backgroundColor: '#000',
             // dotMiddle: true,
-            engineStats: false,
+            engineStats: true,
         });
 
         startDotDemoPhaser2(libraryID);
