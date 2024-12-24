@@ -2,17 +2,18 @@ import {EngineDraw, EngineUpdate} from 'library/types/engine';
 
 export type PhaserProperties = {
     id: string;
+    phase: number;
     timer: number;
     totalTime: number;
     active: boolean;
     atEnd: PhaserAtEnd;
-    draw: PhaserDraw;
-    phase: number;
-    phases: PhaserPhases;
-    startDraw: (id: string, draw: PhaserDraw) => void;
-    stopDraw: (id: string, draw: PhaserDraw, evt: PhaserEvent) => void;
-    stopPhase: (phaseNr: number, phase: PhaserPhase) => void;
-    startPhase: (phaseNr: number, phase: PhaserPhase) => void;
+};
+
+export type PhaserMethods = {
+    startDraw: () => void;
+    stopDraw: (evt: PhaserEvent) => void;
+    stopPhase: (phase: number) => void;
+    startPhase: (phase: number) => void;
     // Remove self-reference
     phaserEnd: (
         id: string,
@@ -22,6 +23,11 @@ export type PhaserProperties = {
         // stopDraw: PhaserProperties['stopDraw'],
         evt: PhaserEvent,
     ) => void;
+};
+
+export type PhaserInternal = {
+    draw: PhaserDraw;
+    phase: PhaserPhase[];
 };
 
 export type PhaserAtEnd = 'stop' | 'destroy' | 'repeat';

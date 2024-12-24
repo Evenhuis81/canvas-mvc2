@@ -1,30 +1,44 @@
-import type {PhaserDraw, PhaserEvent, PhaserPhase, PhaserPhases, PhaserProperties} from './types';
+import type {
+    PhaserDraw,
+    PhaserEvent,
+    PhaserInternal,
+    PhaserMethods,
+    PhaserPhase,
+    PhaserPhases,
+    PhaserProperties,
+} from './types';
 import type {Engine, EngineUpdate, EngineUpdateEvent} from 'library/types/engine';
 
 let idCount = 0;
-const createDefaultProperties: (engine: Engine) => PhaserProperties = engine => ({
+const createDefaultProperties = () => ({
     id: `phaser-${idCount++}`,
     phase: 0,
     timer: 0,
     totalTime: 0,
     active: false,
     atEnd: 'stop',
-    draw: [() => {}],
-    phases: [],
-    startDraw: (id, draw) => {
+});
+
+const createDefaultMethods: (id: string, draw: PhaserDraw, phases: PhaserPhase[], engine: Engine) => PhaserMethods = (
+    id,
+    draw,
+    phases,
+    engine,
+) => ({
+    startDraw: () => {
         if (draw[1]) draw[1](); // PreDraw
-        engine.setDraw({id: `${id}-draw`, fn: draw[0]});
+        if (draw[0]) engine.setDraw({id: `${id}-draw`, fn: draw[0]});
     },
-    stopDraw: (id, draw, evt) => {
+    stopDraw: evt => {
         if (draw[2]) draw[2](evt); // PostDraw
         if (draw[3]) engine.removeDraw(`${id}-draw`); // RemoveDraw
     },
-    startPhase: (phaseNr, phase) => {
-        if (phase[2]) phase[2]; // PrePhase
-        if (phase[1]) engine.setUpdate({id: `phase-${phaseNr}`, fn: phase[1]});
+    startPhase: phase => {
+        if (phases[phase][2]) phases[phase][2](); // PrePhase
+        if (phases[phase][1]) engine.setUpdate({id: `phase-${phase}`, fn: phases[phase][1]});
     },
-    stopPhase: (phaseNr, phase) => {
-        if (phase[1]) engine.removeUpdate(`phase-${phaseNr}`);
+    stopPhase: phase => {
+        if (phase[1]) engine.removeUpdate(`phase-${phase}`);
         if (phase[3]) phase[3](); // PostPhase
     },
     phaserEnd: (id, atEnd, draw, evt) => {
@@ -52,17 +66,24 @@ export type PhaseType = {
 };
 
 export const createPhaser = (engine: Engine) => {
-    const props = createDefaultProperties(engine);
+    const props = createDefaultProperties();
+    // const phaser: PhaserInternal = {
+    //     draw: [],
+    //     phase: [],
+    //     props: createDefaultProperties(engine),
+    // }
+
+    const phases: PhaserDraw | PhaserPhase[] = [];
 
     const setDraw = (draw: PhaserDraw) => (props.draw = draw);
 
-    const setPhase = <T extends keyof PhaseType>() => {
-        //
+    const setPhaser = <T extends keyof PhaseType>(type: T, phase: PhaseType[T]) => {
+        phases.push(phase);
     };
 
     // const setPhase = (phase: PhaserPhase) => props.phases.push(phase);
 
-    const setPhases = (phases: PhaserPhases) => phases.forEach(phase => phases.push(phase));
+    // const setPhases = (phases: PhaserPhases) => phases.forEach(phase => phases.push(phase));
 
     const destroyPhaser = () => console.log('destroy Phaser initiated');
 

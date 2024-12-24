@@ -8,9 +8,10 @@ export const startDotDemoPhaser2 = (libraryID: string | number) => {
 
     const phaser = createPhaser(engine);
 
-    const {draw, preDraw, postDraw, removeDraw, sketch} = createDotPhaserDraw(canvas, context);
+    // const {draw, preDraw, postDraw, removeDraw, sketch} = createDotPhaserDraw(canvas, context);
+    const {type, sketch, ...drawPhase} = createDotPhaserDraw(canvas, context);
 
-    phaser.setDraw([draw, preDraw, postDraw, removeDraw]);
+    phaser.set(type, drawPhase);
 
     // createDotPhases(sketch).forEach(phase =>
     // phaser.setPhase([phase.duration, phase.update, phase.pre, phase.post, phase.startAt]),
@@ -19,17 +20,33 @@ export const startDotDemoPhaser2 = (libraryID: string | number) => {
     // phaser.start();
 };
 
+export type SketchDraw = () => void;
+
+export type PhaserDraw = {
+    type: 'draw';
+    draw: SketchDraw;
+    pre: () => void;
+    post: () => void;
+    remove: boolean;
+};
+
+export type PhaserPhase = {
+    type: 'phase';
+};
+
 const createDotPhaserDraw = (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) => {
     const {sketch, draw} = createDotDrawBucket(context);
 
     return {
+        type: 'draw',
         preDraw: () => {
             sketch.x = canvas.width / 2;
             sketch.y = canvas.height / 2;
             sketch.stroke.a = 0;
+            console.log('preDraw');
         },
         postDraw: (evt: PhaserEvent) => {
-            //
+            console.log('postDraw', evt);
         },
         removeDraw: false,
         draw,
