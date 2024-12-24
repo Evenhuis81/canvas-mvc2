@@ -6,8 +6,6 @@ const createProperties: () => EngineProperties = () => ({
     updateEvent: {
         timePassed: 0,
         lastTime: 0,
-        phasePercentage: 0, // Linear
-        phasePercentageReverse: 1,
     },
     draws: [],
     requestID: 0,
@@ -133,7 +131,6 @@ const createInfo = (props: EngineProperties) => ({
     time: {
         passed: () => props.updateEvent.timePassed,
         last: () => props.updateEvent.lastTime,
-        phasePercentage: () => props.updateEvent.phasePercentage,
     },
 });
 

@@ -7,8 +7,6 @@ export type EngineUpdate = {
 export type EngineUpdateEvent = {
     timePassed: number;
     lastTime: number;
-    phasePercentage: number;
-    phasePercentageReverse: number;
 };
 
 export type EngineDraw = Omit<EngineUpdate, 'fn'> & {fn: (deltaTime: DOMHighResTimeStamp) => void};

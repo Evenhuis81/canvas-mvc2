@@ -1,6 +1,6 @@
 import {resources} from 'library/index';
 import {createPhaser} from '../phaser';
-import type {EngineUpdateEvent} from 'library/types/engine';
+import type {EngineDraw, EngineUpdate, EngineUpdateEvent} from 'library/types/engine';
 import {PhaserEvent} from '../types';
 
 export const startDotDemoPhaser2 = (libraryID: string | number) => {
@@ -20,20 +20,6 @@ export const startDotDemoPhaser2 = (libraryID: string | number) => {
     // phaser.start();
 };
 
-export type SketchDraw = () => void;
-
-export type PhaserDraw = {
-    type: 'draw';
-    draw: SketchDraw;
-    pre: () => void;
-    post: () => void;
-    remove: boolean;
-};
-
-export type PhaserPhase = {
-    type: 'phase';
-};
-
 const createDotPhaserDraw = (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) => {
     const {sketch, draw} = createDotDrawBucket(context);
 
@@ -45,8 +31,8 @@ const createDotPhaserDraw = (canvas: HTMLCanvasElement, context: CanvasRendering
             sketch.stroke.a = 0;
             console.log('preDraw');
         },
-        postDraw: (evt: PhaserEvent) => {
-            console.log('postDraw', evt);
+        postDraw: () => {
+            console.log('postDraw');
         },
         removeDraw: false,
         draw,
@@ -60,7 +46,7 @@ const createDotPhases: (sketch: DotSketch) => DotPhases = sketch => [
     },
     {
         duration: 5000,
-        update: (evt: EngineUpdateEvent) => (sketch.stroke.a = evt.phasePercentage),
+        update: (evt: PhaserPhaseEvent) => (sketch.stroke.a = evt.phasePercentage),
         post: () => (sketch.stroke.a = 1),
     },
     {

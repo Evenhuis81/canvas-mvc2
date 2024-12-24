@@ -7,44 +7,48 @@ export type PhaserProperties = {
     totalTime: number;
     active: boolean;
     atEnd: PhaserAtEnd;
+    phasePercentage: number;
+    phasePercentageReverse: number;
 };
+
+// const phaserAtEnd = {
+//     stop: () => {},
+//     repeat: () => {},
+//     destroy: () => {},
+// };
 
 export type PhaserMethods = {
     startDraw: () => void;
-    stopDraw: (evt: PhaserEvent) => void;
+    stopDraw: () => void;
     stopPhase: (phase: number) => void;
     startPhase: (phase: number) => void;
-    // Remove self-reference
-    phaserEnd: (
-        id: string,
-        // phase: number,
-        atEnd: PhaserAtEnd,
-        draw: PhaserDraw,
-        // stopDraw: PhaserProperties['stopDraw'],
-        evt: PhaserEvent,
-    ) => void;
-};
-
-export type PhaserInternal = {
-    draw: PhaserDraw;
-    phase: PhaserPhase[];
+    phaserEnd: () => void;
+    resetPhaseProperties: () => void;
 };
 
 export type PhaserAtEnd = 'stop' | 'destroy' | 'repeat';
 
-export type PhaserDraw = [EngineDraw['fn'], PreDraw?, PostDraw?, RemoveDraw?];
+export type PhaserDraw = {
+    type: 'draw';
+    draw: EngineDraw['fn'];
+    pre?: () => void;
+    post?: () => void;
+    remove?: boolean;
+};
 
-export type PhaserPhase = [PhaseDuration, EngineUpdate['fn']?, PrePhase?, PostPhase?, StartAt?];
+export type PhaserPhase = {
+    id: number;
+    type: 'phase';
+    duration: number;
+    update?: EngineUpdate['fn'];
+    pre?: () => void;
+    post?: () => void;
+    // startAt? : number;
+};
 
-export type PhaserPhases = {[K in keyof PhaserPhase]: PhaserPhase[K]}[];
-
-export type PhaserEvent = {destroyPhaser: () => void};
-
-export type StartAt = number;
-export type PreDraw = Function;
-export type PostDraw = (evt: PhaserEvent) => void;
-export type RemoveDraw = boolean;
-export type PrePhase = Function;
-export type PostPhase = Function;
-
-export type PhaseDuration = number;
+export type PhaserEvent = {
+    destroyPhaser: () => void;
+    repeatPhaser: () => void;
+    startFromPhase: (phase: number) => void;
+    stopPhaser: () => void;
+};
