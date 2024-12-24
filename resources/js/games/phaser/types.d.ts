@@ -11,6 +11,11 @@ export type PhaserProperties = {
     phasePercentageReverse: number;
 };
 
+export type PhaserUpdateEvent = {
+    phasePercentage: number;
+    phasePercentageReverse: number;
+};
+
 // const phaserAtEnd = {
 //     stop: () => {},
 //     repeat: () => {},

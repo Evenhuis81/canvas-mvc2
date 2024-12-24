@@ -7,6 +7,10 @@ const createProperties: () => EngineProperties = () => ({
         timePassed: 0,
         lastTime: 0,
     },
+    phaserEvent: {
+        phasePercentage: 0,
+        phasePercentageReverse: 1,
+    },
     draws: [],
     requestID: 0,
     stop: false,
@@ -61,7 +65,7 @@ const createLoop = (properties: EngineProperties) => {
         properties.updateEvent.lastTime = timeStamp;
 
         if (frame++ > 2) {
-            for (const update of properties.updates) update.fn(properties.updateEvent);
+            for (const update of properties.updates) update.fn(properties[update.event]);
 
             for (const draw of properties.draws) draw.fn(timeStamp);
         }
@@ -78,12 +82,21 @@ const createLoop = (properties: EngineProperties) => {
     return loop;
 };
 
+// prevents id 0 getting noID
+// if (!update.id) update.id = 'noUpdateID';
+// if (!update.name) update.name = 'noUpdateName';
+// if (!update.event) update.event = 'updateEvent';
+const transformUpdate = (update: EngineUpdate) => ({
+    id: update.id ?? 'noUpdateID',
+    name: update.name ?? 'noUpdateName',
+    event: update.event ?? 'updateEvent',
+    fn: update.fn,
+});
+
 // TODO::Create a set/remove update/draw that orders according to id number (lower = first, higher = last)
 const createSetAndRemoveUpdatesAndDraws = (properties: EngineProperties) => {
     const setUpdate = (update: EngineUpdate) => {
-        // prevents id 0 getting noID
-        if (update.id === undefined) update.id = 'noUpdateID';
-        if (!update.name) update.name = 'noUpdateName';
+        const updateEngine = transformUpdate(update);
 
         properties.updates.push(update);
     };
