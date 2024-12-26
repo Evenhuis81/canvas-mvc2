@@ -84,7 +84,7 @@ export const createPhaser = (engine: Engine) => {
 };
 
 const createStartPhaser =
-    (engine: Engine, props: PhaserProperties, methods: PhaserMethods, update: EngineUpdate) => () => {
+    (engine: Engine, props: PhaserProperties, methods: PhaserMethods, update: EngineUpdate<'engine'>) => () => {
         if (props.active) return console.log(`${props.id} already active`);
         props.active = true;
 

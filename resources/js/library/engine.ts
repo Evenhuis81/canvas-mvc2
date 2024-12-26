@@ -1,15 +1,18 @@
+import {PhaserUpdateEvent} from 'games/phaser/types';
 import statistics from './statistics';
-import type {EngineDraw, EngineInfo, EngineProperties, EngineUpdate} from './types/engine';
+import type {EngineDraw, EngineInfo, EngineProperties, EngineUpdate, UpdateEvents} from './types/engine';
 
-const createProperties: () => EngineProperties = () => ({
+const createProperties: <K extends keyof UpdateEvents<object>>() => EngineProperties<PhaserUpdateEvent> = () => ({
     updates: [],
-    updateEvent: {
-        timePassed: 0,
-        lastTime: 0,
-    },
-    phaserEvent: {
-        phasePercentage: 0,
-        phasePercentageReverse: 1,
+    events: {
+        engine: {
+            timePassed: 0,
+            lastTime: 0,
+        },
+        custom: {
+            phasePercentage: 0,
+            phasePercentageReverse: 1,
+        },
     },
     draws: [],
     requestID: 0,
@@ -58,14 +61,14 @@ export const createEngine = (libraryID: number | string) => {
 // TODO::Fix this with updateloop from https://isaacsukin.com/news/2015/01/detailed-explanation-javascript-game-loops-and-timing#starting-stopping
 let frame = 0;
 
-const createLoop = (properties: EngineProperties) => {
+const createLoop = (properties: EngineProperties<object>) => {
     const loop = (timeStamp: DOMHighResTimeStamp) => {
-        properties.updateEvent.timePassed = timeStamp - properties.updateEvent.lastTime;
+        properties.events.engine.timePassed = timeStamp - properties.events.engine.lastTime;
 
-        properties.updateEvent.lastTime = timeStamp;
+        properties.events.engine.lastTime = timeStamp;
 
         if (frame++ > 2) {
-            for (const update of properties.updates) update.fn(properties[update.event]);
+            for (const update of properties.updates) update.fn(properties.events[update.eventType]);
 
             for (const draw of properties.draws) draw.fn(timeStamp);
         }
@@ -86,19 +89,19 @@ const createLoop = (properties: EngineProperties) => {
 // if (!update.id) update.id = 'noUpdateID';
 // if (!update.name) update.name = 'noUpdateName';
 // if (!update.event) update.event = 'updateEvent';
-const transformUpdate = (update: EngineUpdate) => ({
+const transformUpdate = (update: EngineUpdate<keyof UpdateEvents<object>>) => ({
     id: update.id ?? 'noUpdateID',
     name: update.name ?? 'noUpdateName',
-    event: update.event ?? 'updateEvent',
+    eventType: update.eventType ?? 'updateEvent',
     fn: update.fn,
 });
 
 // TODO::Create a set/remove update/draw that orders according to id number (lower = first, higher = last)
-const createSetAndRemoveUpdatesAndDraws = (properties: EngineProperties) => {
-    const setUpdate = (update: EngineUpdate) => {
+const createSetAndRemoveUpdatesAndDraws = (properties: EngineProperties<object>) => {
+    const setUpdate = (update: EngineUpdate<keyof UpdateEvents<object>>) => {
         const updateEngine = transformUpdate(update);
 
-        properties.updates.push(update);
+        properties.updates.push(updateEngine);
     };
 
     const setDraw = (draw: EngineDraw) => {
@@ -132,7 +135,7 @@ const createSetAndRemoveUpdatesAndDraws = (properties: EngineProperties) => {
     };
 };
 
-const createInfo = (props: EngineProperties) => ({
+const createInfo = (props: EngineProperties<object>) => ({
     updates: {
         length: () => props.updates.length,
         ids: () => props.updates.map(update => update.id),
@@ -142,15 +145,15 @@ const createInfo = (props: EngineProperties) => ({
         ids: () => props.draws.map(draw => draw.id),
     },
     time: {
-        passed: () => props.updateEvent.timePassed,
-        last: () => props.updateEvent.lastTime,
+        passed: () => props.events.engine.timePassed,
+        last: () => props.events.engine.lastTime,
     },
 });
 
 export const createEngineStats = (
     libraryID: string | number,
     {draws, updates}: EngineInfo,
-    props: EngineProperties,
+    props: EngineProperties<object>,
     context: CanvasRenderingContext2D,
     setDraw: (draw: EngineDraw) => void,
     removeDraw: (id: number | string) => void,

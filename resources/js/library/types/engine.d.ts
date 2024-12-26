@@ -1,15 +1,14 @@
-export type EngineUpdate = {
+export type EngineDraw = {
     id: number | string;
     name: string;
-    eventType: 'engine' | 'custom';
-    fn: <K extends keyof UpdateEvents>(evt: UpdateEvents[K]) => void;
+    fn: (deltaTime: DOMHighResTimeStamp) => void;
 };
 
-export type CustomUpdateEvent = object;
-
-export type UpdateEvents = {
-    engine: EngineUpdateEvent;
-    custom: CustomUpdateEvent;
+export type EngineUpdate<K extends keyof UpdateEvents<object>> = {
+    id: number | string;
+    name: string;
+    eventType: K;
+    fn: (evt: UpdateEvents<object>[K]) => void;
 };
 
 export type EngineUpdateEvent = {
@@ -17,13 +16,11 @@ export type EngineUpdateEvent = {
     lastTime: number;
 };
 
-export type EngineDraw = Omit<EngineUpdate, 'fn' | 'eventType'> & {fn: (deltaTime: DOMHighResTimeStamp) => void};
-
 export interface Engine {
     run: () => void;
     runOnce: () => void;
     halt: () => void;
-    setUpdate: (update: EngineUpdate) => void;
+    setUpdate: (update: EngineUpdate<keyof UpdateEvents<object>>) => void;
     setDraw: (draw: EngineDraw) => void;
     removeUpdate: (id: number | string) => void;
     removeDraw: (id: number | string) => void;
@@ -51,10 +48,14 @@ export type EngineInfo = {
     };
 };
 
-export type EngineProperties = {
-    updates: EngineUpdate[];
-    updateEvent: EngineUpdateEvent;
-    customEvent: CustomUpdateEvent;
+export type UpdateEvents<CustomUpdateEvent extends object> = {
+    engine: EngineUpdateEvent;
+    custom: CustomUpdateEvent;
+};
+
+export type EngineProperties<K extends object> = {
+    updates: EngineUpdate<keyof UpdateEvents<object>>[];
+    events: UpdateEvents<K>;
     draws: EngineDraw[];
     requestID: number;
     stop: boolean;

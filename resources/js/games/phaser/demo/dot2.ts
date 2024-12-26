@@ -13,7 +13,7 @@ export const startDotDemoPhaser2 = (libraryID: string | number) => {
 
     createDotPhases(sketch).forEach(phase => phaser.setPhase(phase));
 
-    // phaser.start();
+    phaser.start();
 };
 
 const createDotPhaserDraw = (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) => {
