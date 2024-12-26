@@ -5,7 +5,8 @@ import {getInput} from 'library/input';
 import {getSV} from './views/sv';
 import {uid} from './helpers';
 import type {LibraryOptions, LibraryResources} from './types';
-import {Engine} from './types/engine';
+import type {Engine} from './types/engine';
+import type {PhaserUpdateEvent} from 'games/phaser/types';
 
 export const resources: Record<string | number, LibraryResources> = {};
 
@@ -14,7 +15,9 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
 
     const canvas = getCanvas(options);
     const context = getContext2D(canvas);
-    const engine = createEngine(libraryID);
+
+    // Hardcoded custom event for now, make this also generic for library
+    const engine = createEngine<PhaserUpdateEvent>(libraryID);
 
     // if !options, skip all that uses options!
 

@@ -1,19 +1,15 @@
-import {PhaserUpdateEvent} from 'games/phaser/types';
 import statistics from './statistics';
-import type {EngineDraw, EngineInfo, EngineProperties, EngineUpdate, UpdateEvents} from './types/engine';
+import type {
+    EngineDraw,
+    EngineEvents,
+    EngineInfo,
+    EngineProperties,
+    EngineUpdate,
+    EngineUpdateConfig,
+} from './types/engine';
 
-const createProperties: <K extends keyof UpdateEvents<object>>() => EngineProperties<PhaserUpdateEvent> = () => ({
+const createProperties: () => EngineProperties = () => ({
     updates: [],
-    events: {
-        engine: {
-            timePassed: 0,
-            lastTime: 0,
-        },
-        custom: {
-            phasePercentage: 0,
-            phasePercentageReverse: 1,
-        },
-    },
     draws: [],
     requestID: 0,
     stop: false,
@@ -21,8 +17,16 @@ const createProperties: <K extends keyof UpdateEvents<object>>() => EngineProper
     statsActive: false,
 });
 
-export const createEngine = (libraryID: number | string) => {
+export const createEngine = <T extends object>(libraryID: number | string, customEvent: T) => {
     const properties = createProperties();
+
+    const events = {
+        engine: {
+            timePassed: 0,
+            lastTime: 0,
+        },
+        custom: customEvent,
+    };
 
     const loop = createLoop(properties);
 
@@ -61,14 +65,14 @@ export const createEngine = (libraryID: number | string) => {
 // TODO::Fix this with updateloop from https://isaacsukin.com/news/2015/01/detailed-explanation-javascript-game-loops-and-timing#starting-stopping
 let frame = 0;
 
-const createLoop = (properties: EngineProperties<object>) => {
+const createLoop = <T extends object>(properties: EngineProperties, events: EngineEvents<T>) => {
     const loop = (timeStamp: DOMHighResTimeStamp) => {
-        properties.events.engine.timePassed = timeStamp - properties.events.engine.lastTime;
+        events.engine.timePassed = timeStamp - events.engine.lastTime;
 
-        properties.events.engine.lastTime = timeStamp;
+        events.engine.lastTime = timeStamp;
 
         if (frame++ > 2) {
-            for (const update of properties.updates) update.fn(properties.events[update.eventType]);
+            for (const update of properties.updates) update.fn(events[update.eventType]);
 
             for (const draw of properties.draws) draw.fn(timeStamp);
         }
@@ -89,16 +93,16 @@ const createLoop = (properties: EngineProperties<object>) => {
 // if (!update.id) update.id = 'noUpdateID';
 // if (!update.name) update.name = 'noUpdateName';
 // if (!update.event) update.event = 'updateEvent';
-const transformUpdate = (update: EngineUpdate<keyof UpdateEvents<object>>) => ({
+const transformUpdate = (update: EngineUpdate): EngineUpdateConfig => ({
     id: update.id ?? 'noUpdateID',
     name: update.name ?? 'noUpdateName',
-    eventType: update.eventType ?? 'updateEvent',
+    eventType: update.eventType ?? 'engine',
     fn: update.fn,
 });
 
 // TODO::Create a set/remove update/draw that orders according to id number (lower = first, higher = last)
-const createSetAndRemoveUpdatesAndDraws = (properties: EngineProperties<object>) => {
-    const setUpdate = (update: EngineUpdate<keyof UpdateEvents<object>>) => {
+const createSetAndRemoveUpdatesAndDraws = (properties: EngineProperties) => {
+    const setUpdate = (update: EngineUpdate) => {
         const updateEngine = transformUpdate(update);
 
         properties.updates.push(updateEngine);
@@ -135,7 +139,7 @@ const createSetAndRemoveUpdatesAndDraws = (properties: EngineProperties<object>)
     };
 };
 
-const createInfo = (props: EngineProperties<object>) => ({
+const createInfo = <T extends object>(props: EngineProperties, events: EngineEvents<T>) => ({
     updates: {
         length: () => props.updates.length,
         ids: () => props.updates.map(update => update.id),

@@ -1,14 +1,24 @@
-export type EngineDraw = {
+// Common cases for library types (all that is connected with the library):
+// Incoming = plain (for user, ie. EngineUpdate)
+// Internal usage exisiting or slightly modified types = ...Config (ready to set, no more modifications on this one)
+
+export type EngineDrawConfig = {
     id: number | string;
     name: string;
     fn: (deltaTime: DOMHighResTimeStamp) => void;
 };
 
-export type EngineUpdate<K extends keyof UpdateEvents<object>> = {
+export type WithPartial<T, K extends keyof T> = T & {[P in K]?: T[P]};
+
+export type EngineDraw = WithPartial<EngineDrawConfig, 'id' | 'name'>;
+
+export type EngineUpdate = WithPartial<EngineUpdateConfig, 'id' | 'name' | 'eventType'>;
+
+export type EngineUpdateConfig = {
     id: number | string;
     name: string;
-    eventType: K;
-    fn: (evt: UpdateEvents<object>[K]) => void;
+    eventType: 'engine' | 'custom';
+    fn: (evt: EngineUpdateEvent) => void;
 };
 
 export type EngineUpdateEvent = {
@@ -20,7 +30,7 @@ export interface Engine {
     run: () => void;
     runOnce: () => void;
     halt: () => void;
-    setUpdate: (update: EngineUpdate<keyof UpdateEvents<object>>) => void;
+    setUpdate: (update: EngineUpdate) => void;
     setDraw: (draw: EngineDraw) => void;
     removeUpdate: (id: number | string) => void;
     removeDraw: (id: number | string) => void;
@@ -48,15 +58,14 @@ export type EngineInfo = {
     };
 };
 
-export type UpdateEvents<CustomUpdateEvent extends object> = {
+export type EngineEvents<T extends object> = {
     engine: EngineUpdateEvent;
-    custom: CustomUpdateEvent;
+    custom: T;
 };
 
-export type EngineProperties<K extends object> = {
-    updates: EngineUpdate<keyof UpdateEvents<object>>[];
-    events: UpdateEvents<K>;
-    draws: EngineDraw[];
+export type EngineProperties = {
+    updates: EngineUpdateConfig[];
+    draws: EngineDrawConfig[];
     requestID: number;
     stop: boolean;
     stats: boolean;
