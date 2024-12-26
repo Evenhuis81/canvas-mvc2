@@ -33,8 +33,9 @@ export type PhaserMethods = {
 
 export type PhaserAtEnd = 'stop' | 'destroy' | 'repeat';
 
+export type PhaserUpdate = (evt: PhaserUpdateEvent) => void;
+
 export type PhaserDraw = {
-    type: 'draw';
     draw: EngineDraw['fn'];
     pre?: () => void;
     post?: () => void;
@@ -43,9 +44,8 @@ export type PhaserDraw = {
 
 export type PhaserPhase = {
     id: number;
-    type: 'phase';
     duration: number;
-    update?: EngineUpdate['fn'];
+    update?: PhaserUpdate;
     pre?: () => void;
     post?: () => void;
     // startAt? : number;
@@ -53,7 +53,8 @@ export type PhaserPhase = {
 
 export type PhaserEvent = {
     destroyPhaser: () => void;
+    // startPhaser: () => void;
     repeatPhaser: () => void;
-    startFromPhase: (phase: number) => void;
-    stopPhaser: () => void;
+    // startFromPhase: (phase: number) => void;
+    // stopPhaser: () => void;
 };

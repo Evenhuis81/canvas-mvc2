@@ -61,13 +61,14 @@ export const createPhaser = (engine: Engine) => {
     // sort according to duration / startAt and give proper phaseID
     const setPhase = (phaserPhase: Omit<PhaserPhase, 'id'>) =>
         phases.push(Object.assign(phaserPhase, {id: phases.length}));
+
     const setPhases = (phaserPhases: Omit<PhaserPhase, 'id'>[]) =>
         phaserPhases.forEach(phase => phases.push(Object.assign(phase, {id: phases.length})));
 
-    // const phaserEvent = {
-    //     destroyPhaser: () => console.log('destroy Phaser initiated'),
-    //     repeatPhaser: () => console.log('repeat Phaser initiated'),
-    // };
+    const phaserEvent = {
+        destroyPhaser: () => console.log('destroy Phaser initiated'),
+        repeatPhaser: () => console.log('repeat Phaser initiated'),
+    };
 
     const phaserUpdate = createPhaserUpdate(props, methods, phases);
 
@@ -97,6 +98,7 @@ const createStartPhaser =
 const createPhaserUpdate = (props: PhaserProperties, methods: PhaserMethods, phases: PhaserPhase[]) => ({
     id: `${props.id}-main-update`,
     name: `Main Update ${props.id}`,
+    eventType: 'engine',
     fn: (evt: EngineUpdateEvent) => {
         props.timer += evt.timePassed;
         props.totalTime += evt.timePassed;

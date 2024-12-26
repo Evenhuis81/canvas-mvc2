@@ -1,17 +1,15 @@
-import {PhaserUpdateEvent} from 'games/phaser/types';
-
-export type UpdateEngine = {
+export type EngineUpdate = {
     id: number | string;
     name: string;
-    event: 'updateEvent' | 'phaserEvent';
+    eventType: 'engine' | 'custom';
     fn: <K extends keyof UpdateEvents>(evt: UpdateEvents[K]) => void;
 };
 
-export type EngineUpdate = Partial<UpdateEngine>;
+export type CustomUpdateEvent = object;
 
 export type UpdateEvents = {
     engine: EngineUpdateEvent;
-    phaser: PhaserUpdateEvent;
+    custom: CustomUpdateEvent;
 };
 
 export type EngineUpdateEvent = {
@@ -19,7 +17,7 @@ export type EngineUpdateEvent = {
     lastTime: number;
 };
 
-export type EngineDraw = Omit<UpdateEngine, 'fn' | 'event'> & {fn: (deltaTime: DOMHighResTimeStamp) => void};
+export type EngineDraw = Omit<EngineUpdate, 'fn' | 'eventType'> & {fn: (deltaTime: DOMHighResTimeStamp) => void};
 
 export interface Engine {
     run: () => void;
@@ -54,9 +52,9 @@ export type EngineInfo = {
 };
 
 export type EngineProperties = {
-    updates: UpdateEngine[];
+    updates: EngineUpdate[];
     updateEvent: EngineUpdateEvent;
-    phaserEvent: PhaserUpdateEvent;
+    customEvent: CustomUpdateEvent;
     draws: EngineDraw[];
     requestID: number;
     stop: boolean;

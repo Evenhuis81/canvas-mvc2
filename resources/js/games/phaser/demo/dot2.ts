@@ -1,21 +1,17 @@
 import {resources} from 'library/index';
 import {createPhaser} from '../phaser';
-import type {EngineDraw, EngineUpdate, EngineUpdateEvent} from 'library/types/engine';
-import {PhaserEvent} from '../types';
+import type {PhaserUpdateEvent} from '../types';
 
 export const startDotDemoPhaser2 = (libraryID: string | number) => {
     const {context, canvas, engine} = resources[libraryID];
 
     const phaser = createPhaser(engine);
 
-    // const {draw, preDraw, postDraw, removeDraw, sketch} = createDotPhaserDraw(canvas, context);
-    const {type, sketch, ...drawPhase} = createDotPhaserDraw(canvas, context);
+    const {type, sketch, ...draw} = createDotPhaserDraw(canvas, context);
 
-    phaser.set(type, drawPhase);
+    phaser.setDraw(draw);
 
-    // createDotPhases(sketch).forEach(phase =>
-    // phaser.setPhase([phase.duration, phase.update, phase.pre, phase.post, phase.startAt]),
-    // );
+    createDotPhases(sketch).forEach(phase => phaser.setPhase(phase));
 
     // phaser.start();
 };
@@ -41,19 +37,39 @@ const createDotPhaserDraw = (canvas: HTMLCanvasElement, context: CanvasRendering
 };
 
 const createDotPhases: (sketch: DotSketch) => DotPhases = sketch => [
+    // {
+    //     duration: 2000, // only duration acts like a pauze
+    // },
     {
-        duration: 2000, // only duration acts like a pauze
+        duration: 5000,
+        update: (evt: PhaserUpdateEvent) => (sketch.stroke.a = evt.phasePercentage),
+        post: () => (sketch.stroke.a = 1),
+    },
+    // {
+    // startAt: 4500,
+    // duration: 2500,
+    // update: () => {
+    //     console.log('startAt 4500 running');
+    // },
+    // },
+    {
+        duration: 5000,
+        update: (evt: PhaserUpdateEvent) => {
+            sketch.stroke.g = 255 * evt.phasePercentageReverse;
+            sketch.stroke.b = 255 * evt.phasePercentageReverse;
+            sketch.lineWidth = 4 * evt.phasePercentage + 2;
+        },
+        pre: () => {
+            console.log('prePhase2');
+        },
+        post: () => {
+            console.log('postPhase2');
+        },
     },
     {
         duration: 5000,
-        update: (evt: PhaserPhaseEvent) => (sketch.stroke.a = evt.phasePercentage),
-        post: () => (sketch.stroke.a = 1),
-    },
-    {
-        startAt: 4500,
-        duration: 2500,
         update: () => {
-            console.log('startAt 4500 running');
+            console.log('phase 3 running');
         },
     },
 ];
@@ -83,10 +99,10 @@ export type DotSketch = typeof dotSketch;
 
 export type DotPhases = {
     duration: number;
-    update?: (evt: EngineUpdateEvent) => void;
+    update?: (evt: PhaserUpdateEvent) => void;
     pre?: () => void;
     post?: () => void;
-    startAt?: number;
+    // startAt?: number;
 }[];
 
 const dotSketch = {
