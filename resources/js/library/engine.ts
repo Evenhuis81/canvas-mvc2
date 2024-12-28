@@ -6,7 +6,6 @@ import type {
     EngineProperties,
     EngineUpdate,
     EngineUpdateConfig,
-    EngineUpdateCustomEvent,
     EngineUpdateEvent,
 } from './types/engine';
 
@@ -27,6 +26,9 @@ export const createEngine = (libraryID: number | string) => {
             timePassed: 0,
             lastTime: 0,
         },
+        custom: {
+            testProp: 'testProp',
+        },
     };
 
     const loop = createLoop(properties, updates, draws, events);
@@ -39,9 +41,7 @@ export const createEngine = (libraryID: number | string) => {
         loop(0);
     };
 
-    const halt = () => {
-        properties.stop = true;
-    };
+    const halt = () => (properties.stop = true);
 
     const {setUpdate, setDraw, removeUpdate, removeDraw} = createSetAndRemoveUpdatesAndDraws(updates, draws);
 
@@ -96,9 +96,7 @@ const createLoop = (
 };
 
 // prevents id 0 getting noID
-// if (!update.id) update.id = 'noUpdateID';
-// if (!update.name) update.name = 'noUpdateName';
-// if (!update.event) update.event = 'updateEvent';
+// spread operator?
 const transformUpdate = (update: EngineUpdate): EngineUpdateConfig => ({
     id: update.id ?? 'noUpdateID',
     name: update.name ?? 'noUpdateName',
@@ -108,18 +106,18 @@ const transformUpdate = (update: EngineUpdate): EngineUpdateConfig => ({
 
 // TODO::Create a set/remove update/draw that orders according to id number (lower = first, higher = last)
 const createSetAndRemoveUpdatesAndDraws = (updates: EngineUpdateConfig[], draws: EngineDrawConfig[]) => {
-    const setUpdate = (update: EngineUpdate) => {
-        const updateEngine = transformUpdate(update);
-
-        updates.push(updateEngine);
+    const defaultUpdate = {
+        id: 'noUpdateID',
+        name: 'noUpdateName',
     };
 
-    const setDraw = (draw: EngineDraw) => {
-        if (draw.id === undefined) draw.id = 'noDrawID';
-        if (!draw.name) draw.name = 'noDrawName';
-
-        draws.push(draw);
+    const defaultDraw = {
+        id: 'noDrawID',
+        name: 'noDrawName',
     };
+    const setUpdate = (update: EngineUpdate) => updates.push({...defaultUpdate, ...update});
+
+    const setDraw = (draw: EngineDraw) => draws.push({...defaultDraw, ...draw});
 
     const removeUpdate = (id: number | string) => {
         const index = updates.findIndex(update => update.id === id);
@@ -169,7 +167,7 @@ export const createEngineStats = (
     removeDraw: (id: number | string) => void,
 ) => {
     const setStatistics = () => {
-        statistics.create(libraryID, context, setDraw, removeDraw); // This uses libraryID for resources, refactor to use unique-stat-ID ?
+        statistics.create(libraryID, context, setDraw, removeDraw);
         statistics.setFn(libraryID, () => `Engine draws: ${draws.length()}`);
         statistics.setFn(libraryID, () => `Engine updates: ${updates.length()}`);
         statistics.setFn(libraryID, () => `Engine draw IDs: ${draws.ids()}`);

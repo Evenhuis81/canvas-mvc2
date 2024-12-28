@@ -4,19 +4,23 @@ export type EngineDrawConfig = {
     fn: (deltaTime: DOMHighResTimeStamp) => void;
 };
 
-export type WithPartial<T, K extends keyof T> = T & {[P in K]?: T[P]};
+type MakeOptional<T, K extends keyof T> = Omit<T, K> & {[P in K]?: T[P]};
 
-export type EngineDraw = WithPartial<EngineDrawConfig, 'id' | 'name'>;
+export type EngineDraw = MakeOptional<EngineDrawConfig, 'id' | 'name'>;
 
-export type EngineUpdate = WithPartial<EngineUpdateConfig, 'id' | 'name'>;
+export type EngineUpdate = MakeOptional<EngineUpdateConfig, 'id' | 'name'>;
+
+// export type EngineDraw = {
+//     id?: number | string;
+//     name?: string;
+//     fn: (deltaTime: DOMHighResTimeStamp) => void;
+// };
 
 export type EngineUpdateConfig = {
     id: number | string;
     name: string;
     fn: (evt: EngineUpdateEvent) => void;
 };
-
-export type EngineUpdateCustomEvent = object;
 
 export type EngineUpdateEvent = {
     timePassed: number;
@@ -36,8 +40,8 @@ export interface Engine {
 }
 
 export type EngineStatistics = {
-    on: Function;
-    off: Function;
+    on: () => void;
+    off: () => void;
 };
 
 export type EngineInfo = {

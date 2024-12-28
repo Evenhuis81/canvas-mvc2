@@ -6,7 +6,6 @@ import {getSV} from './views/sv';
 import {uid} from './helpers';
 import type {LibraryOptions, LibraryResources} from './types';
 import type {Engine} from './types/engine';
-import type {PhaserUpdateEvent} from 'games/phaser/types';
 
 export const resources: Record<string | number, LibraryResources> = {};
 

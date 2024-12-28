@@ -17,30 +17,46 @@ const createMethods: (
     phases: PhaserPhase[],
     engine: Engine,
     event: PhaserUpdateEvent,
-) => PhaserMethods = (props, draw, phases, engine, event) => ({
+) => PhaserMethods = (props, phaserDraw, phases, engine, event) => ({
     startDraw: () => {
-        // if (draw[1]) draw[1](); // PreDraw
-        // if (draw[0]) engine.setDraw({id: `${id}-draw`, fn: draw[0]});
+        if (!phaserDraw) return;
+
+        if (phaserDraw.pre) phaserDraw.pre(); // PreDraw
+
+        engine.setDraw({id: `${props.id}-draw`, fn: phaserDraw.draw});
     },
     stopDraw: () => {
-        // if (draw[2]) draw[2](evt); // PostDraw
-        // if (draw[3]) engine.removeDraw(`${id}-draw`); // RemoveDraw
+        if (!phaserDraw) return;
+
+        if (phaserDraw.pre) phaserDraw.pre(); // PostDraw
+
+        if (phaserDraw.remove) engine.removeDraw(`${props.id}-draw`); // RemoveDraw
     },
-    startPhase: phase => {
-        // if (phases[phase][2]) phases[phase][2](); // PrePhase
-        // if (phases[phase][1]) engine.setUpdate({id: `phase-${phase}`, fn: phases[phase][1]});
+    startPhase: phaseNr => {
+        const phase = phases[phaseNr];
+
+        if (phase.pre) phase.pre(); // PrePhase
+
+        if (phase.update) engine.setUpdate({id: `phase-${phaseNr}`, fn: phase.update});
     },
-    stopPhase: phase => {
-        // if (phase[1]) engine.removeUpdate(`phase-${phase}`);
-        // if (phase[3]) phase[3](); // PostPhase
+    stopPhase: phaseNr => {
+        const phase = phases[phaseNr];
+        if (phase.update) engine.removeUpdate(`phase-${phaseNr}`);
+
+        if (phase.post) phase.post(); // PostPhase
     },
     phaserEnd: () => {
+        // temp hard set to 'stop'
+        engine.removeUpdate(`${props.id}-main-update`);
+
+        if (!phaserDraw) return;
+
+        if (phaserDraw.post) phaserDraw.post(); // PostDraw
+
+        if (phaserDraw.remove) engine.removeDraw(`${props.id}-draw`); // RemoveDraw
+
         // phaserAtEnd[atEnd]
-        // if (atEnd === 'stop') {
-        //     engine.removeUpdate(`${id}-main-update`);
-        //     if (draw[2]) draw[2](evt); // PostDraw
-        //     if (draw[3]) engine.removeDraw(`${id}-draw`); // RemoveDraw
-        // }
+        // if (atEnd === 'stop') {}
     },
     resetPhaseProperties: () => {
         props.timer = 0;
@@ -82,6 +98,7 @@ export const createPhaser = (engine: Engine) => {
 const createStartPhaser =
     (engine: Engine, props: PhaserProperties, methods: PhaserMethods, update: EngineUpdate) => () => {
         if (props.active) return console.log(`${props.id} already active`);
+
         props.active = true;
 
         methods.startDraw();

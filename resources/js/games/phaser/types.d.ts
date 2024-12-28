@@ -37,7 +37,8 @@ export type PhaserDraw = {
 export type PhaserPhase = {
     id: number;
     duration: number;
-    update?: PhaserUpdate;
+    // update?: PhaserUpdate;
+    update?: EngineUpdate;
     pre?: () => void;
     post?: () => void;
     // startAt? : number;
