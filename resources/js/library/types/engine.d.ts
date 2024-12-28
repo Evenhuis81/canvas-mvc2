@@ -25,6 +25,8 @@ export type EngineUpdateConfig = {
 export type EngineUpdateEvent = {
     timePassed: number;
     lastTime: number;
+    phasePercentage: number;
+    phasePercentageReverse: number;
 };
 
 export interface Engine {

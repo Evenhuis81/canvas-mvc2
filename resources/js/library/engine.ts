@@ -25,6 +25,8 @@ export const createEngine = (libraryID: number | string) => {
         engine: {
             timePassed: 0,
             lastTime: 0,
+            phasePercentage: 0,
+            phasePercentageReverse: 1,
         },
         custom: {
             testProp: 'testProp',
@@ -115,6 +117,8 @@ const createSetAndRemoveUpdatesAndDraws = (updates: EngineUpdateConfig[], draws:
         id: 'noDrawID',
         name: 'noDrawName',
     };
+
+    // Test this on different events
     const setUpdate = (update: EngineUpdate) => updates.push({...defaultUpdate, ...update});
 
     const setDraw = (draw: EngineDraw) => draws.push({...defaultDraw, ...draw});

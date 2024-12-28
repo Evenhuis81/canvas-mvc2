@@ -13,31 +13,37 @@ const createProperties: () => PhaserProperties = () => ({
 
 const createMethods: (
     props: PhaserProperties,
-    draw: PhaserDraw | undefined,
+    phaserDraw: PhaserDraw[],
     phases: PhaserPhase[],
     engine: Engine,
     event: PhaserUpdateEvent,
 ) => PhaserMethods = (props, phaserDraw, phases, engine, event) => ({
     startDraw: () => {
-        if (!phaserDraw) return;
+        if (!phaserDraw[0]) return;
 
-        if (phaserDraw.pre) phaserDraw.pre(); // PreDraw
+        console.log(phaserDraw[0].pre);
 
-        engine.setDraw({id: `${props.id}-draw`, fn: phaserDraw.draw});
+        if (phaserDraw[0].pre) phaserDraw[0].pre(); // PreDraw
+
+        engine.setDraw({id: `${props.id}-draw`, fn: phaserDraw[0].draw});
     },
     stopDraw: () => {
         if (!phaserDraw) return;
 
-        if (phaserDraw.pre) phaserDraw.pre(); // PostDraw
+        if (phaserDraw[0].pre) phaserDraw[0].pre(); // PostDraw
 
-        if (phaserDraw.remove) engine.removeDraw(`${props.id}-draw`); // RemoveDraw
+        if (phaserDraw[0].remove) engine.removeDraw(`${props.id}-draw`); // RemoveDraw
     },
     startPhase: phaseNr => {
         const phase = phases[phaseNr];
 
         if (phase.pre) phase.pre(); // PrePhase
 
-        if (phase.update) engine.setUpdate({id: `phase-${phaseNr}`, fn: phase.update});
+        const phaserUpdateTest = (evt: PhaserUpdateEvent) => {
+            console.log('phaserUpdateTest');
+        };
+
+        if (phase.update) engine.setUpdate({id: `phase-${phaseNr}`, fn: phaserUpdateTest});
     },
     stopPhase: phaseNr => {
         const phase = phases[phaseNr];
@@ -49,11 +55,11 @@ const createMethods: (
         // temp hard set to 'stop'
         engine.removeUpdate(`${props.id}-main-update`);
 
-        if (!phaserDraw) return;
+        if (!phaserDraw[0]) return;
 
-        if (phaserDraw.post) phaserDraw.post(); // PostDraw
+        if (phaserDraw[0].post) phaserDraw[0].post(); // PostDraw
 
-        if (phaserDraw.remove) engine.removeDraw(`${props.id}-draw`); // RemoveDraw
+        if (phaserDraw[0].remove) engine.removeDraw(`${props.id}-draw`); // RemoveDraw
 
         // phaserAtEnd[atEnd]
         // if (atEnd === 'stop') {}
@@ -68,14 +74,14 @@ const createMethods: (
 export const createPhaser = (engine: Engine) => {
     const props = createProperties();
     const phases: PhaserPhase[] = [];
-    let draw: PhaserDraw | undefined;
+    const draws: PhaserDraw[] = [];
     const updateEvent = {
         phasePercentage: 0,
         phasePercentageReverse: 1,
     };
-    const methods = createMethods(props, draw, phases, engine, updateEvent);
+    const methods = createMethods(props, draws, phases, engine, updateEvent);
 
-    const setDraw = (phaserDraw: PhaserDraw) => (draw = phaserDraw);
+    const setDraw = (phaserDraw: PhaserDraw) => draws.push(phaserDraw);
 
     const setPhase = (phaserPhase: Omit<PhaserPhase, 'id'>) =>
         phases.push(Object.assign(phaserPhase, {id: phases.length}));
@@ -120,8 +126,9 @@ const createPhaserUpdate = (
         props.timer += evt.timePassed;
         props.totalTime += evt.timePassed;
 
-        event.phasePercentage = props.timer / phases[props.phase].duration;
-        event.phasePercentageReverse = 1 - event.phasePercentage;
+        // Create PhaserUpdateEvent Custom in EngineEvents
+        evt.phasePercentage = props.timer / phases[props.phase].duration;
+        evt.phasePercentageReverse = 1 - event.phasePercentage;
 
         if (phases[props.phase].duration < props.timer) {
             methods.stopPhase(props.phase);

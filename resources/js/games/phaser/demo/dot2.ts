@@ -21,13 +21,13 @@ const createDotPhaserDraw = (canvas: HTMLCanvasElement, context: CanvasRendering
     const {sketch, draw} = createDotDrawBucket(context);
 
     return {
-        preDraw: () => {
+        pre: () => {
             sketch.x = canvas.width / 2;
             sketch.y = canvas.height / 2;
             sketch.stroke.a = 0;
             console.log('preDraw');
         },
-        postDraw: () => {
+        post: () => {
             console.log('postDraw');
         },
         removeDraw: false,
@@ -42,7 +42,7 @@ const createDotPhases: (sketch: DotSketch) => DotPhases = sketch => [
     // },
     {
         duration: 5000,
-        update: (evt: EngineUpdateEvent) => (sketch.stroke.a = evt.phasePercentage),
+        update: (evt: PhaserUpdateEvent) => (sketch.stroke.a = evt.phasePercentage),
         // update: (evt: PhaserUpdateEvent) => (sketch.stroke.a = 1),
         pre: () => console.log('prePhase 1'),
         post: () => {
@@ -87,6 +87,7 @@ const createDotDrawBucket = (ctx: CanvasRenderingContext2D) => {
 
     return {
         draw: () => {
+            console.log('phaser draw running');
             ctx.lineWidth = sketch.lineWidth;
             ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
             // ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
@@ -106,7 +107,7 @@ export type DotSketch = typeof dotSketch;
 export type DotPhases = {
     duration: number;
     // update?: (evt: PhaserUpdateEvent) => void;
-    update?: (evt: EngineUpdateEvent) => void;
+    update?: (evt: PhaserUpdateEvent) => void;
     pre?: () => void;
     post?: () => void;
     // startAt?: number;
