@@ -1,16 +1,16 @@
 import statistics from './statistics';
 import type {
     EngineDraw,
-    EngineEvents,
+    EngineDrawConfig,
     EngineInfo,
     EngineProperties,
     EngineUpdate,
     EngineUpdateConfig,
+    EngineUpdateCustomEvent,
+    EngineUpdateEvent,
 } from './types/engine';
 
 const createProperties: () => EngineProperties = () => ({
-    updates: [],
-    draws: [],
     requestID: 0,
     stop: false,
     stats: false,
@@ -19,6 +19,8 @@ const createProperties: () => EngineProperties = () => ({
 
 export const createEngine = <T extends object>(libraryID: number | string, customEvent: T) => {
     const properties = createProperties();
+    const draws: EngineDrawConfig[] = [];
+    const updates: EngineUpdateConfig[] = [];
 
     const events = {
         engine: {
@@ -28,7 +30,7 @@ export const createEngine = <T extends object>(libraryID: number | string, custo
         custom: customEvent,
     };
 
-    const loop = createLoop(properties);
+    const loop = createLoop(properties, updates, draws, events);
 
     const run = () => loop(0);
 
@@ -42,9 +44,9 @@ export const createEngine = <T extends object>(libraryID: number | string, custo
         properties.stop = true;
     };
 
-    const {setUpdate, setDraw, removeUpdate, removeDraw} = createSetAndRemoveUpdatesAndDraws(properties);
+    const {setUpdate, setDraw, removeUpdate, removeDraw} = createSetAndRemoveUpdatesAndDraws(updates, draws);
 
-    const info = createInfo(properties);
+    const info = createInfo(updates, draws, events.engine);
 
     const createStats = (context: CanvasRenderingContext2D) =>
         createEngineStats(libraryID, info, properties, context, setDraw, removeDraw);
@@ -65,16 +67,21 @@ export const createEngine = <T extends object>(libraryID: number | string, custo
 // TODO::Fix this with updateloop from https://isaacsukin.com/news/2015/01/detailed-explanation-javascript-game-loops-and-timing#starting-stopping
 let frame = 0;
 
-const createLoop = <T extends object>(properties: EngineProperties, events: EngineEvents<T>) => {
+const createLoop = (
+    properties: EngineProperties,
+    updates: EngineUpdateConfig[],
+    draws: EngineDrawConfig[],
+    events: {engine: EngineUpdateEvent; custom: EngineUpdateCustomEvent},
+) => {
     const loop = (timeStamp: DOMHighResTimeStamp) => {
         events.engine.timePassed = timeStamp - events.engine.lastTime;
 
         events.engine.lastTime = timeStamp;
 
         if (frame++ > 2) {
-            for (const update of properties.updates) update.fn(events[update.eventType]);
+            for (const update of updates) update.fn(events[update.eventType]);
 
-            for (const draw of properties.draws) draw.fn(timeStamp);
+            for (const draw of draws) draw.fn(timeStamp);
         }
 
         properties.requestID = requestAnimationFrame(loop);
@@ -101,34 +108,34 @@ const transformUpdate = (update: EngineUpdate): EngineUpdateConfig => ({
 });
 
 // TODO::Create a set/remove update/draw that orders according to id number (lower = first, higher = last)
-const createSetAndRemoveUpdatesAndDraws = (properties: EngineProperties) => {
+const createSetAndRemoveUpdatesAndDraws = (updates: EngineUpdateConfig[], draws: EngineDrawConfig[]) => {
     const setUpdate = (update: EngineUpdate) => {
         const updateEngine = transformUpdate(update);
 
-        properties.updates.push(updateEngine);
+        updates.push(updateEngine);
     };
 
     const setDraw = (draw: EngineDraw) => {
         if (draw.id === undefined) draw.id = 'noDrawID';
         if (!draw.name) draw.name = 'noDrawName';
 
-        properties.draws.push(draw);
+        draws.push(draw);
     };
 
     const removeUpdate = (id: number | string) => {
-        const index = properties.updates.findIndex(update => update.id === id);
+        const index = updates.findIndex(update => update.id === id);
 
         if (index === -1) throw Error(`update with id '${id}' not found, nothing to remove`);
 
-        properties.updates.splice(index, 1);
+        updates.splice(index, 1);
     };
 
     const removeDraw = (id: number | string) => {
-        const index = properties.draws.findIndex(draw => draw.id === id);
+        const index = draws.findIndex(draw => draw.id === id);
 
         if (index === -1) throw Error(`draw with id '${id}' not found, nothing to remove`);
 
-        properties.draws.splice(index, 1);
+        draws.splice(index, 1);
     };
 
     return {
@@ -139,25 +146,25 @@ const createSetAndRemoveUpdatesAndDraws = (properties: EngineProperties) => {
     };
 };
 
-const createInfo = <T extends object>(props: EngineProperties, events: EngineEvents<T>) => ({
+const createInfo = (updates: EngineUpdateConfig[], draws: EngineDrawConfig[], event: EngineUpdateEvent) => ({
     updates: {
-        length: () => props.updates.length,
-        ids: () => props.updates.map(update => update.id),
+        length: () => updates.length,
+        ids: () => updates.map(update => update.id),
     },
     draws: {
-        length: () => props.draws.length,
-        ids: () => props.draws.map(draw => draw.id),
+        length: () => draws.length,
+        ids: () => draws.map(draw => draw.id),
     },
     time: {
-        passed: () => props.events.engine.timePassed,
-        last: () => props.events.engine.lastTime,
+        passed: () => event.timePassed,
+        last: () => event.lastTime,
     },
 });
 
 export const createEngineStats = (
     libraryID: string | number,
     {draws, updates}: EngineInfo,
-    props: EngineProperties<object>,
+    props: EngineProperties,
     context: CanvasRenderingContext2D,
     setDraw: (draw: EngineDraw) => void,
     removeDraw: (id: number | string) => void,

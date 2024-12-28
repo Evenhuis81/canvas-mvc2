@@ -1,5 +1,5 @@
 import type {PhaserDraw, PhaserEvent, PhaserMethods, PhaserPhase, PhaserProperties} from './types';
-import type {Engine, EngineUpdate, EngineUpdateEvent} from 'library/types/engine';
+import type {Engine, EngineUpdate, EngineUpdateConfig, EngineUpdateEvent} from 'library/types/engine';
 
 let idCount = 0;
 const createProperties: () => PhaserProperties = () => ({
@@ -84,7 +84,7 @@ export const createPhaser = (engine: Engine) => {
 };
 
 const createStartPhaser =
-    (engine: Engine, props: PhaserProperties, methods: PhaserMethods, update: EngineUpdate<'engine'>) => () => {
+    (engine: Engine, props: PhaserProperties, methods: PhaserMethods, update: EngineUpdate) => () => {
         if (props.active) return console.log(`${props.id} already active`);
         props.active = true;
 
@@ -95,10 +95,15 @@ const createStartPhaser =
         engine.setUpdate(update);
     };
 
-const createPhaserUpdate = (props: PhaserProperties, methods: PhaserMethods, phases: PhaserPhase[]) => ({
+const createPhaserUpdate = <K extends 'engine' | 'phaser'>(
+    eType: K,
+    props: PhaserProperties,
+    methods: PhaserMethods,
+    phases: PhaserPhase[],
+): EngineUpdateConfig<K> => ({
     id: `${props.id}-main-update`,
     name: `Main Update ${props.id}`,
-    eventType: 'engine',
+    eventType: eType,
     fn: (evt: EngineUpdateEvent) => {
         props.timer += evt.timePassed;
         props.totalTime += evt.timePassed;

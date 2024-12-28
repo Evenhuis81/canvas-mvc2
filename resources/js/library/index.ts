@@ -17,7 +17,10 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
     const context = getContext2D(canvas);
 
     // Hardcoded custom event for now, make this also generic for library
-    const engine = createEngine<PhaserUpdateEvent>(libraryID);
+    const engine = createEngine<PhaserUpdateEvent>(libraryID, {
+        phasePercentage: 0,
+        phasePercentageReverse: 1,
+    });
 
     // if !options, skip all that uses options!
 
