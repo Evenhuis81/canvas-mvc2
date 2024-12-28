@@ -1,4 +1,4 @@
-import type {PhaserDraw, PhaserEvent, PhaserMethods, PhaserPhase, PhaserProperties} from './types';
+import type {PhaserDraw, PhaserMethods, PhaserPhase, PhaserProperties, PhaserUpdateEvent} from './types';
 import type {Engine, EngineUpdate, EngineUpdateConfig, EngineUpdateEvent} from 'library/types/engine';
 
 let idCount = 0;
@@ -9,8 +9,6 @@ const createProperties: () => PhaserProperties = () => ({
     totalTime: 0,
     active: false,
     atEnd: 'stop',
-    phasePercentage: 0,
-    phasePercentageReverse: 1,
 });
 
 const createMethods: (
@@ -18,7 +16,8 @@ const createMethods: (
     draw: PhaserDraw | undefined,
     phases: PhaserPhase[],
     engine: Engine,
-) => PhaserMethods = (props, draw, phases, engine) => ({
+    event: PhaserUpdateEvent,
+) => PhaserMethods = (props, draw, phases, engine, event) => ({
     startDraw: () => {
         // if (draw[1]) draw[1](); // PreDraw
         // if (draw[0]) engine.setDraw({id: `${id}-draw`, fn: draw[0]});
@@ -45,8 +44,8 @@ const createMethods: (
     },
     resetPhaseProperties: () => {
         props.timer = 0;
-        props.phasePercentage = 0;
-        props.phasePercentageReverse = 1;
+        event.phasePercentage = 0;
+        event.phasePercentageReverse = 1;
     },
 });
 
@@ -54,26 +53,23 @@ export const createPhaser = (engine: Engine) => {
     const props = createProperties();
     const phases: PhaserPhase[] = [];
     let draw: PhaserDraw | undefined;
-    const methods = createMethods(props, draw, phases, engine);
+    const updateEvent = {
+        phasePercentage: 0,
+        phasePercentageReverse: 1,
+    };
+    const methods = createMethods(props, draw, phases, engine, updateEvent);
 
     const setDraw = (phaserDraw: PhaserDraw) => (draw = phaserDraw);
 
-    // sort according to duration / startAt and give proper phaseID
     const setPhase = (phaserPhase: Omit<PhaserPhase, 'id'>) =>
         phases.push(Object.assign(phaserPhase, {id: phases.length}));
 
     const setPhases = (phaserPhases: Omit<PhaserPhase, 'id'>[]) =>
         phaserPhases.forEach(phase => phases.push(Object.assign(phase, {id: phases.length})));
 
-    const phaserEvent = {
-        destroyPhaser: () => console.log('destroy Phaser initiated'),
-        repeatPhaser: () => console.log('repeat Phaser initiated'),
-    };
-
-    const phaserUpdate = createPhaserUpdate(props, methods, phases);
+    const phaserUpdate = createPhaserUpdate(props, methods, phases, updateEvent);
 
     const startPhaser = createStartPhaser(engine, props, methods, phaserUpdate);
-    // const stopPhaser = createStopPhaser(props, {destroyPhaser: () => {}}, engine);
 
     return {
         start: startPhaser,
@@ -95,28 +91,26 @@ const createStartPhaser =
         engine.setUpdate(update);
     };
 
-const createPhaserUpdate = <K extends 'engine' | 'phaser'>(
-    eType: K,
+const createPhaserUpdate = (
     props: PhaserProperties,
     methods: PhaserMethods,
     phases: PhaserPhase[],
-): EngineUpdateConfig<K> => ({
+    event: PhaserUpdateEvent,
+) => ({
     id: `${props.id}-main-update`,
     name: `Main Update ${props.id}`,
-    eventType: eType,
     fn: (evt: EngineUpdateEvent) => {
         props.timer += evt.timePassed;
         props.totalTime += evt.timePassed;
 
-        props.phasePercentage = props.timer / phases[props.phase].duration;
-        props.phasePercentageReverse = 1 - props.phasePercentage;
+        event.phasePercentage = props.timer / phases[props.phase].duration;
+        event.phasePercentageReverse = 1 - event.phasePercentage;
 
         if (phases[props.phase].duration < props.timer) {
             methods.stopPhase(props.phase);
 
             methods.resetPhaseProperties();
 
-            // caution, update should stop immediatly on certain phaserEnd options
             if (!phases[++props.phase]) return methods.phaserEnd();
 
             methods.startPhase(props.phase);

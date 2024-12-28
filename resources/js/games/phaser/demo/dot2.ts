@@ -7,7 +7,7 @@ export const startDotDemoPhaser2 = (libraryID: string | number) => {
 
     const phaser = createPhaser(engine);
 
-    const {type, sketch, ...draw} = createDotPhaserDraw(canvas, context);
+    const {sketch, ...draw} = createDotPhaserDraw(canvas, context);
 
     phaser.setDraw(draw);
 
@@ -20,7 +20,6 @@ const createDotPhaserDraw = (canvas: HTMLCanvasElement, context: CanvasRendering
     const {sketch, draw} = createDotDrawBucket(context);
 
     return {
-        type: 'draw',
         preDraw: () => {
             sketch.x = canvas.width / 2;
             sketch.y = canvas.height / 2;
@@ -43,7 +42,12 @@ const createDotPhases: (sketch: DotSketch) => DotPhases = sketch => [
     {
         duration: 5000,
         update: (evt: PhaserUpdateEvent) => (sketch.stroke.a = evt.phasePercentage),
-        post: () => (sketch.stroke.a = 1),
+        pre: () => console.log('postPhase 1'),
+        post: () => {
+            sketch.stroke.a = 1;
+
+            console.log('postPhase 1');
+        },
     },
     // {
     // startAt: 4500,

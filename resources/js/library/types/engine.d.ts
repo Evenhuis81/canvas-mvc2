@@ -8,23 +8,12 @@ export type WithPartial<T, K extends keyof T> = T & {[P in K]?: T[P]};
 
 export type EngineDraw = WithPartial<EngineDrawConfig, 'id' | 'name'>;
 
-export type EngineUpdate = WithPartial<EngineUpdateConfig<'engine' | 'phaser'>, 'id' | 'name'>;
+export type EngineUpdate = WithPartial<EngineUpdateConfig, 'id' | 'name'>;
 
-export type EngineUpdateConfig<K extends keyof EngineUpdateEvents> = {
+export type EngineUpdateConfig = {
     id: number | string;
     name: string;
-    eventType: K;
-    fn: (evt: EngineUpdateEvents[K]) => void;
-};
-
-export type PhaserEvent = {
-    phasePercentage: 0;
-    phasePercentageReversed: 1;
-};
-
-export type EngineUpdateEvents = {
-    engine: EngineUpdateEvent;
-    phaser: PhaserEvent;
+    fn: (evt: EngineUpdateEvent) => void;
 };
 
 export type EngineUpdateCustomEvent = object;

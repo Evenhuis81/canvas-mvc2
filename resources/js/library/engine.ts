@@ -17,7 +17,7 @@ const createProperties: () => EngineProperties = () => ({
     statsActive: false,
 });
 
-export const createEngine = <T extends object>(libraryID: number | string, customEvent: T) => {
+export const createEngine = (libraryID: number | string) => {
     const properties = createProperties();
     const draws: EngineDrawConfig[] = [];
     const updates: EngineUpdateConfig[] = [];
@@ -27,7 +27,6 @@ export const createEngine = <T extends object>(libraryID: number | string, custo
             timePassed: 0,
             lastTime: 0,
         },
-        custom: customEvent,
     };
 
     const loop = createLoop(properties, updates, draws, events);
@@ -71,7 +70,7 @@ const createLoop = (
     properties: EngineProperties,
     updates: EngineUpdateConfig[],
     draws: EngineDrawConfig[],
-    events: {engine: EngineUpdateEvent; custom: EngineUpdateCustomEvent},
+    events: {engine: EngineUpdateEvent},
 ) => {
     const loop = (timeStamp: DOMHighResTimeStamp) => {
         events.engine.timePassed = timeStamp - events.engine.lastTime;
@@ -79,7 +78,7 @@ const createLoop = (
         events.engine.lastTime = timeStamp;
 
         if (frame++ > 2) {
-            for (const update of updates) update.fn(events[update.eventType]);
+            for (const update of updates) update.fn(events.engine);
 
             for (const draw of draws) draw.fn(timeStamp);
         }
@@ -103,7 +102,7 @@ const createLoop = (
 const transformUpdate = (update: EngineUpdate): EngineUpdateConfig => ({
     id: update.id ?? 'noUpdateID',
     name: update.name ?? 'noUpdateName',
-    eventType: update.eventType ?? 'engine',
+    // eventType: update.eventType ?? 'engine',
     fn: update.fn,
 });
 
