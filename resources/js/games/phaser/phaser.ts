@@ -1,5 +1,5 @@
 import type {PhaserDraw, PhaserMethods, PhaserPhase, PhaserProperties, PhaserUpdateEvent} from './types';
-import type {Engine, EngineUpdate, EngineUpdateEvent, EngineUpdateEvents} from 'library/types/engine';
+import type {Engine, EngineUpdate, EngineUpdateEvent} from 'library/types/engine';
 
 let idCount = 0;
 const createProperties: () => PhaserProperties = () => ({
@@ -37,7 +37,7 @@ const createMethods: (
 
         if (phase.pre) phase.pre(); // PrePhase
 
-        if (phase.update) engine.setUpdate({type: 'custom', id: `phase-${phaseNr}`, fn: phase.update});
+        if (phase.update) engine.setUpdate({id: `phase-${phaseNr}`, fn: phase.update});
     },
     stopPhase: phaseNr => {
         const phase = phases[phaseNr];
@@ -82,13 +82,6 @@ export const createPhaser = (engine: Engine) => {
 
     const phaserUpdate = createPhaserUpdate(props, methods, phases, updateEvent);
 
-    // const startPhaser = createStartPhaser(engine, props, methods, {
-    //     id: phaserUpdate.id,
-    //     name: phaserUpdate.name,
-    //     type: 'engine',
-    //     fn: phaserUpdate.fn,
-    // });
-
     const startPhaser = createStartPhaser(engine, props, methods, phaserUpdate);
 
     return {
@@ -100,7 +93,7 @@ export const createPhaser = (engine: Engine) => {
 };
 
 const createStartPhaser =
-    (engine: Engine, props: PhaserProperties, methods: PhaserMethods, update: EngineUpdate<'engine'>) => () => {
+    (engine: Engine, props: PhaserProperties, methods: PhaserMethods, update: EngineUpdate) => () => {
         if (props.active) return console.log(`${props.id} already active`);
 
         props.active = true;
@@ -116,8 +109,8 @@ const createPhaserUpdate = (
     props: PhaserProperties,
     methods: PhaserMethods,
     phases: PhaserPhase[],
-    event: PhaserUpdateEvent,
-): EngineUpdate<'engine'> => ({
+    phaserEvent: PhaserUpdateEvent,
+) => ({
     id: `${props.id}-main-update`,
     name: `Main Update ${props.id}`,
     type: 'engine',
@@ -125,8 +118,8 @@ const createPhaserUpdate = (
         props.timer += evt.timePassed;
         props.totalTime += evt.timePassed;
 
-        event.phasePercentage = props.timer / phases[props.phase].duration;
-        event.phasePercentageReverse = 1 - event.phasePercentage;
+        evt.phasePercentage = props.timer / phases[props.phase].duration;
+        evt.phasePercentageReverse = 1 - evt.phasePercentage;
 
         if (phases[props.phase].duration < props.timer) {
             methods.stopPhase(props.phase);

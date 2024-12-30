@@ -7,7 +7,6 @@ import type {
     EngineUpdate,
     EngineUpdateConfig,
     EngineUpdateEvent,
-    EngineUpdateEvents,
 } from './types/engine';
 
 const createProperties: () => EngineProperties = () => ({
@@ -20,20 +19,16 @@ const createProperties: () => EngineProperties = () => ({
 export const createEngine = (libraryID: number | string) => {
     const properties = createProperties();
     const draws: EngineDrawConfig[] = [];
-    const updates: EngineUpdateConfig<keyof EngineUpdateEvents>[] = [];
+    const updates: EngineUpdateConfig[] = [];
 
-    const events = {
-        engine: {
-            timePassed: 0,
-            lastTime: 0,
-        },
-        custom: {
-            phasePercentage: 0,
-            phasePercentageReverse: 1,
-        },
+    const event = {
+        timePassed: 0,
+        lastTime: 0,
+        phasePercentage: 0,
+        phasePercentageReverse: 1,
     };
 
-    const loop = createLoop(properties, updates, draws, events);
+    const loop = createLoop(properties, updates, draws, event);
 
     const run = () => loop(0);
 
@@ -45,17 +40,9 @@ export const createEngine = (libraryID: number | string) => {
 
     const halt = () => (properties.stop = true);
 
-    const setUpdate = <K extends keyof EngineUpdateEvents>(update: EngineUpdate<K>) => {
-        const newUpdate = {...defaultUpdate, ...update};
+    const {setUpdate, setDraw, removeUpdate, removeDraw} = createSetAndRemoveUpdatesAndDraws(updates, draws);
 
-        updates.push(newUpdate);
-
-        // return newUpdate;
-    };
-
-    const {setDraw, removeUpdate, removeDraw} = createSetAndRemoveUpdatesAndDraws(updates, draws);
-
-    const info = createInfo(updates, draws, events.engine);
+    const info = createInfo(updates, draws, event);
 
     const createStats = (context: CanvasRenderingContext2D) =>
         createEngineStats(libraryID, info, properties, context, setDraw, removeDraw);
@@ -78,17 +65,17 @@ let frame = 0;
 
 const createLoop = (
     properties: EngineProperties,
-    updates: EngineUpdateConfig<keyof EngineUpdateEvents>[],
+    updates: EngineUpdateConfig[],
     draws: EngineDrawConfig[],
-    events: EngineUpdateEvents,
+    event: EngineUpdateEvent,
 ) => {
     const loop = (timeStamp: DOMHighResTimeStamp) => {
-        events.engine.timePassed = timeStamp - events.engine.lastTime;
+        event.timePassed = timeStamp - event.lastTime;
 
-        events.engine.lastTime = timeStamp;
+        event.lastTime = timeStamp;
 
         if (frame++ > 2) {
-            for (const update of updates) update.fn(events[update.type]);
+            for (const update of updates) update.fn(event);
 
             for (const draw of draws) draw.fn(timeStamp);
         }
@@ -116,11 +103,10 @@ const defaultDraw = {
 };
 
 // TODO::Create a set/remove update/draw that orders according to id number (lower = first, higher = last)
-const createSetAndRemoveUpdatesAndDraws = (
-    updates: EngineUpdateConfig<keyof EngineUpdateEvents>[],
-    draws: EngineDrawConfig[],
-) => {
+const createSetAndRemoveUpdatesAndDraws = (updates: EngineUpdateConfig[], draws: EngineDrawConfig[]) => {
     const setDraw = (draw: EngineDraw) => draws.push({...defaultDraw, ...draw});
+
+    const setUpdate = (update: EngineUpdate) => updates.push({...defaultUpdate, ...update});
 
     const removeUpdate = (id: number | string) => {
         const index = updates.findIndex(update => update.id === id);
@@ -139,18 +125,14 @@ const createSetAndRemoveUpdatesAndDraws = (
     };
 
     return {
-        // setUpdate,
+        setUpdate,
         setDraw,
         removeUpdate,
         removeDraw,
     };
 };
 
-const createInfo = (
-    updates: EngineUpdateConfig<keyof EngineUpdateEvents>[],
-    draws: EngineDrawConfig[],
-    event: EngineUpdateEvent,
-) => ({
+const createInfo = (updates: EngineUpdateConfig[], draws: EngineDrawConfig[], event: EngineUpdateEvent) => ({
     updates: {
         length: () => updates.length,
         ids: () => updates.map(update => update.id),

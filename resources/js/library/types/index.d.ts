@@ -2,6 +2,8 @@ import {Engine, EngineStatistics} from './engine';
 import {LibraryInput} from './input';
 import {StaticView} from './views';
 
+type MakeOptional<T, K extends keyof T> = Omit<T, K> & {[P in K]?: T[P]};
+
 export interface LibraryResources {
     id: string | number;
     canvas: HTMLCanvasElement;

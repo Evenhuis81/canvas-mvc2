@@ -1,4 +1,4 @@
-import {EngineDraw} from 'library/types/engine';
+import {EngineDraw, EngineUpdate} from 'library/types/engine';
 
 export type PhaserProperties = {
     id: string;
@@ -37,7 +37,7 @@ export type PhaserDraw = {
 export type PhaserPhase = {
     id: number;
     duration: number;
-    update?: PhaserUpdate;
+    update?: EngineUpdate['fn'];
     pre?: () => void;
     post?: () => void;
     // startAt? : number;

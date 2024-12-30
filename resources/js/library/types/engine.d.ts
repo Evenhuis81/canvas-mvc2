@@ -1,4 +1,4 @@
-import {PhaserUpdateEvent} from 'games/phaser/types';
+import {MakeOptional} from '.';
 
 export type EngineDrawConfig = {
     id: number | string;
@@ -6,40 +6,24 @@ export type EngineDrawConfig = {
     fn: (deltaTime: DOMHighResTimeStamp) => void;
 };
 
-type MakeOptional<T, K extends keyof T> = Omit<T, K> & {[P in K]?: T[P]};
+export type EngineUpdateConfig = Omit<EngineDrawConfig, 'fn'> & {fn: (evt: EngineUpdateEvent) => void};
 
 export type EngineDraw = MakeOptional<EngineDrawConfig, 'id' | 'name'>;
 
-export type EngineUpdate<K extends keyof EngineUpdateEvents> = MakeOptional<EngineUpdateConfig<K>, 'id' | 'name'>;
-
-// export type EngineDraw = {
-//     id?: number | string;
-//     name?: string;
-//     fn: (deltaTime: DOMHighResTimeStamp) => void;
-// };
-
-export type EngineUpdateEvents = {
-    engine: EngineUpdateEvent;
-    custom: PhaserUpdateEvent;
-};
-
-export type EngineUpdateConfig<K extends keyof EngineUpdateEvents> = {
-    id: number | string;
-    name: string;
-    type: K;
-    fn: (evt: EngineUpdateEvents[K]) => void;
-};
+export type EngineUpdate = MakeOptional<EngineUpdateConfig, 'id' | 'name'>;
 
 export type EngineUpdateEvent = {
     timePassed: number;
     lastTime: number;
+    phasePercentage: number;
+    phasePercentageReverse: number;
 };
 
 export interface Engine {
     run: () => void;
     runOnce: () => void;
     halt: () => void;
-    setUpdate: <K extends keyof EngineUpdateEvents>(update: EngineUpdate<K>) => void;
+    setUpdate: (update: EngineUpdate) => void;
     setDraw: (draw: EngineDraw) => void;
     removeUpdate: (id: number | string) => void;
     removeDraw: (id: number | string) => void;
