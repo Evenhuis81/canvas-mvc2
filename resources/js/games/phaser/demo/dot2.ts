@@ -1,7 +1,6 @@
 import {resources} from 'library/index';
 import {createPhaser} from '../phaser';
 import type {PhaserUpdateEvent} from '../types';
-import {EngineUpdateEvent} from 'library/types/engine';
 
 export const startDotDemoPhaser2 = (libraryID: string | number) => {
     const {context, canvas, engine} = resources[libraryID];
@@ -87,7 +86,6 @@ const createDotDrawBucket = (ctx: CanvasRenderingContext2D) => {
 
     return {
         draw: () => {
-            console.log('phaser draw running');
             ctx.lineWidth = sketch.lineWidth;
             ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
             // ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;

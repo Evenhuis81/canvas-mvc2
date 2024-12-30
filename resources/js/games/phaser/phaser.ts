@@ -1,5 +1,5 @@
 import type {PhaserDraw, PhaserMethods, PhaserPhase, PhaserProperties, PhaserUpdateEvent} from './types';
-import type {Engine, EngineUpdate, EngineUpdateConfig, EngineUpdateEvent} from 'library/types/engine';
+import type {Engine, EngineUpdate, EngineUpdateEvent, EngineUpdateEvents} from 'library/types/engine';
 
 let idCount = 0;
 const createProperties: () => PhaserProperties = () => ({
@@ -21,8 +21,6 @@ const createMethods: (
     startDraw: () => {
         if (!phaserDraw[0]) return;
 
-        console.log(phaserDraw[0].pre);
-
         if (phaserDraw[0].pre) phaserDraw[0].pre(); // PreDraw
 
         engine.setDraw({id: `${props.id}-draw`, fn: phaserDraw[0].draw});
@@ -39,11 +37,7 @@ const createMethods: (
 
         if (phase.pre) phase.pre(); // PrePhase
 
-        const phaserUpdateTest = (evt: PhaserUpdateEvent) => {
-            console.log('phaserUpdateTest');
-        };
-
-        if (phase.update) engine.setUpdate({id: `phase-${phaseNr}`, fn: phaserUpdateTest});
+        if (phase.update) engine.setUpdate({type: 'custom', id: `phase-${phaseNr}`, fn: phase.update});
     },
     stopPhase: phaseNr => {
         const phase = phases[phaseNr];
@@ -52,7 +46,7 @@ const createMethods: (
         if (phase.post) phase.post(); // PostPhase
     },
     phaserEnd: () => {
-        // temp hard set to 'stop'
+        // if (atEnd === 'stop') phaserAtEnd[atEnd]
         engine.removeUpdate(`${props.id}-main-update`);
 
         if (!phaserDraw[0]) return;
@@ -60,9 +54,6 @@ const createMethods: (
         if (phaserDraw[0].post) phaserDraw[0].post(); // PostDraw
 
         if (phaserDraw[0].remove) engine.removeDraw(`${props.id}-draw`); // RemoveDraw
-
-        // phaserAtEnd[atEnd]
-        // if (atEnd === 'stop') {}
     },
     resetPhaseProperties: () => {
         props.timer = 0;
@@ -102,7 +93,8 @@ export const createPhaser = (engine: Engine) => {
 };
 
 const createStartPhaser =
-    (engine: Engine, props: PhaserProperties, methods: PhaserMethods, update: EngineUpdate) => () => {
+    (engine: Engine, props: PhaserProperties, methods: PhaserMethods, update: EngineUpdate<keyof EngineUpdateEvents>) =>
+    () => {
         if (props.active) return console.log(`${props.id} already active`);
 
         props.active = true;
@@ -122,13 +114,14 @@ const createPhaserUpdate = (
 ) => ({
     id: `${props.id}-main-update`,
     name: `Main Update ${props.id}`,
+    type: 'engine',
     fn: (evt: EngineUpdateEvent) => {
         props.timer += evt.timePassed;
         props.totalTime += evt.timePassed;
 
         // Create PhaserUpdateEvent Custom in EngineEvents
-        evt.phasePercentage = props.timer / phases[props.phase].duration;
-        evt.phasePercentageReverse = 1 - event.phasePercentage;
+        event.phasePercentage = props.timer / phases[props.phase].duration;
+        event.phasePercentageReverse = 1 - event.phasePercentage;
 
         if (phases[props.phase].duration < props.timer) {
             methods.stopPhase(props.phase);
