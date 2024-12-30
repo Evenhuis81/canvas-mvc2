@@ -45,7 +45,15 @@ export const createEngine = (libraryID: number | string) => {
 
     const halt = () => (properties.stop = true);
 
-    const {setUpdate, setDraw, removeUpdate, removeDraw} = createSetAndRemoveUpdatesAndDraws(updates, draws);
+    const setUpdate = <K extends keyof EngineUpdateEvents>(update: EngineUpdate<K>) => {
+        const newUpdate = {...defaultUpdate, ...update};
+
+        updates.push(newUpdate);
+
+        // return newUpdate;
+    };
+
+    const {setDraw, removeUpdate, removeDraw} = createSetAndRemoveUpdatesAndDraws(updates, draws);
 
     const info = createInfo(updates, draws, events.engine);
 
@@ -68,9 +76,9 @@ export const createEngine = (libraryID: number | string) => {
 // TODO::Fix this with updateloop from https://isaacsukin.com/news/2015/01/detailed-explanation-javascript-game-loops-and-timing#starting-stopping
 let frame = 0;
 
-const createLoop = <K extends keyof EngineUpdateEvents>(
+const createLoop = (
     properties: EngineProperties,
-    updates: EngineUpdateConfig<K>[],
+    updates: EngineUpdateConfig<keyof EngineUpdateEvents>[],
     draws: EngineDrawConfig[],
     events: EngineUpdateEvents,
 ) => {
@@ -97,6 +105,11 @@ const createLoop = <K extends keyof EngineUpdateEvents>(
     return loop;
 };
 
+const defaultUpdate = {
+    id: 'noUpdateID',
+    name: 'noUpdateName',
+};
+
 const defaultDraw = {
     id: 'noDrawID',
     name: 'noDrawName',
@@ -107,16 +120,6 @@ const createSetAndRemoveUpdatesAndDraws = (
     updates: EngineUpdateConfig<keyof EngineUpdateEvents>[],
     draws: EngineDrawConfig[],
 ) => {
-    const setUpdate = (update: EngineUpdate<keyof EngineUpdateEvents>) => {
-        const newUpdate: EngineUpdateConfig<keyof EngineUpdateEvents> = {
-            id: update.id ?? 'noUpdateID',
-            name: update.name ?? 'noUpdateName',
-            type: update.type,
-            fn: update.fn,
-        };
-        updates.push(newUpdate);
-    };
-
     const setDraw = (draw: EngineDraw) => draws.push({...defaultDraw, ...draw});
 
     const removeUpdate = (id: number | string) => {
@@ -136,7 +139,7 @@ const createSetAndRemoveUpdatesAndDraws = (
     };
 
     return {
-        setUpdate,
+        // setUpdate,
         setDraw,
         removeUpdate,
         removeDraw,
