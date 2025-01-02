@@ -118,8 +118,8 @@ const createPhaserUpdate = (
         props.timer += evt.timePassed;
         props.totalTime += evt.timePassed;
 
-        evt.phasePercentage = props.timer / phases[props.phase].duration;
-        evt.phasePercentageReverse = 1 - evt.phasePercentage;
+        phaserEvent.phasePercentage = props.timer / phases[props.phase].duration;
+        phaserEvent.phasePercentageReverse = 1 - phaserEvent.phasePercentage;
 
         if (phases[props.phase].duration < props.timer) {
             methods.stopPhase(props.phase);
