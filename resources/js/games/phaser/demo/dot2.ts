@@ -11,7 +11,10 @@ export const startDotDemoPhaser2 = (libraryID: string | number) => {
 
     phaser.setDraw(draw);
 
-    createDotPhases(sketch).forEach(phase => phaser.setPhase(phase));
+    createDotPhases(sketch).forEach(phase => {
+        phase.duration = phase.duration / 10;
+        phaser.setPhase(phase);
+    });
 
     phaser.start();
 };
@@ -30,7 +33,7 @@ const createDotPhaserDraw = (canvas: HTMLCanvasElement, context: CanvasRendering
         post: () => {
             console.log('postDraw');
         },
-        removeDraw: false,
+        // remove: true,
         draw,
         sketch,
     };
@@ -41,7 +44,7 @@ const createDotPhases: (sketch: DotSketch) => DotPhases = sketch => [
     //     duration: 2000, // only duration acts like a pauze
     // },
     {
-        duration: 5000,
+        duration: 3000,
         update: (evt: PhaserUpdateEvent) => (sketch.stroke.a = evt.phasePercentage),
         pre: () => console.log('prePhase 1'),
         post: () => {
@@ -58,7 +61,7 @@ const createDotPhases: (sketch: DotSketch) => DotPhases = sketch => [
     // },
     // },
     {
-        duration: 5000,
+        duration: 4000,
         update: (evt: PhaserUpdateEvent) => {
             sketch.stroke.g = 255 * evt.phasePercentageReverse;
             sketch.stroke.b = 255 * evt.phasePercentageReverse;
@@ -69,12 +72,15 @@ const createDotPhases: (sketch: DotSketch) => DotPhases = sketch => [
         },
         post: () => {
             console.log('postPhase2');
+            sketch.stroke.g = 0;
+            sketch.stroke.b = 0;
+            sketch.lineWidth = 6;
         },
     },
     {
         duration: 5000,
         update: () => {
-            console.log('phase 3 running');
+            // console.log('phase 3 running');
         },
     },
 ];

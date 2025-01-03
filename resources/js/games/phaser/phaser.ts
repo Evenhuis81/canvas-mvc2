@@ -53,11 +53,16 @@ const createMethods: (
         if (phaserDraw[0].post) phaserDraw[0].post(); // PostDraw
 
         if (phaserDraw[0].remove) engine.removeDraw(`${props.id}-draw`); // RemoveDraw
+
+        props.totalTime = 0;
+        props.phase = 0;
     },
     resetPhaseProperties: () => {
         props.timer = 0;
-        props.totalTime = 0;
-        props.phase = 0;
+
+        // EngineCustomUpdateEvent reset here?
+        // props.totalTime = 0;
+        // props.phase = 0;
     },
 });
 
@@ -78,7 +83,7 @@ export const createPhaser = (engine: Engine<PhaserUpdateEvent>) => {
 
     const phaserUpdate = createPhaserUpdate(props, methods, phases);
 
-    const stopPhaser = createStopPhaser(props);
+    // const stopPhaser = createStopPhaser(props);
     const startPhaser = createStartPhaser(engine, props, methods, phaserUpdate);
 
     return {

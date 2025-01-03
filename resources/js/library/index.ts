@@ -6,21 +6,21 @@ import {getSV} from './views/sv';
 import {uid} from './helpers';
 import type {LibraryOptions, LibraryResources} from './types';
 import type {Engine} from './types/engine';
-import {PhaserUpdateEvent} from 'games/phaser/types';
 
 export const resources: Record<string | number, LibraryResources> = {};
 
-export const initialize = <E extends object>(
-    engineEvent: E,
-    id?: string | number,
-    options?: Partial<LibraryOptions>,
-) => {
+const phaserUpdateEvent = {
+    phasePercentage: 0,
+    phasePercentageReverse: 1,
+};
+
+export const initialize = (id?: string | number, options?: Partial<LibraryOptions>) => {
     const libraryID = id ?? uid();
 
     const canvas = getCanvas(options);
     const context = getContext2D(canvas);
 
-    const engine = createEngine(libraryID, engineEvent);
+    const engine = createEngine(libraryID, phaserUpdateEvent);
 
     // Always first draw in engine setDraw
     if (options?.clear) clearOn(engine, context);
