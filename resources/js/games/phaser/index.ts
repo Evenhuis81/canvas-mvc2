@@ -5,9 +5,14 @@ import {LibraryOptions} from 'library/types';
 
 const libraryID = 'phaser';
 
+const phaserUpdateEvent = {
+    phasePercentage: 0,
+    phasePercentageReverse: 1,
+};
+
 export default {
     setup: () => {
-        initialize(libraryID, libraryOptions);
+        initialize(phaserUpdateEvent, libraryID, libraryOptions);
 
         startDotDemoPhaser2(libraryID);
     },

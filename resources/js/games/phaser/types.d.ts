@@ -1,4 +1,4 @@
-import {EngineDraw, EngineUpdate} from 'library/types/engine';
+import {EngineDraw, EngineUpdateEvent} from 'library/types/engine';
 
 export type PhaserProperties = {
     id: string;
@@ -25,7 +25,7 @@ export type PhaserMethods = {
 
 export type PhaserAtEnd = 'stop' | 'destroy' | 'repeat';
 
-export type PhaserUpdate = (evt: PhaserUpdateEvent) => void;
+export type PhaserUpdate = (evt: EngineUpdateEvent<PhaserUpdateEvent>) => void;
 
 export type PhaserDraw = {
     draw: EngineDraw['fn'];

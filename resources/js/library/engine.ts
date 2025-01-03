@@ -7,6 +7,7 @@ import type {
     EngineUpdate,
     EngineUpdateConfig,
     EngineUpdateEvent,
+    InternalEngineUpdateEvent,
 } from './types/engine';
 
 const createProperties: () => EngineProperties = () => ({
@@ -16,19 +17,19 @@ const createProperties: () => EngineProperties = () => ({
     statsActive: false,
 });
 
-export const createEngine = (libraryID: number | string) => {
+export const createEngine = <C extends object>(libraryID: number | string, customEvent: C) => {
     const properties = createProperties();
     const draws: EngineDrawConfig[] = [];
-    const updates: EngineUpdateConfig[] = [];
+    const updates: EngineUpdateConfig<C>[] = [];
 
-    const event = {
+    const engineEvent = {
         timePassed: 0,
         lastTime: 0,
-        phasePercentage: 0,
-        phasePercentageReverse: 1,
     };
 
-    const loop = createLoop(properties, updates, draws, event);
+    const engineUpdateEvent = Object.assign(engineEvent, customEvent);
+
+    const loop = createLoop(properties, updates, draws, engineUpdateEvent);
 
     const run = () => loop(0);
 
@@ -42,7 +43,7 @@ export const createEngine = (libraryID: number | string) => {
 
     const {setUpdate, setDraw, removeUpdate, removeDraw} = createSetAndRemoveUpdatesAndDraws(updates, draws);
 
-    const info = createInfo(updates, draws, event);
+    const info = createInfo(updates, draws, engineUpdateEvent);
 
     const createStats = (context: CanvasRenderingContext2D) =>
         createEngineStats(libraryID, info, properties, context, setDraw, removeDraw);
@@ -63,11 +64,11 @@ export const createEngine = (libraryID: number | string) => {
 // TODO::Fix this with updateloop from https://isaacsukin.com/news/2015/01/detailed-explanation-javascript-game-loops-and-timing#starting-stopping
 let frame = 0;
 
-const createLoop = (
+const createLoop = <C extends object>(
     properties: EngineProperties,
-    updates: EngineUpdateConfig[],
+    updates: EngineUpdateConfig<C>[],
     draws: EngineDrawConfig[],
-    event: EngineUpdateEvent,
+    event: EngineUpdateEvent<C>,
 ) => {
     const loop = (timeStamp: DOMHighResTimeStamp) => {
         event.timePassed = timeStamp - event.lastTime;
@@ -103,10 +104,13 @@ const defaultDraw = {
 };
 
 // TODO::Create a set/remove update/draw that orders according to id number (lower = first, higher = last)
-const createSetAndRemoveUpdatesAndDraws = (updates: EngineUpdateConfig[], draws: EngineDrawConfig[]) => {
+const createSetAndRemoveUpdatesAndDraws = <C extends object>(
+    updates: EngineUpdateConfig<C>[],
+    draws: EngineDrawConfig[],
+) => {
     const setDraw = (draw: EngineDraw) => draws.push({...defaultDraw, ...draw});
 
-    const setUpdate = (update: EngineUpdate) => updates.push({...defaultUpdate, ...update});
+    const setUpdate = (update: EngineUpdate<C>) => updates.push({...defaultUpdate, ...update});
 
     const removeUpdate = (id: number | string) => {
         const index = updates.findIndex(update => update.id === id);
@@ -132,7 +136,11 @@ const createSetAndRemoveUpdatesAndDraws = (updates: EngineUpdateConfig[], draws:
     };
 };
 
-const createInfo = (updates: EngineUpdateConfig[], draws: EngineDrawConfig[], event: EngineUpdateEvent) => ({
+const createInfo = <C extends object>(
+    updates: EngineUpdateConfig<C>[],
+    draws: EngineDrawConfig[],
+    engineUpdateEvent: InternalEngineUpdateEvent,
+) => ({
     updates: {
         length: () => updates.length,
         ids: () => updates.map(update => update.id),
@@ -142,8 +150,8 @@ const createInfo = (updates: EngineUpdateConfig[], draws: EngineDrawConfig[], ev
         ids: () => draws.map(draw => draw.id),
     },
     time: {
-        passed: () => event.timePassed,
-        last: () => event.lastTime,
+        passed: () => engineUpdateEvent.timePassed,
+        last: () => engineUpdateEvent.lastTime,
     },
 });
 

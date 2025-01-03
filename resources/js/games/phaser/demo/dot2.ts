@@ -43,7 +43,6 @@ const createDotPhases: (sketch: DotSketch) => DotPhases = sketch => [
     {
         duration: 5000,
         update: (evt: PhaserUpdateEvent) => (sketch.stroke.a = evt.phasePercentage),
-        // update: (evt: PhaserUpdateEvent) => (sketch.stroke.a = 1),
         pre: () => console.log('prePhase 1'),
         post: () => {
             sketch.stroke.a = 1;
@@ -80,7 +79,7 @@ const createDotPhases: (sketch: DotSketch) => DotPhases = sketch => [
     },
 ];
 
-const createDotDrawBucket = (ctx: CanvasRenderingContext2D) => {
+const createDotDrawBucket = (ctx: CanvasRenderingContext2D, type?: 'fill' | 'stroke' | 'fillStroke') => {
     const sketch = {...dotSketch};
     // const fill = {...dotSketch.fill};
     const stroke = {...dotSketch.stroke};
@@ -105,7 +104,6 @@ export type DotSketch = typeof dotSketch;
 
 export type DotPhases = {
     duration: number;
-    // update?: (evt: PhaserUpdateEvent) => void;
     update?: (evt: PhaserUpdateEvent) => void;
     pre?: () => void;
     post?: () => void;
