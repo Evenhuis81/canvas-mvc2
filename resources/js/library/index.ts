@@ -9,18 +9,13 @@ import type {Engine} from './types/engine';
 
 export const resources: Record<string | number, LibraryResources> = {};
 
-const phaserUpdateEvent = {
-    phasePercentage: 0,
-    phasePercentageReverse: 1,
-};
-
 export const initialize = (id?: string | number, options?: Partial<LibraryOptions>) => {
     const libraryID = id ?? uid();
 
     const canvas = getCanvas(options);
     const context = getContext2D(canvas);
 
-    const engine = createEngine(libraryID, phaserUpdateEvent);
+    const engine = createEngine(libraryID);
 
     // Always first draw in engine setDraw
     if (options?.clear) clearOn(engine, context);
@@ -42,7 +37,7 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
     resources[libraryID] = {id: libraryID, canvas, context, engine, container, sv, input, stats};
 };
 
-export const getLibraryOptions = (context: CanvasRenderingContext2D, engine: Engine<object>) => {
+export const getLibraryOptions = (context: CanvasRenderingContext2D, engine: Engine) => {
     const setClear = () => clearOn(engine, context);
     const setDot = () => dotOn(engine, context);
     const removeClear = () => clearOff(engine);
@@ -56,7 +51,7 @@ export const getLibraryOptions = (context: CanvasRenderingContext2D, engine: Eng
     };
 };
 
-const createLibraryStatistics = (engine: Engine<object>, context: CanvasRenderingContext2D, activate?: boolean) => {
+const createLibraryStatistics = (engine: Engine, context: CanvasRenderingContext2D, activate?: boolean) => {
     const engineStatistics = activate
         ? engine.createStats(context)
         : {
@@ -70,19 +65,19 @@ const createLibraryStatistics = (engine: Engine<object>, context: CanvasRenderin
     return {engine: engineStatistics};
 };
 
-const clearOn = (engine: Engine<object>, context: CanvasRenderingContext2D) => {
+const clearOn = (engine: Engine, context: CanvasRenderingContext2D) => {
     engine.setDraw(clear(context));
 };
 
-const clearOff = (engine: Engine<object>) => {
+const clearOff = (engine: Engine) => {
     engine.removeDraw(0); // clear show id = 0
 };
 
-const dotOn = (engine: Engine<object>, context: CanvasRenderingContext2D) => {
+const dotOn = (engine: Engine, context: CanvasRenderingContext2D) => {
     engine.setDraw(dotMiddle(context));
 };
 
-const dotOff = (engine: Engine<object>) => {
+const dotOff = (engine: Engine) => {
     engine.removeDraw(99); // dot show id = 99
 };
 

@@ -4,18 +4,25 @@ import type {Engine, EngineUpdate, EngineUpdateEvent} from 'library/types/engine
 let idCount = 0;
 const createProperties: () => PhaserProperties = () => ({
     id: `phaser-${idCount++}`,
-    phase: 0,
     timer: 0,
     totalTime: 0,
     active: false,
     atEnd: 'stop',
+    phase: {
+        id: 0,
+        duration: 0,
+    },
+    event: {
+        phasePercentage: 0,
+        phasePercentageReverse: 1,
+    },
 });
 
 const createMethods: (
     props: PhaserProperties,
     phaserDraw: PhaserDraw[],
     phases: PhaserPhase[],
-    engine: Engine<PhaserUpdateEvent>,
+    engine: Engine,
 ) => PhaserMethods = (props, phaserDraw, phases, engine) => ({
     startDraw: () => {
         if (!phaserDraw[0]) return;
@@ -31,13 +38,6 @@ const createMethods: (
 
         if (phaserDraw[0].remove) engine.removeDraw(`${props.id}-draw`); // RemoveDraw
     },
-    startPhase: phaseNr => {
-        const phase = phases[phaseNr];
-
-        if (phase.pre) phase.pre(); // PrePhase
-
-        if (phase.update) engine.setUpdate({id: `phase-${phaseNr}`, fn: phase.update});
-    },
     stopPhase: phaseNr => {
         const phase = phases[phaseNr];
         if (phase.update) engine.removeUpdate(`phase-${phaseNr}`);
@@ -45,7 +45,6 @@ const createMethods: (
         if (phase.post) phase.post(); // PostPhase
     },
     phaserEnd: () => {
-        // if (atEnd === 'stop') phaserAtEnd[atEnd]
         engine.removeUpdate(`${props.id}-main-update`);
 
         if (!phaserDraw[0]) return;
@@ -55,18 +54,16 @@ const createMethods: (
         if (phaserDraw[0].remove) engine.removeDraw(`${props.id}-draw`); // RemoveDraw
 
         props.totalTime = 0;
-        props.phase = 0;
+        props.phase = {id: 0, duration: 0};
     },
     resetPhaseProperties: () => {
         props.timer = 0;
-
-        // EngineCustomUpdateEvent reset here?
-        // props.totalTime = 0;
-        // props.phase = 0;
+        props.event.phasePercentage = 0;
+        props.event.phasePercentageReverse = 1;
     },
 });
 
-export const createPhaser = (engine: Engine<PhaserUpdateEvent>) => {
+export const createPhaser = (engine: Engine) => {
     const props = createProperties();
     const phases: PhaserPhase[] = [];
     const draws: PhaserDraw[] = [];
@@ -81,7 +78,7 @@ export const createPhaser = (engine: Engine<PhaserUpdateEvent>) => {
     const setPhases = (phaserPhases: Omit<PhaserPhase, 'id'>[]) =>
         phaserPhases.forEach(phase => phases.push(Object.assign(phase, {id: phases.length})));
 
-    const phaserUpdate = createPhaserUpdate(props, methods, phases);
+    const phaserUpdate = createPhaserUpdate(props, methods);
 
     // const stopPhaser = createStopPhaser(props);
     const startPhaser = createStartPhaser(engine, props, methods, phaserUpdate);
@@ -95,47 +92,53 @@ export const createPhaser = (engine: Engine<PhaserUpdateEvent>) => {
 };
 
 const createStartPhaser =
-    (
-        engine: Engine<PhaserUpdateEvent>,
-        props: PhaserProperties,
-        methods: PhaserMethods,
-        update: EngineUpdate<PhaserUpdateEvent>,
-    ) =>
-    () => {
+    (engine: Engine, props: PhaserProperties, methods: PhaserMethods, update: EngineUpdate) => () => {
         if (props.active) return console.log(`${props.id} already active`);
 
         props.active = true;
 
         methods.startDraw();
 
-        methods.startPhase(props.phase);
+        // props.phase = {
+        //     id: 0,
+        //     duration: 0,
+        // }
+
+        // methods.startPhase(props.phase);
 
         engine.setUpdate(update);
     };
 
-const createPhaserUpdate = (props: PhaserProperties, methods: PhaserMethods, phases: PhaserPhase[]) => ({
+const createPhaserUpdate = (props: PhaserProperties, methods: PhaserMethods) => ({
     id: `${props.id}-main-update`,
     name: `Main Update ${props.id}`,
-    fn: (evt: EngineUpdateEvent<PhaserUpdateEvent>) => {
+    fn: (evt: EngineUpdateEvent) => {
         props.timer += evt.timePassed;
         props.totalTime += evt.timePassed;
 
-        evt.phasePercentage = props.timer / phases[props.phase].duration;
-        evt.phasePercentageReverse = 1 - evt.phasePercentage;
+        props.event.phasePercentage = props.timer / props.phase.duration;
+        props.event.phasePercentageReverse = 1 - props.event.phasePercentage;
 
-        if (phases[props.phase].duration < props.timer) {
-            methods.stopPhase(props.phase);
+        if (props.phase.duration < props.timer) {
+            // methods.stopPhase(props.phase);
 
             methods.resetPhaseProperties();
 
             // Find better solution for this reset
-            evt.phasePercentage = 0;
-            evt.phasePercentageReverse = 1;
+            props.event.phasePercentage = 0;
+            props.event.phasePercentageReverse = 1;
 
-            if (!phases[++props.phase]) return methods.phaserEnd();
+            // if (!phases[++props.phase]) return methods.phaserEnd();
 
-            methods.startPhase(props.phase);
+            // methods.startPhase(props.phase);
         }
+
+        // New phase will start immediately, test if this is desirable
+        // const phase = phases[phaseNr];
+
+        // if (phase.pre) phase.pre(); // PrePhase
+
+        if (props.phase.update) props.phase.update(props.event);
     },
 });
 

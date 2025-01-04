@@ -6,28 +6,24 @@ export type EngineDrawConfig = {
     fn: (deltaTime: DOMHighResTimeStamp) => void;
 };
 
-export type EngineUpdateConfig<C extends object> = Omit<EngineDrawConfig, 'fn'> & {
-    fn: (evt: EngineUpdateEvent<C>) => void;
+export type EngineUpdateConfig = Omit<EngineDrawConfig, 'fn'> & {
+    fn: (evt: EngineUpdateEvent) => void;
 };
 
 export type EngineDraw = MakeOptional<EngineDrawConfig, 'id' | 'name'>;
 
-export type EngineUpdate<C extends object> = MakeOptional<EngineUpdateConfig<C>, 'id' | 'name'>;
+export type EngineUpdate = MakeOptional<EngineUpdateConfig, 'id' | 'name'>;
 
-// export type EngineCustomUpdateEvent<C extends object> = C;
-
-export type EngineUpdateEvent<C extends object> = InternalEngineUpdateEvent & C;
-
-export type InternalEngineUpdateEvent = {
+export type EngineUpdateEvent = {
     timePassed: number;
     lastTime: number;
 };
 
-export interface Engine<C extends object> {
+export interface Engine {
     run: () => void;
     runOnce: () => void;
     halt: () => void;
-    setUpdate: (update: EngineUpdate<C>) => void;
+    setUpdate: (update: EngineUpdate) => void;
     setDraw: (draw: EngineDraw) => void;
     removeUpdate: (id: number | string) => void;
     removeDraw: (id: number | string) => void;

@@ -11,8 +11,10 @@ export const startDotDemoPhaser2 = (libraryID: string | number) => {
 
     phaser.setDraw(draw);
 
+    const durationSlowFactor = 1;
+
     createDotPhases(sketch).forEach(phase => {
-        phase.duration = phase.duration / 10;
+        phase.duration = phase.duration / 1;
         phaser.setPhase(phase);
     });
 
@@ -40,26 +42,20 @@ const createDotPhaserDraw = (canvas: HTMLCanvasElement, context: CanvasRendering
 };
 
 const createDotPhases: (sketch: DotSketch) => DotPhases = sketch => [
-    // {
-    //     duration: 2000, // only duration acts like a pauze
-    // },
+    {
+        duration: 2000, // only duration acts like a pauze
+        pre: () => console.log('prePhase 1, duration only 2000ms'),
+    },
     {
         duration: 3000,
         update: (evt: PhaserUpdateEvent) => (sketch.stroke.a = evt.phasePercentage),
-        pre: () => console.log('prePhase 1'),
+        pre: () => console.log('prePhase 2'),
         post: () => {
             sketch.stroke.a = 1;
 
-            console.log('postPhase 1');
+            console.log('postPhase 2');
         },
     },
-    // {
-    // startAt: 4500,
-    // duration: 2500,
-    // update: () => {
-    //     console.log('startAt 4500 running');
-    // },
-    // },
     {
         duration: 4000,
         update: (evt: PhaserUpdateEvent) => {
@@ -68,20 +64,21 @@ const createDotPhases: (sketch: DotSketch) => DotPhases = sketch => [
             sketch.lineWidth = 4 * evt.phasePercentage + 2;
         },
         pre: () => {
-            console.log('prePhase2');
+            console.log('prePhase 3');
         },
         post: () => {
-            console.log('postPhase2');
+            console.log('postPhase 3');
             sketch.stroke.g = 0;
             sketch.stroke.b = 0;
             sketch.lineWidth = 6;
         },
     },
     {
-        duration: 5000,
+        duration: 2000,
         update: () => {
-            // console.log('phase 3 running');
+            console.log('phase 4 running');
         },
+        post: () => console.log('postPhase 4'),
     },
 ];
 
