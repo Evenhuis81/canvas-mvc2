@@ -7,10 +7,7 @@ export type PhaserProperties = {
     totalTime: number;
     active: boolean;
     event: PhaserUpdateEvent;
-    // atEnd: PhaserAtEnd;
 };
-
-// export type PhaserAtEnd = 'stop' | 'destroy' | 'repeat';
 
 export type PhaserUpdateEvent = {
     phasePercentage: number;
@@ -20,10 +17,10 @@ export type PhaserUpdateEvent = {
 export type PhaserMethods = {
     startDraw: () => void;
     stopDraw: () => void;
-    setPhase: (phase: number) => void;
+    setPhase: (phase: number) => boolean;
     // stopPhase: (phase: number) => void;
     // startPhase: (phase: number) => void;
-    phaserEnd: () => void;
+    end: () => void;
     resetPhaseProperties: () => void;
 };
 
