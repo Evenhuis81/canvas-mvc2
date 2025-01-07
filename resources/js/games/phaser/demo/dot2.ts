@@ -11,10 +11,10 @@ export const startDotDemoPhaser2 = (libraryID: string | number) => {
 
     phaser.setDraw(draw);
 
-    const durationSlowFactor = 1;
+    const durationSpeedFactor = 2;
 
     createDotPhases(sketch).forEach(phase => {
-        phase.duration = phase.duration / 1;
+        phase.duration = phase.duration / durationSpeedFactor;
         phaser.setPhase(phase);
     });
 
@@ -35,7 +35,7 @@ const createDotPhaserDraw = (canvas: HTMLCanvasElement, context: CanvasRendering
         post: () => {
             console.log('postDraw');
         },
-        // remove: true,
+        remove: true,
         draw,
         sketch,
     };
@@ -44,7 +44,7 @@ const createDotPhaserDraw = (canvas: HTMLCanvasElement, context: CanvasRendering
 const createDotPhases: (sketch: DotSketch) => DotPhases = sketch => [
     {
         duration: 2000, // only duration acts like a pauze
-        pre: () => console.log('prePhase 1, duration only 2000ms'),
+        pre: () => console.log('prePhase 1, duration only 2000ms / speedFactor'),
     },
     {
         duration: 3000,
@@ -103,15 +103,14 @@ const createDotDrawBucket = (ctx: CanvasRenderingContext2D, type?: 'fill' | 'str
     };
 };
 
-export type DotSketch = typeof dotSketch;
-
 export type DotPhases = {
     duration: number;
     update?: (evt: PhaserUpdateEvent) => void;
     pre?: () => void;
     post?: () => void;
-    // startAt?: number;
 }[];
+
+export type DotSketch = typeof dotSketch;
 
 const dotSketch = {
     x: 0,

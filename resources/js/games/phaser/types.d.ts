@@ -5,7 +5,7 @@ export type PhaserProperties = {
     phase: PhaserPhase; // current or active phase
     timer: number;
     totalTime: number;
-    active: boolean;
+    active: boolean; // = phase.duration = 0?
     event: PhaserUpdateEvent;
 };
 
@@ -17,9 +17,8 @@ export type PhaserUpdateEvent = {
 export type PhaserMethods = {
     startDraw: () => void;
     stopDraw: () => void;
-    setPhase: (phase: number) => boolean;
-    // stopPhase: (phase: number) => void;
-    // startPhase: (phase: number) => void;
+    setPhase: (phaseNr?: number) => boolean;
+    endPhase: () => void;
     end: () => void;
     resetPhaseProperties: () => void;
 };

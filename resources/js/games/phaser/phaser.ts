@@ -38,19 +38,16 @@ const createMethods: (
 
         if (phaserDraw[0].remove) engine.removeDraw(`${props.id}-draw`); // RemoveDraw
     },
-    setPhase: (phase: number) => {
-        if (!phases[phase]) return false;
+    setPhase: (phaseNr = 0) => {
+        if (!phases[phaseNr]) return false;
 
-        props.phase = phases[phase];
+        props.phase = phases[phaseNr];
 
         return true;
     },
-    // stopPhase: phaseNr => {
-    //     const phase = phases[phaseNr];
-    //     if (phase.update) engine.removeUpdate(`phase-${phaseNr}`);
-
-    //     if (phase.post) phase.post(); // PostPhase
-    // },
+    endPhase: () => {
+        if (props.phase.post) props.phase.post(); // PostPhase
+    },
     end: () => {
         engine.removeUpdate(`${props.id}-main-update`);
 
@@ -81,12 +78,12 @@ export const createPhaser = (engine: Engine) => {
 
     const setPhase = (phaserPhase: Omit<PhaserPhase, 'id'>) => {
         if (phaserPhase.duration === 0) {
-            console.log('duration on phaserPhase has to be more than 0.');
+            console.log('duration on phaserPhase must be more than 0.');
 
             return;
         }
 
-        // will always return a number above 0, thus this method returns a truthy or falsy
+        // will always return a number above 0, so method returns a truthy or falsy (>0 | undefined)
         return phases.push(Object.assign(phaserPhase, {id: phases.length}));
     };
 
@@ -115,13 +112,16 @@ export const createPhaser = (engine: Engine) => {
 const createStartPhaser =
     (engine: Engine, props: PhaserProperties, methods: PhaserMethods, update: EngineUpdate) => () => {
         if (props.active) return console.log(`${props.id} already active`);
+
+        methods.setPhase(); // set phase with id/index 0
+
+        if (props.phase.pre) props.phase.pre(); // PrePhase, used in update aswell, methods.startPhase?
+
         if (props.phase.duration === 0) return console.log(`${props.id} doesn't have any phases set, aborting`);
 
         props.active = true;
 
         methods.startDraw();
-
-        methods.setPhase(0);
 
         engine.setUpdate(update);
     };
@@ -137,6 +137,8 @@ const createPhaserUpdate = (props: PhaserProperties, methods: PhaserMethods) => 
         props.event.phasePercentageReverse = 1 - props.event.phasePercentage;
 
         if (props.phase.duration < props.timer) {
+            methods.endPhase();
+
             if (!methods.setPhase(props.phase.id + 1)) return methods.end();
 
             if (props.phase.pre) props.phase.pre(); // PrePhase
