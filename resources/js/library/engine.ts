@@ -9,26 +9,25 @@ import type {
     EngineUpdateEvent,
 } from './types/engine';
 
-const createProperties: () => EngineProperties = () => ({
+const engineUpdateEvent = {
+    timePassed: 0,
+    lastTime: 0,
+};
+
+const engineProperties = {
     requestID: 0,
     stop: false,
     stats: false,
     statsActive: false,
-});
+};
 
 export const createEngine = (libraryID: number | string) => {
-    const properties = createProperties();
+    const updateEvent = {...engineUpdateEvent};
+    const properties = {...engineProperties};
     const draws: EngineDrawConfig[] = [];
     const updates: EngineUpdateConfig[] = [];
 
-    const event = {
-        timePassed: 0,
-        lastTime: 0,
-        phasePercentage: 0,
-        phasePercentageReverse: 1,
-    };
-
-    const loop = createLoop(properties, updates, draws, event);
+    const loop = createLoop(properties, updates, draws, updateEvent);
 
     const run = () => loop(0);
 
@@ -42,7 +41,7 @@ export const createEngine = (libraryID: number | string) => {
 
     const {setUpdate, setDraw, removeUpdate, removeDraw} = createSetAndRemoveUpdatesAndDraws(updates, draws);
 
-    const info = createInfo(updates, draws, event);
+    const info = createInfo(updates, draws, updateEvent);
 
     const createStats = (context: CanvasRenderingContext2D) =>
         createEngineStats(libraryID, info, properties, context, setDraw, removeDraw);
@@ -132,7 +131,7 @@ const createSetAndRemoveUpdatesAndDraws = (updates: EngineUpdateConfig[], draws:
     };
 };
 
-const createInfo = (updates: EngineUpdateConfig[], draws: EngineDrawConfig[], event: EngineUpdateEvent) => ({
+const createInfo = (updates: EngineUpdateConfig[], draws: EngineDrawConfig[], updateEvent: EngineUpdateEvent) => ({
     updates: {
         length: () => updates.length,
         ids: () => updates.map(update => update.id),
@@ -142,8 +141,8 @@ const createInfo = (updates: EngineUpdateConfig[], draws: EngineDrawConfig[], ev
         ids: () => draws.map(draw => draw.id),
     },
     time: {
-        passed: () => event.timePassed,
-        last: () => event.lastTime,
+        passed: () => updateEvent.timePassed,
+        last: () => updateEvent.lastTime,
     },
 });
 

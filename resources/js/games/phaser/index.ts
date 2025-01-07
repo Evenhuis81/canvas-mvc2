@@ -20,6 +20,5 @@ const libraryOptions: Partial<LibraryOptions> = {
     full: true,
     clear: true,
     backgroundColor: '#000',
-    // dotMiddle: true,
-    engineStats: true,
+    // engineStats: true,
 };

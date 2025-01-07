@@ -1,12 +1,12 @@
-import {EngineDraw, EngineUpdate} from 'library/types/engine';
+import {EngineDraw} from 'library/types/engine';
 
 export type PhaserProperties = {
     id: string;
-    phase: number;
+    phase: PhaserPhase; // current or active phase
     timer: number;
     totalTime: number;
-    active: boolean;
-    atEnd: PhaserAtEnd;
+    active: boolean; // = phase.duration = 0?
+    event: PhaserUpdateEvent;
 };
 
 export type PhaserUpdateEvent = {
@@ -17,13 +17,11 @@ export type PhaserUpdateEvent = {
 export type PhaserMethods = {
     startDraw: () => void;
     stopDraw: () => void;
-    stopPhase: (phase: number) => void;
-    startPhase: (phase: number) => void;
-    phaserEnd: () => void;
+    setPhase: (phaseNr?: number) => boolean;
+    endPhase: () => void;
+    end: () => void;
     resetPhaseProperties: () => void;
 };
-
-export type PhaserAtEnd = 'stop' | 'destroy' | 'repeat';
 
 export type PhaserUpdate = (evt: PhaserUpdateEvent) => void;
 
@@ -40,13 +38,4 @@ export type PhaserPhase = {
     update?: PhaserUpdate;
     pre?: () => void;
     post?: () => void;
-    // startAt? : number;
 };
-
-// export type PhaserEvent = {
-// destroyPhaser: () => void;
-// startPhaser: () => void;
-// repeatPhaser: () => void;
-// startFromPhase: (phase: number) => void;
-// stopPhaser: () => void;
-// };

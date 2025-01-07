@@ -6,7 +6,9 @@ export type EngineDrawConfig = {
     fn: (deltaTime: DOMHighResTimeStamp) => void;
 };
 
-export type EngineUpdateConfig = Omit<EngineDrawConfig, 'fn'> & {fn: (evt: EngineUpdateEvent) => void};
+export type EngineUpdateConfig = Omit<EngineDrawConfig, 'fn'> & {
+    fn: (evt: EngineUpdateEvent) => void;
+};
 
 export type EngineDraw = MakeOptional<EngineDrawConfig, 'id' | 'name'>;
 
@@ -15,8 +17,6 @@ export type EngineUpdate = MakeOptional<EngineUpdateConfig, 'id' | 'name'>;
 export type EngineUpdateEvent = {
     timePassed: number;
     lastTime: number;
-    phasePercentage: number;
-    phasePercentageReverse: number;
 };
 
 export interface Engine {

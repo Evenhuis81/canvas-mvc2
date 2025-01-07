@@ -4,11 +4,18 @@ import type {Engine, EngineUpdate, EngineUpdateEvent} from 'library/types/engine
 let idCount = 0;
 const createProperties: () => PhaserProperties = () => ({
     id: `phaser-${idCount++}`,
-    phase: 0,
     timer: 0,
     totalTime: 0,
     active: false,
     atEnd: 'stop',
+    phase: {
+        id: 0,
+        duration: 0,
+    },
+    event: {
+        phasePercentage: 0,
+        phasePercentageReverse: 1,
+    },
 });
 
 const createMethods: (
@@ -16,8 +23,7 @@ const createMethods: (
     phaserDraw: PhaserDraw[],
     phases: PhaserPhase[],
     engine: Engine,
-    event: PhaserUpdateEvent,
-) => PhaserMethods = (props, phaserDraw, phases, engine, event) => ({
+) => PhaserMethods = (props, phaserDraw, phases, engine) => ({
     startDraw: () => {
         if (!phaserDraw[0]) return;
 
@@ -26,28 +32,27 @@ const createMethods: (
         engine.setDraw({id: `${props.id}-draw`, fn: phaserDraw[0].draw});
     },
     stopDraw: () => {
-        if (!phaserDraw) return;
+        if (!phaserDraw[0]) return;
 
-        if (phaserDraw[0].pre) phaserDraw[0].pre(); // PostDraw
+        if (phaserDraw[0].post) phaserDraw[0].post(); // PostDraw
 
         if (phaserDraw[0].remove) engine.removeDraw(`${props.id}-draw`); // RemoveDraw
     },
-    startPhase: phaseNr => {
-        const phase = phases[phaseNr];
+    setPhase: (phaseNr = 0) => {
+        if (!phases[phaseNr]) return false;
 
-        if (phase.pre) phase.pre(); // PrePhase
+        props.phase = phases[phaseNr];
 
-        if (phase.update) engine.setUpdate({id: `phase-${phaseNr}`, fn: phase.update});
+        return true;
     },
-    stopPhase: phaseNr => {
-        const phase = phases[phaseNr];
-        if (phase.update) engine.removeUpdate(`phase-${phaseNr}`);
-
-        if (phase.post) phase.post(); // PostPhase
+    endPhase: () => {
+        if (props.phase.post) props.phase.post(); // PostPhase
     },
-    phaserEnd: () => {
-        // if (atEnd === 'stop') phaserAtEnd[atEnd]
+    end: () => {
         engine.removeUpdate(`${props.id}-main-update`);
+
+        props.totalTime = 0;
+        // props.phase = {id: 0, duration: 0}; // optional
 
         if (!phaserDraw[0]) return;
 
@@ -57,8 +62,8 @@ const createMethods: (
     },
     resetPhaseProperties: () => {
         props.timer = 0;
-        event.phasePercentage = 0;
-        event.phasePercentageReverse = 1;
+        props.event.phasePercentage = 0;
+        props.event.phasePercentageReverse = 1;
     },
 });
 
@@ -66,21 +71,33 @@ export const createPhaser = (engine: Engine) => {
     const props = createProperties();
     const phases: PhaserPhase[] = [];
     const draws: PhaserDraw[] = [];
-    const updateEvent = {
-        phasePercentage: 0,
-        phasePercentageReverse: 1,
-    };
-    const methods = createMethods(props, draws, phases, engine, updateEvent);
+
+    const methods = createMethods(props, draws, phases, engine);
 
     const setDraw = (phaserDraw: PhaserDraw) => draws.push(phaserDraw);
 
-    const setPhase = (phaserPhase: Omit<PhaserPhase, 'id'>) =>
-        phases.push(Object.assign(phaserPhase, {id: phases.length}));
+    const setPhase = (phaserPhase: Omit<PhaserPhase, 'id'>) => {
+        if (phaserPhase.duration === 0) {
+            console.log('duration on phaserPhase must be more than 0.');
 
-    const setPhases = (phaserPhases: Omit<PhaserPhase, 'id'>[]) =>
-        phaserPhases.forEach(phase => phases.push(Object.assign(phase, {id: phases.length})));
+            return;
+        }
 
-    const phaserUpdate = createPhaserUpdate(props, methods, phases, updateEvent);
+        // will always return a number above 0, so method returns a truthy or falsy (>0 | undefined)
+        return phases.push(Object.assign(phaserPhase, {id: phases.length}));
+    };
+
+    const setPhases = (phaserPhases: Omit<PhaserPhase, 'id'>[]) => {
+        for (const phase of phaserPhases) {
+            if (!setPhase(phase)) {
+                phases.length = 0;
+
+                break;
+            }
+        }
+    };
+
+    const phaserUpdate = createPhaserUpdate(props, methods);
 
     const startPhaser = createStartPhaser(engine, props, methods, phaserUpdate);
 
@@ -96,53 +113,58 @@ const createStartPhaser =
     (engine: Engine, props: PhaserProperties, methods: PhaserMethods, update: EngineUpdate) => () => {
         if (props.active) return console.log(`${props.id} already active`);
 
+        methods.setPhase(); // set phase with id/index 0
+
+        if (props.phase.pre) props.phase.pre(); // PrePhase, used in update aswell, methods.startPhase?
+
+        if (props.phase.duration === 0) return console.log(`${props.id} doesn't have any phases set, aborting`);
+
         props.active = true;
 
         methods.startDraw();
 
-        methods.startPhase(props.phase);
-
         engine.setUpdate(update);
     };
 
-const createPhaserUpdate = (
-    props: PhaserProperties,
-    methods: PhaserMethods,
-    phases: PhaserPhase[],
-    phaserEvent: PhaserUpdateEvent,
-) => ({
+const createPhaserUpdate = (props: PhaserProperties, methods: PhaserMethods) => ({
     id: `${props.id}-main-update`,
     name: `Main Update ${props.id}`,
-    type: 'engine',
     fn: (evt: EngineUpdateEvent) => {
         props.timer += evt.timePassed;
         props.totalTime += evt.timePassed;
 
-        phaserEvent.phasePercentage = props.timer / phases[props.phase].duration;
-        phaserEvent.phasePercentageReverse = 1 - phaserEvent.phasePercentage;
+        props.event.phasePercentage = props.timer / props.phase.duration;
+        props.event.phasePercentageReverse = 1 - props.event.phasePercentage;
 
-        if (phases[props.phase].duration < props.timer) {
-            methods.stopPhase(props.phase);
+        if (props.phase.duration < props.timer) {
+            methods.endPhase();
+
+            if (!methods.setPhase(props.phase.id + 1)) return methods.end();
+
+            if (props.phase.pre) props.phase.pre(); // PrePhase
 
             methods.resetPhaseProperties();
 
-            if (!phases[++props.phase]) return methods.phaserEnd();
-
-            methods.startPhase(props.phase);
+            // methods.setPhase(props.phase.id + 1);
+            // if (!phases[++props.phase]) return methods.phaserEnd();
+            // methods.startPhase(props.phase);
         }
+
+        // New phase will start immediately, test if this is desirable
+        if (props.phase.update) props.phase.update(props.event);
     },
 });
 
-// const createStopPhaser = (props: PhaserProperties, phaserEvent: PhaserEvent, engine: Engine) => () => {
-//     if (!props.active) return console.log('phaser is not active!');
+const createStopPhaser = (props: PhaserProperties) => () => {
+    if (!props.active) return console.log('phaser is not active!');
 
-//     engine.removeUpdate(`${props.id}-main-update`);
+    //     engine.removeUpdate(`${props.id}-main-update`);
 
-//     props.stopDraw(props.id, props.draw, phaserEvent);
+    //     props.stopDraw(props.id, props.draw, phaserEvent);
 
-//     // Create reset methods in properties
-//     props.timer = 0;
-//     props.phase = 0;
+    //     // Create reset methods in properties
+    //     props.timer = 0;
+    //     props.phase = 0;
 
-//     props.active = false;
-// };
+    props.active = false;
+};
