@@ -19,7 +19,7 @@ export type PhaserMethods = {
     stopDraw: () => void;
     setPhase: (phaseNr?: number) => boolean;
     endPhase: () => void;
-    end: () => void;
+    endPhaser: () => void;
     resetPhaseProperties: () => void;
 };
 

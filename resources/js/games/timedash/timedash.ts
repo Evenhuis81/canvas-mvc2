@@ -7,11 +7,8 @@ export default {
             containerID: 'timedash-container',
             full: true,
             clear: true,
-            // contextMenu: true,
             backgroundColor: '#000',
-            // statistics: {
-            //     toggleKey: 'KeyH',
-            // },
+            engineStats: true,
         });
 
         const entity = getEntity('timedash');

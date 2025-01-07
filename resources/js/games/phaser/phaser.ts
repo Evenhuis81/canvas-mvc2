@@ -48,17 +48,23 @@ const createMethods: (
     endPhase: () => {
         if (props.phase.post) props.phase.post(); // PostPhase
     },
-    end: () => {
+    endPhaser: () => {
         engine.removeUpdate(`${props.id}-main-update`);
 
         props.totalTime = 0;
-        // props.phase = {id: 0, duration: 0}; // optional
+        props.phase = {id: 0, duration: 0};
+        props.timer = 0;
+        props.event.phasePercentage = 0;
+        props.event.phasePercentageReverse = 1;
 
         if (!phaserDraw[0]) return;
 
         if (phaserDraw[0].post) phaserDraw[0].post(); // PostDraw
 
         if (phaserDraw[0].remove) engine.removeDraw(`${props.id}-draw`); // RemoveDraw
+
+        phaserDraw.length = 0;
+        phases.length = 0;
     },
     resetPhaseProperties: () => {
         props.timer = 0;
@@ -101,8 +107,11 @@ export const createPhaser = (engine: Engine) => {
 
     const startPhaser = createStartPhaser(engine, props, methods, phaserUpdate);
 
+    const stopPhaser = createStopPhaser(props, methods);
+
     return {
         start: startPhaser,
+        stop: stopPhaser,
         setDraw,
         setPhases,
         setPhase,
@@ -139,32 +148,22 @@ const createPhaserUpdate = (props: PhaserProperties, methods: PhaserMethods) => 
         if (props.phase.duration < props.timer) {
             methods.endPhase();
 
-            if (!methods.setPhase(props.phase.id + 1)) return methods.end();
+            if (!methods.setPhase(props.phase.id + 1)) return methods.endPhaser();
 
             if (props.phase.pre) props.phase.pre(); // PrePhase
 
             methods.resetPhaseProperties();
-
-            // methods.setPhase(props.phase.id + 1);
-            // if (!phases[++props.phase]) return methods.phaserEnd();
-            // methods.startPhase(props.phase);
         }
 
-        // New phase will start immediately, test if this is desirable
+        // New phase will start immediately, need testing if this is desirable
         if (props.phase.update) props.phase.update(props.event);
     },
 });
 
-const createStopPhaser = (props: PhaserProperties) => () => {
+const createStopPhaser = (props: PhaserProperties, methods: PhaserMethods) => () => {
     if (!props.active) return console.log('phaser is not active!');
 
-    //     engine.removeUpdate(`${props.id}-main-update`);
-
-    //     props.stopDraw(props.id, props.draw, phaserEvent);
-
-    //     // Create reset methods in properties
-    //     props.timer = 0;
-    //     props.phase = 0;
+    methods.endPhaser();
 
     props.active = false;
 };

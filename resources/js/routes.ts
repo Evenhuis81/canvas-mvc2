@@ -11,22 +11,6 @@ export const routes: RouteRecordRaw[] = [
         },
     },
     {
-        path: '/phaser',
-        component: () => import('./games/Phaser.vue'),
-        name: 'Phaser',
-        meta: {
-            shouldBeLoggedIn: false,
-        },
-    },
-    {
-        path: '/test',
-        component: () => import('./library/test/Test.vue'),
-        name: 'Test',
-        meta: {
-            shouldBeLoggedIn: false,
-        },
-    },
-    {
         path: '/tr',
         component: () => import('./games/TR.vue'),
         name: 'TombRaid',
@@ -86,6 +70,22 @@ export const routes: RouteRecordRaw[] = [
         path: '/timedash',
         component: () => import('./games/timedash/Timedash.vue'),
         name: 'Time Dash',
+        meta: {
+            shouldBeLoggedIn: false,
+        },
+    },
+    {
+        path: '/phaser',
+        component: () => import('./games/Phaser.vue'),
+        name: 'Phaser',
+        meta: {
+            shouldBeLoggedIn: false,
+        },
+    },
+    {
+        path: '/test',
+        component: () => import('./library/test/Test.vue'),
+        name: 'Test',
         meta: {
             shouldBeLoggedIn: false,
         },
