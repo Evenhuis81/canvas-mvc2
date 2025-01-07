@@ -1,3 +1,4 @@
+import {EngineDraw, EngineUpdate} from './engine';
 import {ShapesConfig} from './shapes';
 
 export interface GeneralProperties {
@@ -106,7 +107,7 @@ export interface VisualProperties {
 export type TransitionSpeed = 1 | 2 | 3 | 4 | 5;
 
 export type Renderer = {
-    update: Required<Update>;
+    update: Required<EngineUpdate>;
     prepare?: () => void;
 };
 
@@ -115,7 +116,7 @@ export interface Visuals {
     hover?: Renderer;
     start?: Renderer;
     end?: Renderer;
-    draw: Required<Draw>;
+    draw: Required<EngineDraw>;
 }
 
 export type EngineState = 'on' | 'off'; // Future states: 'pauze' | 'continue'?;

@@ -3,16 +3,27 @@ import {createUserMethods} from './properties';
 import {createVisualsAndCallbacks} from './animate';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
-import {resources} from '..';
 import type {EntityConfig, EntityMethods, GeneralProperties} from 'library/types/entity';
 import {createSketch} from './sketch';
 import {defaultProperties} from './defaults';
+import type {LibraryInput} from 'library/types/input';
+import type {Engine} from 'library/types/engine';
 
-const createResource = (res: Resources) => ({
-    create: (options?: EntityConfig) => createEntity(res, options),
-});
+// export const getCreatePhaser = (engine: Engine) => createPhaser(engine);
 
-const createEntity = ({context, engine, input}: Resources, options?: EntityConfig) => {
+export const getCreateEntity = (
+    context: CanvasRenderingContext2D,
+    engine: Engine,
+    input: LibraryInput,
+    options?: EntityConfig,
+) => createEntity(context, engine, input, options);
+
+const createEntity = (
+    context: CanvasRenderingContext2D,
+    engine: Engine,
+    input: LibraryInput,
+    options?: EntityConfig,
+) => {
     // Extract internal properties from options
     const {generalProperties, visualProperties, listeners, shape} = extractOptions(options);
 

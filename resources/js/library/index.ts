@@ -1,11 +1,13 @@
 import {createContainer, getCanvas, getContainer, getContext2D, setCanvas} from './canvas';
 import {createEngine} from './engine';
-// import {getTV} from './views/tv';
 import {getInput} from 'library/input';
 import {getSV} from './views/sv';
 import {uid} from './helpers';
 import type {LibraryOptions, LibraryResources} from './types';
 import type {Engine} from './types/engine';
+import {getCreatePhaser} from 'games/phaser/phaser';
+import {getCreateEntity} from './entity';
+import {EntityConfig} from './types/entity';
 
 export const resources: Record<string | number, LibraryResources> = {};
 
@@ -27,14 +29,16 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
 
     const input = getInput(canvas);
 
-    // const input = getInput(canvas, options?.dualView);
-    // const tv = getTV(context, input);
-
     const sv = getSV(context, engine);
 
     const stats = createLibraryStatistics(engine, context, options?.engineStats);
 
     resources[libraryID] = {id: libraryID, canvas, context, engine, container, sv, input, stats};
+
+    return {
+        createPhaser: () => getCreatePhaser(engine),
+        createEntity: (options?: EntityConfig) => getCreateEntity(context, engine, input, options),
+    };
 };
 
 export const getLibraryOptions = (context: CanvasRenderingContext2D, engine: Engine) => {

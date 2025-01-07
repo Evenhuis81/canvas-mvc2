@@ -1,13 +1,16 @@
-import type {PhaserDraw, PhaserMethods, PhaserPhase, PhaserProperties, PhaserUpdateEvent} from './types';
+import type {PhaserDraw, PhaserMethods, PhaserPhase, PhaserProperties} from './types';
 import type {Engine, EngineUpdate, EngineUpdateEvent} from 'library/types/engine';
 
-let idCount = 0;
+// Using get for library initiation (trying to let everything flow through library, no more direct use of engine, etc.)
+export const getCreatePhaser = (engine: Engine) => createPhaser(engine);
+
+let idCount = 0; // Make part of libraryStats or Statitics module, more will be added for other library modules
+
 const createProperties: () => PhaserProperties = () => ({
     id: `phaser-${idCount++}`,
     timer: 0,
     totalTime: 0,
     active: false,
-    atEnd: 'stop',
     phase: {
         id: 0,
         duration: 0,
@@ -73,7 +76,7 @@ const createMethods: (
     },
 });
 
-export const createPhaser = (engine: Engine) => {
+const createPhaser = (engine: Engine) => {
     const props = createProperties();
     const phases: PhaserPhase[] = [];
     const draws: PhaserDraw[] = [];
