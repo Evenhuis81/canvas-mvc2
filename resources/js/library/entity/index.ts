@@ -3,7 +3,7 @@ import {createUserMethods} from './properties';
 import {createVisualsAndCallbacks} from './animate';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
-import type {EntityConfig, EntityMethods, GeneralProperties} from 'library/types/entity';
+import type {Entity, EntityConfig, GeneralProperties} from 'library/types/entity';
 import {createSketch} from './sketch';
 import {defaultProperties} from './defaults';
 import type {LibraryInput} from 'library/types/input';
@@ -45,19 +45,19 @@ const createEntity = (
         eventHandler,
     ); // Also creates setEngine
 
-    const userMethods: EntityMethods = {
+    const entity: Entity = {
         addListener: eventHandler.addListener,
         removeListener: eventHandler.removeListeners,
         setVisual,
         ...createUserMethods(visualProperties, generalProperties, callbacks, eventHandler),
     };
 
-    initialize(generalProperties, userMethods);
+    initialize(generalProperties, entity);
 
-    return userMethods;
+    return entity;
 };
 
-const initialize = (gProps: GeneralProperties, methods: EntityMethods) => {
+const initialize = (gProps: GeneralProperties, methods: Entity) => {
     if (gProps.show) {
         // Test optional setTimeout efficiency
         setTimeout(() => {
@@ -98,6 +98,3 @@ const extractOptions = (options: EntityConfig = {}) => {
 
     return {generalProperties, visualProperties, listeners, shape};
 };
-
-// TODO::Resource availability check
-export default (resourceID: string | number) => createResource(resources[resourceID]);

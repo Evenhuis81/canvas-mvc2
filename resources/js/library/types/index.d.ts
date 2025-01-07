@@ -1,20 +1,26 @@
+import {Phaser} from 'games/phaser/types';
 import {Engine, EngineStatistics} from './engine';
 import {LibraryInput} from './input';
 import {StaticView} from './views';
+import {EntityConfig, EntityMethods} from './entity';
 
 type MakeOptional<T, K extends keyof T> = Omit<T, K> & {[P in K]?: T[P]};
 
 export interface LibraryResources {
-    id: string | number;
+    // id: string | number;
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
-    container: HTMLDivElement;
-    engine: Engine;
-    sv: StaticView; // empty
-    input: LibraryInput;
-    stats: {
-        engine: EngineStatistics;
-    };
+    // container: HTMLDivElement;
+    // engine: Engine;
+    // sv: StaticView; // empty
+    // input: LibraryInput;
+    // stats: {
+    //     engine: EngineStatistics;
+    // };
+    runEngine: () => void;
+    runEngineOnce: () => void;
+    createPhaser: () => Phaser;
+    createEntity: (options?: EntityConfig) => EntityMethods;
 }
 
 export interface StatisticOptions {

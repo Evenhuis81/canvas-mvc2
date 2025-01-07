@@ -1,28 +1,24 @@
-import {initialize, resources} from 'library/index';
-import getEntity from 'library/entity';
+import {initialize} from 'library/index';
 import {EntityConfig} from 'library/types/entity';
 
 const libraryID = 'timedash';
 
-export default {
-    setup: () => {
-        const library = initialize(libraryID, {
-            containerID: `${libraryID}-container`,
-            full: true,
-            clear: true,
-            backgroundColor: '#000',
-            engineStats: true,
-        });
+export default () => {
+    const library = initialize(libraryID, {
+        containerID: `${libraryID}-container`,
+        full: true,
+        clear: true,
+        backgroundColor: '#000',
+        engineStats: true,
+    });
 
-        const phaser = library.createPhaser();
+    const phaser1 = library.createPhaser();
 
-        const entity1 = library.createEntity(example1);
-        // const entity = getEntity(libraryID);
+    const entity1 = library.createEntity(example1);
 
-        // Add type 'text', or shape, add default if not exist yet
-    },
-    run: () => resources.timedash.engine.run(),
-    runOnce: () => resources.timedash.engine.runOnce(),
+    console.log(phaser1, entity1);
+
+    return library;
 };
 
 const example1: EntityConfig = {

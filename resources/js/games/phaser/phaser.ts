@@ -1,4 +1,4 @@
-import type {PhaserDraw, PhaserMethods, PhaserPhase, PhaserProperties} from './types';
+import type {Phaser, PhaserDraw, PhaserMethods, PhaserPhase, PhaserProperties} from './types';
 import type {Engine, EngineUpdate, EngineUpdateEvent} from 'library/types/engine';
 
 // Using get for library initiation (trying to let everything flow through library, no more direct use of engine, etc.)
@@ -76,7 +76,7 @@ const createMethods: (
     },
 });
 
-const createPhaser = (engine: Engine) => {
+const createPhaser = (engine: Engine): Phaser => {
     const props = createProperties();
     const phases: PhaserPhase[] = [];
     const draws: PhaserDraw[] = [];
@@ -116,8 +116,8 @@ const createPhaser = (engine: Engine) => {
         start: startPhaser,
         stop: stopPhaser,
         setDraw,
-        setPhases,
         setPhase,
+        setPhases,
     };
 };
 

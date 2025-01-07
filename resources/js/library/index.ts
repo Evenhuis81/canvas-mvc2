@@ -9,7 +9,7 @@ import {getCreatePhaser} from 'games/phaser/phaser';
 import {getCreateEntity} from './entity';
 import {EntityConfig} from './types/entity';
 
-export const resources: Record<string | number, LibraryResources> = {};
+// export const resources: Record<string | number, LibraryResources> = {};
 
 export const initialize = (id?: string | number, options?: Partial<LibraryOptions>) => {
     const libraryID = id ?? uid();
@@ -33,9 +33,13 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
 
     const stats = createLibraryStatistics(engine, context, options?.engineStats);
 
-    resources[libraryID] = {id: libraryID, canvas, context, engine, container, sv, input, stats};
+    // resources[libraryID] = {id: libraryID, canvas, context, engine, container, sv, input, stats};
 
     return {
+        canvas,
+        context,
+        runEngine: () => engine.run(),
+        runEngineOnce: () => engine.runOnce(),
         createPhaser: () => getCreatePhaser(engine),
         createEntity: (options?: EntityConfig) => getCreateEntity(context, engine, input, options),
     };

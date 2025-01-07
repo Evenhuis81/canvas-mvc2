@@ -1,13 +1,12 @@
-import {resources} from 'library/index';
-import {createPhaser} from '../phaser';
 import type {PhaserUpdateEvent} from '../types';
+import {LibraryResources} from 'library/types';
 
-export const startDotDemoPhaser2 = (libraryID: string | number) => {
-    const {context, canvas, engine} = resources[libraryID];
+export const startDotDemoPhaser2 = (library: LibraryResources) => {
+    // const {context, canvas, engine} = resources[libraryID];
 
-    const phaser = createPhaser(engine);
+    const phaser = library.createPhaser();
 
-    const {sketch, ...draw} = createDotPhaserDraw(canvas, context);
+    const {sketch, ...draw} = createDotPhaserDraw(library.canvas, library.context);
 
     phaser.setDraw(draw);
 

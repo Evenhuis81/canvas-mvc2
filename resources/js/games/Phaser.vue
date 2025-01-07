@@ -6,9 +6,5 @@
 import {onMounted} from 'vue';
 import phaser from './phaser';
 
-onMounted(() => {
-    phaser.setup();
-
-    phaser.run();
-});
+onMounted(() => phaser().runEngine());
 </script>

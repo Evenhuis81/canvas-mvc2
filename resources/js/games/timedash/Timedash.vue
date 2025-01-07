@@ -6,9 +6,5 @@
 import {onMounted} from 'vue';
 import timedash from './timedash';
 
-onMounted(() => {
-    timedash.setup();
-
-    timedash.run();
-});
+onMounted(() => timedash().runEngine());
 </script>

@@ -29,7 +29,7 @@ export type AddListener = <K extends keyof EntityEventMap>(key: K, listener: (ev
 
 export type RemoveListener = () => void;
 
-export interface EntityMethods {
+export interface Entity {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
     addListener: AddListener;
@@ -37,8 +37,6 @@ export interface EntityMethods {
     setHideTime: SetHideTime;
     setVisual: SetVisual;
 }
-
-export type Entity = EntityMethods;
 
 export interface Callbacks {
     start: (quickShow: boolean, prepare?: () => void) => void;

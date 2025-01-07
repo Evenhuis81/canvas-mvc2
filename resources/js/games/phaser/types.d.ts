@@ -23,6 +23,14 @@ export type PhaserMethods = {
     resetPhaseProperties: () => void;
 };
 
+export type Phaser = {
+    start: () => void;
+    stop: () => void;
+    setDraw: (phaserDraw: PhaserDraw) => number;
+    setPhases: (phaserPhases: Omit<PhaserPhase, 'id'>[]) => void;
+    setPhase: (phaserPhases: Omit<PhaserPhase, 'id'>) => void;
+};
+
 export type PhaserUpdate = (evt: PhaserUpdateEvent) => void;
 
 export type PhaserDraw = {
