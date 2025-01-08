@@ -67,9 +67,9 @@ export const routes: RouteRecordRaw[] = [
         },
     },
     {
-        path: '/timedash',
-        component: () => import('./games/timedash/Timedash.vue'),
-        name: 'Time Dash',
+        path: '/entity',
+        component: () => import('./games/entity/Entity.vue'),
+        name: 'Entity Demo',
         meta: {
             shouldBeLoggedIn: false,
         },
