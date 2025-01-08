@@ -1,3 +1,4 @@
+<script setup lang="ts">
 import {initialize} from 'library/index';
 import {EntityConfig} from 'library/types/entity';
 
@@ -58,3 +59,4 @@ const example1: EntityConfig = {
     //     console.log('end transition ended USER INPUT');
     // },
 };
+</script>
