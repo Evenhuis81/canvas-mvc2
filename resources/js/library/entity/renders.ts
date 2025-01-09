@@ -1,14 +1,14 @@
 /* eslint-disable max-lines-per-function */
 import type {Callbacks, Colors, GeneralProperties, VisualProperties} from 'library/types/entity';
+import {LibraryInput} from 'library/types/input';
 import type {Shapes} from 'library/types/shapes';
-import type {Input} from 'library/types/input';
 
 export const createRenders = (
     props: GeneralProperties,
     sketch: Shapes,
     colors: Colors,
     vProps: VisualProperties,
-    input: Input,
+    input: LibraryInput,
     context: CanvasRenderingContext2D,
     callbacks: Pick<Callbacks, 'startEnd' | 'endEnd'>,
 ) => {
@@ -225,7 +225,7 @@ const createTransitionExplode = (
 
 const createTransitionUpdate =
     (
-        {mouse}: Input, // only mouse, no hover on touch
+        {mouse}: LibraryInput, // only mouse, no hover on touch
         sketch: Shapes,
         transition: {
             forward: () => void;
@@ -233,7 +233,6 @@ const createTransitionUpdate =
         },
     ) =>
     () => {
-        // if (mouse.insideRect(sketch)) {
         if (mouse.inside(sketch)) {
             transition.forward();
 

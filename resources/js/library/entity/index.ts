@@ -9,16 +9,7 @@ import {defaultProperties} from './defaults';
 import type {LibraryInput} from 'library/types/input';
 import type {Engine} from 'library/types/engine';
 
-// export const getCreatePhaser = (engine: Engine) => createPhaser(engine);
-
 export const getCreateEntity = (
-    context: CanvasRenderingContext2D,
-    engine: Engine,
-    input: LibraryInput,
-    options?: EntityConfig,
-) => createEntity(context, engine, input, options);
-
-const createEntity = (
     context: CanvasRenderingContext2D,
     engine: Engine,
     input: LibraryInput,

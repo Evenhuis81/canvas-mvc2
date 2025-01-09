@@ -3,18 +3,13 @@ import {EntityText, ShapeDefaults, ShapesConfig} from 'library/types/shapes';
 export const createSketch = (shape?: ShapesConfig) => {
     if (!shape) return {...shapeDefaults.rect, ...textDefault};
 
-    console.log(shape.type);
-
-    const sketch = {
+    return {
         ...shapeDefaults[shape.type],
         ...textDefault,
         ...Object.fromEntries(Object.entries(shape).filter(item => Boolean(item[1]))),
     };
-
-    return sketch;
 };
 
-// Combine in 1 object or several?
 const shapeDefaults: ShapeDefaults = {
     rect: {
         type: 'rect',

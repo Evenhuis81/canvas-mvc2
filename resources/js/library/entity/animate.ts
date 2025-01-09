@@ -1,4 +1,5 @@
 /* eslint-disable max-lines-per-function */
+import {Engine} from 'library/types/engine';
 import {createRenders} from './renders';
 import type {
     Callbacks,
@@ -10,15 +11,15 @@ import type {
     VisualProperties,
     Visuals,
 } from 'library/types/entity';
-import type {Input} from 'library/types/input';
 import type {Shapes} from 'library/types/shapes';
+import {LibraryInput} from 'library/types/input';
 
 export const createVisualsAndCallbacks = (
     gProps: GeneralProperties,
     vProps: VisualProperties,
     sketch: Shapes,
     colors: Colors,
-    input: Input,
+    input: LibraryInput,
     engine: Engine,
     context: CanvasRenderingContext2D,
     eventHandler: EventHandler,
@@ -29,8 +30,6 @@ export const createVisualsAndCallbacks = (
 
     // callbacks: Pick<Callbacks, 'startEnd' | 'endEnd'>,
     const renders = createRenders(gProps, sketch, colors, vProps, input, context, callbacks);
-
-    // console.log(sketch);
 
     const visuals = {
         entity: animationType ? renders.animations[animationType]() : undefined,

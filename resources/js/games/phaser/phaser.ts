@@ -2,7 +2,7 @@ import type {Phaser, PhaserDraw, PhaserMethods, PhaserPhase, PhaserProperties} f
 import type {Engine, EngineUpdate, EngineUpdateEvent} from 'library/types/engine';
 
 // Using get for library initiation (trying to let everything flow through library, no more direct use of engine, etc.)
-export const getCreatePhaser = (engine: Engine) => createPhaser(engine);
+// export const getCreatePhaser = (engine: Engine) => createPhaser(engine);
 
 let idCount = 0; // Make part of libraryStats or Statitics module, more will be added for other library modules
 
@@ -76,7 +76,7 @@ const createMethods: (
     },
 });
 
-const createPhaser = (engine: Engine): Phaser => {
+export const getCreatePhaser = (engine: Engine): Phaser => {
     const props = createProperties();
     const phases: PhaserPhase[] = [];
     const draws: PhaserDraw[] = [];

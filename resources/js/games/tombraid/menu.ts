@@ -1,38 +1,34 @@
-/* eslint-disable no-console */
-/* eslint-disable max-lines-per-function */
-import createEntity from 'library/entity';
-import type {ConfigOptions, Entity} from 'library/types/entity';
+import type {Entity, EntityConfig} from 'library/types/entity';
+import type { LibraryResources } from 'library/types';
 import {startLevel} from './initiatize';
 
-export const mainMenu = () => {
-    // const entity = createEntity('tr');
-    // const b = entity.create(mainButton);
+const elementAmount = 25;
 
-    goToLevelSelection();
-};
-
-export const goToLevelSelection = () => {
-    const entity = createEntity('tr');
-
-    const elementAmount = 25;
-
+export const  => {
     createLevelSelectEntities(elementAmount, entity);
 };
 
-// For landscape mode
-const createLevelSelectEntities = (amount: number, entity: {create: (options?: ConfigOptions) => Entity}) => {
-    const rowsOrColumns = Math.sqrt(amount);
+// entity: {create: (options?: ConfigOptions) => Entity
+const mainMenu = (library: LibraryResources) => {
+    const rowsOrColumns = Math.sqrt(elementAmount);
+
     const paddingY = innerHeight * 0.1;
     const paddingX = innerWidth - (innerHeight - 2 * paddingY);
+
     const squareLength = (innerHeight - paddingY) / 7; // margin = anything from div/5 - ?
     const squareDistance = (innerHeight - paddingY) / 5;
+
     const startY = paddingY / 2 + squareLength / 2;
     const startX = paddingX / 2 + squareLength / 2;
+
     const timeoutDifference = 25;
 
-    const base: ConfigOptions = {
-        w: squareLength,
-        h: squareLength,
+    const base: EntityConfig = {
+        sketch: {
+            type: 'rect',
+            w: squareLength,
+            h: squareLength,
+        },
         startType: 'fadein1',
         startSpeed: 5,
         endType: 'fadeout1',
@@ -44,14 +40,17 @@ const createLevelSelectEntities = (amount: number, entity: {create: (options?: C
     let column = 0;
     let row = 0;
 
-    for (let i = 0; i < amount; i++) {
+    for (let i = 0; i < elementAmount; i++) {
         elements.push(
-            entity.create({
+            library.createEntity({
                 ...base,
-                x: startX + column * squareDistance,
-                y: startY + row * squareDistance,
-                text: (i + 1).toString(),
                 show: false,
+                sketch: {
+                    ...base.sketch,
+                    x: startX + column * squareDistance,
+                    y: startY + row * squareDistance,
+                    text: (i + 1).toString(),
+                }
             }),
         );
 

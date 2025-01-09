@@ -8,7 +8,7 @@ export default () => {
 
     const entity = library.createEntity();
 
-    console.log(entity);
+    // const demoEntity = entity.
 
     return library;
 };

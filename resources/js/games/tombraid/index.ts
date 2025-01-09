@@ -1,17 +1,21 @@
-import {initialize, resources} from 'library/index';
+import {initialize} from 'library/index';
+// import {mainMenu} from './menu';
+import {LibraryOptions} from 'library/types';
 import {mainMenu} from './menu';
 
-export default {
-    setup: async () => {
-        initialize('tr', {
-            containerID: 'container',
-            full: true,
-            clear: true,
-            backgroundColor: '#000',
-        });
+const libraryID = 'tr';
 
-        mainMenu();
-    },
-    run: () => resources.tr.engine.run(),
-    runOnce: () => resources.tr.engine.runOnce(),
+export default () => {
+    const library = initialize(libraryID, libraryOptions);
+
+    library.runEngine();
+
+    mainMenu(library);
+};
+
+const libraryOptions: Partial<LibraryOptions> = {
+    containerID: `${libraryID}-container`,
+    full: true,
+    clear: true,
+    backgroundColor: '#000',
 };

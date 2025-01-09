@@ -12,9 +12,6 @@ export interface LibraryResources {
     // engine: Engine;
     // sv: StaticView; // empty
     // input: LibraryInput;
-    // stats: {
-    //     engine: EngineStatistics;
-    // };
     runEngine: () => void;
     runEngineOnce: () => void;
     createPhaser: () => Phaser;

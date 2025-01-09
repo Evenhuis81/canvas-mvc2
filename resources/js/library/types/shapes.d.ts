@@ -37,9 +37,9 @@ export type EntityText = {
     type: 'text';
     text: string;
     textFill: string;
-    // textStroke?
+    // textStroke: string;
     font: string;
-    fontSize: number; // part of font (string literal)
+    fontSize: number; // becomes part of font (string literal)
     textAlign: CanvasTextAlign;
     textBaseLine: CanvasTextBaseline;
 };
