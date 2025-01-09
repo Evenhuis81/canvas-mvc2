@@ -3,11 +3,11 @@ import {createUserMethods} from './properties';
 import {createVisualsAndCallbacks} from './animate';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
-import type {Entity, EntityConfig, GeneralProperties} from 'library/types/entity';
 import {createSketch} from './sketch';
 import {defaultProperties} from './defaults';
-import type {LibraryInput} from 'library/types/input';
 import type {Engine} from 'library/types/engine';
+import type {Entity, EntityConfig, GeneralProperties} from 'library/types/entity';
+import type {LibraryInput} from 'library/types/input';
 
 export const getCreateEntity = (
     context: CanvasRenderingContext2D,

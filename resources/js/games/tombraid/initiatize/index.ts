@@ -1,13 +1,13 @@
 import {vector} from 'library/vector';
 import {getLevel} from '../levels';
 import {getPlayer} from '../player';
-import {resources} from 'library/index';
+import {LibraryResources} from 'library/types';
 
 // const levelResource: Record<number, TRLevel> = {};
 // const playerResource: Record<number, TRPlayer> = {};
 
-export const startLevel = (levelNr: number) => {
-    const {tv, canvas, engine} = resources.tr;
+export const startLevel = (library: LibraryResources, levelNr: number) => {
+    const {tv, canvas, engine} = library;
 
     // All things level related
     const level = getLevel(levelNr);

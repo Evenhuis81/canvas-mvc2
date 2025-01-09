@@ -1,3 +1,5 @@
+import {WithRequired} from '.';
+
 export type Pos = {
     x: number;
     y: number;
@@ -51,8 +53,6 @@ export type Line = {
 } & Pos2;
 
 export type Shapes = ShapeMap[keyof ShapeMap] & Omit<EntityText, 'type'>;
-
-export type WithRequired<T, K extends keyof T> = T & {[Key in K]-?: T[Key]};
 
 // Convert ShapeConfig to defaultSketches and userInput sketch
 // Add seperate input for text 'entity' (?), use this entity to put on top of existing default and user input sketches

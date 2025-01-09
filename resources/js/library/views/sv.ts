@@ -1,3 +1,5 @@
+import {PaintTV} from 'library/types/views';
+
 export const getSV = (context: CanvasRenderingContext2D, engine: Engine) => {
     return {};
 };

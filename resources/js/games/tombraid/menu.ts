@@ -1,15 +1,10 @@
-import type {Entity, EntityConfig} from 'library/types/entity';
-import type { LibraryResources } from 'library/types';
-import {startLevel} from './initiatize';
+import type {Entity, VisualProperties} from 'library/types/entity';
+import type {LibraryResources} from 'library/types';
+import type {ShapesConfig} from 'library/types/shapes';
 
 const elementAmount = 25;
 
-export const  => {
-    createLevelSelectEntities(elementAmount, entity);
-};
-
-// entity: {create: (options?: ConfigOptions) => Entity
-const mainMenu = (library: LibraryResources) => {
+export const mainMenu = (library: LibraryResources) => {
     const rowsOrColumns = Math.sqrt(elementAmount);
 
     const paddingY = innerHeight * 0.1;
@@ -23,12 +18,12 @@ const mainMenu = (library: LibraryResources) => {
 
     const timeoutDifference = 25;
 
-    const base: EntityConfig = {
-        sketch: {
-            type: 'rect',
-            w: squareLength,
-            h: squareLength,
-        },
+    const baseSketch: ShapesConfig = {
+        type: 'rect',
+        w: squareLength,
+        h: squareLength,
+    };
+    const baseVisualProperties: Partial<VisualProperties> = {
         startType: 'fadein1',
         startSpeed: 5,
         endType: 'fadeout1',
@@ -40,23 +35,24 @@ const mainMenu = (library: LibraryResources) => {
     let column = 0;
     let row = 0;
 
+    // entity: {create: (options?: ConfigOptions) => Entity
     for (let i = 0; i < elementAmount; i++) {
         elements.push(
             library.createEntity({
-                ...base,
+                ...baseVisualProperties,
                 show: false,
                 sketch: {
-                    ...base.sketch,
+                    ...baseSketch,
                     x: startX + column * squareDistance,
                     y: startY + row * squareDistance,
                     text: (i + 1).toString(),
-                }
+                },
             }),
         );
 
         const element = elements[i];
 
-        element.setHideTime((amount - 1) * timeoutDifference - i * timeoutDifference);
+        element.setHideTime((elementAmount - 1) * timeoutDifference - i * timeoutDifference);
 
         setTimeout(() => {
             element.show();
@@ -78,10 +74,14 @@ const mainMenu = (library: LibraryResources) => {
         element.addListener('mouseup', clicked);
         element.addListener('endTransitionEnd', evt => {
             console.log(evt.clicked, evt.clickTotal);
+
+            console.log(evt);
+
             if (evt.clicked) {
                 // element.destroy();
 
-                startLevel(i + 1);
+                // startLevel(i + 1);
+                console.log(`startLevel(${i + 1})`);
             }
         });
     }

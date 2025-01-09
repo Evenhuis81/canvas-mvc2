@@ -37,7 +37,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
     const removeListener = <T extends keyof InputListenersMap>(type: T) => {
         const index = listeners[type].findIndex(l => l.type === type);
 
-        if (index === -1) console.log('listener with index: ' + index + ' already removed');
+        if (index === -1) return console.log('listener with index: ' + index + ' already removed');
 
         listeners[type].splice(index, 1);
     };

@@ -6,7 +6,7 @@ export interface StaticView {
 
 type TransformedView = PropertiesTV & MethodsTV & PaintTV;
 
-interface PaintTV {
+export interface PaintTV {
     fillRect: (obj: TVFillRect) => void;
     strokeRect: (obj: TVStrokeRect) => void;
     line: (obj: TVLine) => void;
