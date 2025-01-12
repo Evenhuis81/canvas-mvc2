@@ -13,7 +13,7 @@ export const createEventHandler = <T extends keyof EntityEventMap>(
 
     const eventHandler: Omit<EventHandler, 'addListener'> = {
         addListeners: () => listenerHandlers.forEach(l => l.add()),
-        removeListeners: () => listenerHandlers.forEach(l => l.remove),
+        removeListeners: () => listenerHandlers.forEach(l => l.remove()),
     };
 
     const eventProperties = createEventProperties();
@@ -39,40 +39,24 @@ export const createEventHandler = <T extends keyof EntityEventMap>(
     return Object.assign(eventHandler, {addListener});
 };
 
-const createEventProperties = () => {
-    const baseProperties = {clicked: false, clickTotal: 0};
+const mouseProps = {clicked: false, clickTotal: 0};
+const touchProps = {touched: false, touchTotal: 0};
+const keyProps = {keyProp: 'test key prop'};
+const startTransitionEndProps = {startEndProp: 'test startEnd prop'};
+const endTransitionEndProps = {endEndProp: 'test endEnd prop'};
 
-    const testBase = {clicked: false, clickTotal: 0, testKey: 'testKey'};
-
-    // const mouseProperties = {
-    //     mouseProp: 'test mouse prop',
-    // };
-    const keyProperties = {
-        keyProp: 'test mouse prop',
-    };
-    // const touchProperties = {
-    //     touchProp: 'test mouse prop',
-    // };
-    // const startTransitionEndProperties = {
-    //     startEndProp: 'test mouse prop',
-    // };
-    // const endTransitionEndProperties = {
-    //     endEndProp: 'test mouse prop',
-    // };
-
-    return {
-        mousedown: baseProperties,
-        mousemove: baseProperties,
-        mouseup: baseProperties,
-        keydown: keyProperties,
-        keyup: keyProperties,
-        touchstart: baseProperties,
-        touchmove: baseProperties,
-        touchend: baseProperties,
-        startTransitionEnd: testBase,
-        endTransitionEnd: testBase,
-    };
-};
+const createEventProperties = () => ({
+    mousedown: {...mouseProps},
+    mousemove: {...mouseProps},
+    mouseup: {...mouseProps},
+    keydown: {...keyProps},
+    keyup: {...keyProps},
+    touchstart: {...touchProps},
+    touchmove: {...touchProps},
+    touchend: {...touchProps},
+    startTransitionEnd: {...startTransitionEndProps},
+    endTransitionEnd: {...endTransitionEndProps},
+});
 
 const createAddAndRemoveListener = (
     listenerHandlers: ListenerHandler[],

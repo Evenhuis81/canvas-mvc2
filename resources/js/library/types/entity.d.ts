@@ -57,11 +57,16 @@ export interface EventHandler {
 
 type EventProperties = {clicked: boolean; clickTotal: number};
 
-type EntityMouseEvent = EventProperties;
+// const mouseProps = {clicked: false, clickTotal: 0};
+// const touchProps = {touched: false, touchTotal: 0};
+// const keyProps = {keyProp: 'test key prop'};
+// const startTransitionEndProps = {startEndProp: 'test startEnd prop'};
+// const endTransitionEndProps = {endEndProp: 'test endEnd prop'};
+type EntityMouseEvent = {clicked: boolean; clickTotal: number};
+type EntityTouchEvent = {touched: boolean; touchTotal: number};
 type EntityKeyboardEvent = {keyProp: string};
-type EntityTouchEvent = EventProperties;
-type StartEndEntityTransitionEvent = EventProperties & {testKey: string};
-type EndEndEntityTransitionEvent = EventProperties;
+type StartEndEntityTransitionEvent = {startEndProp: string};
+type EndEndEntityTransitionEvent = {endEndProp: string};
 
 export type EntityEventMap = CustomEventMap & InputEventMap;
 

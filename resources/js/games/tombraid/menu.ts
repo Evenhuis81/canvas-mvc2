@@ -2,7 +2,7 @@ import type {Entity, VisualProperties} from 'library/types/entity';
 import type {LibraryResources} from 'library/types';
 import type {ShapesConfig} from 'library/types/shapes';
 
-const elementAmount = 25;
+const elementAmount = 1;
 
 export const mainMenu = (library: LibraryResources) => {
     const rowsOrColumns = Math.sqrt(elementAmount);
