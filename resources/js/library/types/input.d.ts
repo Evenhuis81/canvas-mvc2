@@ -1,4 +1,4 @@
-import type {InputEventMap} from './entity';
+// import type {InputEventMap} from './entity';
 import {BaseCircle, BaseRect, Shapes} from './shapes';
 
 type MouseDown = 'mousedown';
@@ -41,25 +41,12 @@ export type LibraryInput = {
     addListener: <T extends InputMap>(
         type: T,
         input: (evt: HTMLElementEventMap[T]) => void,
-        props: InputEventMap[T],
+        // props: InputEventMap[T],
         // This needs to be adjusted in time to fit all kind of shapes and extract the right one based on input type given
         shape?: Shapes,
     ) => void;
     removeListener: <T extends InputMap>(type: T) => void;
 };
-
-// return {
-//     mouse: Object.assign(mouse, {
-//         insideRect: insideMouseRect,
-//         insideCircle: insideMouseCircle,
-//         inside: insideMouse,
-//     }),
-//     touch: Object.assign(touch, {insideRect: insideTouchRect, insideCircle: insideTouchCircle}),
-//     buttonHeld,
-//     keyHeld,
-//     addListener,
-//     removeListener,
-// };
 
 type InputMap = 'mousedown' | 'mousemove' | 'mouseup' | 'keydown' | 'keyup' | 'touchstart' | 'touchmove' | 'touchend';
 
@@ -67,7 +54,7 @@ export type InputListenersMap = {
     [K in InputMap]: {
         type: K;
         listener: (evt: HTMLElementEventMap[K]) => void;
-        props: InputEventMap[K];
+        // props: InputEventMap[K];
         shape?: Shapes;
     }[];
 };

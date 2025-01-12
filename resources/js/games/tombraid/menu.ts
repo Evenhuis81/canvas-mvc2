@@ -47,6 +47,9 @@ export const mainMenu = (library: LibraryResources) => {
                     y: startY + row * squareDistance,
                     text: (i + 1).toString(),
                 },
+                listeners: {
+                    mouseup: evt => {},
+                },
             }),
         );
 

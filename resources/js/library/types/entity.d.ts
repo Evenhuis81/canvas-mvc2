@@ -25,7 +25,10 @@ export type Colors = {
 
 export type SetHideTime = (time: number) => void;
 export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
-export type AddListener = <K extends keyof EntityEventMap>(key: K, listener: (evt: EntityEventMap[K]) => void) => void;
+export type AddListener = <K extends keyof EntityListenerEvents>(
+    key: K,
+    listener: (evt: EntityListenerEvents[K]) => void,
+) => void;
 
 export type RemoveListener = () => void;
 
@@ -45,55 +48,34 @@ export interface Callbacks {
     endEnd: () => void;
 }
 
-export type ListenerHandler = {type: keyof EntityEventMap; add: () => void; remove: () => void};
+export type ListenerHandler = {type: keyof EntityListenerEvents; add: () => void; remove: () => void};
 
 export interface EventHandler {
     addListeners: () => void;
     removeListeners: () => void;
-    startTransitionEnd?: () => void;
-    endTransitionEnd?: () => void;
+    startTransitionEnd?: (evt: StartEndTransitionEvent) => void;
+    endTransitionEnd?: (evt: EndEndTransitionEvent) => void;
     addListener: AddListener;
 }
 
-type EventProperties = {clicked: boolean; clickTotal: number};
+export type StartEndTransitionEvent = {startEndProp: string};
+export type EndEndTransitionEvent = {endEndProp: string};
 
-// const mouseProps = {clicked: false, clickTotal: 0};
-// const touchProps = {touched: false, touchTotal: 0};
-// const keyProps = {keyProp: 'test key prop'};
-// const startTransitionEndProps = {startEndProp: 'test startEnd prop'};
-// const endTransitionEndProps = {endEndProp: 'test endEnd prop'};
-type EntityMouseEvent = {clicked: boolean; clickTotal: number};
-type EntityTouchEvent = {touched: boolean; touchTotal: number};
-type EntityKeyboardEvent = {keyProp: string};
-type StartEndEntityTransitionEvent = {startEndProp: string};
-type EndEndEntityTransitionEvent = {endEndProp: string};
+export type EntityListenerEvents = EntityEvents & HTMLElementEventMap;
 
-export type EntityEventMap = CustomEventMap & InputEventMap;
-
-export type CustomEventMap = {
-    startTransitionEnd: StartEndEntityTransitionEvent;
-    endTransitionEnd: EndEndEntityTransitionEvent;
+export type EntityEvents = {
+    startTransitionEnd: StartEndTransitionEvent;
+    endTransitionEnd: EndEndTransitionEvent;
 };
 
-export type InputEventMap = {
-    mousedown: EntityMouseEvent;
-    mousemove: EntityMouseEvent;
-    mouseup: EntityMouseEvent;
-    keydown: EntityKeyboardEvent;
-    keyup: EntityKeyboardEvent;
-    touchstart: EntityTouchEvent;
-    touchmove: EntityTouchEvent;
-    touchend: EntityTouchEvent;
-};
-
-export type EntityConfigListeners<Type extends keyof EntityEventMap> = {
-    [Key in Type]: (evt: EntityEventMap[Key]) => void;
+export type EntityConfigListeners<Type extends keyof EntityListenerEvents> = {
+    [Key in Type]: (evt: EntityListenerEvents[Key]) => void;
 };
 
 export type EntityConfig = Partial<
     {sketch: ShapesConfig} & GeneralProperties &
         VisualProperties & {
-            listeners: Partial<EntityConfigListeners<keyof EntityEventMap>>;
+            listeners: Partial<EntityConfigListeners<keyof EntityListenerEvents>>;
         }
 >;
 
