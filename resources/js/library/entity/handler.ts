@@ -65,6 +65,8 @@ const createAddAndRemoveListener = (
 ) => {
     return {
         addListener: <K extends keyof EntityListenerEvents>(type: K, listener: (evt: EntityListenerEvents[K]) => void) => {
+            // TODO::Add only non-native properties to this and leave native listeners alone and put them directly into the addListener method
+            //
             const props = eventProperties[type];
 
             if (type === 'startTransitionEnd') {
