@@ -58,6 +58,7 @@ export interface EventHandler {
     addListener: AddListener;
 }
 
+// Props are for testing for now, eventually these events should be filled with entity related properties
 export type StartEndTransitionEvent = {startEndProp: string};
 export type EndEndTransitionEvent = {endEndProp: string};
 
@@ -68,14 +69,14 @@ export type EntityEvents = {
     endTransitionEnd: EndEndTransitionEvent;
 };
 
-export type EntityConfigListeners<Type extends keyof EntityListenerEvents> = {
+export type EntityListeners<Type extends keyof EntityListenerEvents> = {
     [Key in Type]: (evt: EntityListenerEvents[Key]) => void;
 };
 
 export type EntityConfig = Partial<
     {sketch: ShapesConfig} & GeneralProperties &
         VisualProperties & {
-            listeners: Partial<EntityConfigListeners<keyof EntityListenerEvents>>;
+            listeners: Partial<EntityListeners<keyof EntityListenerEvents>>;
         }
 >;
 
