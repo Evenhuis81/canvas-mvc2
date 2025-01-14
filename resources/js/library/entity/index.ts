@@ -38,7 +38,8 @@ export const getCreateEntity = (
 
     const entity: Entity = {
         addListener: eventHandler.addListener,
-        removeListener: eventHandler.removeListeners,
+        removeListener: eventHandler.removeListener,
+        removeListeners: eventHandler.removeListeners,
         setVisual,
         ...createUserMethods(visualProperties, generalProperties, callbacks, eventHandler),
     };

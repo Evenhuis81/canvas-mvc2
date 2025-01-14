@@ -28,10 +28,9 @@ export const getInput = (canvas: HTMLCanvasElement) => {
     const addListener = <T extends keyof InputListenersMap>(
         type: T,
         listener: (evt: HTMLElementEventMap[T]) => void,
-        props: InputEventMap[T],
         shape?: Shapes,
     ) => {
-        listeners[type].push({type, listener, props, shape});
+        const id = listeners[type].push({id, listener, shape});
     };
 
     const removeListener = <T extends keyof InputListenersMap>(type: T) => {

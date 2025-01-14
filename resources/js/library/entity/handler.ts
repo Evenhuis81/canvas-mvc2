@@ -1,23 +1,19 @@
-/* eslint-disable complexity */
-/* eslint-disable max-lines-per-function */
 import type {
-    EntityConfigListeners,
-    EntityListenerEvents,
+    EntityListeners,
     EventHandler,
     ListenerHandler,
-    StartEndTransitionEvent,
 } from 'library/types/entity';
 import {LibraryInput} from 'library/types/input';
 import type {Shapes} from 'library/types/shapes';
 
-export const createEventHandler = <T extends keyof EntityListenerEvents>(
+export const createEventHandler = <K extends keyof EntityListeners>(
     input: LibraryInput,
     sketch: Shapes,
-    listeners?: Partial<EntityConfigListeners<T>>,
+    listeners?: Partial<EntityListeners[K]>,
 ) => {
     const listenerHandlers: ListenerHandler[] = [];
 
-    const eventHandler: Omit<EventHandler, 'addListener'> = {
+    const eventHandler: Omit<EventHandler, 'addListener' | 'removeListener'> = {
         addListeners: () => listenerHandlers.forEach(l => l.add()),
         removeListeners: () => listenerHandlers.forEach(l => l.remove()),
     };
@@ -91,7 +87,7 @@ const createAddAndRemoveListener = (
             const add = () => {
                 // TODO::Extract Shape from sketch (pass only needed props)
                 if (sketch.type === 'rect' || sketch.type === 'circle') {
-                    input.addListener(type, runListener, props, sketch);
+                    input.addListener(type, runListener, sketch);
 
                     return;
                 }

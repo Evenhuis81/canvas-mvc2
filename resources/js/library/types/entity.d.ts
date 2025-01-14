@@ -1,7 +1,8 @@
+import {BaseID} from '.';
 import {EngineDraw, EngineUpdate} from './engine';
 import {ShapesConfig} from './shapes';
 
-export interface GeneralProperties {
+export type GeneralProperties = {
     id: number | string;
     name: string;
     disabled: boolean;
@@ -9,34 +10,75 @@ export interface GeneralProperties {
     showDelay: number;
     clicked: boolean;
     hideTime: number;
+};
+
+export interface VisualProperties {
+    animateAtStart: boolean;
+    animateAtEnd: boolean;
+    animationType?: EntityAnimations;
+    hoverType?: EntityHovers;
+    startType?: EntityTransitions;
+    startSpeed: TransitionSpeed;
+    endType?: EntityTransitions;
+    endSpeed: TransitionSpeed;
 }
 
-export type Animations = 'noise';
-export type Transitions = 'fadein1' | 'fadeout1' | 'slideinleft' | 'explode';
-export type Hovers = 'bold';
+export type EntityAnimations = 'noise';
+export type EntityTransitions = 'fadein1' | 'fadeout1' | 'slideinleft' | 'explode';
+export type EntityHovers = 'bold';
 
-export type VisualType = Animations | Transitions | Hovers;
-
-export type Colors = {
-    fill: RGBA;
-    stroke: RGBA;
-    textFill: RGBA;
-};
+export type VisualType = EntityAnimations | EntityTransitions | EntityHovers;
 
 export type SetHideTime = (time: number) => void;
 export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
-export type AddListener = <K extends keyof EntityListenerEvents>(
-    key: K,
-    listener: (evt: EntityListenerEvents[K]) => void,
-) => void;
 
-export type RemoveListener = () => void;
+export type ListenerTemplate<T extends object, K extends keyof T> = {
+    type: K;
+    listener: (evt: T[K]) => void;
+    id?: BaseID;
+};
+
+export type NativeListener = ListenerTemplate<HTMLElementEventMap, keyof HTMLElementEventMap>;
+export type CustomListener = ListenerTemplate<CustomEventMap, keyof CustomEventMap>;
+export type EntityListeners = NativeListeners<keyof HTMLElementEventMap> & CustomListeners<keyof CustomEventMap>;
+
+export type StartEndTransitionEvent = {startEndProp: string};
+export type EndEndTransitionEvent = {endEndProp: string};
+
+export type CustomEventMap = {
+    startTransitionEnd: StartEndTransitionEvent;
+    endTransitionEnd: EndEndTransitionEvent;
+};
+
+export type NativeListeners<T extends keyof HTMLElementEventMap> = {
+    [K in T]: (evt: HTMLElementEventMap[K]) => void;
+};
+
+export type CustomListeners<T extends keyof CustomEventMap> = {
+    [K in T]: (evt: CustomEventMap[K]) => void;
+};
+
+export type EntityConfig = Partial<
+    {sketch: ShapesConfig} & GeneralProperties &
+        VisualProperties & {
+            listeners: Partial<EntityListeners>;
+        }
+>;
+
+export type AddListener = <K extends keyof EntityListeners>(
+    type: K,
+    listener: EntityListeners[K],
+    id?: BaseID,
+) => BaseID | void;
+export type RemoveListener = (id: BaseID) => boolean;
+export type RemoveListeners = () => boolean;
 
 export interface Entity {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
     addListener: AddListener;
     removeListener: RemoveListener;
+    removeListeners: RemoveListeners;
     setHideTime: SetHideTime;
     setVisual: SetVisual;
 }
@@ -48,7 +90,7 @@ export interface Callbacks {
     endEnd: () => void;
 }
 
-export type ListenerHandler = {type: keyof EntityListenerEvents; add: () => void; remove: () => void};
+export type ListenerHandler = {type: keyof HTMLElementEventMap; add: () => void; remove: () => void};
 
 export interface EventHandler {
     addListeners: () => void;
@@ -56,40 +98,9 @@ export interface EventHandler {
     startTransitionEnd?: (evt: StartEndTransitionEvent) => void;
     endTransitionEnd?: (evt: EndEndTransitionEvent) => void;
     addListener: AddListener;
+    removeListener: RemoveListener;
 }
 
-// Props are for testing for now, eventually these events should be filled with entity related properties
-export type StartEndTransitionEvent = {startEndProp: string};
-export type EndEndTransitionEvent = {endEndProp: string};
-
-export type EntityListenerEvents = EntityEvents & HTMLElementEventMap;
-
-export type EntityEvents = {
-    startTransitionEnd: StartEndTransitionEvent;
-    endTransitionEnd: EndEndTransitionEvent;
-};
-
-export type EntityListeners<Type extends keyof EntityListenerEvents> = {
-    [Key in Type]: (evt: EntityListenerEvents[Key]) => void;
-};
-
-export type EntityConfig = Partial<
-    {sketch: ShapesConfig} & GeneralProperties &
-        VisualProperties & {
-            listeners: Partial<EntityListeners<keyof EntityListenerEvents>>;
-        }
->;
-
-export interface VisualProperties {
-    animateAtStart: boolean;
-    animateAtEnd: boolean;
-    animationType?: Animations;
-    hoverType?: Hovers;
-    startType?: Transitions;
-    startSpeed: TransitionSpeed;
-    endType?: Transitions;
-    endSpeed: TransitionSpeed;
-}
 export type TransitionSpeed = 1 | 2 | 3 | 4 | 5;
 
 export type Renderer = {

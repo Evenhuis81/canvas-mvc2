@@ -2,7 +2,7 @@ import type {Entity, VisualProperties} from 'library/types/entity';
 import type {LibraryResources} from 'library/types';
 import type {ShapesConfig} from 'library/types/shapes';
 
-const elementAmount = 1;
+const elementAmount = 2;
 
 export const mainMenu = (library: LibraryResources) => {
     const rowsOrColumns = Math.sqrt(elementAmount);
@@ -35,7 +35,6 @@ export const mainMenu = (library: LibraryResources) => {
     let column = 0;
     let row = 0;
 
-    // entity: {create: (options?: ConfigOptions) => Entity
     for (let i = 0; i < elementAmount; i++) {
         elements.push(
             library.createEntity({
@@ -49,6 +48,8 @@ export const mainMenu = (library: LibraryResources) => {
                 },
                 listeners: {
                     mouseup: evt => {},
+                    touchend: evt => {},
+                    startTransitionEnd: evt => {},
                 },
             }),
         );
@@ -73,20 +74,20 @@ export const mainMenu = (library: LibraryResources) => {
             elements.forEach(el => el.hide());
         };
 
-        element.addListener('touchend', clicked);
-        element.addListener('mouseup', clicked);
-        element.addListener('endTransitionEnd', evt => {
-            console.log(evt.clicked, evt.clickTotal);
+        // element.addListener('touchend', clicked);
+        // element.addListener('mouseup', clicked);
+        // element.addListener('endTransitionEnd', evt => {
+        //     console.log(evt.clicked, evt.clickTotal);
 
-            console.log(evt);
+        //     console.log(evt);
 
-            if (evt.clicked) {
-                // element.destroy();
+        //     if (evt.clicked) {
+        //         // element.destroy();
 
-                // startLevel(i + 1);
-                console.log(`startLevel(${i + 1})`);
-            }
-        });
+        //         // startLevel(i + 1);
+        //         console.log(`startLevel(${i + 1})`);
+        //     }
+        // });
     }
 };
 
