@@ -1,19 +1,21 @@
 import type {
-    EntityListeners,
+    EntityEventMap,
     EventHandler,
     ListenerHandler,
+    NativeListenersConfig,
 } from 'library/types/entity';
 import {LibraryInput} from 'library/types/input';
 import type {Shapes} from 'library/types/shapes';
 
-export const createEventHandler = <K extends keyof EntityListeners>(
+export const createEventHandler = <K extends keyof HTMLElementEventMap>(
     input: LibraryInput,
     sketch: Shapes,
-    listeners?: Partial<EntityListeners[K]>,
+    listeners?: Partial<NativeListenersConfig<K>>,
 ) => {
     const listenerHandlers: ListenerHandler[] = [];
 
-    const eventHandler: Omit<EventHandler, 'addListener' | 'removeListener'> = {
+    // const eventHandler: Omit<EventHandler, 'addListener' | 'removeListener'> = {
+    const eventHandler: EventHandler = {
         addListeners: () => listenerHandlers.forEach(l => l.add()),
         removeListeners: () => listenerHandlers.forEach(l => l.remove()),
     };
@@ -41,9 +43,9 @@ export const createEventHandler = <K extends keyof EntityListeners>(
     return Object.assign(eventHandler, {addListener});
 };
 
-const mouseProps = {clicked: false, clickTotal: 0};
-const touchProps = {touched: false, touchTotal: 0};
-const keyProps = {keyProp: 'test key prop'};
+// const mouseProps = {clicked: false, clickTotal: 0};
+// const touchProps = {touched: false, touchTotal: 0};
+// const keyProps = {keyProp: 'test key prop'};
 const startTransitionEndProps = {startEndProp: 'test startEnd prop'};
 const endTransitionEndProps = {endEndProp: 'test endEnd prop'};
 
@@ -54,16 +56,17 @@ const createListenerEvents = () => ({
 
 const createAddAndRemoveListener = (
     listenerHandlers: ListenerHandler[],
-    eventHandler: Omit<EventHandler, 'addListener' | 'removeListener'>,
-    eventProperties: EntityListenerEvents,
+    // eventHandler: Omit<EventHandler, 'addListener' | 'removeListener'>,
+    eventHandler: EventHandler,
+    eventProperties: EntityEventMap,
     input: LibraryInput,
     sketch: Shapes,
 ) => {
     return {
-        addListener: <K extends keyof EntityListenerEvents>(type: K, listener: (evt: EntityListenerEvents[K]) => void) => {
+        addNativeListener: <K extends keyof HTMLElementEventMap>(type: K, listener: (evt: HTMLElementEventMap[K]) => void) => {
             // TODO::Add only non-native properties to this and leave native listeners alone and put them directly into the addListener method
             //
-            const props = eventProperties[type];
+            // const props = eventProperties[type];
 
             if (type === 'startTransitionEnd') {
                 eventHandler.startTransitionEnd = () => {

@@ -39,51 +39,45 @@ export type ListenerTemplate<T extends object, K extends keyof T> = {
 };
 
 export type NativeListener = ListenerTemplate<HTMLElementEventMap, keyof HTMLElementEventMap>;
-export type CustomListener = ListenerTemplate<CustomEventMap, keyof CustomEventMap>;
-// export type EntityListenersConfig = <K extends keyof HTMLElementEventMap, K2 extends keyof CustomEv<entMap>NativeListeners<K> | CustomListeners<K2>;
+export type EntityListener = ListenerTemplate<EntityEventMap, keyof EntityEventMap>;
 
 export type StartEndTransitionEvent = {startEndProp: string};
 export type EndEndTransitionEvent = {endEndProp: string};
 
-export type CustomEventMap = {
+export type EntityEventMap = {
     startTransitionEnd: StartEndTransitionEvent;
     endTransitionEnd: EndEndTransitionEvent;
 };
 
-export type EntityListeners<K extends keyof GeneralListeners> = NativeListeners<K extends keyof HTMLElementEventMap ? > &
-    CustomListeners<K2>;
-
-export type NativeListeners<T extends keyof HTMLElementEventMap> = {
+export type NativeListenersConfig<T extends keyof HTMLElementEventMap> = {
     [K in T]: (evt: HTMLElementEventMap[K]) => void;
 };
 
-export type CustomListeners<T extends keyof CustomEventMap> = {
-    [K in T]: (evt: CustomEventMap[K]) => void;
+export type EntityListenersConfig<T extends keyof EntityEventMap> = {
+    [K in T]: (evt: EntityEventMap[K]) => void;
 };
 
 export type EntityConfig = Partial<
     {sketch: ShapesConfig} & GeneralProperties &
         VisualProperties & {
-            listeners: Partial<GeneralListeners>;
+            listeners: Partial<NativeListenersConfig<keyof HTMLElementEventMap>>;
         }
 >;
 
-export type GeneralListeners = EntityListeners<keyof HTMLElementEventMap, keyof CustomEventMap>;
-
-export type AddListener = <K extends keyof GeneralListeners>(
+export type AddNativeListener = <K extends keyof HTMLElementEventMap>(
     type: K,
-    listener: EntityListeners<K, K>,
+    listener: (evt: HTMLElementEventMap[K]) => void,
     id?: BaseID,
 ) => BaseID | void;
-export type RemoveListener = (id: BaseID) => boolean;
-export type RemoveListeners = () => boolean;
+
+export type RemoveNativeListener = (id: BaseID) => boolean;
 
 export interface Entity {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
-    addListener: AddListener;
-    removeListener: RemoveListener;
-    removeListeners: RemoveListeners;
+    // addNativeListener: AddNativeListener;
+    // removeNativeListener: RemoveNativeListener;
+    removeListeners: () => void;
     setHideTime: SetHideTime;
     setVisual: SetVisual;
 }
@@ -102,8 +96,8 @@ export interface EventHandler {
     removeListeners: () => void;
     startTransitionEnd?: (evt: StartEndTransitionEvent) => void;
     endTransitionEnd?: (evt: EndEndTransitionEvent) => void;
-    addListener: AddListener;
-    removeListener: RemoveListener;
+    // addListener: AddListener;
+    // removeListener: RemoveListener;
 }
 
 export type TransitionSpeed = 1 | 2 | 3 | 4 | 5;

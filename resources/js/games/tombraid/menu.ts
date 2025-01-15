@@ -49,7 +49,7 @@ export const mainMenu = (library: LibraryResources) => {
                 listeners: {
                     mouseup: evt => {},
                     touchend: evt => {},
-                    startTransitionEnd: evt => {},
+                    // startTransitionEnd: evt => {},
                 },
             }),
         );
