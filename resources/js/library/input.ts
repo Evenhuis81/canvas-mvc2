@@ -2,7 +2,7 @@
 // import type {InputEventMap} from './types/entity';
 import {BaseCircle, BaseRect, Pos, Shapes} from './types/shapes';
 import type {InputListenersMap, NativeInputListener} from './types/input';
-import {BaseID} from './types';
+// Instead of just canvas element to add listeners, make this an option for any element or document
 
 const resizeCB: (() => void)[] = [];
 const consoleToggleCB: (() => void)[] = [];
@@ -18,7 +18,13 @@ const listeners: InputListenersMap = {
     touchend: [],
 };
 
-const nativeListeners: NativeInputListener<keyof HTMLElementEventMap>[] = [];
+export type SavedListeners = {
+    id: symbol;
+    listener: (evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => void;
+};
+
+// const savedListeners: SavedListeners[] = [];
+const removeListeners: {id: symbol; remove: () => void}[] = [];
 
 export const getInput = (canvas: HTMLCanvasElement) => {
     const canvasRect = canvas.getBoundingClientRect();
@@ -28,16 +34,36 @@ export const getInput = (canvas: HTMLCanvasElement) => {
     const touch = {x: 0, y: 0};
 
     const addNativeListener = <K extends keyof HTMLElementEventMap>(obj: NativeInputListener<K>) => {
-        document.addEventListener(obj.type, obj.listener);
+        canvas.addEventListener(obj.type, obj.listener);
+
+        const remove = () => canvas.removeEventListener(obj.type, obj.listener);
+
+        const id = obj.id ?? Symbol();
+
+        removeListeners.push({id, remove});
+
+        return id;
     };
 
-    const removeListener = <T extends keyof InputListenersMap>(type: T) => {
-        const index = listeners[type].findIndex(l => l.type === type);
+    const removeNativeListener = (id: symbol) => {
+        const index = removeListeners.findIndex(l => {
+            l.id === id;
+        });
 
-        if (index === -1) return console.log('listener with index: ' + index + ' already removed');
+        if (index === -1) return false;
 
-        listeners[type].splice(index, 1);
+        removeListeners[index].remove();
+
+        return true;
     };
+
+    // const removeListener = <T extends keyof InputListenersMap>(type: T) => {
+    //     const index = listeners[type].findIndex(l => l.type === type);
+
+    //     if (index === -1) return console.log('listener with index: ' + index + ' already removed');
+
+    //     listeners[type].splice(index, 1);
+    // };
 
     canvas.addEventListener('mousedown', evt => {
         mouse.touchEnded = false;
@@ -64,8 +90,8 @@ export const getInput = (canvas: HTMLCanvasElement) => {
 
         listeners.mouseup.forEach(m => {
             if (clickedInsideMouse(m.shape)) {
-                m.props.clicked = true;
-                m.props.clickTotal++;
+                // m.props.clicked = true;
+                // m.props.clickTotal++;
                 m.listener(evt);
             }
         });
@@ -132,8 +158,8 @@ export const getInput = (canvas: HTMLCanvasElement) => {
 
         listeners.touchend.forEach(m => {
             if (clickedInsideTouch(m.shape)) {
-                m.props.clicked = true;
-                m.props.clickTotal++;
+                // m.props.clicked = true;
+                // m.props.clickTotal++;
                 m.listener(evt);
             }
         });
@@ -192,8 +218,8 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         touch: Object.assign(touch, {insideRect: insideTouchRect, insideCircle: insideTouchCircle}),
         buttonHeld,
         keyHeld,
-        addListener,
-        removeListener,
+        addNativeListener,
+        removeNativeListener,
     };
 };
 

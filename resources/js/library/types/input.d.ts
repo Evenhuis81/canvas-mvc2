@@ -47,7 +47,7 @@ export type LibraryInput = {
     buttonHeld: Record<number, boolean>;
     keyHeld: Record<string, boolean>;
     addNativeListener: <K extends keyof HTMLElementEventMap>(nativeInputListener: NativeInputListener<K>) => void;
-    removeNativeListener: (id: BaseID) => void;
+    removeNativeListener: (id: symbol) => boolean;
     addListener: <T extends InputMap>(
         type: T,
         input: (evt: HTMLElementEventMap[T]) => void,

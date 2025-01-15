@@ -62,24 +62,20 @@ const createAddAndRemoveNativeListener = (
             type: K,
             listener: (evt: HTMLElementEventMap[K]) => void,
         ) => {
+            const inputListener = {
+                type,
+                listener,
+                id: Symbol(),
+            };
+
             const add = () => {
-                const inputListener = {
-                    type,
-                    listener,
-                    id: Symbol(),
-                };
-                inputListener.id = input.addNativeListener(inputListener);
-                // TODO::Extract Shape from sketch (pass only needed props)
-                // if (sketch.type === 'rect' || sketch.type === 'circle') {
-
-                // return;
-                // }
-
-                input.addListener(type, runListener, props);
+                input.addNativeListener(inputListener);
             };
 
             const remove = () => {
-                input.removeListener(type);
+                const response = input.removeNativeListener(inputListener.id);
+
+                if (!response) console.log(`listener with id ${String(inputListener.id)} failed`);
             };
 
             const index = listenerHandlers.findIndex(t => t.type === type);
@@ -90,10 +86,10 @@ const createAddAndRemoveNativeListener = (
                 return;
             }
 
-            listenerHandlers[index].remove();
+            // listenerHandlers[index].remove();
 
-            // TODO::Test if overwritten listener gets handled properly
-            listenerHandlers[index] = {type, add, remove};
+            // // TODO::Test if overwritten listener gets handled properly
+            // listenerHandlers[index] = {type, add, remove};
         },
         removeNativeListener: <K extends keyof EntityListenerEvents>(type: K) => {
             const index = listenerHandlers.findIndex(t => t.type === type);
@@ -124,3 +120,10 @@ const createAddAndRemoveNativeListener = (
 // }
 
 // const runListener = () => listener(props);
+// TODO::Extract Shape from sketch (pass only needed props)
+// if (sketch.type === 'rect' || sketch.type === 'circle') {
+
+// return;
+// }
+
+// input.addListener(type, runListener, props);
