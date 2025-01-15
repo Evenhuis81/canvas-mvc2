@@ -1,6 +1,6 @@
 import {BaseID} from '.';
 import {EngineDraw, EngineUpdate} from './engine';
-import {ShapesConfig} from './shapes';
+import {Shapes, ShapesConfig} from './shapes';
 
 export type GeneralProperties = {
     id: number | string;
@@ -35,6 +35,7 @@ export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType)
 export type ListenerTemplate<T extends object, K extends keyof T> = {
     type: K;
     listener: (evt: T[K]) => void;
+    // shape?: Shapes;
     id?: BaseID;
 };
 
@@ -67,6 +68,7 @@ export type EntityConfig = Partial<
 export type AddNativeListener = <K extends keyof HTMLElementEventMap>(
     type: K,
     listener: (evt: HTMLElementEventMap[K]) => void,
+    shape?: Shapes,
     id?: BaseID,
 ) => BaseID | void;
 
@@ -75,8 +77,8 @@ export type RemoveNativeListener = (id: BaseID) => boolean;
 export interface Entity {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
-    // addNativeListener: AddNativeListener;
-    // removeNativeListener: RemoveNativeListener;
+    addNativeListener: AddNativeListener;
+    removeNativeListener: RemoveNativeListener;
     removeListeners: () => void;
     setHideTime: SetHideTime;
     setVisual: SetVisual;

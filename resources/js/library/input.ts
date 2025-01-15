@@ -1,8 +1,9 @@
-import type {InputEventMap} from './types/entity';
-import {BaseCircle, BaseRect, Pos, Shapes} from './types/shapes';
-import type {InputListenersMap} from './types/input';
-
 /* eslint-disable max-lines-per-function */
+// import type {InputEventMap} from './types/entity';
+import {BaseCircle, BaseRect, Pos, Shapes} from './types/shapes';
+import type {InputListenersMap, NativeInputListener} from './types/input';
+import {BaseID} from './types';
+
 const resizeCB: (() => void)[] = [];
 const consoleToggleCB: (() => void)[] = [];
 
@@ -17,7 +18,8 @@ const listeners: InputListenersMap = {
     touchend: [],
 };
 
-// export const getInput = (canvas: HTMLCanvasElement, dualView: boolean = false) => {
+const nativeListeners: NativeInputListener<keyof HTMLElementEventMap>[] = [];
+
 export const getInput = (canvas: HTMLCanvasElement) => {
     const canvasRect = canvas.getBoundingClientRect();
     const buttonHeld: Record<number, boolean> = {};
@@ -25,12 +27,8 @@ export const getInput = (canvas: HTMLCanvasElement) => {
     const mouse = {x: 0, y: 0, touchEnded: false};
     const touch = {x: 0, y: 0};
 
-    const addListener = <T extends keyof InputListenersMap>(
-        type: T,
-        listener: (evt: HTMLElementEventMap[T]) => void,
-        shape?: Shapes,
-    ) => {
-        const id = listeners[type].push({id, listener, shape});
+    const addNativeListener = <K extends keyof HTMLElementEventMap>(obj: NativeInputListener<K>) => {
+        document.addEventListener(obj.type, obj.listener);
     };
 
     const removeListener = <T extends keyof InputListenersMap>(type: T) => {

@@ -1,4 +1,5 @@
 // import type {InputEventMap} from './entity';
+import {BaseID} from '.';
 import {BaseCircle, BaseRect, Shapes} from './shapes';
 
 type MouseDown = 'mousedown';
@@ -16,6 +17,13 @@ interface Events {
     keyup: KeyUp;
     wheel: Wheel;
 }
+
+export type NativeInputListener<K extends keyof HTMLElementEventMap> = {
+    type: K;
+    listener: (evt: HTMLElementEventMap[K]) => void;
+    id?: symbol;
+    shape?: Shapes;
+};
 
 type InsideRect = (rect: BaseRect) => boolean;
 type InsideCircle = (circle: BaseCircle) => boolean;
@@ -38,6 +46,8 @@ export type LibraryInput = {
     };
     buttonHeld: Record<number, boolean>;
     keyHeld: Record<string, boolean>;
+    addNativeListener: <K extends keyof HTMLElementEventMap>(nativeInputListener: NativeInputListener<K>) => void;
+    removeNativeListener: (id: BaseID) => void;
     addListener: <T extends InputMap>(
         type: T,
         input: (evt: HTMLElementEventMap[T]) => void,
