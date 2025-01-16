@@ -33,7 +33,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
     const mouse = {x: 0, y: 0, touchEnded: false};
     const touch = {x: 0, y: 0};
 
-    const addNativeListener = <K extends keyof HTMLElementEventMap>(obj: NativeInputListener<K>) => {
+    const addListener = <K extends keyof HTMLElementEventMap>(obj: NativeInputListener<K>) => {
         canvas.addEventListener(obj.type, obj.listener);
 
         const remove = () => canvas.removeEventListener(obj.type, obj.listener);
@@ -45,7 +45,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         return id;
     };
 
-    const removeNativeListener = (id: symbol) => {
+    const removeListener = (id: symbol) => {
         const index = removeListeners.findIndex(l => {
             l.id === id;
         });
@@ -218,8 +218,8 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         touch: Object.assign(touch, {insideRect: insideTouchRect, insideCircle: insideTouchCircle}),
         buttonHeld,
         keyHeld,
-        addNativeListener,
-        removeNativeListener,
+        addListener,
+        removeListener,
     };
 };
 

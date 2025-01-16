@@ -59,28 +59,41 @@ const createAddAndRemoveNativeListener = (
             };
 
             const remove = () => {
-                const response = input.removeNativeListener(inputListener.id);
+                const response = input.removeListener(inputListener.id);
 
-                if (!response) console.log(`listener with id ${String(inputListener.id)} failed`);
+                if (!response) {
+                    // TODO::Create error handling that can use of symbol id
+                    console.log(`listener with id ${String(inputListener.id)} failed`);
+
+                    return false;
+                }
+
+                return true;
             };
 
-            const index = listenerHandlers.findIndex(t => t.type === type);
+            const index = listenerHandlers.findIndex(l => l.id === inputListener.id);
 
             if (index === -1) {
-                listenerHandlers.push({type, add, remove});
+                listenerHandlers.push({id: inputListener.id, add, remove});
 
                 return;
             }
         },
-        removeNativeListener: <I extends keyof symbol>(id: I) => {
+        removeNativeListener: (id: symbol) => {
             const index = listenerHandlers.findIndex(l => l.id === id);
 
-            // TODO::Add to Error Handling module
-            if (index === -1) throw Error(`${String(id)} does not exist in handler`);
+            if (index === -1) {
+                // TODO::Add to Error Handling module
+                console.log(`${String(id)} does not exist in handler`);
+
+                return false;
+            }
 
             listenerHandlers[index].remove();
 
             listenerHandlers.splice(index, 1);
+
+            return true;
         },
     };
 };

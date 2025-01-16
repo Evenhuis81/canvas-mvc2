@@ -32,15 +32,15 @@ export type VisualType = EntityAnimations | EntityTransitions | EntityHovers;
 export type SetHideTime = (time: number) => void;
 export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
 
-export type ListenerTemplate<T extends object, K extends keyof T, I extends BaseID> = {
+export type ListenerTemplate<T extends object, K extends keyof T> = {
     type: K;
     listener: (evt: T[K]) => void;
     // shape?: Shapes;
-    id?: I;
+    id?: symbol;
 };
 
-export type NativeListener = ListenerTemplate<HTMLElementEventMap, keyof HTMLElementEventMap, symbol>;
-export type EntityListener = ListenerTemplate<EntityEventMap, keyof EntityEventMap, symbol>;
+export type NativeListener = ListenerTemplate<HTMLElementEventMap, keyof HTMLElementEventMap>;
+export type EntityListener = ListenerTemplate<EntityEventMap, keyof EntityEventMap>;
 
 export type StartEndTransitionEvent = {startEndProp: string};
 export type EndEndTransitionEvent = {endEndProp: string};
@@ -65,12 +65,12 @@ export type EntityConfig = Partial<
         }
 >;
 
-export type AddNativeListener = <K extends keyof HTMLElementEventMap, I extends BaseID>(
+export type AddNativeListener = <K extends keyof HTMLElementEventMap>(
     type: K,
     listener: (evt: HTMLElementEventMap[K]) => void,
     shape?: Shapes,
-    id?: I,
-) => I | void;
+    id?: symbol,
+) => symbol | void;
 
 export type RemoveNativeListener = (id: symbol) => boolean;
 
@@ -79,7 +79,7 @@ export interface Entity {
     hide: (quickHide?: boolean) => void;
     addNativeListener: AddNativeListener;
     removeNativeListener: RemoveNativeListener;
-    removeListeners: () => void;
+    // removeListeners: () => void;
     setHideTime: SetHideTime;
     setVisual: SetVisual;
 }
