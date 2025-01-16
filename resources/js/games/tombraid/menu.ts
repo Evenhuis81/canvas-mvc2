@@ -49,6 +49,7 @@ export const mainMenu = (library: LibraryResources) => {
                 listeners: {
                     mouseup: evt => {},
                     touchend: evt => {},
+                    keyup: evt => {},
                     // startTransitionEnd: evt => {},
                 },
             }),
@@ -68,11 +69,11 @@ export const mainMenu = (library: LibraryResources) => {
             row++;
         }
 
-        const clicked = () => {
-            element.setVisual('end', 'explode');
+        // const clicked = () => {
+        //     element.setVisual('end', 'explode');
 
-            elements.forEach(el => el.hide());
-        };
+        //     elements.forEach(el => el.hide());
+        // };
 
         // element.addListener('touchend', clicked);
         // element.addListener('mouseup', clicked);

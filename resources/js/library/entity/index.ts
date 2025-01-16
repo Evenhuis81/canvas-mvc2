@@ -20,7 +20,7 @@ export const getCreateEntity = (
 
     const sketch = createSketch(shape);
 
-    const eventHandler = createEventHandler(input, sketch, listeners);
+    const eventHandler = createEventHandler(input, listeners);
 
     // @type Rect, Circle, Line does not have fill color, make overload function or rehaul colors entirely
     const colors = getSketchRGBAColorsFromHexString(sketch);
