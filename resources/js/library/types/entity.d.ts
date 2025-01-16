@@ -32,15 +32,15 @@ export type VisualType = EntityAnimations | EntityTransitions | EntityHovers;
 export type SetHideTime = (time: number) => void;
 export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
 
-export type ListenerTemplate<T extends object, K extends keyof T> = {
+export type ListenerTemplate<T extends object, K extends keyof T, I extends BaseID> = {
     type: K;
     listener: (evt: T[K]) => void;
     // shape?: Shapes;
-    id?: BaseID;
+    id?: I;
 };
 
-export type NativeListener = ListenerTemplate<HTMLElementEventMap, keyof HTMLElementEventMap>;
-export type EntityListener = ListenerTemplate<EntityEventMap, keyof EntityEventMap>;
+export type NativeListener = ListenerTemplate<HTMLElementEventMap, keyof HTMLElementEventMap, symbol>;
+export type EntityListener = ListenerTemplate<EntityEventMap, keyof EntityEventMap, symbol>;
 
 export type StartEndTransitionEvent = {startEndProp: string};
 export type EndEndTransitionEvent = {endEndProp: string};
@@ -65,14 +65,14 @@ export type EntityConfig = Partial<
         }
 >;
 
-export type AddNativeListener = <K extends keyof HTMLElementEventMap>(
+export type AddNativeListener = <K extends keyof HTMLElementEventMap, I extends BaseID>(
     type: K,
     listener: (evt: HTMLElementEventMap[K]) => void,
     shape?: Shapes,
-    id?: BaseID,
-) => BaseID | void;
+    id?: I,
+) => I | void;
 
-export type RemoveNativeListener = (id: BaseID) => boolean;
+export type RemoveNativeListener = (id: symbol) => boolean;
 
 export interface Entity {
     show: (quickShow?: boolean) => void;
@@ -91,15 +91,11 @@ export interface Callbacks {
     endEnd: () => void;
 }
 
-export type ListenerHandler = {type: keyof HTMLElementEventMap; add: () => void; remove: () => void};
-
 export interface EventHandler {
-    addListeners: () => void;
+    addListeners: () => void; // Native for now, combine with EntityListeners
     removeListeners: () => void;
     startTransitionEnd?: (evt: StartEndTransitionEvent) => void;
     endTransitionEnd?: (evt: EndEndTransitionEvent) => void;
-    // addListener: AddListener;
-    // removeListener: RemoveListener;
 }
 
 export type TransitionSpeed = 1 | 2 | 3 | 4 | 5;

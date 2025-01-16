@@ -46,16 +46,16 @@ export type LibraryInput = {
     };
     buttonHeld: Record<number, boolean>;
     keyHeld: Record<string, boolean>;
-    addNativeListener: <K extends keyof HTMLElementEventMap>(nativeInputListener: NativeInputListener<K>) => void;
-    removeNativeListener: (id: symbol) => boolean;
-    addListener: <T extends InputMap>(
-        type: T,
-        input: (evt: HTMLElementEventMap[T]) => void,
-        // props: InputEventMap[T],
-        // This needs to be adjusted in time to fit all kind of shapes and extract the right one based on input type given
-        shape?: Shapes,
-    ) => void;
-    removeListener: <T extends InputMap>(type: T) => void;
+    addListener: <K extends keyof HTMLElementEventMap>(nativeInputListener: NativeInputListener<K>) => void;
+    removeListener: (id: symbol) => boolean;
+    // addListener: <T extends InputMap>(
+    //     type: T,
+    //     input: (evt: HTMLElementEventMap[T]) => void,
+    //     // props: InputEventMap[T],
+    //     // This needs to be adjusted in time to fit all kind of shapes and extract the right one based on input type given
+    //     shape?: Shapes,
+    // ) => void;
+    // removeListener: <T extends InputMap>(type: T) => void;
 };
 
 type InputMap = 'mousedown' | 'mousemove' | 'mouseup' | 'keydown' | 'keyup' | 'touchstart' | 'touchmove' | 'touchend';

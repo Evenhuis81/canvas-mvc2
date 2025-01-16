@@ -4,7 +4,7 @@ import {createVisualsAndCallbacks} from './animate';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {createSketch} from './sketch';
-import {defaultProperties} from './defaults';
+import {defaultProperties} from './properties';
 import type {Engine} from 'library/types/engine';
 import type {Entity, EntityConfig, GeneralProperties} from 'library/types/entity';
 import type {LibraryInput} from 'library/types/input';
@@ -37,8 +37,8 @@ export const getCreateEntity = (
     ); // Also creates setEngine
 
     const entity: Entity = {
-        // addListener: eventHandler.addListener,
-        // removeListener: eventHandler.removeListener,
+        addNativeListener: eventHandler.addNativeListener,
+        removeNativeListener: eventHandler.removeNativeListener,
         removeListeners: eventHandler.removeListeners,
         setVisual,
         ...createUserMethods(visualProperties, generalProperties, callbacks, eventHandler),

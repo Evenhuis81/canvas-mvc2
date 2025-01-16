@@ -1,6 +1,9 @@
-import type {EventHandler, ListenerHandler, NativeListenersConfig} from 'library/types/entity';
-import {LibraryInput} from 'library/types/input';
+import {BaseID} from 'library/types';
+import type {EventHandler, NativeListenersConfig} from 'library/types/entity';
+import type {LibraryInput} from 'library/types/input';
 import type {Shapes} from 'library/types/shapes';
+
+type ListenerHandler = {id: symbol; add: () => void; remove: () => void};
 
 export const createEventHandler = <K extends keyof HTMLElementEventMap>(
     input: LibraryInput,
@@ -9,20 +12,16 @@ export const createEventHandler = <K extends keyof HTMLElementEventMap>(
 ) => {
     const listenerHandlers: ListenerHandler[] = [];
 
-    // const eventHandler: Omit<EventHandler, 'addListener' | 'removeListener'> = {
     const eventHandler: EventHandler = {
         addListeners: () => listenerHandlers.forEach(l => l.add()),
         removeListeners: () => listenerHandlers.forEach(l => l.remove()),
     };
 
-    // const listenerEvents = createListenerEvents();
-
     const {addNativeListener, removeNativeListener} = createAddAndRemoveNativeListener(
         listenerHandlers,
         eventHandler,
-        // listenerEvents,
         input,
-        sketch,
+        // sketch,
     );
 
     if (!listeners) return Object.assign(eventHandler, {addNativeListener, removeNativeListener});
@@ -38,24 +37,11 @@ export const createEventHandler = <K extends keyof HTMLElementEventMap>(
     return Object.assign(eventHandler, {addNativeListener, removeNativeListener});
 };
 
-// const mouseProps = {clicked: false, clickTotal: 0};
-// const touchProps = {touched: false, touchTotal: 0};
-// const keyProps = {keyProp: 'test key prop'};
-// const startTransitionEndProps = {startEndProp: 'test startEnd prop'};
-// const endTransitionEndProps = {endEndProp: 'test endEnd prop'};
-
-// const createListenerEvents = () => ({
-//     startTransitionEnd: {...startTransitionEndProps},
-//     endTransitionEnd: {...endTransitionEndProps},
-// });
-
 const createAddAndRemoveNativeListener = (
     listenerHandlers: ListenerHandler[],
-    // eventHandler: Omit<EventHandler, 'addListener' | 'removeListener'>,
     eventHandler: EventHandler,
-    // eventProperties: EntityEventMap,
     input: LibraryInput,
-    sketch: Shapes,
+    // sketch: Shapes,
 ) => {
     return {
         addNativeListener: <K extends keyof HTMLElementEventMap>(
@@ -69,7 +55,7 @@ const createAddAndRemoveNativeListener = (
             };
 
             const add = () => {
-                input.addNativeListener(inputListener);
+                input.addListener(inputListener);
             };
 
             const remove = () => {
@@ -85,16 +71,12 @@ const createAddAndRemoveNativeListener = (
 
                 return;
             }
-
-            // listenerHandlers[index].remove();
-
-            // // TODO::Test if overwritten listener gets handled properly
-            // listenerHandlers[index] = {type, add, remove};
         },
-        removeNativeListener: <K extends keyof EntityListenerEvents>(type: K) => {
-            const index = listenerHandlers.findIndex(t => t.type === type);
+        removeNativeListener: <I extends keyof symbol>(id: I) => {
+            const index = listenerHandlers.findIndex(l => l.id === id);
 
-            if (index === -1) throw Error(`${type} does not exist in handler`);
+            // TODO::Add to Error Handling module
+            if (index === -1) throw Error(`${String(id)} does not exist in handler`);
 
             listenerHandlers[index].remove();
 
@@ -102,6 +84,18 @@ const createAddAndRemoveNativeListener = (
         },
     };
 };
+
+// const mouseProps = {clicked: false, clickTotal: 0};
+// const touchProps = {touched: false, touchTotal: 0};
+// const keyProps = {keyProp: 'test key prop'};
+// const startTransitionEndProps = {startEndProp: 'test startEnd prop'};
+// const endTransitionEndProps = {endEndProp: 'test endEnd prop'};
+
+// const createListenerEvents = () => ({
+//     startTransitionEnd: {...startTransitionEndProps},
+//     endTransitionEnd: {...endTransitionEndProps},
+// });
+
 // if (type === 'startTransitionEnd') {
 //     eventHandler.startTransitionEnd = () => {
 // props.
