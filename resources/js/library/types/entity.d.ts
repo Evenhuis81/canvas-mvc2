@@ -68,9 +68,8 @@ export type EntityConfig = Partial<
 export type AddNativeListener = <K extends keyof HTMLElementEventMap>(
     type: K,
     listener: (evt: HTMLElementEventMap[K]) => void,
-    shape?: Shapes,
     id?: symbol,
-) => symbol | void;
+) => symbol;
 
 export type RemoveNativeListener = (id: symbol) => boolean;
 
@@ -92,8 +91,10 @@ export interface Callbacks {
 }
 
 export interface EventHandler {
-    addListeners: () => void; // Native for now, combine with EntityListeners
-    removeListeners: () => void;
+    addNativeListener: AddNativeListener;
+    removeNativeListener: RemoveNativeListener;
+    addNativeListeners: () => void;
+    removeNativeListeners: () => void;
     startTransitionEnd?: (evt: StartEndTransitionEvent) => void;
     endTransitionEnd?: (evt: EndEndTransitionEvent) => void;
 }

@@ -1,4 +1,4 @@
-import type {EventHandler, NativeListenersConfig} from 'library/types/entity';
+import type {AddNativeListener, EventHandler, NativeListenersConfig} from 'library/types/entity';
 import type {LibraryInput} from 'library/types/input';
 
 type ListenerHandler = {id: symbol; add: () => void; remove: () => void};
@@ -12,8 +12,10 @@ export const createEventHandler = <K extends keyof HTMLElementEventMap>(
     const {add, remove} = createAddAndRemoveNativeListener(input);
 
     const eventHandler: EventHandler = {
-        addListeners: () => eventHandlerListeners.forEach(l => l.add()),
-        removeListeners: () => eventHandlerListeners.forEach(l => l.remove()),
+        addNativeListener: add,
+        removeNativeListener: remove,
+        addNativeListeners: () => eventHandlerListeners.forEach(l => l.add()),
+        removeNativeListeners: () => eventHandlerListeners.forEach(l => l.remove()),
     };
 
     if (!listeners) return eventHandler;
@@ -24,25 +26,30 @@ export const createEventHandler = <K extends keyof HTMLElementEventMap>(
         if (!listener) continue;
 
         // Creation of Entity with listeners will get id auto-assigned (?)
-        const newID = add(key, listener);
+
+        const newID = Symbol();
+
+        const addListener = () => {
+            add(key, listener, newID);
+        };
+
+        const removeListener = () => {
+            remove(newID);
+        };
+
+        eventHandlerListeners.push({id: newID, add: addListener, remove: removeListener});
     }
 
-    return Object.assign(eventHandler, {addNativeListener});
+    return eventHandler;
 };
 
 const createAddAndRemoveNativeListener = (input: LibraryInput) => {
-    const add = <K extends keyof HTMLElementEventMap>(
-        type: K,
-        listener: (evt: HTMLElementEventMap[K]) => void,
-        id?: symbol,
-    ) => {
+    const add: AddNativeListener = (type, listener, id) => {
         const listenerID = id ?? Symbol();
 
         input.addListener({type, listener, id: listenerID});
 
-        if (!id) return listenerID;
-
-        return;
+        return listenerID;
     };
 
     const remove = (id: symbol) => {
