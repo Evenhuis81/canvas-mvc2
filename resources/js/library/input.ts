@@ -2,8 +2,11 @@ import type {BaseCircle, BaseRect, Pos, Shapes} from './types/shapes';
 import type {NativeInputListener} from './types/input';
 
 export type RemoveInputListener = () => void;
+export type RunListener = () => void;
 
-export type InputListenerHandler = [NativeInputListener<keyof HTMLElementEventMap>, RemoveInputListener];
+export type InputListenerHandler = [RunListener, RemoveInputListener];
+
+const inputListeners: {[type: string]: any} = {};
 
 const resizeCB: (() => void)[] = [];
 const consoleToggleCB: (() => void)[] = [];
@@ -17,12 +20,16 @@ export const getInput = (canvas: HTMLCanvasElement) => {
     const touch = {x: 0, y: 0, ended: false};
 
     const addListener = <K extends keyof HTMLElementEventMap>(obj: NativeInputListener<K>) => {
-        canvas.addEventListener(obj.type, obj.listener);
+        // TODO::Avoid adding every input listener as a seperate listener to the canvas, but make it so that a single
+        // eventListener handles all types individually under that eventListener
+        // canvas.addEventListener(obj.type, obj.listener);
 
         const id = obj.id ?? Symbol();
 
         listenerHandlers[obj.type][id] = [
-            obj,
+            () => {
+                addEventListener;
+            }, // RunListener
             () => canvas.removeEventListener(obj.type, obj.listener), // RemoveEventListener
         ];
 
