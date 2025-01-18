@@ -70,6 +70,8 @@ export const mainMenu = (library: LibraryResources) => {
         }
 
         const clicked = () => {
+            console.log('clicked element');
+
             element.setVisual('end', 'explode');
 
             elements.forEach(el => el.hide());

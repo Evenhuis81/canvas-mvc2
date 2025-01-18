@@ -1,74 +1,67 @@
-/* eslint-disable max-lines-per-function */
-// import type {InputEventMap} from './types/entity';
-import {BaseCircle, BaseRect, Pos, Shapes} from './types/shapes';
-import type {InputListenersMap, NativeInputListener} from './types/input';
-// Instead of just canvas element to add listeners, make this an option for any element or document
+import type {BaseCircle, BaseRect, Pos, Shapes} from './types/shapes';
+import type {NativeInputListener} from './types/input';
+
+export type RemoveInputListener = () => void;
+
+export type InputListenerHandler = [NativeInputListener<keyof HTMLElementEventMap>, RemoveInputListener];
 
 const resizeCB: (() => void)[] = [];
 const consoleToggleCB: (() => void)[] = [];
-
-const listeners: InputListenersMap = {
-    mousedown: [],
-    mousemove: [],
-    mouseup: [],
-    keydown: [],
-    keyup: [],
-    touchstart: [],
-    touchmove: [],
-    touchend: [],
-};
-
-// export type SavedListeners = {
-//     id: symbol;
-//     listener: (evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => void;
-// };
-
-// const savedListeners: SavedListeners[] = [];
-const removeListeners: {id: symbol; remove: () => void}[] = [];
+const listenerHandlers: {[type: string]: {[id: symbol]: InputListenerHandler}} = {};
 
 export const getInput = (canvas: HTMLCanvasElement) => {
     const canvasRect = canvas.getBoundingClientRect();
     const buttonHeld: Record<number, boolean> = {};
     const keyHeld: Record<string, boolean> = {};
-    const mouse = {x: 0, y: 0, touchEnded: false};
-    const touch = {x: 0, y: 0};
+    const mouse = {x: 0, y: 0};
+    const touch = {x: 0, y: 0, ended: false};
 
     const addListener = <K extends keyof HTMLElementEventMap>(obj: NativeInputListener<K>) => {
         canvas.addEventListener(obj.type, obj.listener);
 
-        const remove = () => canvas.removeEventListener(obj.type, obj.listener);
-
         const id = obj.id ?? Symbol();
 
-        removeListeners.push({id, remove});
+        listenerHandlers[obj.type][id] = [
+            obj,
+            () => canvas.removeEventListener(obj.type, obj.listener), // RemoveEventListener
+        ];
 
         return id;
     };
 
-    const removeListener = (id: symbol) => {
-        const index = removeListeners.findIndex(l => l.id === id);
+    const removeListener = (type: keyof HTMLElementEventMap, id: symbol) => {
+        if (!listenerHandlers[type][id]) return false;
 
-        // TODO::Add to Errorhandling module
-        if (index === -1) return false;
+        listenerHandlers[type][id][0](); // RemoveEventListener
 
-        removeListeners[index].remove();
-
-        removeListeners.splice(index, 1);
+        delete listenerHandlers[type][id];
 
         return true;
     };
 
     canvas.addEventListener('mousedown', evt => {
-        mouse.touchEnded = false;
+        const mousedownListeners = listenerHandlers['mousedown'];
+
+        touch.ended = false;
 
         buttonHeld[evt.button] = true;
 
-        listeners.mousedown.forEach(m => {
-            if (clickedInsideMouse(m.shape)) m.listener(evt);
+        const values: InputListenerHandler[] = Object.values(mousedownListeners);
+
+        values.forEach(val => {
+            val[0]();
         });
+        // for (const id in mousedownListeners) {
+        //     mousedownListeners[id]
+        // }
+
+        // listeners.mousedown.forEach(m => {
+        //     if (clickedInsideMouse(m.shape)) m.listener(evt);
+        // });
     });
+
     canvas.addEventListener('mousemove', evt => {
-        mouse.touchEnded = false;
+        touch.ended = false;
 
         mouse.x = +(evt.clientX - canvasRect.left).toFixed(0);
         mouse.y = +(evt.clientY - canvasRect.top).toFixed(0);
@@ -77,7 +70,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
     });
 
     canvas.addEventListener('mouseup', evt => {
-        mouse.touchEnded = false;
+        touch.ended = false;
 
         delete buttonHeld[evt.button];
 
@@ -90,7 +83,6 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         });
     });
 
-    // TODO::Make prettier when scaled enough
     const clickedInsideMouse = (shape?: Shapes) => {
         if (!shape) return false;
 
@@ -109,7 +101,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
     };
 
     canvas.addEventListener('keydown', evt => {
-        mouse.touchEnded = false;
+        touch.ended = false;
 
         keyHeld[evt.code] = true;
 
@@ -117,7 +109,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
     });
 
     canvas.addEventListener('keyup', evt => {
-        mouse.touchEnded = false;
+        touch.ended = false;
 
         delete keyHeld[evt.code];
 
@@ -147,7 +139,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
     canvas.addEventListener('touchend', (evt: TouchEvent) => {
         evt.preventDefault(); // otherwise mouse gets moved to touch spot, firing all other mouse events
 
-        mouse.touchEnded = true;
+        touch.ended = true;
 
         listeners.touchend.forEach(m => {
             if (clickedInsideTouch(m.shape)) {

@@ -1,6 +1,5 @@
-import {BaseID} from '.';
 import {EngineDraw, EngineUpdate} from './engine';
-import {Shapes, ShapesConfig} from './shapes';
+import {ShapesConfig} from './shapes';
 
 export type GeneralProperties = {
     id: number | string;
@@ -65,6 +64,8 @@ export type EntityConfig = Partial<
 
 type ActivateListener = () => symbol;
 type DeactivateListener = () => boolean;
+
+export type EntityListenerHandler = [symbol, ActivateListener, DeactivateListener];
 
 export type AddNativeListener = <K extends keyof HTMLElementEventMap>(
     type: K, // = ID (1 type per entity)

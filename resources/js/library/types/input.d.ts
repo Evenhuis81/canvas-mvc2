@@ -34,27 +34,27 @@ export type LibraryInput = {
         inside: Inside;
         insideRect: InsideRect;
         insideCircle: InsideCircle;
-        touchEnded: boolean;
     };
     touch: {
         x: number;
         y: number;
         insideRect: InsideRect;
         insideCircle: InsideCircle;
+        ended: boolean;
     };
     buttonHeld: Record<number, boolean>;
     keyHeld: Record<string, boolean>;
     addListener: <K extends keyof HTMLElementEventMap>(nativeInputListener: NativeInputListener<K>) => symbol;
-    removeListener: (id: symbol) => boolean;
+    removeListener: (type: keyof HTMLElementEventMap, id: symbol) => boolean;
 };
 
-type InputMap = 'mousedown' | 'mousemove' | 'mouseup' | 'keydown' | 'keyup' | 'touchstart' | 'touchmove' | 'touchend';
+// type InputMap = 'mousedown' | 'mousemove' | 'mouseup' | 'keydown' | 'keyup' | 'touchstart' | 'touchmove' | 'touchend';
 
-export type InputListenersMap = {
-    [K in InputMap]: {
-        type: K;
-        listener: (evt: HTMLElementEventMap[K]) => void;
-        // props: InputEventMap[K];
-        shape?: Shapes;
-    }[];
-};
+// export type InputListenersMap = {
+//     [K in InputMap]: {
+//         type: K;
+//         listener: (evt: HTMLElementEventMap[K]) => void;
+//         // props: InputEventMap[K];
+//         shape?: Shapes;
+//     }[];
+// };
