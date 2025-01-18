@@ -14,7 +14,7 @@ export const createUserMethods = (
 
         gProps.show = true;
 
-        eventHandler.addListeners();
+        eventHandler.activateNativeListeners();
 
         callbacks.start(quickShow);
     };
@@ -31,7 +31,7 @@ export const createUserMethods = (
 
         if (hideTime) {
             setTimeout(() => {
-                eventHandler.removeListeners();
+                eventHandler.deactivateNativeListeners();
 
                 hideMe();
             }, hideTime);
@@ -39,7 +39,7 @@ export const createUserMethods = (
             return;
         }
 
-        eventHandler.removeListeners();
+        eventHandler.deactivateNativeListeners();
 
         hideMe();
     };

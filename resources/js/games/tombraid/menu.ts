@@ -2,7 +2,7 @@ import type {Entity, VisualProperties} from 'library/types/entity';
 import type {LibraryResources} from 'library/types';
 import type {ShapesConfig} from 'library/types/shapes';
 
-const elementAmount = 2;
+const elementAmount = 9;
 
 export const mainMenu = (library: LibraryResources) => {
     const rowsOrColumns = Math.sqrt(elementAmount);
@@ -46,12 +46,12 @@ export const mainMenu = (library: LibraryResources) => {
                     y: startY + row * squareDistance,
                     text: (i + 1).toString(),
                 },
-                listeners: {
-                    mouseup: evt => {},
-                    touchend: evt => {},
-                    keyup: evt => {},
-                    // startTransitionEnd: evt => {},
-                },
+                // listeners: {
+                // mouseup: evt => {},
+                // touchend: evt => {},
+                // keyup: evt => {},
+                // startTransitionEnd: evt => {},
+                // },
             }),
         );
 
@@ -69,14 +69,14 @@ export const mainMenu = (library: LibraryResources) => {
             row++;
         }
 
-        // const clicked = () => {
-        //     element.setVisual('end', 'explode');
+        const clicked = () => {
+            element.setVisual('end', 'explode');
 
-        //     elements.forEach(el => el.hide());
-        // };
+            elements.forEach(el => el.hide());
+        };
 
-        // element.addListener('touchend', clicked);
-        // element.addListener('mouseup', clicked);
+        element.addNativeListener('touchend', clicked);
+        element.addNativeListener('mouseup', clicked);
         // element.addListener('endTransitionEnd', evt => {
         //     console.log(evt.clicked, evt.clickTotal);
 

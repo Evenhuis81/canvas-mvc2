@@ -1,83 +1,77 @@
-import type {AddNativeListener, EventHandler, NativeListenersConfig} from 'library/types/entity';
+import type {
+    ActivateListener,
+    AddNativeListener,
+    DeactivateListener,
+    EventHandler,
+    NativeListenerMap,
+} from 'library/types/entity';
 import type {LibraryInput} from 'library/types/input';
 
-type ListenerHandler = {id: symbol; add: () => void; remove: () => void};
+export type ListenerHandler = {
+    type: keyof HTMLElementEventMap;
+    // id: symbol;
+    activate: () => void;
+    deactivate: () => void;
+};
 
 export const createEventHandler = <K extends keyof HTMLElementEventMap>(
     input: LibraryInput,
-    listeners?: Partial<NativeListenersConfig<K>>,
+    listeners?: Partial<NativeListenerMap<K>>,
 ) => {
-    const eventHandlerListeners: ListenerHandler[] = [];
+    const listenerHandlers: {[type: string]: [symbol, ActivateListener, DeactivateListener]} = {};
+    // const listenerHandlers: {[K in keyof HTMLElementEventMap]?: [symbol, ActivateListener, DeactivateListener]} = {};
+    // const listenersSet: Array<keyof HTMLElementEventMap> = [];
 
-    const {add, remove} = createAddAndRemoveNativeListener(input);
+    const {addNativeListener, removeNativeListener} = createAddAndRemoveNativeListener(listenerHandlers, input);
 
     const eventHandler: EventHandler = {
-        addNativeListener: add,
-        removeNativeListener: remove,
-        addNativeListeners: () => eventHandlerListeners.forEach(l => l.add()),
-        removeNativeListeners: () => eventHandlerListeners.forEach(l => l.remove()),
+        addNativeListener,
+        removeNativeListener,
+        activateNativeListeners: () => {
+            for (const type in listenerHandlers) listenerHandlers[type][1](); // deactivate function
+        },
+        deactivateNativeListeners: () => {
+            for (const type in listenerHandlers) listenerHandlers[type][2](); // activate function
+        },
     };
 
     if (!listeners) return eventHandler;
 
-    for (const key in listeners) {
-        const listener = listeners[key];
+    for (const type in listeners) {
+        const listener = listeners[type];
 
         if (!listener) continue;
 
-        // Creation of Entity with listeners will get id auto-assigned (?)
-
-        const newID = Symbol();
-
-        const addListener = () => {
-            add(key, listener, newID);
-        };
-
-        const removeListener = () => {
-            remove(newID);
-        };
-
-        eventHandlerListeners.push({id: newID, add: addListener, remove: removeListener});
+        addNativeListener(type, listener, false);
     }
 
     return eventHandler;
 };
 
-const createAddAndRemoveNativeListener = (input: LibraryInput) => {
-    const add: AddNativeListener = (type, listener, id) => {
-        const listenerID = id ?? Symbol();
+const createAddAndRemoveNativeListener = {
+    AddNativeListener: (type, listener, activate = true) => {
+        const id = Symbol();
 
-        input.addListener({type, listener, id: listenerID});
+        listenerHandlers[type] = [id, () => input.addListener({type, listener, id}), () => input.removeListener(id)];
 
-        return listenerID;
-    };
+        if (activate) input.addListener({type, listener, id});
 
-    const remove = (id: symbol) => {
-        const response = input.removeListener(id);
+        return id;
+    },
+    removeNativeListener: (type: keyof HTMLElementEventMap) => {
+        const handler = listenerHandlers[type];
 
-        if (!response) {
-            // TODO::Create error handling with use of symbol id
-            console.log(`listener with id ${String(id)} failed`);
+        if (handler) {
+            input.removeListener(handler[0]);
 
-            return false;
+            delete listenerHandlers[type];
+
+            return;
         }
 
-        return true;
-    };
-
-    return {add, remove};
+        // TODO::Throw Library Error
+    },
 };
-
-//     const index = listenerHandlers.findIndex(l => l.id === inputListener.id);
-
-//     input.addListener(inputListener);
-
-//     if (index === -1) {
-//         listenerHandlers.push({id: inputListener.id, remove});
-
-//         return;
-//     }
-// }
 
 // const mouseProps = {clicked: false, clickTotal: 0};
 // const touchProps = {touched: false, touchTotal: 0};
