@@ -1,16 +1,25 @@
-import type {BaseCircle, BaseRect, Pos, Shapes} from './types/shapes';
-import type {NativeInputListener} from './types/input';
+import type {BaseCircle, BaseRect, Circle, Pos, Rect, Shapes} from './types/shapes';
+import type {InputListener, InputListenerType, InputListeners} from './types/input';
 
 export type RemoveInputListener = () => void;
 export type RunListener = () => void;
 
 export type InputListenerHandler = [RunListener, RemoveInputListener];
 
-const inputListeners: {[type: string]: any} = {};
+const inputListeners: InputListeners = {
+    mousedown: [],
+    mousemove: [],
+    mouseup: [],
+    keydown: [],
+    keyup: [],
+    touchstart: [],
+    touchmove: [],
+    touchend: [],
+};
 
 const resizeCB: (() => void)[] = [];
 const consoleToggleCB: (() => void)[] = [];
-const listenerHandlers: {[type: string]: {[id: symbol]: InputListenerHandler}} = {};
+// const listenerHandlers: {[type: string]: {[id: symbol]: InputListenerHandler}} = {};
 
 export const getInput = (canvas: HTMLCanvasElement) => {
     const canvasRect = canvas.getBoundingClientRect();
@@ -19,52 +28,27 @@ export const getInput = (canvas: HTMLCanvasElement) => {
     const mouse = {x: 0, y: 0};
     const touch = {x: 0, y: 0, ended: false};
 
-    const addListener = <K extends keyof HTMLElementEventMap>(obj: NativeInputListener<K>) => {
-        // TODO::Avoid adding every input listener as a seperate listener to the canvas, but make it so that a single
-        // eventListener handles all types individually under that eventListener
-        // canvas.addEventListener(obj.type, obj.listener);
+    const addListener = <K extends InputListenerType>(listener: InputListener<K>) =>
+        inputListeners[listener.type].push(listener);
 
-        const id = obj.id ?? Symbol();
+    const removeListener = (type: InputListenerType, id: symbol) => {
+        const index = inputListeners[type].findIndex(l => l.id === id);
 
-        listenerHandlers[obj.type][id] = [
-            () => {
-                addEventListener;
-            }, // RunListener
-            () => canvas.removeEventListener(obj.type, obj.listener), // RemoveEventListener
-        ];
+        if (index === -1) return false;
 
-        return id;
-    };
-
-    const removeListener = (type: keyof HTMLElementEventMap, id: symbol) => {
-        if (!listenerHandlers[type][id]) return false;
-
-        listenerHandlers[type][id][0](); // RemoveEventListener
-
-        delete listenerHandlers[type][id];
+        inputListeners[type].splice(index, 1);
 
         return true;
     };
 
     canvas.addEventListener('mousedown', evt => {
-        const mousedownListeners = listenerHandlers['mousedown'];
-
         touch.ended = false;
 
         buttonHeld[evt.button] = true;
 
-        const values: InputListenerHandler[] = Object.values(mousedownListeners);
-
-        values.forEach(val => {
-            val[0]();
+        inputListeners.mousedown.forEach(m => {
+            if (clickedInsideMouse(m.shape)) m.listener(evt);
         });
-        // for (const id in mousedownListeners) {
-        //     mousedownListeners[id]
-        // }
-
-        // listeners.mousedown.forEach(m => {
-        //     if (clickedInsideMouse(m.shape)) m.listener(evt);
-        // });
     });
 
     canvas.addEventListener('mousemove', evt => {
@@ -73,7 +57,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         mouse.x = +(evt.clientX - canvasRect.left).toFixed(0);
         mouse.y = +(evt.clientY - canvasRect.top).toFixed(0);
 
-        listeners.mousemove.forEach(m => m.listener(evt));
+        inputListeners.mousemove.forEach(m => m.listener(evt));
     });
 
     canvas.addEventListener('mouseup', evt => {
@@ -81,8 +65,9 @@ export const getInput = (canvas: HTMLCanvasElement) => {
 
         delete buttonHeld[evt.button];
 
-        listeners.mouseup.forEach(m => {
+        inputListeners.mouseup.forEach((m, index) => {
             if (clickedInsideMouse(m.shape)) {
+                console.log(`clicked inside mouse ${index}`);
                 // m.props.clicked = true;
                 // m.props.clickTotal++;
                 m.listener(evt);
@@ -90,15 +75,15 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         });
     });
 
-    const clickedInsideMouse = (shape?: Shapes) => {
-        if (!shape) return false;
+    const clickedInsideMouse = (shape: Shapes) => {
+        // if (!shape) return false;
 
         if (shape.type === 'rect' && insideMouseRect(shape)) return true;
         if (shape.type === 'circle' && insideMouseCircle(shape)) return true;
 
         return false;
     };
-    const clickedInsideTouch = (shape?: Shapes) => {
+    const clickedInsideTouch = (shape: Shapes) => {
         if (!shape) return false;
 
         if (shape.type === 'rect' && insideTouchRect(shape)) return true;
@@ -112,7 +97,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
 
         keyHeld[evt.code] = true;
 
-        listeners.keydown.forEach(m => m.listener(evt));
+        inputListeners.keydown.forEach(m => m.listener(evt));
     });
 
     canvas.addEventListener('keyup', evt => {
@@ -122,14 +107,14 @@ export const getInput = (canvas: HTMLCanvasElement) => {
 
         if (evt.code === 'F12') for (let i = 0; i < resizeCB.length; i++) consoleToggleCB[i]();
 
-        listeners.keyup.forEach(m => m.listener(evt));
+        inputListeners.keyup.forEach(m => m.listener(evt));
     });
 
     canvas.addEventListener('touchstart', (evt: TouchEvent) => {
         touch.x = +(evt.touches[0].clientX - canvasRect.left).toFixed(0);
         touch.y = +(evt.touches[0].clientY - canvasRect.top).toFixed(0);
 
-        listeners.touchstart.forEach(m => {
+        inputListeners.touchstart.forEach(m => {
             if (clickedInsideTouch(m.shape)) m.listener(evt);
         });
     });
@@ -140,7 +125,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         touch.x = +(evt.touches[0].clientX - canvasRect.left).toFixed(0);
         touch.y = +(evt.touches[0].clientY - canvasRect.top).toFixed(0);
 
-        listeners.touchmove.forEach(m => m.listener(evt));
+        inputListeners.touchmove.forEach(m => m.listener(evt));
     });
 
     canvas.addEventListener('touchend', (evt: TouchEvent) => {
@@ -148,7 +133,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
 
         touch.ended = true;
 
-        listeners.touchend.forEach(m => {
+        inputListeners.touchend.forEach(m => {
             if (clickedInsideTouch(m.shape)) {
                 // m.props.clicked = true;
                 // m.props.clickTotal++;

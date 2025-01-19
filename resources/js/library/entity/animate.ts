@@ -3,7 +3,6 @@ import {Engine} from 'library/types/engine';
 import {createRenders} from './renders';
 import type {
     Callbacks,
-    Colors,
     EventHandler,
     GeneralProperties,
     SetEngine,
@@ -13,6 +12,7 @@ import type {
 } from 'library/types/entity';
 import type {Shapes} from 'library/types/shapes';
 import {LibraryInput} from 'library/types/input';
+import {Colors} from 'library/types/color';
 
 export const createVisualsAndCallbacks = (
     gProps: GeneralProperties,

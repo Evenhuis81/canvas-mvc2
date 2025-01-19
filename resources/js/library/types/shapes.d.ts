@@ -32,11 +32,10 @@ export type BaseRect = {
 
 export type Rect = {
     type: 'rect';
-    radii: number; // border-radius
+    // radii: number; // border-radius
 } & BaseRect;
 
 export type EntityText = {
-    type: 'text';
     text: string;
     textFill: string;
     // textStroke: string;

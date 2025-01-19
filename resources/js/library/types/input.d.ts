@@ -1,4 +1,4 @@
-import {BaseCircle, BaseRect, Shapes} from './shapes';
+import {BaseCircle, BaseRect, Circle, Rect, Shapes} from './shapes';
 
 type MouseDown = 'mousedown';
 type MouseMove = 'mousemove';
@@ -16,12 +16,12 @@ interface Events {
     wheel: Wheel;
 }
 
-export type NativeInputListener<K extends keyof HTMLElementEventMap> = {
-    type: K;
-    listener: (evt: HTMLElementEventMap[K]) => void;
-    id?: symbol;
-    shape?: Shapes;
-};
+// export type InputListener<K extends keyof HTMLElementEventMap> = {
+//     type: K;
+//     listener: (evt: HTMLElementEventMap[K]) => void;
+//     id?: symbol;
+//     shape?: Shapes;
+// };
 
 type InsideRect = (rect: BaseRect) => boolean;
 type InsideCircle = (circle: BaseCircle) => boolean;
@@ -44,17 +44,28 @@ export type LibraryInput = {
     };
     buttonHeld: Record<number, boolean>;
     keyHeld: Record<string, boolean>;
-    addListener: <K extends keyof HTMLElementEventMap>(nativeInputListener: NativeInputListener<K>) => symbol;
-    removeListener: (type: keyof HTMLElementEventMap, id: symbol) => boolean;
+    addListener: <K extends InputListenerType>(listener: InputListener<K>) => symbol;
+    removeListener: (type: InputListenerType, id: symbol) => boolean;
+    // removeListener: <K extends InputListenerType>(type: InputListener<InputListenerType>, id: symbol) => boolean;
 };
 
-// type InputMap = 'mousedown' | 'mousemove' | 'mouseup' | 'keydown' | 'keyup' | 'touchstart' | 'touchmove' | 'touchend';
+export type InputListenerType =
+    | 'mousedown'
+    | 'mousemove'
+    | 'mouseup'
+    | 'keydown'
+    | 'keyup'
+    | 'touchstart'
+    | 'touchmove'
+    | 'touchend';
 
-// export type InputListenersMap = {
-//     [K in InputMap]: {
-//         type: K;
-//         listener: (evt: HTMLElementEventMap[K]) => void;
-//         // props: InputEventMap[K];
-//         shape?: Shapes;
-//     }[];
-// };
+export type InputListeners = {
+    [K in InputListenerType]: InputListener<K>[];
+};
+
+export type InputListener<K extends InputListenerType> = {
+    type: K;
+    listener: (evt: HTMLElementEventMap[K]) => void;
+    id: symbol;
+    shape: Shapes;
+};

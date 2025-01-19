@@ -20,7 +20,7 @@ export const getCreateEntity = (
 
     const sketch = createSketch(shape);
 
-    const eventHandler = createEventHandler(input, listeners);
+    const eventHandler = createEventHandler(input, sketch, listeners);
 
     // @type Rect, Circle, Line does not have fill color, make overload function or rehaul colors entirely
     const colors = getSketchRGBAColorsFromHexString(sketch);
@@ -37,8 +37,8 @@ export const getCreateEntity = (
     ); // Also creates setEngine
 
     const entity: Entity = {
-        addNativeListener: eventHandler.addNativeListener,
-        removeNativeListener: eventHandler.removeNativeListener,
+        addListener: eventHandler.addListener,
+        removeListener: eventHandler.removeListener,
         setVisual,
         ...createUserMethods(visualProperties, generalProperties, callbacks, eventHandler),
     };
@@ -57,6 +57,7 @@ const initialize = (gProps: GeneralProperties, methods: Entity) => {
             // TODO::Make this optional (or with entityMethod)
             gProps.showDelay = 0;
 
+            console.log('show init');
             methods.show();
         }, gProps.showDelay);
     }

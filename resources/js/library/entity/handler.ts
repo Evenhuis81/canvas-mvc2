@@ -1,27 +1,23 @@
-import type {
-    AddNativeListener,
-    EventHandler,
-    EntityListenerHandler,
-    NativeListenerMap,
-    RemoveNativeListener,
-} from 'library/types/entity';
-import type {LibraryInput} from 'library/types/input';
+import type {EventHandler, EntityListenerHandler, AddListener, RemoveListener, ListenerMap} from 'library/types/entity';
+import type {InputListenerType, LibraryInput} from 'library/types/input';
+import {Shapes} from 'library/types/shapes';
 
-export const createEventHandler = <K extends keyof HTMLElementEventMap>(
+export const createEventHandler = <K extends InputListenerType>(
     input: LibraryInput,
-    listeners?: Partial<NativeListenerMap<K>>,
+    sketch: Shapes,
+    listeners?: Partial<ListenerMap<K>>,
 ) => {
     const listenerHandlers: {[type: string]: EntityListenerHandler} = {};
 
-    const {addNativeListener, removeNativeListener} = createAddAndRemoveNativeListener(listenerHandlers, input);
+    const {addListener, removeListener} = createAddAndRemoveListener(listenerHandlers, input, sketch);
 
     const eventHandler: EventHandler = {
-        addNativeListener,
-        removeNativeListener,
-        activateNativeListeners: () => {
+        addListener,
+        removeListener,
+        activateListeners: () => {
             for (const type in listenerHandlers) listenerHandlers[type][1](); // deactivate function
         },
-        deactivateNativeListeners: () => {
+        deactivateListeners: () => {
             for (const type in listenerHandlers) listenerHandlers[type][2](); // activate function
         },
     };
@@ -33,35 +29,39 @@ export const createEventHandler = <K extends keyof HTMLElementEventMap>(
 
         if (!listener) continue;
 
-        addNativeListener(type, listener, false);
+        addListener(type, listener, false);
     }
 
     return eventHandler;
 };
 
-const createAddAndRemoveNativeListener: (
+const createAddAndRemoveListener: (
     listenerHandlers: {[type: string]: EntityListenerHandler},
     input: LibraryInput,
+    sketch: Shapes,
 ) => {
-    addNativeListener: AddNativeListener;
-    removeNativeListener: RemoveNativeListener;
-} = (listenerHandlers, input) => ({
-    addNativeListener: (type, listener, activate = true) => {
+    addListener: AddListener;
+    removeListener: RemoveListener;
+} = (listenerHandlers, input, sketch) => ({
+    addListener: (type, listener, activate = true) => {
         // if (!listenerHandlers[type]) ...
 
         const id = Symbol();
 
-        listenerHandlers[type] = [
-            id,
-            () => input.addListener({type, listener, id}),
-            () => input.removeListener(type, id),
-        ];
+        const activateInput = () => {
+            console.log('activate input');
 
-        if (activate) input.addListener({type, listener, id});
+            return input.addListener({type, listener, id, shape: sketch});
+        };
+        const deactivateInput = () => input.removeListener(type, id);
+
+        listenerHandlers[type] = [id, activateInput, deactivateInput];
+
+        if (activate) activateInput();
 
         return id;
     },
-    removeNativeListener: (type: keyof HTMLElementEventMap) => {
+    removeListener: type => {
         const handler = listenerHandlers[type];
 
         if (handler) {

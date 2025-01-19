@@ -1,4 +1,5 @@
 import {EngineDraw, EngineUpdate} from './engine';
+import {InputListener, InputListenerType} from './input';
 import {ShapesConfig} from './shapes';
 
 export type GeneralProperties = {
@@ -47,7 +48,7 @@ export type EntityEventMap = {
     endTransitionEnd: EndEndTransitionEvent;
 };
 
-export type NativeListenerMap<T extends keyof HTMLElementEventMap> = {
+export type ListenerMap<T extends InputListenerType> = {
     [K in T]: (evt: HTMLElementEventMap[K]) => void;
 };
 
@@ -58,7 +59,7 @@ export type EntityListenerMap<T extends keyof EntityEventMap> = {
 export type EntityConfig = Partial<
     {sketch: ShapesConfig} & GeneralProperties &
         VisualProperties & {
-            listeners: Partial<NativeListenerMap<keyof HTMLElementEventMap>>;
+            listeners: Partial<ListenerMap<InputListenerType>>;
         }
 >;
 
@@ -67,19 +68,19 @@ type DeactivateListener = () => boolean;
 
 export type EntityListenerHandler = [symbol, ActivateListener, DeactivateListener];
 
-export type AddNativeListener = <K extends keyof HTMLElementEventMap>(
+export type AddListener = <K extends InputListenerType>(
     type: K, // = ID (1 type per entity)
     listener: (evt: HTMLElementEventMap[K]) => void,
     activate?: boolean,
 ) => symbol;
 
-export type RemoveNativeListener = (type: keyof HTMLElementEventMap) => void;
+export type RemoveListener = (type: InputListenerType) => void;
 
 export interface EventHandler {
-    addNativeListener: AddNativeListener;
-    removeNativeListener: RemoveNativeListener;
-    activateNativeListeners: () => void;
-    deactivateNativeListeners: () => void;
+    addListener: AddListener;
+    removeListener: RemoveListener;
+    activateListeners: () => void;
+    deactivateListeners: () => void;
     startTransitionEnd?: (evt: StartEndTransitionEvent) => void;
     endTransitionEnd?: (evt: EndEndTransitionEvent) => void;
 }
@@ -87,8 +88,8 @@ export interface EventHandler {
 export interface Entity {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
-    addNativeListener: AddNativeListener;
-    removeNativeListener: RemoveNativeListener;
+    addListener: AddListener;
+    removeListener: RemoveListener;
     setHideTime: SetHideTime;
     setVisual: SetVisual;
 }

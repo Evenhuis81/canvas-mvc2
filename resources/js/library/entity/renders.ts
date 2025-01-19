@@ -1,6 +1,7 @@
 /* eslint-disable max-lines-per-function */
-import type {Callbacks, Colors, GeneralProperties, VisualProperties} from 'library/types/entity';
-import {LibraryInput} from 'library/types/input';
+import type {Colors} from 'library/types/color';
+import type {Callbacks, GeneralProperties, VisualProperties} from 'library/types/entity';
+import type {LibraryInput} from 'library/types/input';
 import type {Shapes} from 'library/types/shapes';
 
 export const createRenders = (
@@ -268,7 +269,8 @@ const createDraw =
             c.lineWidth = sketch.lineWidth;
 
             c.beginPath();
-            c.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.radii);
+            // c.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.radii);
+            c.rect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h);
             c.fill();
             c.stroke();
 

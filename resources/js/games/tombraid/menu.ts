@@ -60,6 +60,7 @@ export const mainMenu = (library: LibraryResources) => {
         element.setHideTime((elementAmount - 1) * timeoutDifference - i * timeoutDifference);
 
         setTimeout(() => {
+            console.log('showw');
             element.show();
         }, timeoutDifference * i);
 
@@ -70,15 +71,15 @@ export const mainMenu = (library: LibraryResources) => {
         }
 
         const clicked = () => {
-            console.log('clicked element');
+            // console.log(`clicked element ${i}`);
 
             element.setVisual('end', 'explode');
 
             elements.forEach(el => el.hide());
         };
 
-        element.addNativeListener('touchend', clicked);
-        element.addNativeListener('mouseup', clicked);
+        // element.addListener('touchend', clicked);
+        element.addListener('mouseup', clicked);
         // element.addListener('endTransitionEnd', evt => {
         //     console.log(evt.clicked, evt.clickTotal);
 
