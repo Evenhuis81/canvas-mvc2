@@ -81,12 +81,9 @@ export const mainMenu = (library: LibraryResources) => {
         element.addListener('mouseup', clicked);
         // element.addListener('endTransitionEnd', evt => {
         //     console.log(evt.clicked, evt.clickTotal);
-
         // console.log(evt);
-
         //     if (evt.clicked) {
         //         // element.destroy();
-
         //         // startLevel(i + 1);
         //         console.log(`startLevel(${i + 1})`);
         //     }

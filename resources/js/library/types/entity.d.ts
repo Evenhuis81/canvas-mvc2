@@ -40,22 +40,23 @@ export type ListenerTemplate<T extends object, K extends keyof T> = {
     listener: (evt: T[K]) => void;
 };
 
-export type NativeListener = ListenerTemplate<HTMLElementEventMap, keyof HTMLElementEventMap>;
-export type EntityListener = ListenerTemplate<EntityEventMap, keyof EntityEventMap>;
+// export type NativeListener = ListenerTemplate<HTMLElementEventMap, keyof HTMLElementEventMap>;
+// export type EntityListener = ListenerTemplate<EntityEventMap, keyof EntityEventMap>;
 
-export type EntityEventMap = {
-    startTransitionEnd: StartEndTransitionEvent;
-    endTransitionEnd: EndEndTransitionEvent;
-};
+// export type EntityEventMap = {
+//     startTransitionEnd: StartEndTransitionEvent;
+//     endTransitionEnd: EndEndTransitionEvent;
+// } & HTMLElementEventMap;
 
-export type EntityListenerMap<T extends keyof EntityEventMap> = {
-    [K in T]: (evt: EntityEventMap[K]) => void;
+// This includees all HTMLElement event keys, before inputlistenertype only
+export type EntityListenerMap<T extends keyof HTMLElementEventMap> = {
+    [K in T]: (evt: HTMLElementEventMap[K]) => void;
 };
 
 export type EntityConfig = Partial<
     {sketch: ShapesConfig} & GeneralProperties &
         VisualProperties & {
-            listeners: Partial<InputListenerNativeMap<InputListenerType>>;
+            listeners: Partial<EntityListenerMap<keyof HTMLElementEventMap>>;
         }
 >;
 

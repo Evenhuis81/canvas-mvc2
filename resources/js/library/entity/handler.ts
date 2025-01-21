@@ -24,7 +24,6 @@ export const createEventHandler = <K extends InputListenerType>(
 
     if (!listeners) return eventHandler;
 
-    console.log('handling listeners');
     for (const type in listeners) {
         const listener = listeners[type];
 
