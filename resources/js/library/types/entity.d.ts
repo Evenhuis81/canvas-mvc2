@@ -1,5 +1,5 @@
 import {EngineDraw, EngineUpdate} from './engine';
-import {InputListener, InputListenerType} from './input';
+import {InputListenerType} from './input';
 import {ShapesConfig} from './shapes';
 
 export type GeneralProperties = {
@@ -46,10 +46,6 @@ export type EntityListener = ListenerTemplate<EntityEventMap, keyof EntityEventM
 export type EntityEventMap = {
     startTransitionEnd: StartEndTransitionEvent;
     endTransitionEnd: EndEndTransitionEvent;
-};
-
-export type ListenerMap<T extends InputListenerType> = {
-    [K in T]: (evt: HTMLElementEventMap[K]) => void;
 };
 
 export type EntityListenerMap<T extends keyof EntityEventMap> = {

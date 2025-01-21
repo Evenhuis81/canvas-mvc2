@@ -1,4 +1,4 @@
-import {BaseCircle, BaseRect, Circle, Rect, Shapes} from './shapes';
+import {BaseCircle, BaseRect, Shapes} from './shapes';
 
 type MouseDown = 'mousedown';
 type MouseMove = 'mousemove';
@@ -15,13 +15,6 @@ interface Events {
     keyup: KeyUp;
     wheel: Wheel;
 }
-
-// export type InputListener<K extends keyof HTMLElementEventMap> = {
-//     type: K;
-//     listener: (evt: HTMLElementEventMap[K]) => void;
-//     id?: symbol;
-//     shape?: Shapes;
-// };
 
 type InsideRect = (rect: BaseRect) => boolean;
 type InsideCircle = (circle: BaseCircle) => boolean;
@@ -58,11 +51,15 @@ export type InputListenerType =
     | 'touchmove'
     | 'touchend';
 
-export type InputListeners = {
-    [K in InputListenerType]: InputListener<K>[];
+export type InputListenersConfig = {
+    [K in InputListenerType]: InputListenerConfig<K>[];
 };
 
-export type InputListener<K extends InputListenerType> = {
+export type InputListeners<T extends InputListenerType> = {
+    [K in T]: (evt: HTMLElementEventMap[K]) => void;
+};
+
+export type InputListenerConfig<K extends InputListenerType> = {
     type: K;
     listener: (evt: HTMLElementEventMap[K]) => void;
     id: symbol;

@@ -57,7 +57,6 @@ const initialize = (gProps: GeneralProperties, methods: Entity) => {
             // TODO::Make this optional (or with entityMethod)
             gProps.showDelay = 0;
 
-            console.log('show init');
             methods.show();
         }, gProps.showDelay);
     }

@@ -16,7 +16,7 @@ export const mainMenu = (library: LibraryResources) => {
     const startY = paddingY / 2 + squareLength / 2;
     const startX = paddingX / 2 + squareLength / 2;
 
-    const timeoutDifference = 25;
+    const timeoutDifference = 75;
 
     const baseSketch: ShapesConfig = {
         type: 'rect',
@@ -70,27 +70,27 @@ export const mainMenu = (library: LibraryResources) => {
         }
 
         const clicked = () => {
-            // console.log(`clicked element ${i}`);
+            console.log(`clicked element ${i}`);
 
             element.setVisual('end', 'explode');
 
             elements.forEach(el => el.hide());
         };
 
-        // element.addListener('touchend', clicked);
+        element.addListener('touchend', clicked);
         element.addListener('mouseup', clicked);
-        // element.addListener('endTransitionEnd', evt => {
-        //     console.log(evt.clicked, evt.clickTotal);
+        element.addListener('endTransitionEnd', evt => {
+            //     console.log(evt.clicked, evt.clickTotal);
 
-        //     console.log(evt);
+            console.log(evt);
 
-        //     if (evt.clicked) {
-        //         // element.destroy();
+            //     if (evt.clicked) {
+            //         // element.destroy();
 
-        //         // startLevel(i + 1);
-        //         console.log(`startLevel(${i + 1})`);
-        //     }
-        // });
+            //         // startLevel(i + 1);
+            //         console.log(`startLevel(${i + 1})`);
+            //     }
+        });
     }
 };
 

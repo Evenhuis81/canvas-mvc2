@@ -50,7 +50,7 @@ const createAddAndRemoveListener: (
 
         const activateInput = () => {
             // TODO::Add to Error/Log Handling module
-            if (!listenerHandlers[type][3]) return console.log('input is already active');
+            if (listenerHandlers[type][3]) return console.log('input is already active');
 
             console.log('activate input');
 
