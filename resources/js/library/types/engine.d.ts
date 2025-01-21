@@ -1,4 +1,4 @@
-import {MakeOptional} from '.';
+import {WithOptional} from '.';
 
 export type EngineDrawConfig = {
     id: number | string;
@@ -10,9 +10,9 @@ export type EngineUpdateConfig = Omit<EngineDrawConfig, 'fn'> & {
     fn: (evt: EngineUpdateEvent) => void;
 };
 
-export type EngineDraw = MakeOptional<EngineDrawConfig, 'id' | 'name'>;
+export type EngineDraw = WithOptional<EngineDrawConfig, 'id' | 'name'>;
 
-export type EngineUpdate = MakeOptional<EngineUpdateConfig, 'id' | 'name'>;
+export type EngineUpdate = WithOptional<EngineUpdateConfig, 'id' | 'name'>;
 
 export type EngineUpdateEvent = {
     timePassed: number;

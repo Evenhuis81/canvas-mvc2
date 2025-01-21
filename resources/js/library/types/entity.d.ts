@@ -1,5 +1,5 @@
 import {EngineDraw, EngineUpdate} from './engine';
-import {InputListenerType} from './input';
+import {InputListenerType, InputListenerMap, InputListenerNativeMap} from './input';
 import {ShapesConfig} from './shapes';
 
 export type GeneralProperties = {
@@ -55,7 +55,7 @@ export type EntityListenerMap<T extends keyof EntityEventMap> = {
 export type EntityConfig = Partial<
     {sketch: ShapesConfig} & GeneralProperties &
         VisualProperties & {
-            listeners: Partial<ListenerMap<InputListenerType>>;
+            listeners: Partial<InputListenerNativeMap<InputListenerType>>;
         }
 >;
 

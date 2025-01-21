@@ -70,7 +70,7 @@ export const mainMenu = (library: LibraryResources) => {
         }
 
         const clicked = () => {
-            console.log(`clicked element ${i}`);
+            console.log(`clicked element ${i + 1} (index + 1)`);
 
             element.setVisual('end', 'explode');
 
@@ -79,18 +79,18 @@ export const mainMenu = (library: LibraryResources) => {
 
         element.addListener('touchend', clicked);
         element.addListener('mouseup', clicked);
-        element.addListener('endTransitionEnd', evt => {
-            //     console.log(evt.clicked, evt.clickTotal);
+        // element.addListener('endTransitionEnd', evt => {
+        //     console.log(evt.clicked, evt.clickTotal);
 
-            console.log(evt);
+        // console.log(evt);
 
-            //     if (evt.clicked) {
-            //         // element.destroy();
+        //     if (evt.clicked) {
+        //         // element.destroy();
 
-            //         // startLevel(i + 1);
-            //         console.log(`startLevel(${i + 1})`);
-            //     }
-        });
+        //         // startLevel(i + 1);
+        //         console.log(`startLevel(${i + 1})`);
+        //     }
+        // });
     }
 };
 

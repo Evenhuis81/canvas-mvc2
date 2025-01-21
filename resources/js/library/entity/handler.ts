@@ -1,11 +1,11 @@
-import type {EventHandler, EntityListenerHandler, AddListener, RemoveListener, ListenerMap} from 'library/types/entity';
-import type {InputListenerType, LibraryInput} from 'library/types/input';
+import type {EventHandler, EntityListenerHandler, AddListener, RemoveListener} from 'library/types/entity';
+import type {InputListenerNativeMap, InputListenerType, LibraryInput} from 'library/types/input';
 import {Shapes} from 'library/types/shapes';
 
 export const createEventHandler = <K extends InputListenerType>(
     input: LibraryInput,
     sketch: Shapes,
-    listeners?: Partial<ListenerMap<K>>,
+    listeners?: Partial<InputListenerNativeMap<K>>,
 ) => {
     const listenerHandlers: {[type: string]: EntityListenerHandler} = {};
 

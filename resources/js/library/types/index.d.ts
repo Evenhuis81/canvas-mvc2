@@ -2,7 +2,7 @@ import {Phaser} from 'games/phaser/types';
 import {Engine} from './engine';
 import {Entity, EntityConfig} from './entity';
 
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {[P in K]?: T[P]};
+export type WithOptional<T, K extends keyof T> = Omit<T, K> & {[P in K]?: T[P]};
 
 // Complete 'T &' keeps discriminated union (type), test with MakeOptional instead of Omit
 export type WithRequired<T, K extends keyof T> = T & {[P in K]-?: T[P]};

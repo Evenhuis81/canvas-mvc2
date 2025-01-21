@@ -1,12 +1,7 @@
-import type {BaseCircle, BaseRect, Circle, Pos, Rect, Shapes} from './types/shapes';
-import type {InputListener, InputListenerType, InputListeners} from './types/input';
+import type {BaseCircle, BaseRect, Pos, Shapes} from './types/shapes';
+import type {InputListenerType, InputListenerMap, InputListener} from './types/input';
 
-export type RemoveInputListener = () => void;
-export type RunListener = () => void;
-
-export type InputListenerHandler = [RunListener, RemoveInputListener];
-
-const inputListeners: InputListeners = {
+const inputListeners: InputListenerMap = {
     mousedown: [],
     mousemove: [],
     mouseup: [],

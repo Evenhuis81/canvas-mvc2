@@ -51,15 +51,15 @@ export type InputListenerType =
     | 'touchmove'
     | 'touchend';
 
-export type InputListenersConfig = {
-    [K in InputListenerType]: InputListenerConfig<K>[];
+export type InputListenerMap = {
+    [K in InputListenerType]: InputListener<K>[];
 };
 
-export type InputListeners<T extends InputListenerType> = {
+export type InputListenerNativeMap<T extends InputListenerType> = {
     [K in T]: (evt: HTMLElementEventMap[K]) => void;
 };
 
-export type InputListenerConfig<K extends InputListenerType> = {
+export type InputListener<K extends InputListenerType> = {
     type: K;
     listener: (evt: HTMLElementEventMap[K]) => void;
     id: symbol;
