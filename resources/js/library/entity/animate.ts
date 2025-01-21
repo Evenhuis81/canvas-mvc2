@@ -154,7 +154,7 @@ const setCallbacks = (
         setEngine('entity', 'on'); // This could have a (double) check
         setEngine('hover', 'on');
 
-        if (eventHandler.startTransitionEnd) eventHandler.startTransitionEnd();
+        // if (eventHandler.startTransitionEnd) eventHandler.startTransitionEnd();
     };
 
     callbacks.end = quickHide => {
@@ -180,7 +180,7 @@ const setCallbacks = (
         setEngine('entity', 'off'); // This could have a (double) check
         setEngine('hover', 'off');
 
-        if (eventHandler.endTransitionEnd) eventHandler.endTransitionEnd();
+        // if (eventHandler.endTransitionEnd) eventHandler.endTransitionEnd();
     };
 };
 

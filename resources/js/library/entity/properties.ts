@@ -9,7 +9,7 @@ export const createUserMethods = (
 ) => {
     // parameter default gives auto start (and end) transitions if type !undefined, manually able to set by user input
     const show = (quickShow = !vProps.startType) => {
-        // TODO::Add to Error Handling module
+        // TODO::Add to Error/Log Handling module
         if (gProps.show) throw Error('show is already active');
 
         gProps.show = true;

@@ -24,11 +24,13 @@ export const createEventHandler = <K extends InputListenerType>(
 
     if (!listeners) return eventHandler;
 
+    console.log('handling listeners');
     for (const type in listeners) {
         const listener = listeners[type];
 
         if (!listener) continue;
 
+        console.log('adding listener first time from handler creation');
         addListener(type, listener, false);
     }
 
@@ -44,20 +46,28 @@ const createAddAndRemoveListener: (
     removeListener: RemoveListener;
 } = (listenerHandlers, input, sketch) => ({
     addListener: (type, listener, activate = true) => {
-        // if (!listenerHandlers[type]) ...
-
         const id = Symbol();
 
         const activateInput = () => {
+            // TODO::Add to Error/Log Handling module
+            if (!listenerHandlers[type][3]) return console.log('input is already active');
+
             console.log('activate input');
+
+            listenerHandlers[type][3] = true;
 
             return input.addListener({type, listener, id, shape: sketch});
         };
+
         const deactivateInput = () => input.removeListener(type, id);
 
-        listenerHandlers[type] = [id, activateInput, deactivateInput];
+        listenerHandlers[type] = [id, activateInput, deactivateInput, false];
 
-        if (activate) activateInput();
+        if (activate) {
+            console.log('activate?');
+
+            activateInput();
+        }
 
         return id;
     },
@@ -88,23 +98,8 @@ const createAddAndRemoveListener: (
 // });
 
 // if (type === 'startTransitionEnd') {
-//     eventHandler.startTransitionEnd = () => {
-// props.
-
-// console.log('startTransitionEnd event call');
-
-// listener(props);
-//     };
-
-//     return;
-// }
 // if (type === 'endTransitionEnd') {
-//     eventHandler.endTransitionEnd = () => ;
-
-//     return;
-// }
 
 // TODO::Extract Shape from sketch (pass only needed props)
-// if (sketch.type === 'rect' || sketch.type === 'circle') {
+// if (sketch.type === 'rect' || sketch.type === 'circle')
 // input.addListener(type, runListener, props);
-// }

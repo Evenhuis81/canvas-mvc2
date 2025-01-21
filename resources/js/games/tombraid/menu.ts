@@ -60,8 +60,7 @@ export const mainMenu = (library: LibraryResources) => {
         element.setHideTime((elementAmount - 1) * timeoutDifference - i * timeoutDifference);
 
         setTimeout(() => {
-            console.log('showw');
-            element.show();
+            element.show(); // activates input 2nd time (not actually cause of a safe trigger, but not desirable)
         }, timeoutDifference * i);
 
         column++;

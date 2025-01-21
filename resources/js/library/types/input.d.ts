@@ -44,9 +44,8 @@ export type LibraryInput = {
     };
     buttonHeld: Record<number, boolean>;
     keyHeld: Record<string, boolean>;
-    addListener: <K extends InputListenerType>(listener: InputListener<K>) => symbol;
+    addListener: <K extends InputListenerType>(listener: InputListener<K>) => void;
     removeListener: (type: InputListenerType, id: symbol) => boolean;
-    // removeListener: <K extends InputListenerType>(type: InputListener<InputListenerType>, id: symbol) => boolean;
 };
 
 export type InputListenerType =

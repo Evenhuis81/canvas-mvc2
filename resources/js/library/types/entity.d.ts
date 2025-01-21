@@ -63,16 +63,17 @@ export type EntityConfig = Partial<
         }
 >;
 
-type ActivateListener = () => symbol;
+type ActivateListener = () => void;
 type DeactivateListener = () => boolean;
+type ListenerActive = boolean;
 
-export type EntityListenerHandler = [symbol, ActivateListener, DeactivateListener];
+export type EntityListenerHandler = [symbol, ActivateListener, DeactivateListener, ListenerActive];
 
 export type AddListener = <K extends InputListenerType>(
     type: K, // = ID (1 type per entity)
     listener: (evt: HTMLElementEventMap[K]) => void,
     activate?: boolean,
-) => symbol;
+) => void;
 
 export type RemoveListener = (type: InputListenerType) => void;
 
