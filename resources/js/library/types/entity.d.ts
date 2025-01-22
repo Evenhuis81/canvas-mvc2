@@ -1,5 +1,5 @@
 import {EngineDraw, EngineUpdate} from './engine';
-import {InputListenerType, InputListenerMap, InputListenerNativeMap} from './input';
+import {InputListenerEventMap, InputListenerType} from './input';
 import {ShapesConfig} from './shapes';
 
 export type GeneralProperties = {
@@ -35,28 +35,29 @@ export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType)
 export type StartEndTransitionEvent = {startEndProp: string};
 export type EndEndTransitionEvent = {endEndProp: string};
 
-export type ListenerTemplate<T extends object, K extends keyof T> = {
-    type: K; // = ID (1 type per entity)
-    listener: (evt: T[K]) => void;
-};
+// export type ListenerTemplate<T extends object, K extends keyof T> = {
+//     type: K; // = ID (1 type per entity)
+//     listener: (evt: T[K]) => void;
+// };
 
 // export type NativeListener = ListenerTemplate<HTMLElementEventMap, keyof HTMLElementEventMap>;
-// export type EntityListener = ListenerTemplate<EntityEventMap, keyof EntityEventMap>;
+// export type EntityListener = ListenerTemplate<EntityListenerEventMap, EntityListenerType>;
 
-// export type EntityEventMap = {
-//     startTransitionEnd: StartEndTransitionEvent;
-//     endTransitionEnd: EndEndTransitionEvent;
-// } & HTMLElementEventMap;
+export type EntityListenerEventMap = {
+    startTransitionEnd: StartEndTransitionEvent;
+    endTransitionEnd: EndEndTransitionEvent;
+};
 
-// This includees all HTMLElement event keys, before inputlistenertype only
-export type EntityListenerMap<T extends keyof HTMLElementEventMap> = {
-    [K in T]: (evt: HTMLElementEventMap[K]) => void;
+// export type EntityListenerType = keyof EntityListenerEventMap | keyof InputListenerType;
+
+export type EntityListenerMap<T extends keyof EntityListenerEventMap> = {
+    [K in T]: (evt: EntityListenerEventMap[K]) => void;
 };
 
 export type EntityConfig = Partial<
     {sketch: ShapesConfig} & GeneralProperties &
         VisualProperties & {
-            listeners: Partial<EntityListenerMap<keyof HTMLElementEventMap>>;
+            listeners: Partial<EntityListenerMap<keyof EntityListenerEventMap>>;
         }
 >;
 
@@ -66,9 +67,9 @@ type ListenerActive = boolean;
 
 export type EntityListenerHandler = [symbol, ActivateListener, DeactivateListener, ListenerActive];
 
-export type AddListener = <K extends InputListenerType>(
+export type AddListener = <K extends keyof EntityListenerEventMap>(
     type: K, // = ID (1 type per entity)
-    listener: (evt: HTMLElementEventMap[K]) => void,
+    listener: (evt: EntityListenerEventMap[K]) => void,
     activate?: boolean,
 ) => void;
 

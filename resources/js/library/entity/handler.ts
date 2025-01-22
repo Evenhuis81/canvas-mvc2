@@ -1,12 +1,30 @@
-import type {EventHandler, EntityListenerHandler, AddListener, RemoveListener} from 'library/types/entity';
-import type {InputListenerNativeMap, InputListenerType, LibraryInput} from 'library/types/input';
-import {Shapes} from 'library/types/shapes';
+import type {
+    EventHandler,
+    EntityListenerHandler,
+    AddListener,
+    RemoveListener,
+    EntityListenerMap,
+    EntityListenerEventMap,
+    // EntityListenerType,
+} from 'library/types/entity';
+import type {LibraryInput} from 'library/types/input';
+import type {Shape} from 'library/types/shapes';
 
-export const createEventHandler = <K extends InputListenerType>(
+export const createEventHandler = <K extends keyof EntityListenerEventMap>(
     input: LibraryInput,
-    sketch: Shapes,
-    listeners?: Partial<InputListenerNativeMap<K>>,
+    sketch: Shape,
+    listeners?: Partial<EntityListenerMap<K>>,
 ) => {
+    if (listeners) {
+        // const {startTransitionEnd, ...native} = listeners;
+
+        if (listeners.startTransitionEnd)
+
+
+        // native.mousedown
+        //
+    }
+
     const listenerHandlers: {[type: string]: EntityListenerHandler} = {};
 
     const {addListener, removeListener} = createAddAndRemoveListener(listenerHandlers, input, sketch);
@@ -36,10 +54,19 @@ export const createEventHandler = <K extends InputListenerType>(
     return eventHandler;
 };
 
+const type1And2 = {
+    x: 0,
+    y: 0,
+    w: 0,
+    h: 0,
+};
+
+const {x, y, ...type2} = type1And2;
+
 const createAddAndRemoveListener: (
     listenerHandlers: {[type: string]: EntityListenerHandler},
     input: LibraryInput,
-    sketch: Shapes,
+    sketch: Shape,
 ) => {
     addListener: AddListener;
     removeListener: RemoveListener;

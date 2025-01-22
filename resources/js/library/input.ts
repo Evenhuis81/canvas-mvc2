@@ -1,7 +1,7 @@
-import type {BaseCircle, BaseRect, Pos, Shapes} from './types/shapes';
-import type {InputListenerType, InputListenerMap, InputListener} from './types/input';
+import type {BaseCircle, BaseRect, Pos, Shape} from './types/shapes';
+import type {InputListenerType, InputListener, InputListenerStorage} from './types/input';
 
-const inputListeners: InputListenerMap = {
+const inputListeners: InputListenerStorage = {
     mousedown: [],
     mousemove: [],
     mouseup: [],
@@ -14,7 +14,6 @@ const inputListeners: InputListenerMap = {
 
 const resizeCB: (() => void)[] = [];
 const consoleToggleCB: (() => void)[] = [];
-// const listenerHandlers: {[type: string]: {[id: symbol]: InputListenerHandler}} = {};
 
 export const getInput = (canvas: HTMLCanvasElement) => {
     const canvasRect = canvas.getBoundingClientRect();
@@ -70,15 +69,13 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         });
     });
 
-    const clickedInsideMouse = (shape: Shapes) => {
-        // if (!shape) return false;
-
+    const clickedInsideMouse = (shape: Shape) => {
         if (shape.type === 'rect' && insideMouseRect(shape)) return true;
         if (shape.type === 'circle' && insideMouseCircle(shape)) return true;
 
         return false;
     };
-    const clickedInsideTouch = (shape: Shapes) => {
+    const clickedInsideTouch = (shape: Shape) => {
         if (!shape) return false;
 
         if (shape.type === 'rect' && insideTouchRect(shape)) return true;
@@ -156,8 +153,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
         return pos1sq - pos2sq;
     };
 
-    // TODO::Make generic when growing
-    const insideMouse = (shape: Shapes) => {
+    const insideMouse = (shape: Shape) => {
         if (shape.type === 'rect') return insideMouseRect(shape);
         else if (shape.type === 'circle') return insideMouseCircle(shape);
 

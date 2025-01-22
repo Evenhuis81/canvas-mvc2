@@ -79,7 +79,7 @@ export const mainMenu = (library: LibraryResources) => {
 
         element.addListener('touchend', clicked);
         element.addListener('mouseup', clicked);
-        // element.addListener('endTransitionEnd', evt => {
+        element.addListener('endTransitionEnd', evt => {
         //     console.log(evt.clicked, evt.clickTotal);
         // console.log(evt);
         //     if (evt.clicked) {

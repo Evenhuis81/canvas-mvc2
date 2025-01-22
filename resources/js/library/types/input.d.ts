@@ -1,24 +1,24 @@
-import {BaseCircle, BaseRect, Shapes} from './shapes';
+import {BaseCircle, BaseRect, Shape} from './shapes';
 
-type MouseDown = 'mousedown';
-type MouseMove = 'mousemove';
-type MouseUp = 'mouseup';
-type KeyDown = 'keydown';
-type KeyUp = 'keyup';
-type Wheel = 'wheel';
+// type MouseDown = 'mousedown';
+// type MouseMove = 'mousemove';
+// type MouseUp = 'mouseup';
+// type KeyDown = 'keydown';
+// type KeyUp = 'keyup';
+// type Wheel = 'wheel';
 
-interface Events {
-    mousedown: MouseDown;
-    mousemove: MouseMove;
-    mouseup: MouseUp;
-    keydown: KeyDown;
-    keyup: KeyUp;
-    wheel: Wheel;
-}
+// interface Events {
+//     mousedown: MouseDown;
+//     mousemove: MouseMove;
+//     mouseup: MouseUp;
+//     keydown: KeyDown;
+//     keyup: KeyUp;
+//     wheel: Wheel;
+// }
 
 type InsideRect = (rect: BaseRect) => boolean;
 type InsideCircle = (circle: BaseCircle) => boolean;
-type Inside = (shape: Shapes) => boolean | undefined;
+type Inside = (shape: Shape) => boolean | undefined;
 
 export type LibraryInput = {
     mouse: {
@@ -51,17 +51,17 @@ export type InputListenerType =
     | 'touchmove'
     | 'touchend';
 
-export type InputListenerMap = {
+export type InputListenerStorage = {
     [K in InputListenerType]: InputListener<K>[];
 };
 
-export type InputListenerNativeMap<T extends InputListenerType> = {
-    [K in T]: (evt: HTMLElementEventMap[K]) => void;
+export type InputListenerEventMap = {
+    [K in InputListenerType]: HTMLElementEventMap[K];
 };
 
 export type InputListener<K extends InputListenerType> = {
     type: K;
     listener: (evt: HTMLElementEventMap[K]) => void;
     id: symbol;
-    shape: Shapes;
+    shape: Shape;
 };

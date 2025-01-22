@@ -51,11 +51,11 @@ export type Line = {
     type: 'line';
 } & Pos2;
 
-export type Shapes = ShapeMap[keyof ShapeMap] & Omit<EntityText, 'type'>;
+export type Shape = ShapeMap[keyof ShapeMap] & Omit<EntityText, 'type'>;
 
 // Convert ShapeConfig to defaultSketches and userInput sketch
 // Add seperate input for text 'entity' (?), use this entity to put on top of existing default and user input sketches
-export type ShapesConfig = WithRequired<Partial<Shapes>, 'type'>;
+export type ShapesConfig = WithRequired<Partial<Shape>, 'type'>;
 
 export type ShapeMap = {
     rect: Rect & Fill & Stroke;
