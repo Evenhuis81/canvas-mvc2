@@ -2,6 +2,10 @@ import {Engine} from './engine';
 import {Entity, EntityConfig} from './entity';
 import {Phaser} from 'games/phaser/types';
 
+// type KeyWithCallback<A extends object> = {
+//     [K in keyof A]: [K, (evt: A[K]) => void]
+// }[keyof A];
+
 export type WithOptional<T, K extends keyof T> = Omit<T, K> & {[P in K]?: T[P]};
 
 // Complete 'T &' keeps discriminated union (type), test with MakeOptional instead of Omit

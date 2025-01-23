@@ -1,13 +1,14 @@
 /* eslint-disable max-lines-per-function */
 import {Shape} from 'library/types/shapes';
 import type {
+    AddListener,
     AddNativeListener,
     EntityConfig,
     EntityListenerEventMap,
-    // EntityListenerEventMap,
     EntityListenerHandler,
-    // EntityListenerMap,
+    EntityListenerMap,
     EventHandler,
+    RemoveListener,
     RemoveNativeListener,
 } from 'library/types/entity';
 import type {InputListenerMap, InputListenerType, LibraryInput} from 'library/types/input';
@@ -17,40 +18,50 @@ export const createEventHandler = (
     sketch: Shape,
     listeners: EntityConfig['listeners'],
 ): EventHandler => {
-    // if (!listeners) return;
-
     const listenerHandlers: {[type: string]: EntityListenerHandler} = {};
 
     const {addNativeListener, removeNativeListener} = createAddAndRemoveNativeListener(listenerHandlers, sketch, input);
 
-    const {startEndEvent, endEndEvent} = createEntityListenerEvents();
-
-    // generic type in order to use with different objects then UserEvents only
-    // type KeyWithCallback<A extends object> = {
-    //     [K in keyof A]: [K, (evt: A[K]) => void]
-    // }[keyof A];
-
     // ...args: KeyWithCallback<EntityListenerEventMap>
-    const addListener = (
-        type: keyof EntityListenerEventMap,
-        listener: (evt: EntityListenerEventMap[keyof EntityListenerEventMap]) => void,
-    ) => {
-        // const ll: EntityConfig['listeners'] = {};
+    const addListeners: (listeners: Partial<EntityListenerMap<keyof EntityListenerEventMap>>) => void = listteners => {
+        if (type === 'startTransitionEnd') {
+            // const prop = entityEvents['startTransitionEnd'];
 
-        // if (args[0] === 'startTransitionEnd') return;
-        // if (args[0] === 'endTransitionEnd') return;
-        if (type === 'startTransitionEnd') return;
-        if (type === 'endTransitionEnd') return;
+            return (eventHandler.startTransitionEnd = () => listener(entityEvents[type]));
 
-        // ll[type] = listener;
+            // const ll: EntityConfig['listeners'] = {};
+        }
+        if (type === 'endTransitionEnd') return (eventHandler.endTransitionEnd = () => listener(endEndEvent));
 
-        addNativeListener(type, listener);
+        addNativeListener(type, listener, activate);
 
-        // createEventHandler(input, sketch, ll);
+        return;
+    };
+
+    const addListener: AddListener = (type, listener, activate = true) => {
+        addEntityListener(type, listener, true);
+    };
+
+    const removeListener: RemoveListener = type => {
+        const handler = listenerHandlers[type];
+
+        if (type === 'startTransitionEnd') return (eventHandler.startTransitionEnd = () => {});
+        if (type === 'endTransitionEnd') return (eventHandler.endTransitionEnd = () => {});
+
+        if (handler) {
+            input.removeListener(type, handler[0]); // type + id
+
+            delete listenerHandlers[type];
+        }
+
+        // TODO::Throw Library Error
+
+        return;
     };
 
     const eventHandler: EventHandler = {
-        addListener,
+        addListener: addListener,
+        removeListener: removeListener,
         addNativeListener,
         removeNativeListener,
         activateNativeListeners: () => {
@@ -65,18 +76,30 @@ export const createEventHandler = (
 
     if (!listeners) return eventHandler;
 
+    return eventHandler;
+};
+
+const setEntityListeners = (
+    listeners: EntityConfig['listeners'],
+    addNativeListener: AddNativeListener,
+    eventHandler: EventHandler,
+) => {
+    if (!listeners) return;
+
     const {startTransitionEnd, endTransitionEnd, ...native} = listeners;
 
     setNativeListeners(native, addNativeListener);
 
-    eventHandler.startTransitionEnd = () => {
-        if (startTransitionEnd) startTransitionEnd(startEndEvent);
-    };
-    eventHandler.endTransitionEnd = () => {
-        if (endTransitionEnd) endTransitionEnd(endEndEvent);
-    };
+    const {startEndEvent, endEndEvent} = createEntityListenerEvents();
 
-    return eventHandler;
+    if (startTransitionEnd)
+        eventHandler.startTransitionEnd = () => {
+            startTransitionEnd(startEndEvent);
+        };
+    if (endTransitionEnd)
+        eventHandler.endTransitionEnd = () => {
+            endTransitionEnd(endEndEvent);
+        };
 };
 
 const setNativeListeners = <K extends InputListenerType>(
@@ -137,25 +160,3 @@ const createEntityListenerEvents = () => ({
     startEndEvent: {...startTransitionEndProps},
     endEndEvent: {...endTransitionEndProps},
 });
-
-// if (type === 'startTransitionEnd') {
-//     eventHandler.startTransitionEnd = () => {
-// props.
-
-// console.log('startTransitionEnd event call');
-
-// listener(props);
-//     };
-
-//     return;
-// }
-// if (type === 'endTransitionEnd') {
-//     eventHandler.endTransitionEnd = () => ;
-
-//     return;
-// }
-
-// TODO::Extract Shape from sketch (pass only needed props)
-// if (sketch.type === 'rect' || sketch.type === 'circle') {
-// input.addListener(type, runListener, props);
-// }

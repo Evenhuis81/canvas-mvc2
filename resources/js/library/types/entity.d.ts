@@ -71,18 +71,25 @@ export type AddNativeListener = <K extends InputListenerType>(
     activate?: boolean,
 ) => void;
 
-export type AddEntityListener = <K extends keyof EntityListenerEventMap>(
+// export type AddEntitListener = (
+//     type: keyof EntityListenerEventMap, // = ID (1 type per entity)
+//     listener: (evt: EntityListenerEventMap[keyof EntityListenerEventMap]) => void,
+//     activate?: boolean,
+// ) => void;
+
+export type AddListener = <K extends keyof EntityListenerEventMap>(
     type: K, // = ID (1 type per entity)
     listener: (evt: EntityListenerEventMap[K]) => void,
-    activate?: boolean,
+    // activate?: boolean,
 ) => void;
 
 export type RemoveNativeListener = (type: InputListenerType) => void;
-export type RemoveEntityListener = (type: keyof EntityListenerEventMap) => void;
+export type RemoveListener = (type: keyof EntityListenerEventMap) => void;
+// export type RemoveListener = (type: keyof )
 
 export interface EventHandler {
-    addListener: AddEntityListener;
-    removeListener: RemoveEntityListener;
+    addListener: AddListener;
+    removeListener: RemoveListener;
     addNativeListener: AddNativeListener;
     removeNativeListener: RemoveNativeListener;
     activateNativeListeners: () => void;
@@ -94,8 +101,8 @@ export interface EventHandler {
 export interface Entity {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
-    addListener: AddEntityListener;
-    removeListener: RemoveEntityListener;
+    addListener: AddListener;
+    removeListener: RemoveListener;
     setHideTime: SetHideTime;
     setVisual: SetVisual;
 }
