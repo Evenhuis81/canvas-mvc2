@@ -1,10 +1,10 @@
 import {createEventHandler} from './handler';
-import {createUserMethods} from './properties';
+import {createSketch} from './sketch';
+import {createUserMethods, defaultProperties} from './properties';
 import {createVisualsAndCallbacks} from './animate';
+
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
-import {createSketch} from './sketch';
-import {defaultProperties} from './properties';
 import type {Engine} from 'library/types/engine';
 import type {Entity, EntityConfig, GeneralProperties} from 'library/types/entity';
 import type {LibraryInput} from 'library/types/input';

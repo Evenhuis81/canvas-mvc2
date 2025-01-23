@@ -1,6 +1,6 @@
-import {Phaser} from 'games/phaser/types';
 import {Engine} from './engine';
 import {Entity, EntityConfig} from './entity';
+import {Phaser} from 'games/phaser/types';
 
 export type WithOptional<T, K extends keyof T> = Omit<T, K> & {[P in K]?: T[P]};
 
@@ -62,8 +62,8 @@ export interface DualViewProperties {
 }
 
 interface CRUD {
-    create: () => {};
-    read: () => {};
-    update: () => {};
-    delete: () => {};
+    create: () => void;
+    read: () => void;
+    update: () => void;
+    delete: () => void;
 }

@@ -1,5 +1,7 @@
+/* eslint-disable complexity */
+/* eslint-disable max-lines-per-function */
 import type {BaseCircle, BaseRect, Pos, Shape} from './types/shapes';
-import type {InputListenerType, InputListener, InputListenerStorage} from './types/input';
+import type {InputListener, InputListenerStorage, InputListenerType} from './types/input';
 
 const inputListeners: InputListenerStorage = {
     mousedown: [],
@@ -155,9 +157,7 @@ export const getInput = (canvas: HTMLCanvasElement) => {
 
     const insideMouse = (shape: Shape) => {
         if (shape.type === 'rect') return insideMouseRect(shape);
-        else if (shape.type === 'circle') return insideMouseCircle(shape);
-
-        return;
+        if (shape.type === 'circle') return insideMouseCircle(shape);
     };
 
     const createInsideCircle = (inputDevice: Pos) => (circle: BaseCircle) => {

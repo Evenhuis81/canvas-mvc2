@@ -65,3 +65,10 @@ export type InputListener<K extends InputListenerType> = {
     id: symbol;
     shape: Shape;
 };
+
+// Used by Library Entity
+export type InputListenerMap<T extends InputListenerType> = {
+    [K in T]: (evt: InputListenerEventMap[K]) => void;
+};
+
+export type InputListenerExternal<K extends InputListenerType> = (evt: HTMLElementEventMap[K]) => void;

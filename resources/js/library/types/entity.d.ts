@@ -43,12 +43,10 @@ export type EndEndTransitionEvent = {endEndProp: string};
 // export type NativeListener = ListenerTemplate<HTMLElementEventMap, keyof HTMLElementEventMap>;
 // export type EntityListener = ListenerTemplate<EntityListenerEventMap, EntityListenerType>;
 
-export type EntityListenerEventMap = {
+export type EntityListenerEventMap = InputListenerEventMap & {
     startTransitionEnd: StartEndTransitionEvent;
     endTransitionEnd: EndEndTransitionEvent;
 };
-
-// export type EntityListenerType = keyof EntityListenerEventMap | keyof InputListenerType;
 
 export type EntityListenerMap<T extends keyof EntityListenerEventMap> = {
     [K in T]: (evt: EntityListenerEventMap[K]) => void;
@@ -67,28 +65,37 @@ type ListenerActive = boolean;
 
 export type EntityListenerHandler = [symbol, ActivateListener, DeactivateListener, ListenerActive];
 
-export type AddListener = <K extends keyof EntityListenerEventMap>(
+export type AddNativeListener = <K extends InputListenerType>(
+    type: K, // = ID (1 type per entity)
+    listener: (evt: InputListenerEventMap[K]) => void,
+    activate?: boolean,
+) => void;
+
+export type AddEntityListener = <K extends keyof EntityListenerEventMap>(
     type: K, // = ID (1 type per entity)
     listener: (evt: EntityListenerEventMap[K]) => void,
     activate?: boolean,
 ) => void;
 
-export type RemoveListener = (type: InputListenerType) => void;
+export type RemoveNativeListener = (type: InputListenerType) => void;
+export type RemoveEntityListener = (type: keyof EntityListenerEventMap) => void;
 
 export interface EventHandler {
-    addListener: AddListener;
-    removeListener: RemoveListener;
-    activateListeners: () => void;
-    deactivateListeners: () => void;
-    startTransitionEnd?: (evt: StartEndTransitionEvent) => void;
-    endTransitionEnd?: (evt: EndEndTransitionEvent) => void;
+    addListener: AddEntityListener;
+    removeListener: RemoveEntityListener;
+    addNativeListener: AddNativeListener;
+    removeNativeListener: RemoveNativeListener;
+    activateNativeListeners: () => void;
+    deactivateNativeListeners: () => void;
+    startTransitionEnd: () => void;
+    endTransitionEnd: () => void;
 }
 
 export interface Entity {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
-    addListener: AddListener;
-    removeListener: RemoveListener;
+    addListener: AddEntityListener;
+    removeListener: RemoveEntityListener;
     setHideTime: SetHideTime;
     setVisual: SetVisual;
 }

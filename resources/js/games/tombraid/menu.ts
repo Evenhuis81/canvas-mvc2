@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import type {Entity, VisualProperties} from 'library/types/entity';
 import type {LibraryResources} from 'library/types';
 import type {ShapesConfig} from 'library/types/shapes';
@@ -46,12 +47,20 @@ export const mainMenu = (library: LibraryResources) => {
                     y: startY + row * squareDistance,
                     text: (i + 1).toString(),
                 },
-                // listeners: {
-                // mouseup: evt => {},
-                // touchend: evt => {},
-                // keyup: evt => {},
-                // startTransitionEnd: evt => {},
-                // },
+                listeners: {
+                    mouseup: evt => {
+                        console.log(evt);
+                    },
+                    touchend: evt => {
+                        console.log(evt);
+                    },
+                    keyup: evt => {
+                        console.log(evt);
+                    },
+                    startTransitionEnd: evt => {
+                        console.log(evt);
+                    },
+                },
             }),
         );
 
@@ -80,14 +89,14 @@ export const mainMenu = (library: LibraryResources) => {
         element.addListener('touchend', clicked);
         element.addListener('mouseup', clicked);
         element.addListener('endTransitionEnd', evt => {
-        //     console.log(evt.clicked, evt.clickTotal);
-        // console.log(evt);
-        //     if (evt.clicked) {
-        //         // element.destroy();
-        //         // startLevel(i + 1);
-        //         console.log(`startLevel(${i + 1})`);
-        //     }
-        // });
+            //     console.log(evt.clicked, evt.clickTotal);
+            console.log(evt);
+            //     if (evt.clicked) {
+            //         // element.destroy();
+            //         // startLevel(i + 1);
+            //         console.log(`startLevel(${i + 1})`);
+            //     }
+        });
     }
 };
 

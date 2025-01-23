@@ -1,5 +1,7 @@
 /* eslint-disable max-lines-per-function */
+import {Colors} from 'library/types/color';
 import {Engine} from 'library/types/engine';
+import {LibraryInput} from 'library/types/input';
 import {createRenders} from './renders';
 import type {
     Callbacks,
@@ -10,14 +12,12 @@ import type {
     VisualProperties,
     Visuals,
 } from 'library/types/entity';
-import type {Shapes} from 'library/types/shapes';
-import {LibraryInput} from 'library/types/input';
-import {Colors} from 'library/types/color';
+import type {Shape} from 'library/types/shapes';
 
 export const createVisualsAndCallbacks = (
     gProps: GeneralProperties,
     vProps: VisualProperties,
-    sketch: Shapes,
+    sketch: Shape,
     colors: Colors,
     input: LibraryInput,
     engine: Engine,
@@ -154,7 +154,7 @@ const setCallbacks = (
         setEngine('entity', 'on'); // This could have a (double) check
         setEngine('hover', 'on');
 
-        // if (eventHandler.startTransitionEnd) eventHandler.startTransitionEnd();
+        eventHandler.startTransitionEnd();
     };
 
     callbacks.end = quickHide => {
@@ -180,7 +180,7 @@ const setCallbacks = (
         setEngine('entity', 'off'); // This could have a (double) check
         setEngine('hover', 'off');
 
-        // if (eventHandler.endTransitionEnd) eventHandler.endTransitionEnd();
+        eventHandler.endTransitionEnd();
     };
 };
 
