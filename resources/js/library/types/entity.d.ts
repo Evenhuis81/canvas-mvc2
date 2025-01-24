@@ -63,7 +63,11 @@ type ActivateListener = () => void;
 type DeactivateListener = () => boolean;
 type ListenerActive = boolean;
 
-export type EntityListenerHandler = [symbol, ActivateListener, DeactivateListener, ListenerActive];
+export type InputListenerHandler = [symbol, ActivateListener, DeactivateListener, ListenerActive];
+export type EntityListeners = {
+    startTransitionEnd: ((evt: StartEndTransitionEvent) => void) | undefined;
+    endTransitionEnd: ((evt: EndEndTransitionEvent) => void) | undefined;
+};
 
 export type AddNativeListener = <K extends InputListenerType>(
     type: K, // = ID (1 type per entity)
