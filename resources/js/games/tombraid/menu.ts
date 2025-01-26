@@ -49,17 +49,17 @@ export const mainMenu = (library: LibraryResources) => {
                 },
                 listeners: {
                     mouseup: evt => {
-                        console.log(evt);
+                        console.log(`Mouse UP: ${evt}`);
                     },
                     touchend: evt => {
-                        console.log(evt);
+                        console.log(`Touch END: ${evt}`);
                     },
-                    keyup: evt => {
-                        console.log(evt);
-                    },
-                    // startTransition: evt => {
+                    // keyup: evt => {
                     //     console.log(evt);
                     // },
+                    startTransition: evt => {
+                        console.log(`Start Transition: ${evt}`);
+                    },
                 },
             }),
         );
@@ -69,7 +69,7 @@ export const mainMenu = (library: LibraryResources) => {
         element.setHideTime((elementAmount - 1) * timeoutDifference - i * timeoutDifference);
 
         setTimeout(() => {
-            element.show(); // activates input 2nd time (not actually cause of a safe trigger, but not desirable)
+            element.show();
         }, timeoutDifference * i);
 
         column++;
@@ -78,24 +78,26 @@ export const mainMenu = (library: LibraryResources) => {
             row++;
         }
 
-        const clicked = () => {
-            console.log(`clicked element ${i + 1} (index + 1)`);
+        const clicked = (evt: TouchEvent | MouseEvent) => {
+            console.log(`Clicked element: `);
+
+            console.log(`clicked element ${i + 1} (index + 1), event:`, evt);
 
             element.setVisual('end', 'explode');
 
             elements.forEach(el => el.hide());
         };
 
-        element.addListener('touchend', clicked);
-        element.addListener('mouseup', clicked);
-        element.addListener('finishTransition', evt => {
-            console.log(evt);
-            //     if (evt.clicked) {
-            //         // element.destroy();
-            //         // startLevel(i + 1);
-            //         console.log(`startLevel(${i + 1})`);
-            //     }
-        });
+        // element.addListener('touchend', clicked);
+        // element.addListener('mouseup', clicked);
+        // element.addListener('finishTransition', evt => {
+        //     console.log(`finish Transition: ${evt}`);
+        //     //     if (evt.clicked) {
+        //     //         // element.destroy();
+        //     //         // startLevel(i + 1);
+        //     //         console.log(`startLevel(${i + 1})`);
+        //     //     }
+        // });
     }
 };
 

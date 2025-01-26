@@ -49,7 +49,6 @@ export const getCreateEntity = (
 };
 
 const initialize = (gProps: GeneralProperties, methods: Entity, eventHandler: EventHandler) => {
-    eventHandler.activateInputListeners();
     if (gProps.show) {
         // Test optional setTimeout efficiency
         setTimeout(() => {

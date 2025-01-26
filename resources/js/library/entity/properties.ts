@@ -14,7 +14,7 @@ export const createUserMethods = (
 
         gProps.show = true;
 
-        // eventHandler.activateListeners();
+        eventHandler.activateInputListeners();
 
         callbacks.start(quickShow);
     };
