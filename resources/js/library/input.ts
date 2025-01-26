@@ -1,9 +1,38 @@
 /* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
 import type {BaseCircle, BaseRect, Pos, Shape} from './types/shapes';
-import type {InputListener, InputListenerStorage, InputListenerType} from './types/input';
+import type {InputListener, InputListenerEventMap, InputListenerStore} from './types/input';
 
-const inputListeners: InputListenerStorage = {
+const resizeCB: (() => void)[] = [];
+const consoleToggleCB: (() => void)[] = [];
+
+const buttonHeldMap: Record<number, boolean> = {};
+const keyHeldMap: Record<string, boolean> = {};
+
+let resizeTimeout: NodeJS.Timeout;
+
+const getInputEvents = () => ({
+    mouse: {
+        x: 0,
+        y: 0,
+        buttonHeld: buttonHeldMap,
+        pressCounter: 0,
+        pressedInside: false,
+    },
+    keyboard: {
+        keyHeld: keyHeldMap,
+        pressCounter: 0,
+    },
+    touch: {
+        x: 0,
+        y: 0,
+        ended: false,
+        pushCounter: 0,
+        pushedInside: false,
+    },
+});
+
+const inputHandler: InputListenerStore = {
     mousedown: [],
     mousemove: [],
     mouseup: [],
@@ -14,138 +43,139 @@ const inputListeners: InputListenerStorage = {
     touchend: [],
 };
 
-const resizeCB: (() => void)[] = [];
-const consoleToggleCB: (() => void)[] = [];
-
-export const getInput = (canvas: HTMLCanvasElement) => {
+export const getCanvasInput = (canvas: HTMLCanvasElement) => {
     const canvasRect = canvas.getBoundingClientRect();
-    const buttonHeld: Record<number, boolean> = {};
-    const keyHeld: Record<string, boolean> = {};
-    const mouse = {x: 0, y: 0};
-    const touch = {x: 0, y: 0, ended: false};
+    const {mouse, keyboard, touch} = getInputEvents();
 
-    const addListener = <K extends InputListenerType>(listener: InputListener<K>) =>
-        inputListeners[listener.type].push(listener);
+    const addListener = <K extends keyof InputListenerEventMap>(listener: InputListener<K>) =>
+        inputHandler[listener.type].push(listener);
 
-    const removeListener = (type: InputListenerType, id: symbol) => {
-        const index = inputListeners[type].findIndex(l => l.id === id);
+    const removeListener = (type: keyof InputListenerEventMap, id: symbol) => {
+        const index = inputHandler[type].findIndex(input => input.id === id);
 
         if (index === -1) return false;
 
-        inputListeners[type].splice(index, 1);
+        inputHandler[type].splice(index, 1);
 
         return true;
     };
 
-    canvas.addEventListener('mousedown', evt => {
+    canvas.addEventListener('mousedown', mouseEvent => {
         touch.ended = false;
 
-        buttonHeld[evt.button] = true;
+        mouse.buttonHeld[mouseEvent.button] = true;
 
-        inputListeners.mousedown.forEach(m => {
-            if (clickedInsideMouse(m.shape)) m.listener(evt);
-        });
-    });
+        inputHandler.mousedown.forEach(input => {
+            if (pressedInsideMouse(input.shape)) {
+                mouse.pressedInside = true;
 
-    canvas.addEventListener('mousemove', evt => {
-        touch.ended = false;
-
-        mouse.x = +(evt.clientX - canvasRect.left).toFixed(0);
-        mouse.y = +(evt.clientY - canvasRect.top).toFixed(0);
-
-        inputListeners.mousemove.forEach(m => m.listener(evt));
-    });
-
-    canvas.addEventListener('mouseup', evt => {
-        touch.ended = false;
-
-        delete buttonHeld[evt.button];
-
-        inputListeners.mouseup.forEach((m, index) => {
-            if (clickedInsideMouse(m.shape)) {
-                console.log(`clicked inside mouse ${index}`);
-                // m.props.clicked = true;
-                // m.props.clickTotal++;
-                m.listener(evt);
+                input.listener(mouseEvent);
             }
         });
     });
 
-    const clickedInsideMouse = (shape: Shape) => {
+    canvas.addEventListener('mousemove', mouseEvent => {
+        touch.ended = false;
+
+        mouse.x = +(mouseEvent.clientX - canvasRect.left).toFixed(0);
+        mouse.y = +(mouseEvent.clientY - canvasRect.top).toFixed(0);
+
+        inputHandler.mousemove.forEach(input => input.listener(mouseEvent));
+    });
+
+    canvas.addEventListener('mouseup', mouseEvent => {
+        touch.ended = false;
+
+        delete mouse.buttonHeld[mouseEvent.button];
+
+        mouse.pressCounter++;
+
+        inputHandler.mouseup.forEach(input => {
+            if (pressedInsideMouse(input.shape)) {
+                input.props.pressed = true;
+
+                if (input.props.pushed) input.props.clicked = true;
+
+                input.listener(mouseEvent);
+            }
+        });
+    });
+
+    canvas.addEventListener('keydown', touchEvent => {
+        touch.ended = false;
+
+        keyboard.keyHeld[touchEvent.code] = true;
+
+        inputHandler.keydown.forEach(input => input.listener(touchEvent));
+    });
+
+    canvas.addEventListener('keyup', keyboardEvent => {
+        touch.ended = false;
+
+        delete keyboard.keyHeld[keyboardEvent.code];
+
+        if (keyboardEvent.code === 'F12') for (let i = 0; i < resizeCB.length; i++) consoleToggleCB[i]();
+
+        inputHandler.keyup.forEach(input => input.listener(keyboardEvent));
+    });
+
+    canvas.addEventListener('touchstart', touchEvent => {
+        touch.x = +(touchEvent.touches[0].clientX - canvasRect.left).toFixed(0);
+        touch.y = +(touchEvent.touches[0].clientY - canvasRect.top).toFixed(0);
+
+        inputHandler.touchstart.forEach(m => {
+            if (pushedInsideTouch(m.shape)) m.listener(touchEvent);
+        });
+    });
+
+    canvas.addEventListener('touchmove', touchEvent => {
+        touchEvent.preventDefault(); // prevents scrolling and more
+
+        touch.x = +(touchEvent.touches[0].clientX - canvasRect.left).toFixed(0);
+        touch.y = +(touchEvent.touches[0].clientY - canvasRect.top).toFixed(0);
+
+        inputHandler.touchmove.forEach(input => input.listener(touchEvent));
+    });
+
+    canvas.addEventListener('touchend', (touchEvent: TouchEvent) => {
+        touchEvent.preventDefault(); // prevents moving mouse to touch spot and firing all other mouse events
+
+        touch.ended = true;
+
+        mouse.pressCounter++;
+
+        inputHandler.touchend.forEach(input => {
+            if (pushedInsideTouch(input.shape)) {
+                input.props.pushed = true;
+
+                if (input.props.pressed) input.props.clicked = true;
+
+                input.listener(touchEvent);
+            }
+        });
+    });
+
+    const pressedInsideMouse = (shape: Shape) => {
         if (shape.type === 'rect' && insideMouseRect(shape)) return true;
         if (shape.type === 'circle' && insideMouseCircle(shape)) return true;
 
         return false;
     };
-    const clickedInsideTouch = (shape: Shape) => {
-        if (!shape) return false;
-
+    const pushedInsideTouch = (shape: Shape) => {
         if (shape.type === 'rect' && insideTouchRect(shape)) return true;
         if (shape.type === 'circle' && insideTouchCircle(shape)) return true;
 
         return false;
     };
 
-    canvas.addEventListener('keydown', evt => {
-        touch.ended = false;
-
-        keyHeld[evt.code] = true;
-
-        inputListeners.keydown.forEach(m => m.listener(evt));
-    });
-
-    canvas.addEventListener('keyup', evt => {
-        touch.ended = false;
-
-        delete keyHeld[evt.code];
-
-        if (evt.code === 'F12') for (let i = 0; i < resizeCB.length; i++) consoleToggleCB[i]();
-
-        inputListeners.keyup.forEach(m => m.listener(evt));
-    });
-
-    canvas.addEventListener('touchstart', (evt: TouchEvent) => {
-        touch.x = +(evt.touches[0].clientX - canvasRect.left).toFixed(0);
-        touch.y = +(evt.touches[0].clientY - canvasRect.top).toFixed(0);
-
-        inputListeners.touchstart.forEach(m => {
-            if (clickedInsideTouch(m.shape)) m.listener(evt);
-        });
-    });
-
-    canvas.addEventListener('touchmove', (evt: TouchEvent) => {
-        evt.preventDefault(); // prevents scrolling for example
-
-        touch.x = +(evt.touches[0].clientX - canvasRect.left).toFixed(0);
-        touch.y = +(evt.touches[0].clientY - canvasRect.top).toFixed(0);
-
-        inputListeners.touchmove.forEach(m => m.listener(evt));
-    });
-
-    canvas.addEventListener('touchend', (evt: TouchEvent) => {
-        evt.preventDefault(); // otherwise mouse gets moved to touch spot, firing all other mouse events
-
-        touch.ended = true;
-
-        inputListeners.touchend.forEach(m => {
-            if (clickedInsideTouch(m.shape)) {
-                // m.props.clicked = true;
-                // m.props.clickTotal++;
-                m.listener(evt);
-            }
-        });
-    });
-
     const resize = () => {
         for (let i = 0; i < resizeCB.length; i++) resizeCB[i]();
     };
 
-    let timeout: NodeJS.Timeout;
-
     // resize events are only fired on the window object (mdn mozilla)
     onresize = () => {
-        clearTimeout(timeout);
-        timeout = setTimeout(resize, 250);
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(resize, 250);
     };
 
     const distanceShape = (pos1: Pos, pos2: Pos) => {
@@ -158,6 +188,8 @@ export const getInput = (canvas: HTMLCanvasElement) => {
     const insideMouse = (shape: Shape) => {
         if (shape.type === 'rect') return insideMouseRect(shape);
         if (shape.type === 'circle') return insideMouseCircle(shape);
+
+        return false;
     };
 
     const createInsideCircle = (inputDevice: Pos) => (circle: BaseCircle) => {
@@ -184,10 +216,11 @@ export const getInput = (canvas: HTMLCanvasElement) => {
             inside: insideMouse,
         }),
         touch: Object.assign(touch, {insideRect: insideTouchRect, insideCircle: insideTouchCircle}),
-        buttonHeld,
-        keyHeld,
+        // buttonHeld,
+        // keyHeld,
         addListener,
         removeListener,
+        keyboard,
     };
 };
 

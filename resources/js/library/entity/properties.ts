@@ -31,7 +31,7 @@ export const createUserMethods = (
 
         if (hideTime) {
             setTimeout(() => {
-                // eventHandler.deactivateListeners();
+                eventHandler.deactivateInputListeners();
 
                 hideMe();
             }, hideTime);
@@ -39,7 +39,7 @@ export const createUserMethods = (
             return;
         }
 
-        // eventHandler.deactivateListeners();
+        eventHandler.deactivateInputListeners();
 
         hideMe();
     };

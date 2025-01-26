@@ -1,5 +1,5 @@
 import {EngineDraw, EngineUpdate} from './engine';
-import {InputListenerEventMap, InputListenerType} from './input';
+import {InputListenerEventMap} from './input';
 import {ShapesConfig} from './shapes';
 
 export type GeneralProperties = {
@@ -32,70 +32,61 @@ export type VisualType = EntityAnimations | EntityTransitions | EntityHovers;
 export type SetHideTime = (time: number) => void;
 export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
 
-export type StartEndTransitionEvent = {startEndProp: string};
-export type EndEndTransitionEvent = {endEndProp: string};
-
-// export type ListenerTemplate<T extends object, K extends keyof T> = {
-//     type: K; // = ID (1 type per entity)
-//     listener: (evt: T[K]) => void;
-// };
-
-// export type NativeListener = ListenerTemplate<HTMLElementEventMap, keyof HTMLElementEventMap>;
-// export type EntityListener = ListenerTemplate<EntityListenerEventMap, EntityListenerType>;
-
-export type EntityListenerEventMap = InputListenerEventMap & {
-    startTransitionEnd: StartEndTransitionEvent;
-    endTransitionEnd: EndEndTransitionEvent;
-};
-
-export type EntityListenerMap<T extends keyof EntityListenerEventMap> = {
-    [K in T]: (evt: EntityListenerEventMap[K]) => void;
-};
-
 export type EntityConfig = Partial<
     {sketch: ShapesConfig} & GeneralProperties &
         VisualProperties & {
-            listeners: Partial<EntityListenerMap<keyof EntityListenerEventMap>>;
+            listeners: Partial<EntityListeners & InputListenersGeneric<keyof InputListenerEventMap>>;
         }
 >;
+
+export type StartTransitionEvent = {testProperty: string};
+export type FinishTransitionEvent = {pressed: boolean; pushed: boolean; clicked: boolean};
+
+export type EntityListenerEventMap = {
+    startTransition: StartTransitionEvent;
+    finishTransition: FinishTransitionEvent;
+};
+
+export type EntityListeners = {
+    [Key in keyof EntityListenerEventMap]: (evt: EntityListenerEventMap[Key]) => void;
+};
+
+export type InputListenersGeneric<K extends keyof InputListenerEventMap> = {
+    [Key in K]: (evt: HTMLElementEventMap[Key]) => void;
+};
+
+export type ListenersGeneric<K extends keyof EntityListenerEventMap | keyof InputListenerEventMap> = {
+    [Key in K]: (evt: (EntityListenerEventMap & InputListenerEventMap)[K]) => void;
+};
 
 type ActivateListener = () => void;
 type DeactivateListener = () => boolean;
 type ListenerActive = boolean;
 
-export type EntityListenerHandler = [symbol, ActivateListener, DeactivateListener, ListenerActive];
+export type InputListenerHandler = [symbol, ActivateListener, DeactivateListener, ListenerActive];
 
-export type AddNativeListener = <K extends InputListenerType>(
+export type AddInputListener = <K extends keyof InputListenerEventMap>(
     type: K, // = ID (1 type per entity)
-    listener: (evt: InputListenerEventMap[K]) => void,
+    listener: (evt: HTMLElementEventMap[K]) => void,
     activate?: boolean,
 ) => void;
 
-// export type AddEntitListener = (
-//     type: keyof EntityListenerEventMap, // = ID (1 type per entity)
-//     listener: (evt: EntityListenerEventMap[keyof EntityListenerEventMap]) => void,
-//     activate?: boolean,
-// ) => void;
-
-export type AddListener = <K extends keyof EntityListenerEventMap>(
-    type: K, // = ID (1 type per entity)
-    listener: (evt: EntityListenerEventMap[K]) => void,
-    // activate?: boolean,
+export type AddListener = <K extends keyof EntityListenerEventMap | keyof InputListenerEventMap>(
+    type: K,
+    listener: (evt: (EntityListenerEventMap & InputListenerEventMap)[K]) => void,
 ) => void;
 
-export type RemoveNativeListener = (type: InputListenerType) => void;
-export type RemoveListener = (type: keyof EntityListenerEventMap) => void;
-// export type RemoveListener = (type: keyof )
+export type RemoveInputListener = (type: keyof InputListenerEventMap) => void;
+export type RemoveListener = (type: keyof EntityListenerEventMap | keyof InputListenerEventMap) => void;
 
 export interface EventHandler {
     addListener: AddListener;
     removeListener: RemoveListener;
-    addNativeListener: AddNativeListener;
-    removeNativeListener: RemoveNativeListener;
-    activateNativeListeners: () => void;
-    deactivateNativeListeners: () => void;
-    startTransitionEnd: () => void;
-    endTransitionEnd: () => void;
+    activateInputListeners: () => void;
+    deactivateInputListeners: () => void;
+    entityListenerEvents: EntityListenerEventMap;
+    startTransition?: (event: StartTransitionEvent) => void;
+    finishTransition?: (event: FinishTransitionEvent) => void;
 }
 
 export interface Entity {
