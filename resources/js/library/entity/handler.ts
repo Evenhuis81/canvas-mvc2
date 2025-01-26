@@ -22,6 +22,7 @@ export const createEventHandler = (
 ): EventHandler => {
     const inputListenerHandlers: {[type: string]: InputListenerHandler} = {};
     const entityListenerEvents = createEntityListenerEvents();
+    const entityListeners: Partial<EntityListeners> = {};
     const activate = () => Object.values(inputListenerHandlers).forEach(handler => handler[1]()); // deactivate method
     const deactivate = () => Object.values(inputListenerHandlers).forEach(handler => handler[2]()); // activate method
 
@@ -32,7 +33,12 @@ export const createEventHandler = (
         entityListenerEvents.finishTransition,
     );
 
-    const {addListener, removeListener} = createAddAndRemoveListener(inputListenerHandlers, addInputListener, input);
+    const {addListener, removeListener} = createAddAndRemoveListener(
+        inputListenerHandlers,
+        entityListeners,
+        addInputListener,
+        input,
+    );
 
     if (!listeners) {
         return {
@@ -80,7 +86,7 @@ const createAddInputListener =
         const id = Symbol();
 
         inputListenerHandlers[type] = [
-            id,
+            type,
             () => input.addListener({type, listener, id, shape: sketch, props}),
             () => input.removeListener(type, id),
             activate,
@@ -106,12 +112,13 @@ const setInputListeners = <K extends keyof InputListenerEventMap>(
 
 const createAddAndRemoveListener: (
     inputListenerHandlers: {[type: string]: InputListenerHandler},
+    entityListeners: Partial<EntityListeners>,
     addInputListener: AddInputListener,
     input: LibraryInput,
 ) => {
     addListener: AddListener;
     removeListener: RemoveListener;
-} = (inputListenerHandlers, addInputListener, input) => ({
+} = (inputListenerHandlers, entityListeners, addInputListener, input) => ({
     addListener: <K extends keyof EntityListeners | keyof InputListenerEventMap>(
         type: K,
         listener: (evt: (EntityListenerEventMap & InputListenerEventMap)[K]) => void,
@@ -124,16 +131,23 @@ const createAddAndRemoveListener: (
         setInputListeners(ll, addInputListener);
     },
     removeListener: type => {
-        if (type === 'startTransition') return;
-        if (type === 'finishTransition') return;
+        if (type === 'startTransition') return delete entityListeners.startTransition;
+        if (type === 'finishTransition') return delete entityListeners.finishTransition;
+
+        // const {startTransition, finishTransition, inputListeners} = filterListeners(listeners);
+        // setInputListeners(inputListeners, addInputListener);
 
         const handler = inputListenerHandlers[type];
 
         if (handler) {
-            input.removeListener(type, handler[0]); // type + id
+            // input.removeListener(type, handler[0]); // type + id
+
+            handler[2](); // deactivate listener
 
             delete inputListenerHandlers[type];
         }
+
+        return;
 
         // TODO::Throw Library Error
     },

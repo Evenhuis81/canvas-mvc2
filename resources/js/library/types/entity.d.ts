@@ -35,7 +35,7 @@ export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType)
 export type EntityConfig = Partial<
     {sketch: ShapesConfig} & GeneralProperties &
         VisualProperties & {
-            listeners: Partial<EntityListeners & InputListenersGeneric<keyof InputListenerEventMap>>;
+            listeners: Partial<EntityListeners & EntityInputListeners<keyof InputListenerEventMap>>;
         }
 >;
 
@@ -51,11 +51,13 @@ export type EntityListeners = {
     [Key in keyof EntityListenerEventMap]: (evt: EntityListenerEventMap[Key]) => void;
 };
 
-export type InputListenersGeneric<K extends keyof InputListenerEventMap> = {
+export type EntityInputListenerType = 'mouseup' | 'mousedown' | 'touchstart' | 'touchend';
+
+export type EntityInputListeners<K extends keyof InputListenerEventMap> = {
     [Key in K]: (evt: HTMLElementEventMap[Key]) => void;
 };
 
-export type ListenersGeneric<K extends keyof EntityListenerEventMap | keyof InputListenerEventMap> = {
+export type ListenersGeneric<K extends keyof EntityListenerEventMap | EntityInputListenerType> = {
     [Key in K]: (evt: (EntityListenerEventMap & InputListenerEventMap)[K]) => void;
 };
 
@@ -63,15 +65,15 @@ type ActivateListener = () => void;
 type DeactivateListener = () => boolean;
 type ListenerActive = boolean;
 
-export type InputListenerHandler = [symbol, ActivateListener, DeactivateListener, ListenerActive];
+export type InputListenerHandler = [EntityInputListenerType, ActivateListener, DeactivateListener, ListenerActive];
 
-export type AddInputListener = <K extends keyof InputListenerEventMap>(
+export type AddEntityInputListener = <K extends EntityInputListenerType>(
     type: K, // = ID (1 type per entity)
     listener: (evt: HTMLElementEventMap[K]) => void,
     activate?: boolean,
 ) => void;
 
-export type AddListener = <K extends keyof EntityListenerEventMap | keyof InputListenerEventMap>(
+export type AddListener = <K extends keyof EntityListenerEventMap | EntityInputListenerType>(
     type: K,
     listener: (evt: (EntityListenerEventMap & InputListenerEventMap)[K]) => void,
 ) => void;
