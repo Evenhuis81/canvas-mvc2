@@ -1,27 +1,12 @@
 import {BaseCircle, BaseRect, Shape} from './shapes';
 
-// type MouseDown = 'mousedown';
-// type MouseMove = 'mousemove';
-// type MouseUp = 'mouseup';
-// type KeyDown = 'keydown';
-// type KeyUp = 'keyup';
-// type Wheel = 'wheel';
-
-// interface Events {
-//     mousedown: MouseDown;
-//     mousemove: MouseMove;
-//     mouseup: MouseUp;
-//     keydown: KeyDown;
-//     keyup: KeyUp;
-//     wheel: Wheel;
-// }
-
 type InsideRect = (rect: BaseRect) => boolean;
 type InsideCircle = (circle: BaseCircle) => boolean;
 type Inside = (shape: Shape) => boolean | undefined;
 
 export type LibraryInput = {
     mouse: {
+        buttonHeld: Record<number, boolean>;
         x: number;
         y: number;
         inside: Inside;
@@ -35,40 +20,32 @@ export type LibraryInput = {
         insideCircle: InsideCircle;
         ended: boolean;
     };
-    buttonHeld: Record<number, boolean>;
-    keyHeld: Record<string, boolean>;
-    addListener: <K extends InputListenerType>(listener: InputListener<K>) => void;
-    removeListener: (type: InputListenerType, id: symbol) => boolean;
-};
-
-export type InputListenerType =
-    | 'mousedown'
-    | 'mousemove'
-    | 'mouseup'
-    | 'keydown'
-    | 'keyup'
-    | 'touchstart'
-    | 'touchmove'
-    | 'touchend';
-
-export type InputListenerStorage = {
-    [K in InputListenerType]: InputListener<K>[];
+    keyboard: {
+        keyHeld: Record<string, boolean>;
+    };
+    addListener: <K extends keyof InputListenerEventMap>(listener: InputListener<K>) => void;
+    removeListener: (type: keyof InputListenerEventMap, id: symbol) => boolean;
 };
 
 export type InputListenerEventMap = {
-    [K in InputListenerType]: HTMLElementEventMap[K];
+    mousedown: MouseEvent;
+    mousemove: MouseEvent;
+    mouseup: MouseEvent;
+    keydown: KeyboardEvent;
+    keyup: KeyboardEvent;
+    touchstart: TouchEvent;
+    touchmove: TouchEvent;
+    touchend: TouchEvent;
 };
 
-export type InputListener<K extends InputListenerType> = {
+export type InputListenerStore = {
+    [K in keyof InputListenerEventMap]: InputListener<K>[];
+};
+
+export type InputListener<K extends keyof InputListenerEventMap> = {
     type: K;
-    listener: (evt: HTMLElementEventMap[K]) => void;
+    listener: (event: HTMLElementEventMap[K]) => void;
     id: symbol;
     shape: Shape;
+    props: {pressed: boolean; pushed: boolean; clicked: boolean};
 };
-
-// Used by Library Entity
-export type InputListenerMap<T extends InputListenerType> = {
-    [K in T]: (evt: InputListenerEventMap[K]) => void;
-};
-
-export type InputListenerExternal<K extends InputListenerType> = (evt: HTMLElementEventMap[K]) => void;

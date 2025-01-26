@@ -6,7 +6,7 @@ import {createVisualsAndCallbacks} from './animate';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import type {Engine} from 'library/types/engine';
-import type {Entity, EntityConfig, GeneralProperties} from 'library/types/entity';
+import type {Entity, EntityConfig, EventHandler, GeneralProperties} from 'library/types/entity';
 import type {LibraryInput} from 'library/types/input';
 
 export const getCreateEntity = (
@@ -43,12 +43,13 @@ export const getCreateEntity = (
         ...createUserMethods(visualProperties, generalProperties, callbacks, eventHandler),
     };
 
-    initialize(generalProperties, entity);
+    initialize(generalProperties, entity, eventHandler);
 
     return entity;
 };
 
-const initialize = (gProps: GeneralProperties, methods: Entity) => {
+const initialize = (gProps: GeneralProperties, methods: Entity, eventHandler: EventHandler) => {
+    eventHandler.activateInputListeners();
     if (gProps.show) {
         // Test optional setTimeout efficiency
         setTimeout(() => {

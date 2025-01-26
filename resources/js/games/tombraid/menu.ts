@@ -57,9 +57,9 @@ export const mainMenu = (library: LibraryResources) => {
                     keyup: evt => {
                         console.log(evt);
                     },
-                    startTransitionEnd: evt => {
-                        console.log(evt);
-                    },
+                    // startTransition: evt => {
+                    //     console.log(evt);
+                    // },
                 },
             }),
         );
@@ -88,8 +88,7 @@ export const mainMenu = (library: LibraryResources) => {
 
         element.addListener('touchend', clicked);
         element.addListener('mouseup', clicked);
-        element.addListener('endTransitionEnd', evt => {
-            //     console.log(evt.clicked, evt.clickTotal);
+        element.addListener('finishTransition', evt => {
             console.log(evt);
             //     if (evt.clicked) {
             //         // element.destroy();
