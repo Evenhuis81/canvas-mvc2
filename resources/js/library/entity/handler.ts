@@ -1,17 +1,17 @@
 /* eslint-disable max-lines-per-function */
 import {Shape} from 'library/types/shapes';
 import type {
-    AddInputListener,
+    AddEntityInputListener,
     AddListener,
     EntityConfig,
+    EntityInputListenerType,
     EntityListenerEventMap,
     EntityListeners,
     EventHandler,
     FinishTransitionEvent,
-    InputListenerHandler,
-    InputListenersGeneric,
-    ListenersGeneric,
+    EntityInputListenerHandler,
     RemoveListener,
+    EntityInputListeners,
 } from 'library/types/entity';
 import type {InputListenerEventMap, LibraryInput} from 'library/types/input';
 
@@ -20,13 +20,13 @@ export const createEventHandler = (
     sketch: Shape,
     listeners: EntityConfig['listeners'],
 ): EventHandler => {
-    const inputListenerHandlers: {[type: string]: InputListenerHandler} = {};
+    const inputListenerHandlers: {[type: string]: EntityInputListenerHandler} = {};
     const entityListenerEvents = createEntityListenerEvents();
     const entityListeners: Partial<EntityListeners> = {};
     const activate = () => Object.values(inputListenerHandlers).forEach(handler => handler[1]()); // deactivate method
     const deactivate = () => Object.values(inputListenerHandlers).forEach(handler => handler[2]()); // activate method
 
-    const addInputListener = createAddInputListener(
+    const addEntityInputListener = createAddInputListener(
         inputListenerHandlers,
         input,
         sketch,
@@ -36,7 +36,7 @@ export const createEventHandler = (
     const {addListener, removeListener} = createAddAndRemoveListener(
         inputListenerHandlers,
         entityListeners,
-        addInputListener,
+        addEntityInputListener,
         input,
     );
 
@@ -45,6 +45,7 @@ export const createEventHandler = (
             addListener,
             removeListener,
             entityListenerEvents,
+            entityListeners,
             activateInputListeners: activate,
             deactivateInputListeners: deactivate,
         };
@@ -52,7 +53,7 @@ export const createEventHandler = (
 
     const {startTransition, finishTransition, inputListeners} = filterListeners(listeners);
 
-    setInputListeners(inputListeners, addInputListener);
+    setEntityInputListeners(inputListeners, addEntityInputListener);
 
     return {
         addListener,
@@ -60,8 +61,7 @@ export const createEventHandler = (
         activateInputListeners: activate,
         deactivateInputListeners: deactivate,
         entityListenerEvents,
-        startTransition,
-        finishTransition,
+        entityListeners,
     };
 };
 
@@ -69,7 +69,7 @@ const filterListeners = ({
     startTransition,
     finishTransition,
     ...inputListeners
-}: Partial<EntityListeners & InputListenersGeneric<keyof InputListenerEventMap>>) => ({
+}: Partial<EntityListeners & EntityInputListeners<EntityInputListenerType>>) => ({
     startTransition,
     finishTransition,
     inputListeners,
@@ -77,11 +77,11 @@ const filterListeners = ({
 
 const createAddInputListener =
     (
-        inputListenerHandlers: {[type: string]: InputListenerHandler},
+        inputListenerHandlers: {[type: string]: EntityInputListenerHandler},
         input: LibraryInput,
         sketch: Shape,
         props: FinishTransitionEvent,
-    ): AddInputListener =>
+    ): AddEntityInputListener =>
     (type, listener, activate = true) => {
         const id = Symbol();
 
@@ -97,23 +97,23 @@ const createAddInputListener =
         return id;
     };
 
-const setInputListeners = <K extends keyof InputListenerEventMap>(
-    listeners: Partial<InputListenersGeneric<K>>,
-    addInputListener: AddInputListener,
+const setEntityInputListeners = <K extends EntityInputListenerType>(
+    listeners: Partial<EntityInputListeners<K>>,
+    addEntityInputListener: AddEntityInputListener,
 ) => {
     for (const type in listeners) {
         const listener = listeners[type];
 
         if (!listener) continue;
 
-        addInputListener(type, listener, false);
+        addEntityInputListener(type, listener, false);
     }
 };
 
 const createAddAndRemoveListener: (
-    inputListenerHandlers: {[type: string]: InputListenerHandler},
+    inputListenerHandlers: {[type: string]: EntityInputListenerHandler},
     entityListeners: Partial<EntityListeners>,
-    addInputListener: AddInputListener,
+    addInputListener: AddEntityInputListener,
     input: LibraryInput,
 ) => {
     addListener: AddListener;
@@ -123,12 +123,12 @@ const createAddAndRemoveListener: (
         type: K,
         listener: (evt: (EntityListenerEventMap & InputListenerEventMap)[K]) => void,
     ) => {
-        const ll: Partial<ListenersGeneric<K>> = {};
+        const ll: Partial<EntityListeners<K>> = {};
 
         ll[type] = listener;
 
         // TODO::Make seperate method for adding individual inputListener
-        setInputListeners(ll, addInputListener);
+        setEntityInputListeners(ll, addInputListener);
     },
     removeListener: type => {
         if (type === 'startTransition') return delete entityListeners.startTransition;
