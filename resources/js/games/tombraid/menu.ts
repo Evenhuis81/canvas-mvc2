@@ -48,17 +48,18 @@ export const mainMenu = (library: LibraryResources) => {
                     text: (i + 1).toString(),
                 },
                 listeners: {
-                    mouseup: evt => {
-                        console.log(`Mouse UP: ${evt}`);
-                    },
-                    touchend: evt => {
-                        console.log(`Touch END: ${evt}`);
-                    },
-                    // keyup: evt => {
-                    //     console.log(evt);
+                    mouseup: undefined,
+                    // mouseup: evt => {
+                    //     console.log(`Mouse UP: ${i}`, evt);
                     // },
+                    touchend: evt => {
+                        console.log(`Touch END: ${i}`, evt);
+                    },
                     startTransition: evt => {
-                        console.log(`Start Transition: ${evt}`);
+                        console.log(`Start Transition: ${i}`, evt);
+                    },
+                    finishTransition: evt => {
+                        console.log(`Finish Transition: ${i}`, evt);
                     },
                 },
             }),
@@ -78,16 +79,21 @@ export const mainMenu = (library: LibraryResources) => {
             row++;
         }
 
-        const clicked = (evt: TouchEvent | MouseEvent) => {
-            console.log(`Clicked element: `);
+        // const clicked = (evt: TouchEvent | MouseEvent) => {
+        //     console.log('Clicked element: ');
 
-            console.log(`clicked element ${i + 1} (index + 1), event:`, evt);
+        //     console.log(`clicked element ${i + 1} (index + 1), event:`, evt);
 
-            element.setVisual('end', 'explode');
+        //     element.setVisual('end', 'explode');
 
-            elements.forEach(el => el.hide());
-        };
+        //     elements.forEach(el => el.hide());
+        // };
 
+        // element.removeListener('mouseup');
+
+        element.addListener('mouseup', evt => {
+            console.log(`Mouse UP: ${i}`, evt);
+        });
         // element.addListener('touchend', clicked);
         // element.addListener('mouseup', clicked);
         // element.addListener('finishTransition', evt => {

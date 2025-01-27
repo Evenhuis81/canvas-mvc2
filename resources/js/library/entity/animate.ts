@@ -129,7 +129,7 @@ const setCallbacks = (
     vProps: VisualProperties,
     setEngine: SetEngine,
     callbacks: Callbacks,
-    {startTransition, finishTransition, entityListenerEvents}: EventHandler,
+    {entityListenerEvents, entityListeners}: EventHandler,
 ) => {
     callbacks.start = quickShow => {
         if (quickShow) {
@@ -154,7 +154,7 @@ const setCallbacks = (
         setEngine('entity', 'on'); // This could have a (double) check
         setEngine('hover', 'on');
 
-        if (startTransition) startTransition(entityListenerEvents.startTransition);
+        if (entityListeners.startTransition) entityListeners.startTransition(entityListenerEvents.startTransition);
     };
 
     callbacks.end = quickHide => {
@@ -180,7 +180,7 @@ const setCallbacks = (
         setEngine('entity', 'off'); // This could have a (double) check
         setEngine('hover', 'off');
 
-        if (finishTransition) finishTransition(entityListenerEvents.finishTransition);
+        if (entityListeners.finishTransition) entityListeners.finishTransition(entityListenerEvents.finishTransition);
     };
 };
 

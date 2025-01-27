@@ -42,25 +42,20 @@ export type EntityConfig = Partial<
 export type StartTransitionEvent = {testProperty: string};
 export type FinishTransitionEvent = {pressed: boolean; pushed: boolean; clicked: boolean};
 
-export type EntityListenerEventMap = {
+export type EntityListenerEvents = {
     startTransition: StartTransitionEvent;
     finishTransition: FinishTransitionEvent;
 };
 
 export type EntityListeners = {
-    [Key in keyof EntityListenerEventMap]: (evt: EntityListenerEventMap[Key]) => void;
+    [K in keyof EntityListenerEvents]: (evt: EntityListenerEvents[K]) => void;
 };
 
 export type EntityInputListenerType = 'mouseup' | 'mousedown' | 'touchstart' | 'touchend';
 
-// <K extends EntityInputListenerType>
-export type EntityInputListeners<K extends EntityInputListenerType> = {
-    [Key in K]: (evt: HTMLElementEventMap[Key]) => void;
+export type EntityInputListeners<T extends EntityInputListenerType> = {
+    [K in T]: (evt: HTMLElementEventMap[K]) => void;
 };
-
-// export type EntityInputListenersConfig<K extends EntityInputListenerType> = {
-//     [Key in K]: (evt: HTMLElementEventMap[K]) => void;
-// };
 
 type ActivateListener = () => void;
 type DeactivateListener = () => boolean;
@@ -79,20 +74,22 @@ export type AddEntityInputListener = <K extends EntityInputListenerType>(
     activate?: boolean,
 ) => void;
 
-export type AddListener = <K extends keyof EntityListenerEventMap | EntityInputListenerType>(
-    type: K,
-    listener: (evt: (EntityListenerEventMap & InputListenerEventMap)[K]) => void,
+export type AddListener = (
+    type: keyof EntityListenerEvents | EntityInputListenerType,
+    listener: (
+        evt: (EntityListenerEvents & InputListenerEventMap)[keyof EntityListenerEvents | EntityInputListenerType],
+    ) => void,
 ) => void;
 
 export type RemoveEntityInputListener = (type: EntityInputListenerType) => void;
-export type RemoveListener = (type: keyof EntityListenerEventMap | EntityInputListenerType) => void;
+export type RemoveListener = (type: keyof EntityListenerEvents | EntityInputListenerType) => void;
 
 export interface EventHandler {
     addListener: AddListener;
     removeListener: RemoveListener;
     activateInputListeners: () => void;
     deactivateInputListeners: () => void;
-    entityListenerEvents: EntityListenerEventMap;
+    entityListenerEvents: EntityListenerEvents;
     entityListeners: {
         startTransition?: (event: StartTransitionEvent) => void;
         finishTransition?: (event: FinishTransitionEvent) => void;
