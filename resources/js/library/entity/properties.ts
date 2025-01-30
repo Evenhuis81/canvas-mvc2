@@ -8,20 +8,20 @@ export const createUserMethods = (
     eventHandler: EventHandler,
 ) => {
     // parameter default gives auto start (and end) transitions if type !undefined, manually able to set by user input
-    const show = (quickShow = !vProps.startType) => {
-        // TODO::Add to Error/Log Handling module
-        if (gProps.show) throw Error('show is already active');
+    const show = (quickShow = !vProps.startTransition) => {
+        // TODO::Add to Library Error
+        if (gProps.show) console.log('show is already active');
 
         gProps.show = true;
 
-        eventHandler.activateInputListeners();
+        // eventHandler.activateInputListeners();
 
         callbacks.start(quickShow);
     };
 
-    const hide = (quickHide = !vProps.endType, hideTime = gProps.hideTime) => {
-        // TODO::Add to Error Handling module
-        if (!gProps.show) throw Error('hide is already active');
+    const hide = (quickHide = !vProps.endTransition, hideDelay = gProps.hideDelay) => {
+        // TODO::Add to Library Error
+        if (!gProps.show) console.log('hide is already active');
 
         const hideMe = () => {
             gProps.show = false;
@@ -29,22 +29,22 @@ export const createUserMethods = (
             callbacks.end(quickHide);
         };
 
-        if (hideTime) {
+        if (hideDelay) {
             setTimeout(() => {
-                eventHandler.deactivateInputListeners();
+                // eventHandler.deactivateInputListeners();
 
                 hideMe();
-            }, hideTime);
+            }, hideDelay);
 
             return;
         }
 
-        eventHandler.deactivateInputListeners();
+        // eventHandler.deactivateInputListeners();
 
         hideMe();
     };
 
-    const setHideTime = (time: number) => (gProps.hideTime = time);
+    const setHideTime = (time: number) => (gProps.hideDelay = time);
 
     return {show, hide, setHideTime};
 };
@@ -56,11 +56,11 @@ export const defaultProperties = {
     disabled: false,
     show: true,
     showDelay: 0,
-    clicked: false,
-    hideTime: 0,
+    clicked: false, // Also in transitionEventProps
+    hideDelay: 0,
     // visualProperties (types can be undefined)
-    animateAtStart: false,
-    animateAtEnd: false,
+    // animateAtEnd: false,
+    // animateAtStart: false,
     startSpeed: 3,
     endSpeed: 3,
 };

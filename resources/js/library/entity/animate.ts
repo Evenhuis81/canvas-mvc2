@@ -16,7 +16,7 @@ import type {Shape} from 'library/types/shapes';
 
 export const createVisualsAndCallbacks = (
     gProps: GeneralProperties,
-    vProps: VisualProperties,
+    vProps: Partial<VisualProperties>,
     sketch: Shape,
     colors: Colors,
     input: LibraryInput,

@@ -8,18 +8,16 @@ export type GeneralProperties = {
     disabled: boolean;
     show: boolean;
     showDelay: number;
-    clicked: boolean;
-    hideTime: number;
+    clicked: boolean; // Also in transitionEventProps
+    hideDelay: number;
 };
 
 export interface VisualProperties {
-    animateAtStart: boolean;
-    animateAtEnd: boolean;
-    animationType?: EntityAnimations;
-    hoverType?: EntityHovers;
-    startType?: EntityTransitions;
+    startTransition: EntityTransitions;
+    endTransition: EntityTransitions;
+    animation: EntityAnimations;
+    hover: EntityHovers;
     startSpeed: TransitionSpeed;
-    endType?: EntityTransitions;
     endSpeed: TransitionSpeed;
 }
 
@@ -40,11 +38,11 @@ export type EntityConfig = Partial<
 >;
 
 export type StartTransitionEvent = {testProperty: string};
-export type FinishTransitionEvent = {pressed: boolean; pushed: boolean; clicked: boolean};
+export type EndTransitionEvent = {pressed: boolean; pushed: boolean; clicked: boolean};
 
 export type EntityListenerEvents = {
     startTransition: StartTransitionEvent;
-    finishTransition: FinishTransitionEvent;
+    endTransition: EndTransitionEvent;
 };
 
 export type EntityListeners = {
@@ -92,7 +90,7 @@ export interface EventHandler {
     entityListenerEvents: EntityListenerEvents;
     entityListeners: {
         startTransition?: (event: StartTransitionEvent) => void;
-        finishTransition?: (event: FinishTransitionEvent) => void;
+        endTransition?: (event: EndTransitionEvent) => void;
     };
 }
 

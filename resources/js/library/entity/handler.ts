@@ -9,7 +9,7 @@ import type {
     EntityInputListeners,
     EntityListenerEvents,
     EntityListeners,
-    FinishTransitionEvent,
+    EndTransitionEvent,
 } from 'library/types/entity';
 import type {InputListenerEventMap, LibraryInput} from 'library/types/input';
 
@@ -33,32 +33,26 @@ export const createEventHandler = (input: LibraryInput, sketch: Shape, listeners
         addEntityInputListener,
     );
 
-    if (!listeners) {
-        return {
-            addListener,
-            removeListener,
-            entityListenerEvents,
-            entityListeners,
-            activateInputListeners: activate,
-            deactivateInputListeners: deactivate,
-        };
-    }
+    const handler = {
+        addListener,
+        removeListener,
+        entityListenerEvents,
+        entityListeners,
+        activateInputListeners: activate,
+        deactivateInputListeners: deactivate,
+    };
 
-    const {startTransition, finishTransition, ...entityInputListeners} = listeners;
+    if (!listeners) return handler;
+
+    // Make generic with split object (https://stackoverflow.com/questions/75323570/what-is-the-correct-type-for-splitting-an-object-in-two-complimentary-objects-in)
+    const {startTransition, endTransition, ...entityInputListeners} = listeners;
 
     if (startTransition) entityListeners.startTransition = startTransition;
-    if (finishTransition) entityListeners.finishTransition = finishTransition;
+    if (endTransition) entityListeners.endTransition = endTransition;
 
     setEntityInputListeners(entityInputListeners, addEntityInputListener);
 
-    return {
-        addListener,
-        removeListener,
-        activateInputListeners: activate,
-        deactivateInputListeners: deactivate,
-        entityListenerEvents,
-        entityListeners,
-    };
+    return handler;
 };
 
 const createAddEntityInputListener =
@@ -66,7 +60,7 @@ const createAddEntityInputListener =
         entityInputListenerHandlers: {[type: string]: EntityInputListenerHandler},
         input: LibraryInput,
         sketch: Shape,
-        props: FinishTransitionEvent,
+        props: EndTransitionEvent,
     ): AddEntityInputListener =>
     (type, listener, active = true) => {
         const id = Symbol();
@@ -108,7 +102,7 @@ const createAddAndRemoveListener = (
         ) => void,
     ) => {
         if (type === 'startTransition') return (entityListeners.startTransition = listener);
-        if (type === 'finishTransition') return (entityListeners.finishTransition = listener);
+        if (type === 'endTransition') return (entityListeners.endTransition = listener);
 
         addEntityInputListener(type, listener);
 
@@ -116,7 +110,7 @@ const createAddAndRemoveListener = (
     },
     removeListener: (type: keyof EntityListeners | EntityInputListenerType) => {
         if (type === 'startTransition') return delete entityListeners.startTransition;
-        if (type === 'finishTransition') return delete entityListeners.finishTransition;
+        if (type === 'endTransition') return delete entityListeners.endTransition;
 
         const handler = entityInputListenerHandlers[type];
 

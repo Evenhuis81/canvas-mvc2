@@ -2,13 +2,13 @@
 import type {Colors} from 'library/types/color';
 import type {Callbacks, GeneralProperties, VisualProperties} from 'library/types/entity';
 import type {LibraryInput} from 'library/types/input';
-import type {Shapes} from 'library/types/shapes';
+import type {Shape} from 'library/types/shapes';
 
 export const createRenders = (
     props: GeneralProperties,
-    sketch: Shapes,
+    sketch: Shape,
     colors: Colors,
-    vProps: VisualProperties,
+    {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
     input: LibraryInput,
     context: CanvasRenderingContext2D,
     callbacks: Pick<Callbacks, 'startEnd' | 'endEnd'>,
@@ -31,7 +31,7 @@ export const createRenders = (
 
     const transitions = {
         fadein1: () => {
-            const {update: fn, prepare} = createTransitionFadein1(colors, 0.005 * vProps.startSpeed, callbacks);
+            const {update: fn, prepare} = createTransitionFadein1(colors, 0.005 * startSpeed, callbacks);
 
             return {
                 update: {
@@ -43,7 +43,7 @@ export const createRenders = (
             };
         },
         fadeout1: () => {
-            const {update: fn, prepare} = createTransitionFadeout1(colors, 0.005 * vProps.endSpeed, callbacks);
+            const {update: fn, prepare} = createTransitionFadeout1(colors, 0.005 * endSpeed, callbacks);
 
             return {
                 update: {
@@ -99,7 +99,7 @@ export const createRenders = (
     };
 };
 
-const createHoverBold = (sketch: Shapes) => {
+const createHoverBold = (sketch: Shape) => {
     const origin = {
         lineWidth: sketch.lineWidth,
         f: sketch.fontSize,
@@ -193,7 +193,7 @@ const createTransitionSlideinleft = () => () => {
 let phase = 1;
 
 const createTransitionExplode = (
-    sketch: Shapes,
+    sketch: Shape,
     {fill, stroke, textFill}: Colors,
     callbacks: Pick<Callbacks, 'endEnd'>,
 ) => ({
@@ -227,7 +227,7 @@ const createTransitionExplode = (
 const createTransitionUpdate =
     (
         {mouse}: LibraryInput, // only mouse, no hover on touch
-        sketch: Shapes,
+        sketch: Shape,
         transition: {
             forward: () => void;
             reverse: () => void;
@@ -243,7 +243,7 @@ const createTransitionUpdate =
         transition.reverse();
     };
 
-const createAnimationNoise = (sketch: Shapes) => () => {
+const createAnimationNoise = (sketch: Shape) => () => {
     if (sketch.type === 'rect') {
         sketch.x += upd.adj.x;
         sketch.y += upd.adj.y;
@@ -261,7 +261,7 @@ const createAnimationNoise = (sketch: Shapes) => () => {
 
 // TODO::Create seperate module and abstract this one into multiple shape renders
 const createDraw =
-    (sketch: Shapes, c: CanvasRenderingContext2D, {fill, stroke, textFill}: Colors) =>
+    (sketch: Shape, c: CanvasRenderingContext2D, {fill, stroke, textFill}: Colors) =>
     () => {
         if (sketch.type === 'rect') {
             c.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;

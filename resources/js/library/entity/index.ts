@@ -50,39 +50,42 @@ export const getCreateEntity = (
 
 const initialize = (gProps: GeneralProperties, methods: Entity) => {
     if (gProps.show) {
-        // Test optional setTimeout efficiency
-        setTimeout(() => {
-            gProps.show = false;
+        if (gProps.showDelay) {
+            setTimeout(() => {
+                gProps.show = false;
 
-            // TODO::Make this optional (or with entityMethod)
-            gProps.showDelay = 0;
+                gProps.showDelay = 0;
 
-            methods.show();
-        }, gProps.showDelay);
+                methods.show();
+
+                return;
+            }, gProps.showDelay);
+        }
+
+        methods.show();
+
+        return;
     }
 };
 
 // TODO::Set defaults for options if no options is provided (empty entity default)
 const extractOptions = (options: EntityConfig = {}) => {
-    const {id, name, disabled, show, showDelay, clicked, hideTime, ...rest} = {
+    const {id, name, disabled, show, showDelay, clicked, hideDelay, ...rest} = {
         id: options.id ?? `entity-${uid()}`,
         ...getProperties(defaultProperties, options),
     };
 
-    const generalProperties = {id, name, disabled, show, showDelay, clicked, hideTime};
+    const generalProperties = {id, name, disabled, show, showDelay, clicked, hideDelay};
 
-    const {startType, startSpeed, endType, endSpeed, hoverType, animationType, animateAtStart, animateAtEnd, ...rest2} =
-        rest;
+    const {startTransition, endTransition, animation, hover, startSpeed, endSpeed, ...rest2} = rest;
 
     const visualProperties = {
-        startType,
+        startTransition,
+        endTransition,
+        animation,
+        hover,
         startSpeed,
-        endType,
         endSpeed,
-        hoverType,
-        animationType,
-        animateAtStart,
-        animateAtEnd,
     };
 
     const {listeners, sketch: shape} = rest2;

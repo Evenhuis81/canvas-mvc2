@@ -48,10 +48,10 @@ export const mainMenu = (library: LibraryResources) => {
                     text: (i + 1).toString(),
                 },
                 listeners: {
-                    mouseup: undefined,
-                    // mouseup: evt => {
-                    //     console.log(`Mouse UP: ${i}`, evt);
-                    // },
+                    // mouseup: undefined,
+                    mouseup: evt => {
+                        console.log(`Mouse UP: ${i}`, evt);
+                    },
                     touchend: evt => {
                         console.log(`Touch END: ${i}`, evt);
                     },
