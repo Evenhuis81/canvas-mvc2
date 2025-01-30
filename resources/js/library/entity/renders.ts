@@ -1,8 +1,8 @@
 /* eslint-disable max-lines-per-function */
 import type {Colors} from 'library/types/color';
-import type {Callbacks, GeneralProperties, VisualProperties} from 'library/types/entity';
+import type {GeneralProperties, VisualProperties} from 'library/types/entity';
 import type {LibraryInput} from 'library/types/input';
-import type {Shape} from 'library/types/shapes';
+import type {Circle, Shape} from 'library/types/shapes';
 
 export const createRenders = (
     props: GeneralProperties,
@@ -11,9 +11,10 @@ export const createRenders = (
     {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
     input: LibraryInput,
     context: CanvasRenderingContext2D,
-    // callbacks: Pick<Callbacks, 'startEnd' | 'endEnd'>,
 ) => {
     const {id, name} = props;
+
+    const getDraw = createGetDraw();
 
     const hovers = {
         bold: () => {
@@ -31,7 +32,7 @@ export const createRenders = (
 
     const transitions = {
         fadein1: () => {
-            const {update: fn, prepare} = createTransitionFadein1(colors, 0.005 * startSpeed, () => );
+            const {update: fn, prepare} = createTransitionFadein1(colors, 0.005 * startSpeed, () => {});
 
             return {
                 update: {
@@ -43,7 +44,10 @@ export const createRenders = (
             };
         },
         fadeout1: () => {
-            const {update: fn, prepare} = createTransitionFadeout1(colors, 0.005 * endSpeed, callbacks);
+            // TODO::Fill with end callback needs, implement outside of render module
+            const callback = () => {};
+
+            const {update: fn, prepare} = createTransitionFadeout1(colors, 0.005 * endSpeed, callback);
 
             return {
                 update: {
@@ -62,7 +66,7 @@ export const createRenders = (
             },
         }),
         explode: () => {
-            const {update: fn, prepare} = createTransitionExplode(sketch, colors, callbacks);
+            const {update: fn, prepare} = createTransitionExplode(sketch, colors, () => {});
 
             return {
                 update: {
@@ -88,7 +92,7 @@ export const createRenders = (
     const draw = {
         id: `${id}-draw`,
         name: `draw-${name}`,
-        fn: createDraw(sketch, context, colors),
+        fn: getDraw(sketch, context, colors),
     };
 
     return {
@@ -134,18 +138,14 @@ const createHoverBold = (sketch: Shape) => {
     return {forward, reverse};
 };
 
-const createTransitionFadein1 = (
-    {fill, stroke, textFill}: Colors,
-    alphaVelocity: number,
-    endCallback: () => void,
-) => {
+const createTransitionFadein1 = ({fill, stroke, textFill}: Colors, alphaVelocity: number, endCallback: () => void) => {
     const update = () => {
         fill.a += alphaVelocity;
         stroke.a += alphaVelocity;
         textFill.a += alphaVelocity;
 
         if (fill.a >= 1) end();
-    }
+    };
 
     const prepare = () => {
         fill.a = 0;
@@ -159,36 +159,36 @@ const createTransitionFadein1 = (
         textFill.a = 1;
 
         endCallback();
-    }
+    };
 
     return {update, prepare, end};
 };
 
-const createTransitionFadeout1 = (
-    {fill, stroke, textFill}: Colors,
-    alphaVelocity: number,
-    callbacks: Pick<Callbacks, 'endEnd'>,
-) => ({
-    update: () => {
+const createTransitionFadeout1 = ({fill, stroke, textFill}: Colors, alphaVelocity: number, callback: () => void) => {
+    const update = () => {
         fill.a -= alphaVelocity;
         stroke.a -= alphaVelocity;
         textFill.a -= alphaVelocity;
 
-        if (fill.a <= 0) {
-            // create endPrepare (finish) method for this and put in animate.ts
-            fill.a = 0;
-            stroke.a = 0;
-            textFill.a = 0;
+        if (fill.a <= 0) end();
+    };
 
-            callbacks.endEnd();
-        }
-    },
-    prepare: () => {
+    const prepare = () => {
         fill.a = 1;
         stroke.a = 1;
         textFill.a = 1;
-    },
-});
+    };
+
+    const end = () => {
+        fill.a = 0;
+        stroke.a = 0;
+        textFill.a = 0;
+
+        callback();
+    };
+
+    return {update, prepare, end};
+};
 
 const createTransitionSlideinleft = () => () => {
     //
@@ -196,12 +196,8 @@ const createTransitionSlideinleft = () => () => {
 
 let phase = 1;
 
-const createTransitionExplode = (
-    sketch: Shape,
-    {fill, stroke, textFill}: Colors,
-    callbacks: Pick<Callbacks, 'endEnd'>,
-) => ({
-    update: () => {
+const createTransitionExplode = (sketch: Shape, {fill, stroke, textFill}: Colors, callback: () => void) => {
+    const update = () => {
         if (phase === 1) sketch.lineWidth += 0.1;
         else if (phase === 2) {
             fill.a -= 0.01;
@@ -213,7 +209,7 @@ const createTransitionExplode = (
                 stroke.a -= 0;
                 textFill.a -= 0;
 
-                callbacks.endEnd();
+                end();
             }
         }
 
@@ -222,11 +218,14 @@ const createTransitionExplode = (
 
             phase = 2;
         }
-    },
-    prepare: () => {
-        //
-    },
-});
+    };
+
+    const end = () => callback();
+
+    const prepare = () => {};
+
+    return {update, prepare, end};
+};
 
 const createTransitionUpdate =
     (
@@ -264,10 +263,11 @@ const createAnimationNoise = (sketch: Shape) => () => {
 };
 
 // TODO::Create seperate module and abstract this one into multiple shape renders
-const createDraw =
+const createGetDraw =
     (sketch: Shape, c: CanvasRenderingContext2D, {fill, stroke, textFill}: Colors) =>
-    () => {
-        if (sketch.type === 'rect') {
+    () => ({
+        // if (sketch.type === 'rect') {
+        rect: () => {
             c.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
             c.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
             c.lineWidth = sketch.lineWidth;
@@ -286,7 +286,9 @@ const createDraw =
 
             c.beginPath();
             c.fillText(sketch.text, sketch.x, sketch.y + 1.5);
-        } else if (sketch.type === 'circle') {
+        },
+        //  else if (sketch.type === 'circle') {
+        circle: (sketch: Circle) => {
             c.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
             c.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
             c.lineWidth = sketch.lineWidth;
@@ -305,8 +307,8 @@ const createDraw =
 
             c.beginPath();
             c.fillText(sketch.text, sketch.x, sketch.y + 1.5);
-        }
-    };
+        },
+    });
 
 // max property is default 60, need for deltaTime, adj is change in property
 // make this a createProperties that picks the needed properties for each update respectively

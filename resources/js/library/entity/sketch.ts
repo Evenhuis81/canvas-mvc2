@@ -1,7 +1,7 @@
 import {EntityText, ShapeDefaults, ShapesConfig} from 'library/types/shapes';
 
 export const createSketch = (shape?: ShapesConfig) => {
-    if (!shape) return {...shapeDefaults.rect, ...textDefault};
+    if (!shape) return {...shapeDefaults.rectroundfillstroke, ...textDefault};
 
     return {
         ...shapeDefaults[shape.type],
@@ -10,8 +10,8 @@ export const createSketch = (shape?: ShapesConfig) => {
     };
 };
 
-const shapeDefaults: ShapeDefaults = {
-    rect: {
+const shapeDefaults: Omit<ShapeDefaults, 'rect' | 'circle'> = {
+    rectroundfillstroke: {
         type: 'rect',
         x: 300,
         y: 200,
@@ -22,7 +22,7 @@ const shapeDefaults: ShapeDefaults = {
         radii: 5,
         lineWidth: 2,
     },
-    circle: {
+    circlefillstroke: {
         type: 'circle',
         fill: '#000',
         stroke: '#f00',

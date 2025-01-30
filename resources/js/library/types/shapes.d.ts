@@ -57,10 +57,16 @@ export type Shape = ShapeMap[keyof ShapeMap] & Omit<EntityText, 'type'>;
 // Add seperate input for text 'entity' (?), use this entity to put on top of existing default and user input sketches
 export type ShapesConfig = WithRequired<Partial<Shape>, 'type'>;
 
+export type Round = {
+    radii: number;
+};
+
 export type ShapeMap = {
-    rect: Rect & Fill & Stroke;
-    circle: Circle & Fill & Stroke;
+    rectroundfillstroke: Rect & Round & Fill & Stroke;
+    circlefillstroke: Circle & Fill & Stroke;
+    rect: Rect;
+    circle: Circle;
     line: Line & Stroke;
 };
 
-type ShapeDefaults = {[Key in keyof ShapeMap]: ShapeMap[Key]};
+export type ShapeDefaults = {[Key in keyof ShapeMap]: ShapeMap[Key]};
