@@ -11,7 +11,7 @@ export const createRenders = (
     {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
     input: LibraryInput,
     context: CanvasRenderingContext2D,
-    callbacks: Pick<Callbacks, 'startEnd' | 'endEnd'>,
+    // callbacks: Pick<Callbacks, 'startEnd' | 'endEnd'>,
 ) => {
     const {id, name} = props;
 
@@ -31,7 +31,7 @@ export const createRenders = (
 
     const transitions = {
         fadein1: () => {
-            const {update: fn, prepare} = createTransitionFadein1(colors, 0.005 * startSpeed, callbacks);
+            const {update: fn, prepare} = createTransitionFadein1(colors, 0.005 * startSpeed, () => );
 
             return {
                 update: {
@@ -137,28 +137,32 @@ const createHoverBold = (sketch: Shape) => {
 const createTransitionFadein1 = (
     {fill, stroke, textFill}: Colors,
     alphaVelocity: number,
-    callbacks: Pick<Callbacks, 'startEnd'>,
-) => ({
-    update: () => {
+    endCallback: () => void,
+) => {
+    const update = () => {
         fill.a += alphaVelocity;
         stroke.a += alphaVelocity;
         textFill.a += alphaVelocity;
 
-        if (fill.a >= 1) {
-            // create endPrepare (finish) method for this and put in animate.ts
-            fill.a = 1;
-            stroke.a = 1;
-            textFill.a = 1;
+        if (fill.a >= 1) end();
+    }
 
-            callbacks.startEnd();
-        }
-    },
-    prepare: () => {
+    const prepare = () => {
         fill.a = 0;
         stroke.a = 0;
         textFill.a = 0;
-    },
-});
+    };
+
+    const end = () => {
+        fill.a = 1;
+        stroke.a = 1;
+        textFill.a = 1;
+
+        endCallback();
+    }
+
+    return {update, prepare, end};
+};
 
 const createTransitionFadeout1 = (
     {fill, stroke, textFill}: Colors,

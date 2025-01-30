@@ -2,13 +2,12 @@
 import {Callbacks, EventHandler, GeneralProperties, VisualProperties} from 'library/types/entity';
 
 export const createUserMethods = (
-    vProps: VisualProperties,
+    vProps: Partial<VisualProperties>,
     gProps: GeneralProperties,
     callbacks: Callbacks,
     eventHandler: EventHandler,
 ) => {
-    // parameter default gives auto start (and end) transitions if type !undefined, manually able to set by user input
-    const show = (quickShow = !vProps.startTransition) => {
+    const show = () => {
         // TODO::Add to Library Error
         if (gProps.show) console.log('show is already active');
 
@@ -16,32 +15,31 @@ export const createUserMethods = (
 
         // eventHandler.activateInputListeners();
 
-        callbacks.start(quickShow);
+        // callbacks.start(quickShow);
     };
 
-    const hide = (quickHide = !vProps.endTransition, hideDelay = gProps.hideDelay) => {
-        // TODO::Add to Library Error
-        if (!gProps.show) console.log('hide is already active');
+    const hide = () => {
+        // TODO::Add to Library Error/Log
+        if (!gProps.show) console.log('hide trigger while gProps.show = false');
 
-        const hideMe = () => {
-            gProps.show = false;
+        // const hideMe = () => {
+        // gProps.show = false;
 
-            callbacks.end(quickHide);
-        };
+        // callbacks.end(quickHide);
+        // };
 
-        if (hideDelay) {
+        if (gProps.hideDelay) {
             setTimeout(() => {
                 // eventHandler.deactivateInputListeners();
-
-                hideMe();
-            }, hideDelay);
+                // hideMe();
+            }, gProps.hideDelay);
 
             return;
         }
 
         // eventHandler.deactivateInputListeners();
 
-        hideMe();
+        // hideMe();
     };
 
     const setHideTime = (time: number) => (gProps.hideDelay = time);
@@ -52,7 +50,6 @@ export const createUserMethods = (
 export const defaultProperties = {
     // generalProperties (mixed internal properties + id set in abstractOptions)
     name: 'noName', // + counter/uid?
-    // type: 'default',
     disabled: false,
     show: true,
     showDelay: 0,
@@ -61,6 +58,6 @@ export const defaultProperties = {
     // visualProperties (types can be undefined)
     // animateAtEnd: false,
     // animateAtStart: false,
-    startSpeed: 3,
-    endSpeed: 3,
+    // startSpeed: 3,
+    // endSpeed: 3,
 };

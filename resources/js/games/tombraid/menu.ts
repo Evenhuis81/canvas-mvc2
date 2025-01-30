@@ -25,9 +25,9 @@ export const mainMenu = (library: LibraryResources) => {
         h: squareLength,
     };
     const baseVisualProperties: Partial<VisualProperties> = {
-        startType: 'fadein1',
+        start: 'fadein1',
         startSpeed: 5,
-        endType: 'fadeout1',
+        end: 'fadeout1',
         endSpeed: 5,
     };
 
@@ -58,8 +58,8 @@ export const mainMenu = (library: LibraryResources) => {
                     startTransition: evt => {
                         console.log(`Start Transition: ${i}`, evt);
                     },
-                    finishTransition: evt => {
-                        console.log(`Finish Transition: ${i}`, evt);
+                    endTransition: evt => {
+                        console.log(`End Transition: ${i}`, evt);
                     },
                 },
             }),
@@ -91,9 +91,9 @@ export const mainMenu = (library: LibraryResources) => {
 
         // element.removeListener('mouseup');
 
-        element.addListener('mouseup', evt => {
-            console.log(`Mouse UP: ${i}`, evt);
-        });
+        // element.addListener('mouseup', evt => {
+        //     console.log(`Mouse UP: ${i}`, evt);
+        // });
         // element.addListener('touchend', clicked);
         // element.addListener('mouseup', clicked);
         // element.addListener('finishTransition', evt => {
@@ -113,9 +113,9 @@ export const mainMenu = (library: LibraryResources) => {
 // Create oscillerate animation and/or real noise animation
 
 // const mainButton: Partial<ConfigOptions> = {
-//     startType: 'fadein1',
+//     startTransition: 'fadein1',
 //     startSpeed: 5,
-//     endType: 'fadeout1',
+//     endTransition: 'fadeout1',
 //     endSpeed: 5,
 //     x: innerWidth * 0.5,
 //     y: innerHeight * 0.25,

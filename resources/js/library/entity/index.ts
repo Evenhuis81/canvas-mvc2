@@ -77,11 +77,11 @@ const extractOptions = (options: EntityConfig = {}) => {
 
     const generalProperties = {id, name, disabled, show, showDelay, clicked, hideDelay};
 
-    const {startTransition, endTransition, animation, hover, startSpeed, endSpeed, ...rest2} = rest;
+    const {start, end, animation, hover, startSpeed, endSpeed, ...rest2} = rest;
 
     const visualProperties = {
-        startTransition,
-        endTransition,
+        start,
+        end,
         animation,
         hover,
         startSpeed,

@@ -24,7 +24,7 @@ export const createEventHandler = (input: LibraryInput, sketch: Shape, listeners
         entityInputListenerHandlers,
         input,
         sketch,
-        entityListenerEvents.finishTransition,
+        entityListenerEvents.endTransition,
     );
 
     const {addListener, removeListener} = createAddAndRemoveListener(
@@ -123,9 +123,9 @@ const createAddAndRemoveListener = (
 });
 
 const startTransition = {testProperty: 'testProperty startTransition'};
-const finishTransition = {pressed: false, pushed: false, clicked: false};
+const endTransition = {pressed: false, pushed: false, clicked: false};
 
 const createEntityListenerEvents = () => ({
     startTransition: {...startTransition},
-    finishTransition: {...finishTransition},
+    endTransition: {...endTransition},
 });

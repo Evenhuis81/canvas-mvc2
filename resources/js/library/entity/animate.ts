@@ -24,18 +24,17 @@ export const createVisualsAndCallbacks = (
     context: CanvasRenderingContext2D,
     eventHandler: EventHandler,
 ) => {
-    const {animationType, hoverType, startType, endType} = vProps;
+    const {animation, hover, start, end} = vProps;
 
-    const callbacks = {...emptyCallbacks};
+    // const callbacks = {...emptyCallbacks};
 
-    // callbacks: Pick<Callbacks, 'startEnd' | 'endEnd'>,
     const renders = createRenders(gProps, sketch, colors, vProps, input, context, callbacks);
 
     const visuals = {
-        entity: animationType ? renders.animations[animationType]() : undefined,
-        hover: hoverType ? renders.hovers[hoverType]() : undefined,
-        start: startType ? renders.transitions[startType]() : undefined,
-        end: endType ? renders.transitions[endType]() : undefined,
+        animation: animation ? renders.animations[animation]() : undefined,
+        hover: hover ? renders.hovers[hover]() : undefined,
+        start: start ? renders.transitions[start]() : undefined,
+        end: end ? renders.transitions[end]() : undefined,
         draw: renders.draw,
     };
 
@@ -46,19 +45,19 @@ export const createVisualsAndCallbacks = (
     const setEngine = createSetEngine(engine, visuals);
 
     // transforms empty callbacks to functional callbacks
-    setCallbacks(gProps, vProps, setEngine, callbacks, eventHandler);
+    setCallbacks(vProps, setEngine, callbacks, eventHandler);
 
-    return {visuals, callbacks, setVisual};
+    return {callbacks, setVisual};
 };
 
 // TODO::remove duplications and if statements, see comments in createCallbacks -> renders object
 const createEngineRenders = (engine: Engine, renders: Partial<Visuals>) => ({
-    entity: {
+    animation: {
         on: () => {
-            if (renders.entity) engine.setUpdate(renders.entity.update);
+            if (renders.animation) engine.setUpdate(renders.animation.update);
         },
         off: () => {
-            if (renders.entity) engine.removeUpdate(renders.entity.update.id);
+            if (renders.animation) engine.removeUpdate(renders.animation.update.id);
         },
         set: false,
     },
@@ -124,69 +123,39 @@ const createSetEngine = (engine: Engine, renders: Partial<Visuals>): SetEngine =
     };
 };
 
-const setCallbacks = (
-    gProps: GeneralProperties,
-    vProps: VisualProperties,
+const createSetCallback = (
+    vProps: Partial<VisualProperties>,
     setEngine: SetEngine,
-    callbacks: Callbacks,
-    {entityListenerEvents, entityListeners}: EventHandler,
-) => {
-    callbacks.start = quickShow => {
-        if (quickShow) {
-            setEngine('draw', 'on');
-            setEngine('entity', 'on');
-            setEngine('hover', 'on');
-
-            return;
-        }
-
+    {
+        entityListenerEvents: {startTransition: startEvent, endTransition: endEvent},
+        entityListeners: {startTransition, endOfStartTransition, endTransition, endOfEndTransition},
+    }: EventHandler,
+) => ({
+    start: () => {
+        setEngine('draw', 'on');
         setEngine('start', 'on');
 
-        if (vProps.animateAtStart && vProps.startType) setEngine('entity', 'on');
-
-        // set hover on startTransition? This requires proper checking on sketch properties change
-
-        setEngine('draw', 'on');
-    };
-
-    callbacks.startEnd = () => {
+        if (startTransition) startTransition(startEvent);
+    },
+    endOfStart: () => {
         setEngine('start', 'off');
-        setEngine('entity', 'on'); // This could have a (double) check
+        setEngine('animation', 'on');
         setEngine('hover', 'on');
 
-        if (entityListeners.startTransition) entityListeners.startTransition(entityListenerEvents.startTransition);
-    };
-
-    callbacks.end = quickHide => {
-        if (quickHide) {
-            setEngine('draw', 'off');
-            setEngine('entity', 'off');
-            setEngine('hover', 'off');
-
-            return;
-        }
-
+        if (endOfStartTransition) endOfStartTransition(startEvent);
+    },
+    end: () => {
         setEngine('end', 'on');
-
-        // Useless check? if entity is !'none', entity is already running
-        if (vProps.animateAtEnd && vProps.endType) setEngine('entity', 'on');
-
-        // See comments on this in callback.start()
         setEngine('hover', 'off');
-    };
+        setEngine('animation', 'off');
 
-    callbacks.endEnd = () => {
+        if (endTransition) endTransition(endEvent);
+    },
+    endOfEnd: () => {
         setEngine('end', 'off');
-        setEngine('entity', 'off'); // This could have a (double) check
+        setEngine('animation', 'off');
         setEngine('hover', 'off');
 
-        if (entityListeners.finishTransition) entityListeners.finishTransition(entityListenerEvents.finishTransition);
-    };
-};
-
-const emptyCallbacks = {
-    start: () => {},
-    startEnd: () => {},
-    end: () => {},
-    endEnd: () => {},
-};
+        if (endOfEndTransition) endOfEndTransition(endEvent);
+    },
+});

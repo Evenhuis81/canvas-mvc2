@@ -13,8 +13,8 @@ export type GeneralProperties = {
 };
 
 export interface VisualProperties {
-    startTransition: EntityTransitions;
-    endTransition: EntityTransitions;
+    start: EntityTransitions;
+    end: EntityTransitions;
     animation: EntityAnimations;
     hover: EntityHovers;
     startSpeed: TransitionSpeed;
@@ -42,7 +42,9 @@ export type EndTransitionEvent = {pressed: boolean; pushed: boolean; clicked: bo
 
 export type EntityListenerEvents = {
     startTransition: StartTransitionEvent;
+    endOfStartTransition: StartTransitionEvent;
     endTransition: EndTransitionEvent;
+    endOfEndTransition: EndTransitionEvent;
 };
 
 export type EntityListeners = {
@@ -88,10 +90,7 @@ export interface EventHandler {
     activateInputListeners: () => void;
     deactivateInputListeners: () => void;
     entityListenerEvents: EntityListenerEvents;
-    entityListeners: {
-        startTransition?: (event: StartTransitionEvent) => void;
-        endTransition?: (event: EndTransitionEvent) => void;
-    };
+    entityListeners: Partial<EntityListeners>;
 }
 
 export interface Entity {
@@ -104,10 +103,10 @@ export interface Entity {
 }
 
 export interface Callbacks {
-    start: (quickShow: boolean, prepare?: () => void) => void;
-    startEnd: () => void;
-    end: (quickHide: boolean, prepare?: () => void) => void;
-    endEnd: () => void;
+    start: (prepare?: () => void) => void;
+    endOfStart: () => void;
+    end: (prepare?: () => void) => void;
+    endOfEnd: () => void;
 }
 
 export type TransitionSpeed = 1 | 2 | 3 | 4 | 5;
@@ -118,7 +117,7 @@ export type Renderer = {
 };
 
 export interface Visuals {
-    entity?: Renderer;
+    animation?: Renderer;
     hover?: Renderer;
     start?: Renderer;
     end?: Renderer;
