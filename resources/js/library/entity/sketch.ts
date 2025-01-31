@@ -11,7 +11,7 @@ export const createSketch = (shape?: ShapesConfig) => {
 };
 
 const shapeDefaults: Omit<ShapeDefaults, 'rect' | 'circle'> = {
-    rectroundfillstroke: {
+    rect: {
         type: 'rect',
         x: 300,
         y: 200,
@@ -42,7 +42,7 @@ const shapeDefaults: Omit<ShapeDefaults, 'rect' | 'circle'> = {
     },
 };
 
-const textDefault: Omit<EntityText, 'type'> = {
+const textDefault: EntityText = {
     text: 'Entity',
     textFill: '#fff',
     font: 'monospace',

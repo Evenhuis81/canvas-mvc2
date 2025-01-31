@@ -2,11 +2,12 @@
 import type {Colors} from 'library/types/color';
 import type {GeneralProperties, VisualProperties} from 'library/types/entity';
 import type {LibraryInput} from 'library/types/input';
-import type {Circle, Shape} from 'library/types/shapes';
+import type {Circle, Rect, ShapeMap, Text} from 'library/types/shapes';
 
-export const createRenders = (
+export const createRenders = <K extends keyof ShapeMap>(
     props: GeneralProperties,
-    sketch: Shape,
+    sketchType: K,
+    sketch: ShapeMap[K],
     colors: Colors,
     {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
     input: LibraryInput,
@@ -14,7 +15,7 @@ export const createRenders = (
 ) => {
     const {id, name} = props;
 
-    const getDraw = createGetDraw();
+    const draw = createDraw(sketchType, sketch);
 
     const hovers = {
         bold: () => {
@@ -262,53 +263,56 @@ const createAnimationNoise = (sketch: Shape) => () => {
     }
 };
 
+const createDraw = <K extends keyof ShapeMap>(type: K, sketch: ShapeMap[K]) => {
+    return;
+};
+
 // TODO::Create seperate module and abstract this one into multiple shape renders
-const createGetDraw =
-    (sketch: Shape, c: CanvasRenderingContext2D, {fill, stroke, textFill}: Colors) =>
-    () => ({
-        // if (sketch.type === 'rect') {
-        rect: () => {
-            c.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
-            c.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
-            c.lineWidth = sketch.lineWidth;
+// (sketch: Shape, c: CanvasRenderingContext2D, {fill, stroke, textFill}: Colors)
 
-            c.beginPath();
-            // c.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.radii);
-            c.rect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h);
-            c.fill();
-            c.stroke();
+const createGetDraw = {
+    rect: (sketch: ShapeMap['rect'], ctx: CanvasRenderingContext2D, {fill, stroke, textFill}: Colors) => {
+        ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
+        ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
+        ctx.lineWidth = sketch.lineWidth;
 
-            c.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
-            c.font = `${sketch.fontSize}px ${sketch.font}`;
+        ctx.beginPath();
+        ctx.rect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h);
+        ctx.fill();
+        ctx.stroke();
 
-            c.textAlign = sketch.textAlign;
-            c.textBaseline = sketch.textBaseLine;
+        ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
+        ctx.font = `${sketch.fontSize}px ${sketch.font}`;
 
-            c.beginPath();
-            c.fillText(sketch.text, sketch.x, sketch.y + 1.5);
-        },
-        //  else if (sketch.type === 'circle') {
-        circle: (sketch: Circle) => {
-            c.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
-            c.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
-            c.lineWidth = sketch.lineWidth;
+        ctx.textAlign = sketch.textAlign;
+        ctx.textBaseline = sketch.textBaseLine;
 
-            c.beginPath();
-            // c.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.radii);
-            c.arc(sketch.x, sketch.y, sketch.radius, 0, Math.PI * 2);
-            c.fill();
-            c.stroke();
+        ctx.beginPath();
+        ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5);
+    },
+    circle: (sketch: ShapeMap['circle'] & Text) => {
+        c.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
+        c.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
+        c.lineWidth = sketch.lineWidth;
 
-            c.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
-            c.font = `${sketch.fontSize}px ${sketch.font}`;
+        c.beginPath();
+        // c.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.radii);
+        c.arc(sketch.x, sketch.y, sketch.radius, 0, Math.PI * 2);
+        c.fill();
+        c.stroke();
 
-            c.textAlign = sketch.textAlign;
-            c.textBaseline = sketch.textBaseLine;
+        c.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
+        c.font = `${sketch.fontSize}px ${sketch.font}`;
 
-            c.beginPath();
-            c.fillText(sketch.text, sketch.x, sketch.y + 1.5);
-        },
-    });
+        c.textAlign = sketch.textAlign;
+        c.textBaseline = sketch.textBaseLine;
+
+        c.beginPath();
+        c.fillText(sketch.text, sketch.x, sketch.y + 1.5);
+    },
+    line: () => {},
+    roundRect: () => {},
+};
 
 // max property is default 60, need for deltaTime, adj is change in property
 // make this a createProperties that picks the needed properties for each update respectively
