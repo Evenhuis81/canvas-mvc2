@@ -1,7 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import type {Entity, VisualProperties} from 'library/types/entity';
 import type {LibraryResources} from 'library/types';
-import type {ShapesConfig} from 'library/types/shapes';
 
 const elementAmount = 9;
 
@@ -19,11 +18,6 @@ export const mainMenu = (library: LibraryResources) => {
 
     const timeoutDifference = 75;
 
-    const baseSketch: ShapesConfig = {
-        type: 'rect',
-        w: squareLength,
-        h: squareLength,
-    };
     const baseVisualProperties: Partial<VisualProperties> = {
         start: 'fadein1',
         startSpeed: 5,
@@ -31,7 +25,7 @@ export const mainMenu = (library: LibraryResources) => {
         endSpeed: 5,
     };
 
-    const elements: Entity[] = [];
+    const elements: Entity<'rect'>[] = [];
 
     let column = 0;
     let row = 0;
@@ -42,7 +36,9 @@ export const mainMenu = (library: LibraryResources) => {
                 ...baseVisualProperties,
                 show: false,
                 sketch: {
-                    ...baseSketch,
+                    type: 'rect',
+                    w: squareLength,
+                    h: squareLength,
                     x: startX + column * squareDistance,
                     y: startY + row * squareDistance,
                     text: (i + 1).toString(),

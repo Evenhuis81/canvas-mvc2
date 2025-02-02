@@ -1,19 +1,25 @@
 /* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
-import {Shape} from 'library/types/shapes';
+import {ShapeMap} from 'library/types/shapes';
 import type {
     AddEntityInputListener,
+    EndTransitionEvent,
     EntityConfig,
     EntityInputListenerHandler,
     EntityInputListenerType,
     EntityInputListeners,
     EntityListenerEvents,
     EntityListeners,
-    EndTransitionEvent,
+    EntityShape,
+    EventHandler,
 } from 'library/types/entity';
 import type {InputListenerEventMap, LibraryInput} from 'library/types/input';
 
-export const createEventHandler = (input: LibraryInput, sketch: Shape, listeners: EntityConfig['listeners']) => {
+export const createEventHandler = (
+    input: LibraryInput,
+    sketch: ShapeMap[keyof ShapeMap],
+    listeners: EntityConfig['listeners'],
+) => {
     const entityInputListenerHandlers: {[type: string]: EntityInputListenerHandler} = {};
     const entityListenerEvents = createEntityListenerEvents();
     const entityListeners: Partial<EntityListeners> = {};
@@ -33,7 +39,7 @@ export const createEventHandler = (input: LibraryInput, sketch: Shape, listeners
         addEntityInputListener,
     );
 
-    const handler = {
+    const handler: EventHandler = {
         addListener,
         removeListener,
         entityListenerEvents,
@@ -44,7 +50,7 @@ export const createEventHandler = (input: LibraryInput, sketch: Shape, listeners
 
     if (!listeners) return handler;
 
-    // Make generic with split object (https://stackoverflow.com/questions/75323570/what-is-the-correct-type-for-splitting-an-object-in-two-complimentary-objects-in)
+    // Make generic with split object: (https://stackoverflow.com/questions/75323570/what-is-the-correct-type-for-splitting-an-object-in-two-complimentary-objects-in)
     const {startTransition, endTransition, ...entityInputListeners} = listeners;
 
     if (startTransition) entityListeners.startTransition = startTransition;
@@ -59,7 +65,7 @@ const createAddEntityInputListener =
     (
         entityInputListenerHandlers: {[type: string]: EntityInputListenerHandler},
         input: LibraryInput,
-        sketch: Shape,
+        sketch: EntityShape,
         props: EndTransitionEvent,
     ): AddEntityInputListener =>
     (type, listener, active = true) => {
@@ -103,6 +109,8 @@ const createAddAndRemoveListener = (
     ) => {
         if (type === 'startTransition') return (entityListeners.startTransition = listener);
         if (type === 'endTransition') return (entityListeners.endTransition = listener);
+        if (type === 'endOfStartTransition') return (entityListeners.endOfStartTransition = listener);
+        if (type === 'endOfEndTransition') return (entityListeners.endOfEndTransition = listener);
 
         addEntityInputListener(type, listener);
 
@@ -111,6 +119,8 @@ const createAddAndRemoveListener = (
     removeListener: (type: keyof EntityListeners | EntityInputListenerType) => {
         if (type === 'startTransition') return delete entityListeners.startTransition;
         if (type === 'endTransition') return delete entityListeners.endTransition;
+        if (type === 'endOfStartTransition') return delete entityListeners.endOfStartTransition;
+        if (type === 'endOfEndTransition') return delete entityListeners.endOfEndTransition;
 
         const handler = entityInputListenerHandlers[type];
 

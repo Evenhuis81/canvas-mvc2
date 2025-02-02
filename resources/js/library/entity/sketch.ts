@@ -1,18 +1,70 @@
-import {EntityText, ShapeDefaults, ShapesConfig} from 'library/types/shapes';
+import {ShapeMap} from 'library/types/shapes';
 
-export const createSketch = (shape?: ShapesConfig) => {
-    if (!shape) return {...shapeDefaults.rectroundfillstroke, ...textDefault};
+type Shaper<K extends 'circle' | 'rect'> = {
+    [T in K]: Shapers[T];
+};
+
+type Shapers = {
+    circle: Cc;
+    rect: Rr;
+};
+
+type Rr = {
+    w: string;
+};
+
+type Cc = {
+    r: number;
+};
+
+const shaperDef = {
+    circle: {
+        r: 0,
+    },
+    rect: {
+        w: '',
+    },
+};
+
+const crSk = <K extends 'circle' | 'rect'>(typer: K, shaper?: Partial<Shaper<K>>): Shaper<K>[K] => {
+    if (!shaper) return {...shaperDef[typer]};
+
+    return {...shaperDef[typer], ...shaper[typer]};
+};
+// w: 0,
+// if (!shaper) return;
+
+// const t = 11;
+
+// console.log(t);
+
+// shaperDef[typer];
+
+const dk = crSk('circle', {circle: {r: 1}});
+
+export const createSketch = <K extends keyof ShapeMap>(type: K, shape?: Partial<ShapeMap[K]>): ShapeMap[K] => {
+    if (type === 'rect' && !shape) return {...shapeDefaults.rect, ...shapeDefaults.text};
 
     return {
-        ...shapeDefaults[shape.type],
+        ...shapeDefaults[type],
         ...textDefault,
         ...Object.fromEntries(Object.entries(shape).filter(item => Boolean(item[1]))),
     };
 };
 
-const shapeDefaults: Omit<ShapeDefaults, 'rect' | 'circle'> = {
+const shapeDefaults: ShapeMap = {
     rect: {
         type: 'rect',
+        x: 300,
+        y: 200,
+        w: 100,
+        h: 50,
+        fill: '#000',
+        stroke: '#f00',
+        lineWidth: 2,
+    },
+    roundRect: {
+        type: 'roundrect',
         x: 300,
         y: 200,
         w: 100,
@@ -22,7 +74,7 @@ const shapeDefaults: Omit<ShapeDefaults, 'rect' | 'circle'> = {
         radii: 5,
         lineWidth: 2,
     },
-    circlefillstroke: {
+    circle: {
         type: 'circle',
         fill: '#000',
         stroke: '#f00',
@@ -40,13 +92,22 @@ const shapeDefaults: Omit<ShapeDefaults, 'rect' | 'circle'> = {
         y2: 100,
         lineWidth: 2,
     },
+    text: {
+        type: 'text',
+        text: 'Entity',
+        textFill: '#fff',
+        font: 'monospace',
+        fontSize: 16,
+        textAlign: 'center',
+        textBaseLine: 'middle',
+    },
 };
 
-const textDefault: EntityText = {
-    text: 'Entity',
-    textFill: '#fff',
-    font: 'monospace',
-    fontSize: 16,
-    textAlign: 'center',
-    textBaseLine: 'middle',
-};
+// const textDefault: Text = {
+//     text: 'Entity',
+//     textFill: '#fff',
+//     font: 'monospace',
+//     fontSize: 16,
+//     textAlign: 'center',
+//     textBaseLine: 'middle',
+// };

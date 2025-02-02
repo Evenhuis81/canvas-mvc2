@@ -1,6 +1,7 @@
+import {Circle, Fill, Rect, ShapeMap, Stroke, Text} from './shapes';
 import {EngineDraw, EngineUpdate} from './engine';
 import {InputListenerEventMap} from './input';
-import {ShapesConfig} from './shapes';
+import {WithRequired} from '.';
 
 export type GeneralProperties = {
     id: number | string;
@@ -31,11 +32,27 @@ export type SetHideTime = (time: number) => void;
 export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
 
 export type EntityConfig = Partial<
-    {sketch: ShapesConfig} & GeneralProperties &
+    {sketch: WithRequired<Partial<EntityShape>, 'type'>} & GeneralProperties &
         VisualProperties & {
             listeners: Partial<EntityListeners & EntityInputListeners<EntityInputListenerType>>;
         }
 >;
+
+export type EntityShape = EntityRect | EntityCircle;
+
+export type EntityRect = Rect &
+    Fill &
+    Stroke &
+    Text & {
+        type: 'rect';
+    };
+
+export type EntityCircle = Circle &
+    Fill &
+    Stroke &
+    Text & {
+        type: 'circle';
+    };
 
 export type StartTransitionEvent = {testProperty: string};
 export type EndTransitionEvent = {pressed: boolean; pushed: boolean; clicked: boolean};
@@ -89,18 +106,19 @@ export interface EventHandler {
     removeListener: RemoveListener;
     activateInputListeners: () => void;
     deactivateInputListeners: () => void;
-    entityListenerEvents: EntityListenerEvents;
+    entityListenerEvents: Partial<EntityListenerEvents>;
     entityListeners: Partial<EntityListeners>;
 }
 
-export interface Entity {
+export type Entity<T extends keyof ShapeMap> = {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
     addListener: AddListener;
     removeListener: RemoveListener;
     setHideTime: SetHideTime;
     setVisual: SetVisual;
-}
+    sketch: ShapeMap[T];
+};
 
 export interface Callbacks {
     start: (prepare?: () => void) => void;

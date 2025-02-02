@@ -1,7 +1,8 @@
 /* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
-import type {BaseCircle, BaseRect, Pos, Shape} from './types/shapes';
-import type {InputListener, InputListenerEventMap, InputListenerStore} from './types/input';
+import {Circle, Pos, Rect} from './types/shapes';
+import {EntityShape} from './types/entity';
+import type {InputListener, InputListenerEventMap, InputListenerStore, InputShape} from './types/input';
 
 const resizeCB: (() => void)[] = [];
 const consoleToggleCB: (() => void)[] = [];
@@ -155,13 +156,13 @@ export const getCanvasInput = (canvas: HTMLCanvasElement) => {
         });
     });
 
-    const pressedInsideMouse = (shape: Shape) => {
+    const pressedInsideMouse = (shape: InputShape) => {
         if (shape.type === 'rect' && insideMouseRect(shape)) return true;
         if (shape.type === 'circle' && insideMouseCircle(shape)) return true;
 
         return false;
     };
-    const pushedInsideTouch = (shape: Shape) => {
+    const pushedInsideTouch = (shape: InputShape) => {
         if (shape.type === 'rect' && insideTouchRect(shape)) return true;
         if (shape.type === 'circle' && insideTouchCircle(shape)) return true;
 
@@ -185,20 +186,20 @@ export const getCanvasInput = (canvas: HTMLCanvasElement) => {
         return pos1sq - pos2sq;
     };
 
-    const insideMouse = (shape: Shape) => {
+    const insideMouse = (shape: EntityShape) => {
         if (shape.type === 'rect') return insideMouseRect(shape);
         if (shape.type === 'circle') return insideMouseCircle(shape);
 
         return false;
     };
 
-    const createInsideCircle = (inputDevice: Pos) => (circle: BaseCircle) => {
+    const createInsideCircle = (inputDevice: Pos) => (circle: Circle) => {
         const distance = distanceShape(inputDevice, circle);
 
         return distance <= circle.radius;
     };
 
-    const createInsideRect = (inputDevice: {x: number; y: number}) => (rect: BaseRect) =>
+    const createInsideRect = (inputDevice: {x: number; y: number}) => (rect: Rect) =>
         inputDevice.x >= rect.x - rect.w / 2 &&
         inputDevice.x < rect.x + rect.w / 2 &&
         inputDevice.y >= rect.y - rect.h / 2 &&

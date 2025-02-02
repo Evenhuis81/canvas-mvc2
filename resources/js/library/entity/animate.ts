@@ -2,9 +2,9 @@
 import {Colors} from 'library/types/color';
 import {Engine} from 'library/types/engine';
 import {LibraryInput} from 'library/types/input';
+import {ShapeMap} from 'library/types/shapes';
 import {createRenders} from './renders';
 import type {
-    Callbacks,
     EventHandler,
     GeneralProperties,
     SetEngine,
@@ -12,12 +12,11 @@ import type {
     VisualProperties,
     Visuals,
 } from 'library/types/entity';
-import type {Shape} from 'library/types/shapes';
 
 export const createVisualsAndCallbacks = (
     gProps: GeneralProperties,
     vProps: Partial<VisualProperties>,
-    sketch: Shape,
+    sketch: ShapeMap[keyof ShapeMap],
     colors: Colors,
     input: LibraryInput,
     engine: Engine,
@@ -28,7 +27,7 @@ export const createVisualsAndCallbacks = (
 
     // const callbacks = {...emptyCallbacks};
 
-    const renders = createRenders(gProps, sketch, colors, vProps, input, context, callbacks);
+    const renders = createRenders(gProps, sketch, colors, vProps, input, context);
 
     const visuals = {
         animation: animation ? renders.animations[animation]() : undefined,
@@ -45,7 +44,7 @@ export const createVisualsAndCallbacks = (
     const setEngine = createSetEngine(engine, visuals);
 
     // transforms empty callbacks to functional callbacks
-    setCallbacks(vProps, setEngine, callbacks, eventHandler);
+    set(vProps, setEngine, eventHandler);
 
     return {callbacks, setVisual};
 };

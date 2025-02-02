@@ -1,31 +1,34 @@
+/* eslint-disable max-lines-per-function */
 import {createEventHandler} from './handler';
 import {createSketch} from './sketch';
 import {createUserMethods, defaultProperties} from './properties';
 import {createVisualsAndCallbacks} from './animate';
 
+import {ShapeMap} from 'library/types/shapes';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import type {Engine} from 'library/types/engine';
 import type {Entity, EntityConfig, GeneralProperties} from 'library/types/entity';
 import type {LibraryInput} from 'library/types/input';
 
-export const getCreateEntity = (
+export const getCreateEntity = <T extends keyof ShapeMap>(
+    type: keyof ShapeMap,
     context: CanvasRenderingContext2D,
     engine: Engine,
     input: LibraryInput,
     options?: EntityConfig,
-) => {
+): Entity<T> => {
     // Extract internal properties from options
     const {generalProperties, visualProperties, listeners, shape} = extractOptions(options);
 
-    const sketch = createSketch(shape);
+    const sketch = createSketch(type, shape);
 
     const eventHandler = createEventHandler(input, sketch, listeners);
 
     // @type Rect, Circle, Line does not have fill color, make overload function or rehaul colors entirely
     const colors = getSketchRGBAColorsFromHexString(sketch);
 
-    const {callbacks, setVisual} = createVisualsAndCallbacks(
+    const {setVisual} = createVisualsAndCallbacks(
         generalProperties,
         visualProperties,
         sketch,
@@ -40,7 +43,8 @@ export const getCreateEntity = (
         addListener: eventHandler.addListener,
         removeListener: eventHandler.removeListener,
         setVisual,
-        ...createUserMethods(visualProperties, generalProperties, callbacks, eventHandler),
+        ...createUserMethods(visualProperties, generalProperties, eventHandler),
+        sketch,
     };
 
     initialize(generalProperties, entity);
@@ -57,14 +61,12 @@ const initialize = (gProps: GeneralProperties, methods: Entity) => {
                 gProps.showDelay = 0;
 
                 methods.show();
-
-                return;
             }, gProps.showDelay);
+
+            return;
         }
 
         methods.show();
-
-        return;
     }
 };
 

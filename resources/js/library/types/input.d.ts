@@ -1,8 +1,8 @@
-import {BaseCircle, BaseRect, Shape} from './shapes';
+import {Circle, Rect} from './shapes';
 
-type InsideRect = (rect: BaseRect) => boolean;
-type InsideCircle = (circle: BaseCircle) => boolean;
-type Inside = (shape: Shape) => boolean | undefined;
+type InsideRect = (rect: Rect) => boolean;
+type InsideCircle = (circle: Circle) => boolean;
+type Inside = (shape: InputShape) => boolean | undefined;
 
 export type LibraryInput = {
     mouse: {
@@ -46,6 +46,8 @@ export type InputListener<K extends keyof InputListenerEventMap> = {
     type: K;
     listener: (event: HTMLElementEventMap[K]) => void;
     id: symbol;
-    shape: Shape;
+    shape: InputShape;
     props: {pressed: boolean; pushed: boolean; clicked: boolean};
 };
+
+export type InputShape = (Circle & {type: 'circle'}) | (Rect & {type: 'rect'});

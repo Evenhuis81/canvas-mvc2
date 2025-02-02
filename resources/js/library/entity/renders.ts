@@ -1,21 +1,19 @@
 /* eslint-disable max-lines-per-function */
 import type {Colors} from 'library/types/color';
-import type {GeneralProperties, VisualProperties} from 'library/types/entity';
+import type {EntityShape, GeneralProperties, VisualProperties} from 'library/types/entity';
 import type {LibraryInput} from 'library/types/input';
-import type {Circle, Rect, ShapeMap, Text} from 'library/types/shapes';
+import type {ShapeMap, Text} from 'library/types/shapes';
 
-export const createRenders = <K extends keyof ShapeMap>(
+export const createRenders = (
     props: GeneralProperties,
-    sketchType: K,
-    sketch: ShapeMap[K],
+    // sketchType: K,
+    sketch: EntityShape,
     colors: Colors,
     {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
     input: LibraryInput,
     context: CanvasRenderingContext2D,
 ) => {
     const {id, name} = props;
-
-    const draw = createDraw(sketchType, sketch);
 
     const hovers = {
         bold: () => {
@@ -197,7 +195,7 @@ const createTransitionSlideinleft = () => () => {
 
 let phase = 1;
 
-const createTransitionExplode = (sketch: Shape, {fill, stroke, textFill}: Colors, callback: () => void) => {
+const createTransitionExplode = (sketch: EntityShape, {fill, stroke, textFill}: Colors, callback: () => void) => {
     const update = () => {
         if (phase === 1) sketch.lineWidth += 0.1;
         else if (phase === 2) {
@@ -231,7 +229,7 @@ const createTransitionExplode = (sketch: Shape, {fill, stroke, textFill}: Colors
 const createTransitionUpdate =
     (
         {mouse}: LibraryInput, // only mouse, no hover on touch
-        sketch: Shape,
+        sketch: EntityShape,
         transition: {
             forward: () => void;
             reverse: () => void;
@@ -247,7 +245,7 @@ const createTransitionUpdate =
         transition.reverse();
     };
 
-const createAnimationNoise = (sketch: Shape) => () => {
+const createAnimationNoise = (sketch: EntityShape) => () => {
     if (sketch.type === 'rect') {
         sketch.x += upd.adj.x;
         sketch.y += upd.adj.y;
@@ -263,12 +261,10 @@ const createAnimationNoise = (sketch: Shape) => () => {
     }
 };
 
-const createDraw = <K extends keyof ShapeMap>(type: K, sketch: ShapeMap[K]) => {
-    return;
-};
+const getDraw = (sketch: EntityShape) => {};
 
 // TODO::Create seperate module and abstract this one into multiple shape renders
-// (sketch: Shape, c: CanvasRenderingContext2D, {fill, stroke, textFill}: Colors)
+// (sketch: EntityShape, c: CanvasRenderingContext2D, {fill, stroke, textFill}: Colors)
 
 const createGetDraw = {
     rect: (sketch: ShapeMap['rect'], ctx: CanvasRenderingContext2D, {fill, stroke, textFill}: Colors) => {
