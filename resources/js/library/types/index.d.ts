@@ -1,6 +1,7 @@
 import {Engine} from './engine';
 import {Entity, EntityConfig} from './entity';
 import {Phaser} from 'games/phaser/types';
+import {LibraryInput} from './input';
 
 export type KeyWithCallback<A extends object> = {
     [K in keyof A]: [K, (evt: A[K]) => void];
@@ -20,11 +21,11 @@ export interface LibraryResources {
     engine: Engine;
     // container: HTMLDivElement;
     // sv: StaticView; // empty
-    // input: LibraryInput;
+    input: LibraryInput;
     runEngine: () => void;
     runEngineOnce: () => void;
     createPhaser: () => Phaser;
-    createEntity: (options?: EntityConfig) => Entity;
+    // createEntity: (options?: EntityConfig) => Entity;
 }
 
 export interface StatisticOptions {

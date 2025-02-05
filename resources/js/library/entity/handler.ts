@@ -1,6 +1,6 @@
 /* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
-import {Shape} from 'library/types/shapes';
+// import {Shape} from 'library/types/shapes';
 import type {
     AddEntityInputListener,
     EntityConfig,
@@ -12,8 +12,9 @@ import type {
     EndTransitionEvent,
 } from 'library/types/entity';
 import type {InputListenerEventMap, LibraryInput} from 'library/types/input';
+import {EntityShape} from 'library/types/shapes';
 
-export const createEventHandler = (input: LibraryInput, sketch: Shape, listeners: EntityConfig['listeners']) => {
+export const createEventHandler = (input: LibraryInput, sketch: EntityShape, listeners: EntityConfig['listeners']) => {
     const entityInputListenerHandlers: {[type: string]: EntityInputListenerHandler} = {};
     const entityListenerEvents = createEntityListenerEvents();
     const entityListeners: Partial<EntityListeners> = {};
@@ -59,7 +60,7 @@ const createAddEntityInputListener =
     (
         entityInputListenerHandlers: {[type: string]: EntityInputListenerHandler},
         input: LibraryInput,
-        sketch: Shape,
+        sketch: EntityShape,
         props: EndTransitionEvent,
     ): AddEntityInputListener =>
     (type, listener, active = true) => {
@@ -103,6 +104,8 @@ const createAddAndRemoveListener = (
     ) => {
         if (type === 'startTransition') return (entityListeners.startTransition = listener);
         if (type === 'endTransition') return (entityListeners.endTransition = listener);
+        if (type === 'endOfStartTransition') return (entityListeners.endOfStartTransition = listener);
+        if (type === 'endOfEndTransition') return (entityListeners.endOfEndTransition = listener);
 
         addEntityInputListener(type, listener);
 

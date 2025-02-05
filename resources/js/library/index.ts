@@ -40,10 +40,11 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
         canvas,
         context,
         engine,
+        input,
         runEngine: () => engine.run(),
         runEngineOnce: () => engine.runOnce(),
         createPhaser: () => getCreatePhaser(engine),
-        createEntity: (entityOptions?: EntityConfig) => getCreateEntity(context, engine, input, entityOptions),
+        // createEntity: (entityOptions?: EntityConfig) => getCreateEntity(context, engine, input, entityOptions),
     };
 };
 

@@ -19,11 +19,10 @@ export type Stroke = {
 };
 
 export type Circle = {
-    // type: 'circle';
     radius: number;
 } & Pos;
+
 export type Rect = {
-    // type: 'rect';
     w: number;
     h: number;
 } & Pos;
@@ -44,13 +43,17 @@ export type RoundRect = {
     radii: number;
 } & Rect;
 
-export type ShapeMap = {
-    roundRect: RoundRect & Fill & Stroke;
-    rect: Rect & Fill & Stroke;
-    circle: Circle & Fill & Stroke;
-    line: Line;
-    text: Text;
+export type EntityShapeMap = {
+    rect: Rect & Fill & Stroke & {type: 'rect'};
+    circle: Circle & Fill & Stroke & {type: 'circle'};
+    // roundRect: RoundRect & Fill & Stroke;
+    // line: Line & Stroke;
+    // text: Text;
 };
+
+export type EntityShapeConfig<T extends keyof EntityShapeMap> = {[K in T]: EntityShapeMap[K]};
+
+export type EntityShape = EntityShapeMap['circle'] | EntityShapeMap['rect'];
 
 // export type BaseLine = Omit<Line, 'type'>;
 

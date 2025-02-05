@@ -1,7 +1,7 @@
 import {initialize} from 'library/index';
 // import {mainMenu} from './menu';
 import {LibraryOptions} from 'library/types';
-import {mainMenu} from './menu';
+import {mainMenu} from './menuT';
 
 const libraryID = 'tr';
 

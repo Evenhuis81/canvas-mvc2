@@ -1,7 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import type {Entity, VisualProperties} from 'library/types/entity';
 import type {LibraryResources} from 'library/types';
-import type {ShapesConfig} from 'library/types/shapes';
 
 const elementAmount = 9;
 
@@ -19,7 +18,7 @@ export const mainMenu = (library: LibraryResources) => {
 
     const timeoutDifference = 75;
 
-    const baseSketch: ShapesConfig = {
+    const baseSketch = {
         type: 'rect',
         w: squareLength,
         h: squareLength,
@@ -42,10 +41,20 @@ export const mainMenu = (library: LibraryResources) => {
                 ...baseVisualProperties,
                 show: false,
                 sketch: {
-                    ...baseSketch,
-                    x: startX + column * squareDistance,
-                    y: startY + row * squareDistance,
-                    text: (i + 1).toString(),
+                    type: 'rect',
+                    w: squareLength,
+                    h: squareLength,
+                    // fill: '',
+                    // stroke: '',
+                    // lineWidth: 1,
+                    // textFill: '',
+                    // font: '',
+                    // fontSize: 5,
+                    // textAlign: 'center',
+                    // textBaseLine: 'alphabetic',
+                    // x: startX + column * squareDistance,
+                    // y: startY + row * squareDistance,
+                    // text: (i + 1).toString(),
                 },
                 listeners: {
                     // mouseup: undefined,

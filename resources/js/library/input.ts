@@ -1,7 +1,7 @@
 /* eslint-disable complexity */
 /* eslint-disable max-lines-per-function */
-import type {BaseCircle, BaseRect, Pos, Shape} from './types/shapes';
 import type {InputListener, InputListenerEventMap, InputListenerStore} from './types/input';
+import {Circle, Rect} from './types/shapes';
 
 const resizeCB: (() => void)[] = [];
 const consoleToggleCB: (() => void)[] = [];
@@ -155,13 +155,22 @@ export const getCanvasInput = (canvas: HTMLCanvasElement) => {
         });
     });
 
-    const pressedInsideMouse = (shape: Shape) => {
+    const insideS = {
+        rect: () => {
+            //
+        },
+        circle: () => {
+            //
+        },
+    };
+
+    const pressedInsideMouse = (shape: Rect | Circle) => {
         if (shape.type === 'rect' && insideMouseRect(shape)) return true;
         if (shape.type === 'circle' && insideMouseCircle(shape)) return true;
 
         return false;
     };
-    const pushedInsideTouch = (shape: Shape) => {
+    const pushedInsideTouch = (shape: Rect | Circle) => {
         if (shape.type === 'rect' && insideTouchRect(shape)) return true;
         if (shape.type === 'circle' && insideTouchCircle(shape)) return true;
 
@@ -185,7 +194,7 @@ export const getCanvasInput = (canvas: HTMLCanvasElement) => {
         return pos1sq - pos2sq;
     };
 
-    const insideMouse = (shape: Shape) => {
+    const insideMouse = (shape: Rect | Circle) => {
         if (shape.type === 'rect') return insideMouseRect(shape);
         if (shape.type === 'circle') return insideMouseCircle(shape);
 

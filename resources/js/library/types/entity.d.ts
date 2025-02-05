@@ -1,6 +1,6 @@
 import {EngineDraw, EngineUpdate} from './engine';
 import {InputListenerEventMap} from './input';
-import {ShapesConfig} from './shapes';
+import {Circle, EntityShape, Rect} from './shapes';
 
 export type GeneralProperties = {
     id: number | string;
@@ -30,8 +30,10 @@ export type VisualType = EntityAnimations | EntityTransitions | EntityHovers;
 export type SetHideTime = (time: number) => void;
 export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
 
+export type EntityShapeT = (Rect & {type: 'rect'}) | (Circle & {type: 'circle'});
+
 export type EntityConfig = Partial<
-    {sketch: ShapesConfig} & GeneralProperties &
+    {sketch: Partial<EntityShapeT>} & GeneralProperties &
         VisualProperties & {
             listeners: Partial<EntityListeners & EntityInputListeners<EntityInputListenerType>>;
         }
