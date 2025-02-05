@@ -30,14 +30,21 @@ export type VisualType = EntityAnimations | EntityTransitions | EntityHovers;
 export type SetHideTime = (time: number) => void;
 export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
 
-export type EntityShapeT = (Rect & {type: 'rect'}) | (Circle & {type: 'circle'});
-
 export type EntityConfig = Partial<
     {sketch: Partial<EntityShapeT>} & GeneralProperties &
         VisualProperties & {
             listeners: Partial<EntityListeners & EntityInputListeners<EntityInputListenerType>>;
         }
 >;
+
+export type EntityShapeMap = {
+    rect: Rect & {type: 'rect'};
+    circle: Circle & {type: 'circle'};
+};
+
+export type EntityShapeT = (Rect & {type: 'rect'}) | (Circle & {type: 'circle'});
+
+export type EntityConfigT = Partial<{sketch: Partial<EntityShapeT>}>;
 
 export type EntityShape = EntityRect | EntityCircle;
 
@@ -111,14 +118,20 @@ export interface EventHandler {
     entityListeners: Partial<EntityListeners>;
 }
 
-export type Entity<T extends keyof ShapeMap> = {
+export type SketchType = 'rect' | 'circle';
+
+export type EntityT<T extends SketchType> = {
+    sketch: EntityShapeMap[T];
+};
+
+export type Entity = {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
     addListener: AddListener;
     removeListener: RemoveListener;
     setHideTime: SetHideTime;
     setVisual: SetVisual;
-    sketch: ShapeMap[T];
+    // sketch: ShapeMap[T];
 };
 
 export interface Callbacks {

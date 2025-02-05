@@ -3,13 +3,56 @@ import {createEventHandler} from './handler';
 import {createSketch} from './sketch';
 import {createUserMethods, defaultProperties} from './properties';
 import {createVisualsAndCallbacks} from './animate';
-
-import {ShapeMap} from 'library/types/shapes';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import type {Engine} from 'library/types/engine';
-import type {Entity, EntityConfig, GeneralProperties} from 'library/types/entity';
+import type {
+    Entity,
+    EntityConfig,
+    EntityConfigT,
+    EntityShapeMap,
+    EntityT,
+    GeneralProperties,
+    SketchType,
+} from 'library/types/entity';
 import type {LibraryInput} from 'library/types/input';
+import {Circle, Rect} from 'library/types/shapes';
+
+const rect: Rect & {type: 'rect'} = {
+    type: 'rect',
+    x: 100,
+    y: 50,
+    w: 10,
+    h: 5,
+};
+
+const circle: Circle & {type: 'circle'} = {
+    type: 'circle',
+    x: 100,
+    y: 50,
+    radius: 5,
+};
+
+const defaultSketch = {
+    rect,
+    circle,
+};
+
+const createSketch = <K extends keyof EntityShapeMap>(type: K): EntityShapeMap[K] => ({
+    ...defaultSketch[type],
+    // if (type === 'rect') return {...rect};
+
+    // return {
+    //     ...defaultSketch[type],
+    //     // ...Object.fromEntries(Object.entries(shape).filter(item => Boolean(item[1]))),
+    // };
+});
+
+export const createEntity = <K extends SketchType>(options?: EntityConfigT): EntityT<K> => {
+    return {
+        sketch: {},
+    };
+};
 
 export const getCreateEntity = <T extends keyof ShapeMap>(
     type: keyof ShapeMap,

@@ -57,7 +57,7 @@ export const createSketch = <K extends keyof ShapeMap>(type: K, shape?: Partial<
     return {
         ...shapeDefaults[type],
         ...textDefault,
-        ...Object.fromEntries(Object.entries(shape).filter(item => Boolean(item[1]))),
+        // ...Object.fromEntries(Object.entries(shape).filter(item => Boolean(item[1]))),
     };
 };
 
