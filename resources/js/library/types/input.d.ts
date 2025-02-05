@@ -1,5 +1,3 @@
-// import {BaseCircle, BaseRect, Shape} from './shapes';
-
 import {Circle, Rect} from './shapes';
 
 type InsideRect = (rect: Rect) => boolean;
@@ -51,3 +49,5 @@ export type InputListener<K extends keyof InputListenerEventMap> = {
     shape: Rect | Circle;
     props: {pressed: boolean; pushed: boolean; clicked: boolean};
 };
+
+export type InputShape = (Circle & {type: 'circle'}) | (Rect & {type: 'rect'});

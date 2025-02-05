@@ -30,7 +30,7 @@ export const mainMenu = (library: LibraryResources) => {
         endSpeed: 5,
     };
 
-    const elements: Entity[] = [];
+    const elements: Entity<'rect'>[] = [];
 
     let column = 0;
     let row = 0;
@@ -55,6 +55,9 @@ export const mainMenu = (library: LibraryResources) => {
                     // x: startX + column * squareDistance,
                     // y: startY + row * squareDistance,
                     // text: (i + 1).toString(),
+                    x: startX + column * squareDistance,
+                    y: startY + row * squareDistance,
+                    text: (i + 1).toString(),
                 },
                 listeners: {
                     // mouseup: undefined,

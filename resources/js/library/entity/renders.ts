@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import type {Colors} from 'library/types/color';
-import type {GeneralProperties, VisualProperties} from 'library/types/entity';
+import type {EntityShape, GeneralProperties, VisualProperties} from 'library/types/entity';
 import type {LibraryInput} from 'library/types/input';
 import type {EntityShape, EntityShapeConfig, EntityShapeMap} from 'library/types/shapes';
 import {defaultSketch} from './sketch';
@@ -33,107 +33,18 @@ export const createRenders = <K extends keyof EntityShapeMap>(
     props: GeneralProperties,
     sketchType: K,
     sketch: EntityShapeMap[K],
+import type {ShapeMap, Text} from 'library/types/shapes';
+
+export const createRenders = (
+    props: GeneralProperties,
+    // sketchType: K,
+    sketch: EntityShape,
     colors: Colors,
     {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
     input: LibraryInput,
     context: CanvasRenderingContext2D,
 ) => {
     const {id, name} = props;
-
-    // const draw = createDrawN();
-
-    type SketchMap = {
-        rect: (rect: EntityShapeMap['rect']) => {
-            //
-        };
-        circle: (circle: EntityShapeMap['circle']) => {
-            //
-        };
-    };
-
-    const sketches = {
-        rect: () => {
-            const sketch = {...defaultSketch.rect, ...defaultSketch.text};
-            const colors = defaultColors();
-        },
-        circle: () => {
-            const sketch = {type: 'circle', ...defaultSketch.circle, ...defaultSketch.text};
-            const colors = defaultColors();
-            const circleDraw = createCircleDraw(context, sketch, colors);
-        },
-    };
-
-    type SketchN<T extends keyof SketchMap> = {
-        [K in T]: SketchMap[K];
-    };
-
-    // const sketches = <K extends EntityShapeMap['circle'] | EntityShapeMap['rect']>(ske: K) => {};
-
-    // const sketchStore: {[key: string]: [keyof EntityShapeMap, EntityShapeMap[keyof EntityShapeMap]]} = {};
-
-    const createDrawN = <T extends keyof EntityShapeMap>(type: T) => {
-        const {sketch, draw} = sketches[type]();
-
-        // draw(sketch)
-        // draw(sketch);
-    };
-
-    const circl = createDrawN('circle', {
-        x: 0,
-        y: 0,
-        radius: 5,
-        fill: '',
-        stroke: '',
-        text: 'sdf',
-        lineWidth: 1,
-        textFill: '',
-        font: '',
-        fontSize: 5,
-        textAlign: 'center',
-        textBaseLine: 'alphabetic',
-    });
-
-    // const draw = {
-    //     id: `${id}-draw`,
-    //     name: `draw-${name}`,
-    //     fn: getDraw(sketch, context, colors),
-    // };
-
-    // const draw = createDraw(sketchType, sketch, context, colors);
-
-    // const draw = {
-    //     id: 'noID',
-    //     name: 'noName',
-    //     fn: <K extends keyof EntityShapeMap>(type: K, sketch: ) => {
-
-    //     }
-    // }
-
-    // const testShapeCreateDraw = <K extends keyof EntityShapeMap>(type: K, sketch: EntityShapeMap[K], ctx: CanvasRenderingContext2D, {fill, stroke, textFill}: Colors) => {
-    // const ShapeSave:
-    //     if (type === 'rect') {
-    //         ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
-    //         ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
-    //         ctx.lineWidth = sketch.lineWidth;
-
-    //         ctx.beginPath();
-    //         ctx.rect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h);
-    //         ctx.fill();
-    //         ctx.stroke();
-
-    //         ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
-    //         ctx.font = `${sketch.fontSize}px ${sketch.font}`;
-
-    //         ctx.textAlign = sketch.textAlign;
-    //         ctx.textBaseline = sketch.textBaseLine;
-
-    //         ctx.beginPath();
-    //         ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5);
-    //     }
-    //     // circle: () => {
-    //     //     //
-    //     // },
-    // });
 
     const hovers = {
         bold: () => {
@@ -378,6 +289,7 @@ const createAnimationNoise = (sketch: EntityShape) => () => {
 // const createDraw = <K extends keyof ShapeMap>(type: K, sketch: ShapeMap[K]) => {
 //     return;
 // };
+const getDraw = (sketch: EntityShape) => {};
 
 // TODO::Create seperate module and abstract this one into multiple shape renders
 // (sketch: EntityShape, c: CanvasRenderingContext2D, {fill, stroke, textFill}: Colors)

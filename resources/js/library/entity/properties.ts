@@ -1,10 +1,10 @@
 /* eslint-disable max-lines-per-function */
-import {Callbacks, EventHandler, GeneralProperties, VisualProperties} from 'library/types/entity';
+import {EventHandler, GeneralProperties, VisualProperties} from 'library/types/entity';
 
 export const createUserMethods = (
     vProps: Partial<VisualProperties>,
     gProps: GeneralProperties,
-    callbacks: Callbacks,
+    // callbacks: Callbacks,
     eventHandler: EventHandler,
 ) => {
     const show = () => {
@@ -34,7 +34,7 @@ export const createUserMethods = (
                 // hideMe();
             }, gProps.hideDelay);
 
-            return;
+            // return;
         }
 
         // eventHandler.deactivateInputListeners();
