@@ -1,6 +1,7 @@
-import {Circle, Fill, Rect, Stroke, Text} from './shapes';
 import {EngineDraw, EngineUpdate} from './engine';
 import {InputListenerEventMap} from './input';
+import {EntityCircle, EntityRect, EntityShapeMap} from './entitySketch';
+import {Text} from './shapes';
 
 export type GeneralProperties = {
     id: number | string;
@@ -31,36 +32,11 @@ export type SetHideTime = (time: number) => void;
 export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
 
 export type EntityConfig = Partial<
-    {sketch: Partial<EntityShapeT>} & GeneralProperties &
+    {sketch: Partial<(EntityRect & Text) | (EntityCircle & Text)>} & GeneralProperties &
         VisualProperties & {
             listeners: Partial<EntityListeners & EntityInputListeners<EntityInputListenerType>>;
         }
 >;
-
-export type EntityShapeMap = {
-    rect: Rect & {type: 'rect'};
-    circle: Circle & {type: 'circle'};
-};
-
-export type EntityShapeT = (Rect & {type: 'rect'}) | (Circle & {type: 'circle'});
-
-export type EntityConfigT = Partial<{sketch: Partial<EntityShapeT>}>;
-
-export type EntityShape = EntityRect | EntityCircle;
-
-export type EntityRect = Rect &
-    Fill &
-    Stroke &
-    Text & {
-        type: 'rect';
-    };
-
-export type EntityCircle = Circle &
-    Fill &
-    Stroke &
-    Text & {
-        type: 'circle';
-    };
 
 export type StartTransitionEvent = {testProperty: string};
 export type EndTransitionEvent = {pressed: boolean; pushed: boolean; clicked: boolean};
@@ -118,21 +94,19 @@ export interface EventHandler {
     entityListeners: Partial<EntityListeners>;
 }
 
-export type SketchType = 'rect' | 'circle';
+export type Entity = EntityGeneric<keyof EntityShapeMap>;
 
-export type EntityT<T extends SketchType> = {
-    sketch: EntityShapeMap[T];
-};
-
-export type Entity = {
+export type EntityGeneric<K extends keyof EntityShapeMap> = {
     show: (quickShow?: boolean) => void;
     hide: (quickHide?: boolean) => void;
     addListener: AddListener;
     removeListener: RemoveListener;
     setHideTime: SetHideTime;
     setVisual: SetVisual;
-    // sketch: ShapeMap[T];
+    sketch: EntityShapeMap[K];
 };
+
+export type CreateEntity = <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig) => EntityGeneric<K>;
 
 export interface Callbacks {
     start: (prepare?: () => void) => void;

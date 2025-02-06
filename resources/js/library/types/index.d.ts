@@ -1,7 +1,8 @@
 import {Engine} from './engine';
-import {Entity, EntityConfig} from './entity';
+import {CreateEntity, Entity, EntityConfig} from './entity';
 import {Phaser} from 'games/phaser/types';
 import {LibraryInput} from './input';
+import {EntityShapeMap} from './entitySketch';
 
 export type KeyWithCallback<A extends object> = {
     [K in keyof A]: [K, (evt: A[K]) => void];
@@ -19,13 +20,13 @@ export interface LibraryResources {
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
     engine: Engine;
-    // container: HTMLDivElement;
-    // sv: StaticView; // empty
     input: LibraryInput;
     runEngine: () => void;
     runEngineOnce: () => void;
     createPhaser: () => Phaser;
-    // createEntity: (options?: EntityConfig) => Entity;
+    createEntity: CreateEntity;
+    // container: HTMLDivElement;
+    // sv: StaticView; // empty
 }
 
 export interface StatisticOptions {

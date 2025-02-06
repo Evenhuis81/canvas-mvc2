@@ -1,99 +1,49 @@
-/* eslint-disable max-lines-per-function */
 import {createEventHandler} from './handler';
-import {createSketch} from './sketch';
 import {createUserMethods, defaultProperties} from './properties';
 import {createVisualsAndCallbacks} from './animate';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import type {Engine} from 'library/types/engine';
-import type {
-    Entity,
-    EntityConfig,
-    EntityConfigT,
-    EntityShapeMap,
-    EntityT,
-    GeneralProperties,
-    SketchType,
-} from 'library/types/entity';
+import type {Entity, EntityConfig, EntityGeneric, GeneralProperties} from 'library/types/entity';
 import type {LibraryInput} from 'library/types/input';
-import {Circle, Rect} from 'library/types/shapes';
+import type {EntityShapeMap} from 'library/types/entitySketch';
+import {createSketch} from './sketch';
 
-const rect: Rect & {type: 'rect'} = {
-    type: 'rect',
-    x: 100,
-    y: 50,
-    w: 10,
-    h: 5,
-};
+export default (context: CanvasRenderingContext2D, engine: Engine, input: LibraryInput) =>
+    <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig): EntityGeneric<K> => {
+        // Extract internal properties from options
+        const {generalProperties, visualProperties, listeners, shape} = extractOptions(options);
 
-const circle: Circle & {type: 'circle'} = {
-    type: 'circle',
-    x: 100,
-    y: 50,
-    radius: 5,
-};
+        const sketch = createSketch(type);
 
-const defaultSketch = {
-    rect,
-    circle,
-};
+        const eventHandler = createEventHandler(input, sketch, listeners);
 
-const createSketch = <K extends keyof EntityShapeMap>(type: K): EntityShapeMap[K] => ({
-    ...defaultSketch[type],
-    // if (type === 'rect') return {...rect};
+        // @type Rect, Circle, Line does not have fill color, make overload function or rehaul colors entirely
+        const colors = getSketchRGBAColorsFromHexString(sketch);
 
-    // return {
-    //     ...defaultSketch[type],
-    //     // ...Object.fromEntries(Object.entries(shape).filter(item => Boolean(item[1]))),
-    // };
-});
+        const {setVisual} = createVisualsAndCallbacks(
+            generalProperties,
+            visualProperties,
+            sketch,
+            colors,
+            input,
+            engine,
+            context,
+            eventHandler,
+        ); // Also creates setEngine
 
-export const createEntity = <K extends SketchType>(options?: EntityConfigT): EntityT<K> => {
-    return {
-        sketch: {},
+        const entity = {
+            addListener: eventHandler.addListener,
+            removeListener: eventHandler.removeListener,
+            setVisual,
+            ...createUserMethods(visualProperties, generalProperties, eventHandler),
+            sketch,
+        };
+
+        initialize(generalProperties, entity);
+
+        return entity;
     };
-};
-
-export const getCreateEntity = <T extends keyof ShapeMap>(
-    type: keyof ShapeMap,
-    context: CanvasRenderingContext2D,
-    engine: Engine,
-    input: LibraryInput,
-    options?: EntityConfig,
-): Entity<T> => {
-    // Extract internal properties from options
-    const {generalProperties, visualProperties, listeners, shape} = extractOptions(options);
-
-    const sketch = createSketch(type, shape);
-
-    const eventHandler = createEventHandler(input, sketch, listeners);
-
-    // @type Rect, Circle, Line does not have fill color, make overload function or rehaul colors entirely
-    const colors = getSketchRGBAColorsFromHexString(sketch);
-
-    const {setVisual} = createVisualsAndCallbacks(
-        generalProperties,
-        visualProperties,
-        sketch,
-        colors,
-        input,
-        engine,
-        context,
-        eventHandler,
-    ); // Also creates setEngine
-
-    const entity = {
-        addListener: eventHandler.addListener,
-        removeListener: eventHandler.removeListener,
-        setVisual,
-        ...createUserMethods(visualProperties, generalProperties, eventHandler),
-        sketch,
-    };
-
-    initialize(generalProperties, entity);
-
-    return entity;
-};
 
 const initialize = (gProps: GeneralProperties, methods: Entity) => {
     if (gProps.show) {

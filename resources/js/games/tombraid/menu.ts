@@ -1,5 +1,5 @@
 /* eslint-disable max-lines-per-function */
-import type {Entity, VisualProperties} from 'library/types/entity';
+import type {EntityGeneric, VisualProperties} from 'library/types/entity';
 import type {LibraryResources} from 'library/types';
 
 const elementAmount = 9;
@@ -18,11 +18,6 @@ export const mainMenu = (library: LibraryResources) => {
 
     const timeoutDifference = 75;
 
-    const baseSketch = {
-        type: 'rect',
-        w: squareLength,
-        h: squareLength,
-    };
     const baseVisualProperties: Partial<VisualProperties> = {
         start: 'fadein1',
         startSpeed: 5,
@@ -30,20 +25,21 @@ export const mainMenu = (library: LibraryResources) => {
         endSpeed: 5,
     };
 
-    const elements: Entity<'rect'>[] = [];
+    const elements: EntityGeneric<'entityRect'>[] = [];
 
     let column = 0;
     let row = 0;
 
     for (let i = 0; i < elementAmount; i++) {
         elements.push(
-            library.createEntity({
+            library.createEntity('entityRect', {
                 ...baseVisualProperties,
                 show: false,
                 sketch: {
-                    type: 'rect',
+                    // type: 'rect',
                     w: squareLength,
                     h: squareLength,
+                    radius: 0,
                     // fill: '',
                     // stroke: '',
                     // lineWidth: 1,
