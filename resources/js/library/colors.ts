@@ -1,4 +1,4 @@
-import {Shapes} from './types/shapes';
+import {Colors} from './types/color';
 
 // https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
 export const hexToRgb = (hex: string) => {
@@ -19,14 +19,16 @@ export const hexToRgb = (hex: string) => {
 };
 
 // TODO:: Colors shouldn't be a required part of the entity shape, make this optional
-export const getSketchRGBAColorsFromHexString = (sketch: Shapes) => {
-    const newColors = {
-        fill: {a: 1, r: 255, g: 255, b: 255},
-        stroke: {a: 1, ...hexToRgb(sketch.stroke)},
-        textFill: {a: 1, ...hexToRgb(sketch.textFill)},
-    };
-
-    if (sketch.type !== 'line') newColors.fill = {a: 1, ...hexToRgb(sketch.fill)};
-
-    return newColors;
-};
+export const getSketchRGBAColorsFromHexString = ({
+    fill,
+    stroke,
+    textFill,
+}: {
+    fill: string;
+    stroke: string;
+    textFill: string;
+}) => ({
+    fill: {a: 1, ...hexToRgb(fill)},
+    stroke: {a: 1, ...hexToRgb(stroke)},
+    textFill: {a: 1, ...hexToRgb(textFill)},
+});

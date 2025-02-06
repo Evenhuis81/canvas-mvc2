@@ -1,6 +1,6 @@
 import {EngineDraw, EngineUpdate} from './engine';
 import {InputListenerEventMap} from './input';
-import {EntityCircle, EntityRect, EntityShapeMap} from './entitySketch';
+import {EntityCircle, EntityRect, EntityShapeMap, EntitySketchConfig} from './entitySketch';
 import {Text} from './shapes';
 
 export type GeneralProperties = {
@@ -32,7 +32,7 @@ export type SetHideTime = (time: number) => void;
 export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
 
 export type EntityConfig = Partial<
-    {sketch: Partial<(EntityRect & Text) | (EntityCircle & Text)>} & GeneralProperties &
+    {sketch: EntitySketchConfig} & GeneralProperties &
         VisualProperties & {
             listeners: Partial<EntityListeners & EntityInputListeners<EntityInputListenerType>>;
         }

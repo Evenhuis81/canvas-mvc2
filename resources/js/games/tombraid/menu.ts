@@ -36,9 +36,9 @@ export const mainMenu = (library: LibraryResources) => {
                 ...baseVisualProperties,
                 show: false,
                 sketch: {
-                    // type: 'rect',
-                    w: squareLength,
-                    h: squareLength,
+                    type: 'entityCircle',
+                    // w: squareLength,
+                    // h: squareLength,
                     radius: 0,
                     // fill: '',
                     // stroke: '',
@@ -53,7 +53,7 @@ export const mainMenu = (library: LibraryResources) => {
                     // text: (i + 1).toString(),
                     x: startX + column * squareDistance,
                     y: startY + row * squareDistance,
-                    text: (i + 1).toString(),
+                    // text: (i + 1).toString(),
                 },
                 listeners: {
                     // mouseup: undefined,

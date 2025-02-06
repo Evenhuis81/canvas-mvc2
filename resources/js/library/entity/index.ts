@@ -14,6 +14,7 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
         // Extract internal properties from options
         const {generalProperties, visualProperties, listeners, shape} = extractOptions(options);
 
+        // TODO::Overwrite defaults with SketchConfig (user input)
         const sketch = createSketch(type);
 
         const eventHandler = createEventHandler(input, sketch, listeners);

@@ -1,13 +1,12 @@
 /* eslint-disable max-lines-per-function */
 import type {Colors} from 'library/types/color';
-import type {EntityShape, GeneralProperties, VisualProperties} from 'library/types/entity';
+import type {VisualProperties} from 'library/types/entity';
+import { EntityShapeMap } from 'library/types/entitySketch';
 import type {LibraryInput} from 'library/types/input';
-import type {EntityShape, EntityShapeConfig, EntityShapeMap} from 'library/types/shapes';
-import {defaultSketch} from './sketch';
 
 const createCircleDraw = (
     ctx: CanvasRenderingContext2D,
-    sketch: EntityShapeMap['circle'],
+    sketch: EntityShapeMap['entityCircle'],
     {fill, stroke, textFill}: Colors,
 ) => {
     ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;

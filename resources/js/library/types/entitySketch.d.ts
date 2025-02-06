@@ -1,3 +1,4 @@
+import {WithRequired} from '.';
 import {Circle, Fill, Rect, Stroke} from './shapes';
 
 export type EntityShapeMap = {
@@ -5,11 +6,9 @@ export type EntityShapeMap = {
     entityCircle: EntityCircle;
 };
 
-// export type EntityShape = (Rect & {type: 'rect'}) | (Circle & {type: 'circle'});
+export type EntityShape = EntityRect | EntityCircle;
 
-// export type EntityConfig = Partial<{sketch: Partial<EntityShape>}>;
-
-// export type EntityShape = EntityRect | EntityCircle;
+export type EntitySketchConfig = WithRequired<Partial<EntityShape>, 'type'>;
 
 export type EntityRect = Rect &
     Fill &
