@@ -1,7 +1,7 @@
 /* eslint-disable max-lines-per-function */
 import type {Colors} from 'library/types/color';
 import type {VisualProperties} from 'library/types/entity';
-import { EntityShapeMap } from 'library/types/entitySketch';
+import type { EntityShapeMap } from 'library/types/entitySketch';
 import type {LibraryInput} from 'library/types/input';
 
 const createCircleDraw = (

@@ -1,9 +1,7 @@
-/* eslint-disable max-lines-per-function */
-import {Colors} from 'library/types/color';
-import {Engine} from 'library/types/engine';
-import {LibraryInput} from 'library/types/input';
-import {ShapeMap} from 'library/types/shapes';
 import {createRenders} from './renders';
+import type {Colors} from 'library/types/color';
+import type {Engine} from 'library/types/engine';
+import type {LibraryInput} from 'library/types/input';
 import type {
     EventHandler,
     GeneralProperties,
@@ -16,7 +14,7 @@ import type {
 export const createVisualsAndCallbacks = (
     gProps: GeneralProperties,
     vProps: Partial<VisualProperties>,
-    sketch: ShapeMap[keyof ShapeMap],
+    sketch: any, // make generic sketch from input (to cretae draw method)
     colors: Colors,
     input: LibraryInput,
     engine: Engine,

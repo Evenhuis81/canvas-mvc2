@@ -36,10 +36,11 @@ export const mainMenu = (library: LibraryResources) => {
                 ...baseVisualProperties,
                 show: false,
                 sketch: {
-                    type: 'entityCircle',
+                    type: 'b1',
+                    radii: 5,
                     // w: squareLength,
                     // h: squareLength,
-                    radius: 0,
+                    // radius: 0,
                     // fill: '',
                     // stroke: '',
                     // lineWidth: 1,

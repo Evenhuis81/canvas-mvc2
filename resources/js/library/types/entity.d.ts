@@ -1,6 +1,6 @@
 import {EngineDraw, EngineUpdate} from './engine';
 import {InputListenerEventMap} from './input';
-import {EntityCircle, EntityRect, EntityShapeMap, EntitySketchConfig} from './entitySketch';
+import {EntityShapeMap, EntitySketchConfig} from './entitySketch';
 import {Text} from './shapes';
 
 export type GeneralProperties = {
