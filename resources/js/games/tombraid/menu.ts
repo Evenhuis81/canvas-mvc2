@@ -2,7 +2,7 @@
 import type {EntityGeneric, VisualProperties} from 'library/types/entity';
 import type {LibraryResources} from 'library/types';
 
-const elementAmount = 9;
+const elementAmount = 1;
 
 export const mainMenu = (library: LibraryResources) => {
     const rowsOrColumns = Math.sqrt(elementAmount);
@@ -25,14 +25,14 @@ export const mainMenu = (library: LibraryResources) => {
         endSpeed: 5,
     };
 
-    const elements: EntityGeneric<'entityRect'>[] = [];
+    const elements: EntityGeneric<'b1'>[] = [];
 
     let column = 0;
     let row = 0;
 
     for (let i = 0; i < elementAmount; i++) {
         elements.push(
-            library.createEntity('entityRect', {
+            library.createEntity('b1', {
                 ...baseVisualProperties,
                 show: false,
                 sketch: {

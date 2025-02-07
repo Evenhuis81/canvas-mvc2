@@ -1,6 +1,6 @@
 import {createEventHandler} from './handler';
 import {createUserMethods, defaultProperties} from './properties';
-import {createVisualsAndCallbacks} from './animate';
+import {createSetVisuals} from './animate';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import type {Engine} from 'library/types/engine';
@@ -15,14 +15,16 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
         const {generalProperties, visualProperties, listeners, shape} = extractOptions(options);
 
         // TODO::Overwrite defaults with SketchConfig (user input)
-        const sketch = createSketch(type);
+        const sketch = createSketch(type, shape);
+
+        console.log(sketch);
 
         const eventHandler = createEventHandler(input, sketch, listeners);
 
         // @type Rect, Circle, Line does not have fill color, make overload function or rehaul colors entirely
         const colors = getSketchRGBAColorsFromHexString(sketch);
 
-        const {setVisual} = createVisualsAndCallbacks(
+        const {setVisual} = createSetVisuals(
             generalProperties,
             visualProperties,
             sketch,
@@ -30,7 +32,7 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
             input,
             engine,
             context,
-            eventHandler,
+            // eventHandler,
         ); // Also creates setEngine
 
         const entity = {

@@ -7,17 +7,12 @@ import type {
     EntityInputListeners,
     EntityListenerEvents,
     EntityListeners,
-    EntityShape,
     EventHandler,
 } from 'library/types/entity';
+import {EntityShape} from 'library/types/entitySketch';
 import type {InputListenerEventMap, LibraryInput} from 'library/types/input';
-import {EntityShape} from 'library/types/shapes';
 
-export const createEventHandler = (
-    input: LibraryInput,
-    sketch: ShapeMap[keyof ShapeMap],
-    listeners: EntityConfig['listeners'],
-) => {
+export const createEventHandler = (input: LibraryInput, sketch: EntityShape, listeners: EntityConfig['listeners']) => {
     const entityInputListenerHandlers: {[type: string]: EntityInputListenerHandler} = {};
     const entityListenerEvents = createEntityListenerEvents();
     const entityListeners: Partial<EntityListeners> = {};
@@ -131,9 +126,13 @@ const createAddAndRemoveListener = (
 });
 
 const startTransition = {testProperty: 'testProperty startTransition'};
+const endOfStartTransition = {testProperty: 'testProperty endOfStartTransition'};
 const endTransition = {pressed: false, pushed: false, clicked: false};
+const endOfEndTransition = {pressed: false, pushed: false, clicked: false};
 
 const createEntityListenerEvents = () => ({
     startTransition: {...startTransition},
+    endOfStartTransition: {...endOfStartTransition},
     endTransition: {...endTransition},
+    endOfEndTransition: {...endOfEndTransition},
 });

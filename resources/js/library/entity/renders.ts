@@ -1,12 +1,12 @@
-/* eslint-disable max-lines-per-function */
 import type {Colors} from 'library/types/color';
-import type {VisualProperties} from 'library/types/entity';
-import type { EntityShapeMap } from 'library/types/entitySketch';
+import type {GeneralProperties, VisualProperties} from 'library/types/entity';
+import {EntityShape, EntityShapeMap} from 'library/types/entitySketch';
 import type {LibraryInput} from 'library/types/input';
 
-const createCircleDraw = (
+// Creating visual methods based on 'b1 entity', make dynamic
+const createB1Draw = (
     ctx: CanvasRenderingContext2D,
-    sketch: EntityShapeMap['entityCircle'],
+    sketch: EntityShapeMap['b1'],
     {fill, stroke, textFill}: Colors,
 ) => {
     ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
@@ -28,22 +28,19 @@ const createCircleDraw = (
     ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5);
 };
 
-export const createRenders = <K extends keyof EntityShapeMap>(
+// Hardcoded to reflect upon b1 entity only
+// export const createB1Renders = <K extends keyof EntityShapeMap>(
+export const createB1Renders = (
     props: GeneralProperties,
-    sketchType: K,
-    sketch: EntityShapeMap[K],
-import type {ShapeMap, Text} from 'library/types/shapes';
-
-export const createRenders = (
-    props: GeneralProperties,
-    // sketchType: K,
-    sketch: EntityShape,
+    sketch: EntityShapeMap['b1'],
     colors: Colors,
     {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
     input: LibraryInput,
     context: CanvasRenderingContext2D,
 ) => {
     const {id, name} = props;
+
+    const draw = createB1Draw(context, sketch, colors);
 
     const hovers = {
         bold: () => {
@@ -126,7 +123,7 @@ export const createRenders = (
     };
 };
 
-const createHoverBold = (sketch: EntityShape) => {
+const createHoverBold = (sketch: EntityShapeMap['b1']) => {
     const origin = {
         lineWidth: sketch.lineWidth,
         f: sketch.fontSize,
@@ -270,83 +267,44 @@ const createTransitionUpdate =
     };
 
 const createAnimationNoise = (sketch: EntityShape) => () => {
-    if (sketch.type === 'rect') {
-        sketch.x += upd.adj.x;
-        sketch.y += upd.adj.y;
+    sketch.x += upd.adj.x;
+    sketch.y += upd.adj.y;
 
-        upd.count++;
+    upd.count++;
 
-        if (upd.count > 60) {
-            upd.adj.x *= -1;
-            upd.adj.y *= -1;
+    if (upd.count > 60) {
+        upd.adj.x *= -1;
+        upd.adj.y *= -1;
 
-            upd.count = 0;
-        }
+        upd.count = 0;
     }
 };
 
-// const createDraw = <K extends keyof ShapeMap>(type: K, sketch: ShapeMap[K]) => {
-//     return;
-// };
-const getDraw = (sketch: EntityShape) => {};
-
-// TODO::Create seperate module and abstract this one into multiple shape renders
-// (sketch: EntityShape, c: CanvasRenderingContext2D, {fill, stroke, textFill}: Colors)
-
-const testFunc =
-    (sketch: EntityShape, ctx: CanvasRenderingContext2D, {fill, stroke, textFill}: Colors) =>
-    () => {
-        if (sketch.w) {
-            // ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
-            // ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
-            // ctx.lineWidth = sketch.lineWidth;
-            // ctx.beginPath();
-            // ctx.rect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h);
-            // ctx.fill();
-            // ctx.stroke();
-            // ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
-            // ctx.font = `${sketch.fontSize}px ${sketch.font}`;
-            // ctx.textAlign = sketch.textAlign;
-            // ctx.textBaseline = sketch.textBaseLine;
-            // ctx.beginPath();
-            // ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5);
-        }
-    };
-
-const createDraw = <K extends keyof EntityShapeMap>(
-    type: K,
-    sketch: EntityShapeConfig<K>,
+const createCircleDraw = (
+    sketch: EntityShapeMap['entityCircle'],
     ctx: CanvasRenderingContext2D,
-    colors: Colors,
+    {fill, stroke, textFill}: Colors,
 ) => {
-    testFunc(sketch[type], ctx, colors);
+    ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
+    ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
+    ctx.lineWidth = sketch.lineWidth;
 
-    // if (type === 'circle') return () => {
-    //     {
-    //         ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
-    //         ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
-    //         ctx.lineWidth = sketch.lineWidth;
+    ctx.beginPath();
+    ctx.arc(sketch.x, sketch.y, sketch.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
 
-    //         ctx.beginPath();
-    //         ctx.arc(sketch.x, sketch.y, sketch.radius, 0, Math.PI * 2);
-    //         ctx.fill();
-    //         ctx.stroke();
+    ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
+    // ctx.font = `${sketch.fontSize}px ${sketch.font}`;
 
-    //         ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
-    //         ctx.font = `${sketch.fontSize}px ${sketch.font}`;
+    // ctx.textAlign = sketch.textAlign;
+    // ctx.textBaseline = sketch.textBaseLine;
 
-    //         ctx.textAlign = sketch.textAlign;
-    //         ctx.textBaseline = sketch.textBaseLine;
-
-    //         ctx.beginPath();
-    //         ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5);
-    //     }
-    // }
-    // line: () => {},
-    // roundRect: () => {
-    // ctx.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.radii);
-    // },
+    ctx.beginPath();
+    // ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5);
 };
+
+// ctx.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.radii);
 
 // max property is default 60, need for deltaTime, adj is change in property
 // make this a createProperties that picks the needed properties for each update respectively

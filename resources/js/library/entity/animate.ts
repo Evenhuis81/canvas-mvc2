@@ -1,4 +1,4 @@
-import {createRenders} from './renders';
+import {createB1Renders} from './renders';
 import type {Colors} from 'library/types/color';
 import type {Engine} from 'library/types/engine';
 import type {LibraryInput} from 'library/types/input';
@@ -10,22 +10,21 @@ import type {
     VisualProperties,
     Visuals,
 } from 'library/types/entity';
+import {EntityShape} from 'library/types/entitySketch';
 
-export const createVisualsAndCallbacks = (
+export const createSetVisuals = (
     gProps: GeneralProperties,
     vProps: Partial<VisualProperties>,
-    sketch: any, // make generic sketch from input (to cretae draw method)
-    colors: Colors,
+    sketch: EntityShape,
+    colors: Partial<Colors>,
     input: LibraryInput,
     engine: Engine,
     context: CanvasRenderingContext2D,
-    eventHandler: EventHandler,
+    // eventHandler: EventHandler,
 ) => {
     const {animation, hover, start, end} = vProps;
 
-    // const callbacks = {...emptyCallbacks};
-
-    const renders = createRenders(gProps, sketch, colors, vProps, input, context);
+    const renders = createB1Renders(gProps, sketch, colors, vProps, input, context);
 
     const visuals = {
         animation: animation ? renders.animations[animation]() : undefined,
@@ -42,9 +41,10 @@ export const createVisualsAndCallbacks = (
     const setEngine = createSetEngine(engine, visuals);
 
     // transforms empty callbacks to functional callbacks
-    set(vProps, setEngine, eventHandler);
+    // set(vProps, setEngine, eventHandler);
 
-    return {callbacks, setVisual};
+    // Separation of concern?
+    return {setVisual, setEngine};
 };
 
 // TODO::remove duplications and if statements, see comments in createCallbacks -> renders object

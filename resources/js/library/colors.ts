@@ -24,11 +24,11 @@ export const getSketchRGBAColorsFromHexString = ({
     stroke,
     textFill,
 }: {
-    fill: string;
-    stroke: string;
-    textFill: string;
+    fill?: string;
+    stroke?: string;
+    textFill?: string;
 }) => ({
-    fill: {a: 1, ...hexToRgb(fill)},
-    stroke: {a: 1, ...hexToRgb(stroke)},
-    textFill: {a: 1, ...hexToRgb(textFill)},
+    fill: fill ? {a: 1, ...hexToRgb(fill)} : undefined,
+    stroke: stroke ? {a: 1, ...hexToRgb(stroke)} : undefined,
+    textFill: textFill ? {a: 1, ...hexToRgb(textFill)} : undefined,
 });

@@ -1,7 +1,6 @@
 import {EngineDraw, EngineUpdate} from './engine';
 import {InputListenerEventMap} from './input';
 import {EntityShapeMap, EntitySketchConfig} from './entitySketch';
-import {Text} from './shapes';
 
 export type GeneralProperties = {
     id: number | string;
@@ -90,7 +89,7 @@ export interface EventHandler {
     removeListener: RemoveListener;
     activateInputListeners: () => void;
     deactivateInputListeners: () => void;
-    entityListenerEvents: Partial<EntityListenerEvents>;
+    entityListenerEvents: EntityListenerEvents;
     entityListeners: Partial<EntityListeners>;
 }
 
@@ -108,12 +107,12 @@ export type EntityGeneric<K extends keyof EntityShapeMap> = {
 
 export type CreateEntity = <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig) => EntityGeneric<K>;
 
-export interface Callbacks {
-    start: (prepare?: () => void) => void;
-    endOfStart: () => void;
-    end: (prepare?: () => void) => void;
-    endOfEnd: () => void;
-}
+// export interface Callbacks {
+//     start: (prepare?: () => void) => void;
+//     endOfStart: () => void;
+//     end: (prepare?: () => void) => void;
+//     endOfEnd: () => void;
+// }
 
 export type TransitionSpeed = 1 | 2 | 3 | 4 | 5;
 

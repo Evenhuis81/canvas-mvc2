@@ -1,9 +1,19 @@
+import {WithRequired} from 'library/types';
 import {EntityShapeMap} from 'library/types/entitySketch';
 
-export const createSketch = <K extends keyof EntityShapeMap>(type: K) => ({
-    ...defaultSketch[type],
-    ...text,
-});
+const createDefaultSketch = <K extends keyof EntityShapeMap>(type: K) => ({...defaultSketch[type]});
+
+type ShapeInc<K extends keyof EntityShapeMap> = WithRequired<Partial<EntityShapeMap[K]>, 'type'>;
+
+export const createSketch = <K extends keyof EntityShapeMap>(type: K, shape?: ShapeInc<K>): EntityShapeMap[K] => {
+    const defaultSketch = createDefaultSketch(type);
+
+    if (!shape) return defaultSketch;
+
+    if (shape.type === 'b1') return {defaultSketch, ...shape};
+
+    return {defaultSketch, ...shape};
+};
 
 const entityB1: EntityShapeMap['b1'] = {
     type: 'b1',

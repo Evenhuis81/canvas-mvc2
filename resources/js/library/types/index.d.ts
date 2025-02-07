@@ -1,8 +1,7 @@
 import {Engine} from './engine';
-import {CreateEntity, Entity, EntityConfig} from './entity';
+import {CreateEntity} from './entity';
 import {Phaser} from 'games/phaser/types';
 import {LibraryInput} from './input';
-import {EntityShapeMap} from './entitySketch';
 
 export type KeyWithCallback<A extends object> = {
     [K in keyof A]: [K, (evt: A[K]) => void];
