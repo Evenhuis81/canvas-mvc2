@@ -10,7 +10,7 @@ import type {LibraryInput} from 'library/types/input';
 import type {EntityShapeMap} from 'library/types/entitySketch';
 
 export default (context: CanvasRenderingContext2D, engine: Engine, input: LibraryInput) =>
-    <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig): EntityGeneric<K> => {
+    <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig): EntityShapeMap[K] => {
         // Extract internal properties from options
         const {generalProperties, visualProperties, listeners, shape} = extractOptions(options);
 
