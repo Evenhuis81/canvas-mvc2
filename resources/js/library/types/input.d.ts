@@ -46,6 +46,7 @@ export type InputListener<K extends keyof InputListenerEventMap> = {
     type: K;
     listener: (event: HTMLElementEventMap[K]) => void;
     id: symbol;
+    // shapeType: 'rect' | 'circle';
     shape: InputShape;
     props: {pressed: boolean; pushed: boolean; clicked: boolean};
 };

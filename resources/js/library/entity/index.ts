@@ -32,7 +32,7 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
             // eventHandler,
         ); // Also creates setEngine
 
-        const entity = {
+        const entity: EntityGeneric<K> = {
             addListener: eventHandler.addListener,
             removeListener: eventHandler.removeListener,
             setVisual,
@@ -41,6 +41,8 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
         };
 
         initialize(generalProperties, entity);
+
+        console.log(sketch);
 
         return entity;
     };

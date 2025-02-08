@@ -5,9 +5,9 @@ import type {LibraryResources} from 'library/types';
 const elementAmount = 1;
 
 export const mainMenu = (library: LibraryResources) => {
-    // const {createEntity} = library;
+    const {createEntity} = library;
 
-    // const ee = createEntity('b1');
+    const ee = createEntity('b1');
 
     const rowsOrColumns = Math.sqrt(elementAmount);
 
@@ -40,6 +40,7 @@ export const mainMenu = (library: LibraryResources) => {
                 ...baseVisualProperties,
                 show: false,
                 sketch: {
+                    // type: 'optional',
                     x: startX + column * squareDistance,
                     y: startY + row * squareDistance,
                     w: squareLength,

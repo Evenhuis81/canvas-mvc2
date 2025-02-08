@@ -10,9 +10,11 @@ export const createSketch = <K extends keyof EntityShapeMap>(
 ): EntityShapeMap[K] => ({
     ...defaultSketch[type],
     ...shape,
+    type,
 });
 
 const entityB1: EntityShapeMap['b1'] = {
+    type: 'rect',
     x: 100,
     y: 50,
     w: 80,
@@ -31,6 +33,7 @@ const entityB1: EntityShapeMap['b1'] = {
 };
 
 const entityRect: EntityShapeMap['entityRect'] = {
+    type: 'rect',
     x: 100,
     y: 50,
     w: 80,
@@ -41,6 +44,7 @@ const entityRect: EntityShapeMap['entityRect'] = {
 };
 
 const entityCircle: EntityShapeMap['entityCircle'] = {
+    type: 'circle',
     x: 100,
     y: 50,
     radius: 255,
