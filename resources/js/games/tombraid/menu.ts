@@ -29,61 +29,56 @@ export const mainMenu = (library: LibraryResources) => {
         endSpeed: 5,
     };
 
-    const elements: EntityGeneric<'entityRect'>[] = [];
+    const elements: EntityGeneric<'b1'>[] = [];
 
     let column = 0;
     let row = 0;
 
     for (let i = 0; i < elementAmount; i++) {
-        // elements.push(
-        //     library.createEntity('entityRect', {
-        //         ...baseVisualProperties,
-        //         show: false,
-        // sketch: {
-        //     b1: {
-        //         //
-        //     },
-        //     entityCircle: {
-        //         //
-        //     },
-        //     // type: 'entityCircle',
-        //     // radii: 5,
-        //     // radius: 5,
-        //     // w: squareLength,
-        //     // h: squareLength,
-        //     // radius: 0,
-        //     // fill: '',
-        //     // stroke: '',
-        //     // lineWidth: 1,
-        //     // textFill: '',
-        //     // font: '',
-        //     // fontSize: 5,
-        //     // textAlign: 'center',
-        //     // textBaseLine: 'alphabetic',
-        //     // x: startX + column * squareDistance,
-        //     // y: startY + row * squareDistance,
-        //     // text: (i + 1).toString(),
-        //     // x: startX + column * squareDistance,
-        //     // y: startY + row * squareDistance,
-        //     // text: (i + 1).toString(),
-        // },
-        //     listeners: {
-        //         // mouseup: undefined,
-        //         mouseup: evt => {
-        //             console.log(`Mouse UP: ${i}`, evt);
-        //         },
-        //         touchend: evt => {
-        //             console.log(`Touch END: ${i}`, evt);
-        //         },
-        //         startTransition: evt => {
-        //             console.log(`Start Transition: ${i}`, evt);
-        //         },
-        //         endTransition: evt => {
-        //             console.log(`End Transition: ${i}`, evt);
-        //         },
-        //     },
-        // }),
-        // );
+        elements.push(
+            library.createEntity('b1', {
+                ...baseVisualProperties,
+                show: false,
+                sketch: {
+                    x: startX + column * squareDistance,
+                    y: startY + row * squareDistance,
+                    w: squareLength,
+                    h: squareLength,
+                    radii: 25,
+                    fill: '#0a0',
+                    stroke: '#00f',
+                    lineWidth: 1,
+                    fontSize: 5,
+                    textFill: '#f0f',
+                    text: (i + 1).toString(),
+                    // font: '',
+                    // textAlign: 'center',
+                    // textBaseLine: 'alphabetic',
+                    // radius: 8,
+                },
+                listeners: {
+                    // mouseup: undefined,
+                    mouseup: evt => {
+                        console.log(`Mouse UP: ${i}`, evt);
+                    },
+                    touchend: evt => {
+                        console.log(`Touch END: ${i}`, evt);
+                    },
+                    startTransition: evt => {
+                        console.log(`Start Transition: ${i}`, evt);
+                    },
+                    endOfStartTransition: evt => {
+                        console.log(`End Of Start Transition: ${i}`, evt);
+                    },
+                    endTransition: evt => {
+                        console.log(`End Transition: ${i}`, evt);
+                    },
+                    endOfEndTransition: evt => {
+                        console.log(`End of End Transition: ${i}`, evt);
+                    },
+                },
+            }),
+        );
 
         const element = elements[i];
 

@@ -1,5 +1,5 @@
 import {Circle, Pos, Rect} from './types/shapes';
-import type {InputListener, InputListenerEventMap, InputListenerStore} from './types/input';
+import type {InputListener, InputListenerEventMap, InputListenerStore, InputShape} from './types/input';
 
 const resizeCB: (() => void)[] = [];
 const consoleToggleCB: (() => void)[] = [];
@@ -153,16 +153,7 @@ export const getCanvasInput = (canvas: HTMLCanvasElement) => {
         });
     });
 
-    const insideS = {
-        rect: () => {
-            //
-        },
-        circle: () => {
-            //
-        },
-    };
-
-    const pressedInsideMouse = (shape: Rect | Circle) => {
+    const pressedInsideMouse = (shape: InputShape) => {
         if (shape.type === 'rect' && insideMouseRect(shape)) return true;
         if (shape.type === 'circle' && insideMouseCircle(shape)) return true;
 
@@ -192,7 +183,7 @@ export const getCanvasInput = (canvas: HTMLCanvasElement) => {
         return pos1sq - pos2sq;
     };
 
-    const insideMouse = (shape: Rect | Circle) => {
+    const insideMouse = (shape: InputShape) => {
         if (shape.type === 'rect') return insideMouseRect(shape);
         if (shape.type === 'circle') return insideMouseCircle(shape);
 

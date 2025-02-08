@@ -1,7 +1,6 @@
 import type {
     AddEntityInputListener,
     EndTransitionEvent,
-    EntityConfig,
     EntityInputListenerHandler,
     EntityInputListenerType,
     EntityInputListeners,
@@ -9,10 +8,14 @@ import type {
     EntityListeners,
     EventHandler,
 } from 'library/types/entity';
-import {EntityShape} from 'library/types/entitySketch';
+import {EntityShapeMap} from 'library/types/entitySketch';
 import type {InputListenerEventMap, LibraryInput} from 'library/types/input';
 
-export const createEventHandler = (input: LibraryInput, sketch: EntityShape, listeners: EntityConfig['listeners']) => {
+export const createEventHandler = <K extends keyof EntityShapeMap>(
+    input: LibraryInput,
+    sketch: EntityShapeMap[K],
+    listeners?: Partial<EntityListeners & EntityInputListeners<EntityInputListenerType>>,
+) => {
     const entityInputListenerHandlers: {[type: string]: EntityInputListenerHandler} = {};
     const entityListenerEvents = createEntityListenerEvents();
     const entityListeners: Partial<EntityListeners> = {};
@@ -44,10 +47,13 @@ export const createEventHandler = (input: LibraryInput, sketch: EntityShape, lis
     if (!listeners) return handler;
 
     // Make generic with split object: (https://stackoverflow.com/questions/75323570/what-is-the-correct-type-for-splitting-an-object-in-two-complimentary-objects-in)
-    const {startTransition, endTransition, ...entityInputListeners} = listeners;
+    const {startTransition, endTransition, endOfStartTransition, endOfEndTransition, ...entityInputListeners} =
+        listeners;
 
     if (startTransition) entityListeners.startTransition = startTransition;
+    if (endOfStartTransition) entityListeners.endOfStartTransition = endOfStartTransition;
     if (endTransition) entityListeners.endTransition = endTransition;
+    if (endOfEndTransition) entityListeners.endOfEndTransition = endOfEndTransition;
 
     setEntityInputListeners(entityInputListeners, addEntityInputListener);
 
@@ -55,10 +61,10 @@ export const createEventHandler = (input: LibraryInput, sketch: EntityShape, lis
 };
 
 const createAddEntityInputListener =
-    (
+    <K extends keyof EntityShapeMap>(
         entityInputListenerHandlers: {[type: string]: EntityInputListenerHandler},
         input: LibraryInput,
-        sketch: EntityShape,
+        sketch: EntityShapeMap[K],
         props: EndTransitionEvent,
     ): AddEntityInputListener =>
     (type, listener, active = true) => {

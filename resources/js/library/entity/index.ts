@@ -15,11 +15,11 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
         const {generalProperties, visualProperties, listeners, shape} = extractOptions(options);
 
         const sketch = createSketch(type, shape);
+        const colors = getSketchRGBAColorsFromHexString(sketch);
 
         const eventHandler = createEventHandler(input, sketch, listeners);
 
         // @type Rect, Circle, Line does not have fill color, make overload function or rehaul colors entirely
-        const colors = getSketchRGBAColorsFromHexString(sketch);
 
         const {setVisual} = createSetVisuals(
             generalProperties,

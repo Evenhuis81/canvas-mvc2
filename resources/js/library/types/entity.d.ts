@@ -31,7 +31,7 @@ export type SetHideTime = (time: number) => void;
 export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
 
 export type EntityConfig<K extends keyof EntityShapeMap> = Partial<
-    {sketch: EntityShapeMap[K]} & GeneralProperties &
+    {sketch: Partial<EntityShapeMap[K]>} & GeneralProperties &
         VisualProperties & {
             listeners: Partial<EntityListeners & EntityInputListeners<EntityInputListenerType>>;
         }

@@ -6,21 +6,21 @@ import {EntityShapeMap} from 'library/types/entitySketch';
 
 export const createSketch = <K extends keyof EntityShapeMap>(
     type: K,
-    shape?: EntityShapeMap[K],
+    shape?: Partial<EntityShapeMap[K]>,
 ): EntityShapeMap[K] => ({
     ...defaultSketch[type],
     ...shape,
 });
 
 const entityB1: EntityShapeMap['b1'] = {
-    radii: 5,
     x: 100,
     y: 50,
     w: 80,
     h: 40,
+    radii: 5,
     fill: '#000',
     stroke: '#f00',
-    lineWidth: 2,
+    lineWidth: 4,
     // Text Part
     text: 'Entity B1',
     textFill: '#fff',
