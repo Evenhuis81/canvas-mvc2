@@ -3,11 +3,11 @@ import {createUserMethods, defaultProperties} from './properties';
 import {createSetVisuals} from './animate';
 import {getProperties, uid} from 'library/helpers';
 import {getSketchRGBAColorsFromHexString} from 'library/colors';
+import {createSketch} from './sketch';
 import type {Engine} from 'library/types/engine';
 import type {Entity, EntityConfig, EntityGeneric, GeneralProperties} from 'library/types/entity';
 import type {LibraryInput} from 'library/types/input';
 import type {EntityShapeMap} from 'library/types/entitySketch';
-import {createSketch} from './sketch';
 
 export default (context: CanvasRenderingContext2D, engine: Engine, input: LibraryInput) =>
     <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig): EntityGeneric<K> => {

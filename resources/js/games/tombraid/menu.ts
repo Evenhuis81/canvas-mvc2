@@ -36,8 +36,15 @@ export const mainMenu = (library: LibraryResources) => {
                 ...baseVisualProperties,
                 show: false,
                 sketch: {
-                    type: 'b1',
-                    radii: 5,
+                    b1: {
+                        //
+                    },
+                    entityCircle: {
+                        //
+                    },
+                    // type: 'entityCircle',
+                    // radii: 5,
+                    // radius: 5,
                     // w: squareLength,
                     // h: squareLength,
                     // radius: 0,
@@ -52,8 +59,8 @@ export const mainMenu = (library: LibraryResources) => {
                     // x: startX + column * squareDistance,
                     // y: startY + row * squareDistance,
                     // text: (i + 1).toString(),
-                    x: startX + column * squareDistance,
-                    y: startY + row * squareDistance,
+                    // x: startX + column * squareDistance,
+                    // y: startY + row * squareDistance,
                     // text: (i + 1).toString(),
                 },
                 listeners: {
