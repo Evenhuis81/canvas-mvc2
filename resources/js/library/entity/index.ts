@@ -10,14 +10,11 @@ import type {LibraryInput} from 'library/types/input';
 import type {EntityShapeMap} from 'library/types/entitySketch';
 
 export default (context: CanvasRenderingContext2D, engine: Engine, input: LibraryInput) =>
-    <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig): EntityShapeMap[K] => {
+    <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig<K>): EntityGeneric<K> => {
         // Extract internal properties from options
         const {generalProperties, visualProperties, listeners, shape} = extractOptions(options);
 
-        // TODO::Overwrite defaults with SketchConfig (user input)
         const sketch = createSketch(type, shape);
-
-        console.log(sketch);
 
         const eventHandler = createEventHandler(input, sketch, listeners);
 
@@ -67,7 +64,7 @@ const initialize = (gProps: GeneralProperties, methods: Entity) => {
 };
 
 // TODO::Set defaults for options if no options is provided (empty entity default)
-const extractOptions = (options: EntityConfig = {}) => {
+const extractOptions = <K extends keyof EntityShapeMap>(options: EntityConfig<K> = {}) => {
     const {id, name, disabled, show, showDelay, clicked, hideDelay, ...rest} = {
         id: options.id ?? `entity-${uid()}`,
         ...getProperties(defaultProperties, options),

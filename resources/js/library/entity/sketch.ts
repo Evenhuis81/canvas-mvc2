@@ -1,22 +1,18 @@
-import {WithRequired} from 'library/types';
 import {EntityShapeMap} from 'library/types/entitySketch';
 
-const createDefaultSketch = <K extends keyof EntityShapeMap>(type: K) => ({...defaultSketch[type]});
+// const createDefaultSketch = <K extends keyof EntityShapeMap>(type: K) => ({...defaultSketch[type]});
 
-type ShapeInc<K extends keyof EntityShapeMap> = WithRequired<Partial<EntityShapeMap[K]>, 'type'>;
+// type ShapeInc<K extends keyof EntityShapeMap> = WithRequired<Partial<EntityShapeMap[K]>, 'type'>;
 
-export const createSketch = <K extends keyof EntityShapeMap>(type: K, shape?: ShapeInc<K>): EntityShapeMap[K] => {
-    const defaultSketch = createDefaultSketch(type);
-
-    if (!shape) return defaultSketch;
-
-    if (shape.type === 'b1') return {defaultSketch, ...shape};
-
-    return {defaultSketch, ...shape};
-};
+export const createSketch = <K extends keyof EntityShapeMap>(
+    type: K,
+    shape?: EntityShapeMap[K],
+): EntityShapeMap[K] => ({
+    ...defaultSketch[type],
+    ...shape,
+});
 
 const entityB1: EntityShapeMap['b1'] = {
-    type: 'b1',
     radii: 5,
     x: 100,
     y: 50,
@@ -35,7 +31,6 @@ const entityB1: EntityShapeMap['b1'] = {
 };
 
 const entityRect: EntityShapeMap['entityRect'] = {
-    type: 'entityRect',
     x: 100,
     y: 50,
     w: 80,
@@ -46,7 +41,6 @@ const entityRect: EntityShapeMap['entityRect'] = {
 };
 
 const entityCircle: EntityShapeMap['entityCircle'] = {
-    type: 'entityCircle',
     x: 100,
     y: 50,
     radius: 255,
@@ -76,33 +70,6 @@ export const defaultSketch = {
     b1: entityB1,
     entityRect,
     entityCircle,
-    // line,
-    // text,
+    line,
+    text,
 };
-
-// export const createSketch = (shape?: EntityShape) => {
-//     // if (!shape) return {...defaultSketch.rect, ...textDefault};
-//     if (!shape) return {...defaultSketch.rect};
-
-//     return {
-//         ...defaultSketch[shape.type],
-//         // ...textDefault,
-// import {ShapeMap} from 'library/types/shapes';
-
-// const crSk = <K extends 'circle' | 'rect'>(typer: K, shaper?: Partial<Shaper<K>>): Shaper<K>[K] => {
-//     if (!shaper) return {...shaperDef[typer]};
-
-//     return {...shaperDef[typer], ...shaper[typer]};
-// };
-
-// const dk = crSk('circle', {circle: {r: 1}});
-
-// export const createSketch = <K extends keyof ShapeMap>(type: K, shape?: Partial<ShapeMap[K]>): ShapeMap[K] => {
-//     if (type === 'rect' && !shape) return {...shapeDefaults.rect, ...shapeDefaults.text};
-
-//     return {
-//         ...shapeDefaults[type],
-//         ...textDefault,
-//         // ...Object.fromEntries(Object.entries(shape).filter(item => Boolean(item[1]))),
-//     };
-// };

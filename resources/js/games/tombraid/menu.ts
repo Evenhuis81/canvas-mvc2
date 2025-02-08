@@ -5,6 +5,10 @@ import type {LibraryResources} from 'library/types';
 const elementAmount = 1;
 
 export const mainMenu = (library: LibraryResources) => {
+    // const {createEntity} = library;
+
+    // const ee = createEntity('b1');
+
     const rowsOrColumns = Math.sqrt(elementAmount);
 
     const paddingY = innerHeight * 0.1;
@@ -25,61 +29,61 @@ export const mainMenu = (library: LibraryResources) => {
         endSpeed: 5,
     };
 
-    const elements: EntityGeneric<'b1'>[] = [];
+    const elements: EntityGeneric<'entityRect'>[] = [];
 
     let column = 0;
     let row = 0;
 
     for (let i = 0; i < elementAmount; i++) {
-        elements.push(
-            library.createEntity('b1', {
-                ...baseVisualProperties,
-                show: false,
-                sketch: {
-                    b1: {
-                        //
-                    },
-                    entityCircle: {
-                        //
-                    },
-                    // type: 'entityCircle',
-                    // radii: 5,
-                    // radius: 5,
-                    // w: squareLength,
-                    // h: squareLength,
-                    // radius: 0,
-                    // fill: '',
-                    // stroke: '',
-                    // lineWidth: 1,
-                    // textFill: '',
-                    // font: '',
-                    // fontSize: 5,
-                    // textAlign: 'center',
-                    // textBaseLine: 'alphabetic',
-                    // x: startX + column * squareDistance,
-                    // y: startY + row * squareDistance,
-                    // text: (i + 1).toString(),
-                    // x: startX + column * squareDistance,
-                    // y: startY + row * squareDistance,
-                    // text: (i + 1).toString(),
-                },
-                listeners: {
-                    // mouseup: undefined,
-                    mouseup: evt => {
-                        console.log(`Mouse UP: ${i}`, evt);
-                    },
-                    touchend: evt => {
-                        console.log(`Touch END: ${i}`, evt);
-                    },
-                    startTransition: evt => {
-                        console.log(`Start Transition: ${i}`, evt);
-                    },
-                    endTransition: evt => {
-                        console.log(`End Transition: ${i}`, evt);
-                    },
-                },
-            }),
-        );
+        // elements.push(
+        //     library.createEntity('entityRect', {
+        //         ...baseVisualProperties,
+        //         show: false,
+        // sketch: {
+        //     b1: {
+        //         //
+        //     },
+        //     entityCircle: {
+        //         //
+        //     },
+        //     // type: 'entityCircle',
+        //     // radii: 5,
+        //     // radius: 5,
+        //     // w: squareLength,
+        //     // h: squareLength,
+        //     // radius: 0,
+        //     // fill: '',
+        //     // stroke: '',
+        //     // lineWidth: 1,
+        //     // textFill: '',
+        //     // font: '',
+        //     // fontSize: 5,
+        //     // textAlign: 'center',
+        //     // textBaseLine: 'alphabetic',
+        //     // x: startX + column * squareDistance,
+        //     // y: startY + row * squareDistance,
+        //     // text: (i + 1).toString(),
+        //     // x: startX + column * squareDistance,
+        //     // y: startY + row * squareDistance,
+        //     // text: (i + 1).toString(),
+        // },
+        //     listeners: {
+        //         // mouseup: undefined,
+        //         mouseup: evt => {
+        //             console.log(`Mouse UP: ${i}`, evt);
+        //         },
+        //         touchend: evt => {
+        //             console.log(`Touch END: ${i}`, evt);
+        //         },
+        //         startTransition: evt => {
+        //             console.log(`Start Transition: ${i}`, evt);
+        //         },
+        //         endTransition: evt => {
+        //             console.log(`End Transition: ${i}`, evt);
+        //         },
+        //     },
+        // }),
+        // );
 
         const element = elements[i];
 

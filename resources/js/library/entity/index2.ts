@@ -31,10 +31,6 @@ const shDefaults: EntityShMap = {
     },
 };
 
-type EntityShMapConfig<T extends keyof EntityShMap> = {
-    [K in T]: EntityShMap[K];
-};
-
 type EntityShMap = {
     ci: EntityCi;
     re: EntityRe;
@@ -49,3 +45,7 @@ type EntityRe = {
     // type: 're',
     reProp: boolean;
 };
+
+// type EntityShMapConfig<T extends keyof EntityShMap> = {
+//     [K in T]: EntityShMap[K];
+// };

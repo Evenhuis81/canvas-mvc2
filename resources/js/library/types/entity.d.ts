@@ -1,6 +1,6 @@
 import {EngineDraw, EngineUpdate} from './engine';
 import {InputListenerEventMap} from './input';
-import {EntityShape, EntityShapeMap, EntitySketchConfig} from './entitySketch';
+import {EntityShapeMap} from './entitySketch';
 
 export type GeneralProperties = {
     id: number | string;
@@ -30,12 +30,8 @@ export type VisualType = EntityAnimations | EntityTransitions | EntityHovers;
 export type SetHideTime = (time: number) => void;
 export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
 
-export type EntityShapeConfig<T extends keyof EntityShapeMap> = {
-    [K in T]: Partial<EntityShapeMap[K]>;
-};
-
-export type EntityConfig = Partial<
-    {sketch: EntityShapeConfig<keyof EntityShapeMap>} & GeneralProperties &
+export type EntityConfig<K extends keyof EntityShapeMap> = Partial<
+    {sketch: EntityShapeMap[K]} & GeneralProperties &
         VisualProperties & {
             listeners: Partial<EntityListeners & EntityInputListeners<EntityInputListenerType>>;
         }
@@ -109,14 +105,7 @@ export type EntityGeneric<K extends keyof EntityShapeMap> = {
     sketch: EntityShapeMap[K];
 };
 
-export type CreateEntity = <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig) => EntityGeneric<K>;
-
-// export interface Callbacks {
-//     start: (prepare?: () => void) => void;
-//     endOfStart: () => void;
-//     end: (prepare?: () => void) => void;
-//     endOfEnd: () => void;
-// }
+export type CreateEntity = <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig<K>) => EntityGeneric<K>;
 
 export type TransitionSpeed = 1 | 2 | 3 | 4 | 5;
 
