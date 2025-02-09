@@ -1,15 +1,14 @@
-/* eslint-disable max-lines-per-function */
 import {EventHandler, GeneralProperties, VisualProperties} from 'library/types/entity';
 
 export const createUserMethods = (
     vProps: Partial<VisualProperties>,
     gProps: GeneralProperties,
-    // callbacks: Callbacks,
+    callbacks: any, // Callbacks
     eventHandler: EventHandler,
 ) => {
     const show = () => {
         // TODO::Add to Library Error
-        if (gProps.show) console.log('show is already active');
+        if (gProps.show) return console.log('show is already active');
 
         gProps.show = true;
 

@@ -1,4 +1,5 @@
 import type {Colors} from 'library/types/color';
+import {EngineDrawConfig} from 'library/types/engine';
 import type {GeneralProperties, VisualProperties} from 'library/types/entity';
 import type {EntityShapeMap} from 'library/types/entitySketch';
 import type {LibraryInput} from 'library/types/input';
@@ -8,25 +9,29 @@ const createB1Draw = (
     ctx: CanvasRenderingContext2D,
     sketch: EntityShapeMap['b1'],
     {fill, stroke, textFill}: Colors,
-) => {
-    ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
-    ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
-    ctx.lineWidth = sketch.lineWidth;
+): EngineDrawConfig => ({
+    id: 'b1Draw',
+    name: 'b1 Draw (hardcoded)',
+    fn: () => {
+        ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
+        ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
+        ctx.lineWidth = sketch.lineWidth;
 
-    ctx.beginPath();
-    ctx.rect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h);
-    ctx.fill();
-    ctx.stroke();
+        ctx.beginPath();
+        ctx.rect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h);
+        ctx.fill();
+        ctx.stroke();
 
-    ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
-    ctx.font = `${sketch.fontSize}px ${sketch.font}`;
+        ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
+        ctx.font = `${sketch.fontSize}px ${sketch.font}`;
 
-    ctx.textAlign = sketch.textAlign;
-    ctx.textBaseline = sketch.textBaseLine;
+        ctx.textAlign = sketch.textAlign;
+        ctx.textBaseline = sketch.textBaseLine;
 
-    ctx.beginPath();
-    ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5);
-};
+        ctx.beginPath();
+        ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5);
+    },
+});
 
 // Hardcoded to reflect upon b1 entity only
 // export const createB1Renders = <K extends keyof EntityShapeMap>(
@@ -39,6 +44,7 @@ export const createB1Renders = (
 ) => {
     const {id, name} = props;
 
+    // Required<EngineDraw> | undefined
     const draw = createB1Draw(context, sketch, sketch.colors);
 
     const hovers = {

@@ -24,7 +24,7 @@ export const setVisuals = <K extends keyof EntityShapeMap>(
     const {animation, hover, start, end} = vProps;
 
     // TODO::Make this dynamic for any sketch possibility
-    const renders = createB1Renders(gProps, sketch, vProps, input, context);
+    const renders = createB1Renders(gProps, sketch as EntityShapeMap['b1'] & {colors: Colors}, vProps, input, context);
 
     const visuals = {
         animation: animation ? renders.animations[animation]() : undefined,
@@ -120,8 +120,9 @@ const createSetEngine = (engine: Engine, renders: Partial<Visuals>): SetEngine =
     };
 };
 
+// This get mixed up with entityListeners (callbacks are entitylisteners eventually), try seperate and combine the 2
 const createSetCallback = (
-    vProps: Partial<VisualProperties>,
+    // vProps: Partial<VisualProperties>,
     setEngine: SetEngine,
     {
         entityListenerEvents: {startTransition: startEvent, endTransition: endEvent},
