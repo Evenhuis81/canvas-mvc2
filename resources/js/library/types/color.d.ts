@@ -6,7 +6,7 @@ type RGB = {
 
 type RGBA = RGB & {a: number};
 
-// EntityColors (temp)
+// | EntityColors
 export type Colors = {
     fill: RGBA;
     stroke: RGBA;

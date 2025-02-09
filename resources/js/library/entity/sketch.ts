@@ -1,4 +1,6 @@
-import {EntityShapeMap} from 'library/types/entitySketch';
+import {getSketchRGBAColorsFromHexString} from 'library/colors';
+import {Colors} from 'library/types/color';
+import {EntityShapeMap, EntitySketchReturn} from 'library/types/entitySketch';
 
 // const createDefaultSketch = <K extends keyof EntityShapeMap>(type: K) => ({...defaultSketch[type]});
 
@@ -7,11 +9,21 @@ import {EntityShapeMap} from 'library/types/entitySketch';
 export const createSketch = <K extends keyof EntityShapeMap>(
     type: K,
     shape?: Partial<EntityShapeMap[K]>,
-): EntityShapeMap[K] => ({
-    ...defaultSketch[type],
-    ...shape,
-    type,
-});
+): EntityShapeMap[K] & {colors: Colors} => {
+    const colors = getSketchRGBAColorsFromHexString({
+        fill: shape?.fill ?? '#ff0000',
+        stroke: shape?.stroke ?? '#00ff00',
+    });
+
+    const sketch = {
+        ...defaultSketch[type],
+        ...shape,
+        type,
+        colors,
+    };
+
+    return sketch;
+};
 
 const entityB1: EntityShapeMap['b1'] = {
     type: 'rect',

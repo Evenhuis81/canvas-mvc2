@@ -12,11 +12,10 @@ import type {
 } from 'library/types/entity';
 import {EntityShapeMap} from 'library/types/entitySketch';
 
-export const createSetVisuals = <K extends keyof EntityShapeMap>(
+export const setVisuals = <K extends keyof EntityShapeMap>(
     gProps: GeneralProperties,
     vProps: Partial<VisualProperties>,
     sketch: EntityShapeMap[K],
-    colors: Partial<Colors>,
     input: LibraryInput,
     engine: Engine,
     context: CanvasRenderingContext2D,
@@ -25,7 +24,7 @@ export const createSetVisuals = <K extends keyof EntityShapeMap>(
     const {animation, hover, start, end} = vProps;
 
     // TODO::Make this dynamic for any sketch possibility
-    const renders = createB1Renders(gProps, sketch, colors, vProps, input, context);
+    const renders = createB1Renders(gProps, sketch, vProps, input, context);
 
     const visuals = {
         animation: animation ? renders.animations[animation]() : undefined,

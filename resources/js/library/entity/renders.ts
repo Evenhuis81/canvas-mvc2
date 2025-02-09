@@ -1,6 +1,6 @@
 import type {Colors} from 'library/types/color';
 import type {GeneralProperties, VisualProperties} from 'library/types/entity';
-import {EntityShape, EntityShapeMap} from 'library/types/entitySketch';
+import type {EntityShapeMap} from 'library/types/entitySketch';
 import type {LibraryInput} from 'library/types/input';
 
 // Creating visual methods based on 'b1 entity', make dynamic
@@ -32,15 +32,14 @@ const createB1Draw = (
 // export const createB1Renders = <K extends keyof EntityShapeMap>(
 export const createB1Renders = (
     props: GeneralProperties,
-    sketch: EntityShapeMap['b1'],
-    colors: Colors,
+    sketch: EntityShapeMap['b1'] & {colors: Colors},
     {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
     input: LibraryInput,
     context: CanvasRenderingContext2D,
 ) => {
     const {id, name} = props;
 
-    const draw = createB1Draw(context, sketch, colors);
+    const draw = createB1Draw(context, sketch, sketch.colors);
 
     const hovers = {
         bold: () => {
@@ -58,7 +57,7 @@ export const createB1Renders = (
 
     const transitions = {
         fadein1: () => {
-            const {update: fn, prepare} = createTransitionFadein1(colors, 0.005 * startSpeed, () => {});
+            const {update: fn, prepare} = createTransitionFadein1(sketch.colors, 0.005 * startSpeed, () => {});
 
             return {
                 update: {
@@ -70,10 +69,9 @@ export const createB1Renders = (
             };
         },
         fadeout1: () => {
-            // TODO::Fill with end callback needs, implement outside of render module
             const callback = () => {};
 
-            const {update: fn, prepare} = createTransitionFadeout1(colors, 0.005 * endSpeed, callback);
+            const {update: fn, prepare} = createTransitionFadeout1(sketch.colors, 0.005 * endSpeed, callback);
 
             return {
                 update: {
@@ -92,7 +90,7 @@ export const createB1Renders = (
             },
         }),
         explode: () => {
-            const {update: fn, prepare} = createTransitionExplode(sketch, colors, () => {});
+            const {update: fn, prepare} = createTransitionExplode(sketch, sketch.colors, () => {});
 
             return {
                 update: {
@@ -216,7 +214,11 @@ const createTransitionSlideinleft = () => () => {
 
 let phase = 1;
 
-const createTransitionExplode = (sketch: EntityShape, {fill, stroke, textFill}: Colors, callback: () => void) => {
+const createTransitionExplode = (
+    sketch: EntityShapeMap['b1'],
+    {fill, stroke, textFill}: Colors,
+    callback: () => void,
+) => {
     const update = () => {
         if (phase === 1) sketch.lineWidth += 0.1;
         else if (phase === 2) {
@@ -250,7 +252,7 @@ const createTransitionExplode = (sketch: EntityShape, {fill, stroke, textFill}: 
 const createTransitionUpdate =
     (
         {mouse}: LibraryInput, // only mouse, no hover on touch
-        sketch: EntityShape,
+        sketch: EntityShapeMap['b1'],
         transition: {
             forward: () => void;
             reverse: () => void;
@@ -266,7 +268,7 @@ const createTransitionUpdate =
         transition.reverse();
     };
 
-const createAnimationNoise = (sketch: EntityShape) => () => {
+const createAnimationNoise = (sketch: EntityShapeMap['b1']) => () => {
     sketch.x += upd.adj.x;
     sketch.y += upd.adj.y;
 
@@ -278,30 +280,6 @@ const createAnimationNoise = (sketch: EntityShape) => () => {
 
         upd.count = 0;
     }
-};
-
-const createCircleDraw = (
-    sketch: EntityShapeMap['entityCircle'],
-    ctx: CanvasRenderingContext2D,
-    {fill, stroke, textFill}: Colors,
-) => {
-    ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
-    ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
-    ctx.lineWidth = sketch.lineWidth;
-
-    ctx.beginPath();
-    ctx.arc(sketch.x, sketch.y, sketch.radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
-    // ctx.font = `${sketch.fontSize}px ${sketch.font}`;
-
-    // ctx.textAlign = sketch.textAlign;
-    // ctx.textBaseline = sketch.textBaseLine;
-
-    ctx.beginPath();
-    // ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5);
 };
 
 // ctx.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.radii);
@@ -328,3 +306,27 @@ const upd = {
     max: 60,
     angle: 0,
 };
+
+// const createCircleDraw = (
+//     sketch: EntityShapeMap['entityCircle'],
+//     ctx: CanvasRenderingContext2D,
+//     {fill, stroke, textFill}: Colors,
+// ) => {
+//     ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
+//     ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
+//     ctx.lineWidth = sketch.lineWidth;
+
+//     ctx.beginPath();
+//     ctx.arc(sketch.x, sketch.y, sketch.radius, 0, Math.PI * 2);
+//     ctx.fill();
+//     ctx.stroke();
+
+//     ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
+//     // ctx.font = `${sketch.fontSize}px ${sketch.font}`;
+
+//     // ctx.textAlign = sketch.textAlign;
+//     // ctx.textBaseline = sketch.textBaseLine;
+
+//     ctx.beginPath();
+//     // ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5);
+// };

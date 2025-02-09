@@ -1,11 +1,10 @@
 import {createEventHandler} from './handler';
 import {createUserMethods, defaultProperties} from './properties';
-import {createSetVisuals} from './animate';
+import {setVisuals} from './animate';
 import {getProperties, uid} from 'library/helpers';
-import {getSketchRGBAColorsFromHexString} from 'library/colors';
 import {createSketch} from './sketch';
 import type {Engine} from 'library/types/engine';
-import type {Entity, EntityConfig, EntityGeneric, GeneralProperties} from 'library/types/entity';
+import type {EntityConfig, EntityGeneric, GeneralProperties} from 'library/types/entity';
 import type {LibraryInput} from 'library/types/input';
 import type {EntityShapeMap} from 'library/types/entitySketch';
 
@@ -15,17 +14,13 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
         const {generalProperties, visualProperties, listeners, shape} = extractOptions(options);
 
         const sketch = createSketch(type, shape);
-        const colors = getSketchRGBAColorsFromHexString(sketch);
 
         const eventHandler = createEventHandler(input, sketch, listeners);
 
-        // @type Rect, Circle, Line does not have fill color, make overload function or rehaul colors entirely
-
-        const {setVisual} = createSetVisuals(
+        const {setVisual} = setVisuals(
             generalProperties,
             visualProperties,
             sketch,
-            colors,
             input,
             engine,
             context,
@@ -40,14 +35,14 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
             sketch,
         };
 
-        initialize(generalProperties, entity);
+        initialize(generalProperties, entity.show);
 
         console.log(sketch);
 
         return entity;
     };
 
-const initialize = (gProps: GeneralProperties, methods: Entity) => {
+const initialize = (gProps: GeneralProperties, show: () => void) => {
     if (gProps.show) {
         if (gProps.showDelay) {
             setTimeout(() => {
@@ -55,13 +50,13 @@ const initialize = (gProps: GeneralProperties, methods: Entity) => {
 
                 gProps.showDelay = 0;
 
-                methods.show();
+                show();
             }, gProps.showDelay);
 
             return;
         }
 
-        methods.show();
+        show();
     }
 };
 

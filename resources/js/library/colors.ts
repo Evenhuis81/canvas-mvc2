@@ -18,8 +18,7 @@ export const hexToRgb = (hex: string) => {
     };
 };
 
-// TODO:: Colors shouldn't be a required part of the entity shape, make this optional
-export const getSketchRGBAColorsFromHexString = ({
+export const getSketchRGBAColorsFromHexStringPartial = ({
     fill,
     stroke,
     textFill,
@@ -31,4 +30,24 @@ export const getSketchRGBAColorsFromHexString = ({
     fill: fill ? {a: 1, ...hexToRgb(fill)} : undefined,
     stroke: stroke ? {a: 1, ...hexToRgb(stroke)} : undefined,
     textFill: textFill ? {a: 1, ...hexToRgb(textFill)} : undefined,
+});
+
+export const getSketchRGBAColorsFromHexString = ({
+    fill,
+    stroke,
+    textFill,
+}: {
+    fill?: string;
+    stroke?: string;
+    textFill?: string;
+}) => ({
+    fill: fill ? {a: 1, ...hexToRgb(fill)} : defaultColors().fill,
+    stroke: stroke ? {a: 1, ...hexToRgb(stroke)} : defaultColors().stroke,
+    textFill: textFill ? {a: 1, ...hexToRgb(textFill)} : defaultColors().textFill,
+});
+
+const defaultColors = () => ({
+    fill: {a: 1, r: 50, g: 0, b: 0},
+    stroke: {a: 1, r: 0, g: 50, b: 0},
+    textFill: {a: 1, r: 255, g: 155, b: 255},
 });

@@ -7,7 +7,9 @@ const elementAmount = 1;
 export const mainMenu = (library: LibraryResources) => {
     const {createEntity} = library;
 
-    const ee = createEntity('b1');
+    const {sketch} = createEntity('b1');
+
+    console.log(sketch);
 
     const rowsOrColumns = Math.sqrt(elementAmount);
 
