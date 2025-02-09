@@ -19,12 +19,19 @@ export const setVisuals = <K extends keyof EntityShapeMap>(
     input: LibraryInput,
     engine: Engine,
     context: CanvasRenderingContext2D,
-    // eventHandler: EventHandler,
+    eventHandler: EventHandler,
 ) => {
     const {animation, hover, start, end} = vProps;
 
     // TODO::Make this dynamic for any sketch possibility
-    const renders = createB1Renders(gProps, sketch as EntityShapeMap['b1'] & {colors: Colors}, vProps, input, context);
+    const renders = createB1Renders(
+        gProps,
+        sketch as EntityShapeMap['b1'] & {colors: Colors},
+        vProps,
+        input,
+        context,
+        eventHandler,
+    );
 
     const visuals = {
         animation: animation ? renders.animations[animation]() : undefined,
@@ -42,6 +49,9 @@ export const setVisuals = <K extends keyof EntityShapeMap>(
 
     // transforms empty callbacks to functional callbacks
     // set(vProps, setEngine, eventHandler);
+    const setCallback = createSetCallback(setEngine, eventHandler);
+
+    eventHandler.callbacks = {...setCallback};
 
     // Separation of concern?
     return {setVisual, setEngine};

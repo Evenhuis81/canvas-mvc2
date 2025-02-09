@@ -1,12 +1,9 @@
-import {EventHandler, GeneralProperties, VisualProperties} from 'library/types/entity';
+import {EventHandler, GeneralProperties} from 'library/types/entity';
 
-export const createUserMethods = (
-    vProps: Partial<VisualProperties>,
-    gProps: GeneralProperties,
-    eventHandler: EventHandler,
-) => {
+export const createUserMethods = (gProps: GeneralProperties, eventHandler: EventHandler) => {
     const show = () => {
         // Should this handle all different scenarios? (showDelay + show + callBack + Input- & EntityListener)
+        // Needs refactor for the different kind of options, find way to make this less complex
 
         // TODO::Add to Library Error
         if (gProps.show) return console.log('show is already active');
@@ -16,31 +13,31 @@ export const createUserMethods = (
         // TODO::Make this an option
         eventHandler.activateInputListeners();
 
-        // callbacks.start(quickShow);
+        eventHandler.callbacks.start();
     };
 
     const hide = () => {
         // TODO::Add to Library Error/Log
         if (!gProps.show) return console.log('hide trigger while gProps.show = false');
 
-        // const hideMe = () => {
-        // gProps.show = false;
+        // Hide delay requires a certain complexity, impelemnt in a later stage, read comment for show
 
-        // callbacks.end(quickHide);
-        // };
-
-        if (gProps.hideDelay) {
-            setTimeout(() => {
-                // eventHandler.deactivateInputListeners();
-                // hideMe();
-            }, gProps.hideDelay);
-
-            // return;
-        }
-
+        // if (gProps.hideDelay) {
+        //     setTimeout(() => {
         // eventHandler.deactivateInputListeners();
 
         // hideMe();
+        // }, gProps.hideDelay);
+
+        // return;
+        // }
+
+        // TODO::Make this an option
+        eventHandler.deactivateInputListeners();
+
+        gProps.show = false;
+
+        eventHandler.callbacks.end();
     };
 
     const setHideTime = (time: number) => (gProps.hideDelay = time);

@@ -24,14 +24,14 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
             input,
             engine,
             context,
-            // eventHandler,
+            eventHandler,
         ); // Also creates setEngine
 
         const entity: EntityGeneric<K> = {
             addListener: eventHandler.addListener,
             removeListener: eventHandler.removeListener,
             setVisual,
-            ...createUserMethods(visualProperties, generalProperties, eventHandler),
+            ...createUserMethods(generalProperties, eventHandler),
             sketch,
         };
 
@@ -41,8 +41,6 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
     };
 
 const initialize = (gProps: GeneralProperties, show: Entity['show']) => {
-    // console.log(gProps.show);
-
     if (!gProps.show && !gProps.showDelay) return show();
 
     if (gProps.showDelay) {
@@ -62,8 +60,6 @@ const initialize = (gProps: GeneralProperties, show: Entity['show']) => {
 
 // TODO::Set defaults for options if no options is provided (empty entity default)
 const extractOptions = <K extends keyof EntityShapeMap>(options: EntityConfig<K> = {}) => {
-    console.log(options);
-
     const {id, name, disabled, show, showDelay, clicked, hideDelay, ...rest} = {
         id: options.id ?? `entity-${uid()}`,
         ...getProperties(defaultProperties, options),

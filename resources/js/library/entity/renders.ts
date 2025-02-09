@@ -1,6 +1,6 @@
 import type {Colors} from 'library/types/color';
 import {EngineDrawConfig} from 'library/types/engine';
-import type {GeneralProperties, VisualProperties} from 'library/types/entity';
+import type {Callbacks, EventHandler, GeneralProperties, VisualProperties} from 'library/types/entity';
 import type {EntityShapeMap} from 'library/types/entitySketch';
 import type {LibraryInput} from 'library/types/input';
 
@@ -18,7 +18,7 @@ const createB1Draw = (
         ctx.lineWidth = sketch.lineWidth;
 
         ctx.beginPath();
-        ctx.rect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h);
+        ctx.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.radii);
         ctx.fill();
         ctx.stroke();
 
@@ -29,18 +29,18 @@ const createB1Draw = (
         ctx.textBaseline = sketch.textBaseLine;
 
         ctx.beginPath();
-        ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5);
+        ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5); // adjustment needs be baked in
     },
 });
 
 // Hardcoded to reflect upon b1 entity only
-// export const createB1Renders = <K extends keyof EntityShapeMap>(
 export const createB1Renders = (
     props: GeneralProperties,
     sketch: EntityShapeMap['b1'] & {colors: Colors},
     {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
     input: LibraryInput,
     context: CanvasRenderingContext2D,
+    eventHandler: EventHandler,
 ) => {
     const {id, name} = props;
 
@@ -62,7 +62,11 @@ export const createB1Renders = (
 
     const transitions = {
         fadein1: () => {
-            const {update: fn, prepare} = createTransitionFadein1(sketch.colors, 0.005 * startSpeed, () => {});
+            const {update: fn, prepare} = createTransitionFadein1(
+                sketch.colors,
+                0.005 * startSpeed,
+                eventHandler.callbacks,
+            );
 
             return {
                 update: {
@@ -74,9 +78,11 @@ export const createB1Renders = (
             };
         },
         fadeout1: () => {
-            const callback = () => {};
-
-            const {update: fn, prepare} = createTransitionFadeout1(sketch.colors, 0.005 * endSpeed, callback);
+            const {update: fn, prepare} = createTransitionFadeout1(
+                sketch.colors,
+                0.005 * endSpeed,
+                eventHandler.callbacks,
+            );
 
             return {
                 update: {
@@ -95,7 +101,7 @@ export const createB1Renders = (
             },
         }),
         explode: () => {
-            const {update: fn, prepare} = createTransitionExplode(sketch, sketch.colors, () => {});
+            const {update: fn, prepare} = createTransitionExplode(sketch, sketch.colors, eventHandler.callbacks);
 
             return {
                 update: {
@@ -161,7 +167,7 @@ const createHoverBold = (sketch: EntityShapeMap['b1']) => {
     return {forward, reverse};
 };
 
-const createTransitionFadein1 = ({fill, stroke, textFill}: Colors, alphaVelocity: number, endCallback: () => void) => {
+const createTransitionFadein1 = ({fill, stroke, textFill}: Colors, alphaVelocity: number, callbacks: Callbacks) => {
     const update = () => {
         fill.a += alphaVelocity;
         stroke.a += alphaVelocity;
@@ -181,13 +187,13 @@ const createTransitionFadein1 = ({fill, stroke, textFill}: Colors, alphaVelocity
         stroke.a = 1;
         textFill.a = 1;
 
-        endCallback();
+        callbacks.endOfStart();
     };
 
     return {update, prepare, end};
 };
 
-const createTransitionFadeout1 = ({fill, stroke, textFill}: Colors, alphaVelocity: number, callback: () => void) => {
+const createTransitionFadeout1 = ({fill, stroke, textFill}: Colors, alphaVelocity: number, callbacks: Callbacks) => {
     const update = () => {
         fill.a -= alphaVelocity;
         stroke.a -= alphaVelocity;
@@ -207,7 +213,7 @@ const createTransitionFadeout1 = ({fill, stroke, textFill}: Colors, alphaVelocit
         stroke.a = 0;
         textFill.a = 0;
 
-        callback();
+        callbacks.endOfEnd();
     };
 
     return {update, prepare, end};
@@ -222,7 +228,7 @@ let phase = 1;
 const createTransitionExplode = (
     sketch: EntityShapeMap['b1'],
     {fill, stroke, textFill}: Colors,
-    callback: () => void,
+    callbacks: Callbacks,
 ) => {
     const update = () => {
         if (phase === 1) sketch.lineWidth += 0.1;
@@ -236,7 +242,7 @@ const createTransitionExplode = (
                 stroke.a -= 0;
                 textFill.a -= 0;
 
-                end();
+                callbacks.endOfEnd();
             }
         }
 
@@ -247,7 +253,8 @@ const createTransitionExplode = (
         }
     };
 
-    const end = () => callback();
+    // Figure out what this one does
+    const end = () => {};
 
     const prepare = () => {};
 
@@ -287,8 +294,6 @@ const createAnimationNoise = (sketch: EntityShapeMap['b1']) => () => {
     }
 };
 
-// ctx.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.radii);
-
 // max property is default 60, need for deltaTime, adj is change in property
 // make this a createProperties that picks the needed properties for each update respectively
 const upd = {
@@ -311,27 +316,3 @@ const upd = {
     max: 60,
     angle: 0,
 };
-
-// const createCircleDraw = (
-//     sketch: EntityShapeMap['entityCircle'],
-//     ctx: CanvasRenderingContext2D,
-//     {fill, stroke, textFill}: Colors,
-// ) => {
-//     ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
-//     ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
-//     ctx.lineWidth = sketch.lineWidth;
-
-//     ctx.beginPath();
-//     ctx.arc(sketch.x, sketch.y, sketch.radius, 0, Math.PI * 2);
-//     ctx.fill();
-//     ctx.stroke();
-
-//     ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
-//     // ctx.font = `${sketch.fontSize}px ${sketch.font}`;
-
-//     // ctx.textAlign = sketch.textAlign;
-//     // ctx.textBaseline = sketch.textBaseLine;
-
-//     ctx.beginPath();
-//     // ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5);
-// };

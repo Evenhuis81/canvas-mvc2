@@ -35,6 +35,14 @@ export const createEventHandler = <K extends keyof EntityShapeMap>(
         addEntityInputListener,
     );
 
+    // This is probably not the best spot for callbacks, but for now it's the easiest till more structure is revealed
+    const callbacks = {
+        start: () => {},
+        endOfStart: () => {},
+        end: () => {},
+        endOfEnd: () => {},
+    };
+
     const handler: EventHandler = {
         addListener,
         removeListener,
@@ -42,6 +50,7 @@ export const createEventHandler = <K extends keyof EntityShapeMap>(
         entityListeners,
         activateInputListeners: activate,
         deactivateInputListeners: deactivate,
+        callbacks,
     };
 
     if (!listeners) return handler;

@@ -1,6 +1,6 @@
 import {EngineDraw, EngineUpdate} from './engine';
 import {InputListenerEventMap} from './input';
-import {EntityShapeMap, EntitySketchReturn} from './entitySketch';
+import {EntityShapeMap} from './entitySketch';
 import {Colors} from './color';
 
 export type GeneralProperties = {
@@ -92,7 +92,15 @@ export interface EventHandler {
     deactivateInputListeners: () => void;
     entityListenerEvents: EntityListenerEvents;
     entityListeners: Partial<EntityListeners>;
+    callbacks: Callbacks;
 }
+
+export type Callbacks = {
+    start: () => void;
+    endOfStart: () => void;
+    end: () => void;
+    endOfEnd: () => void;
+};
 
 export type Entity = EntityGeneric<keyof EntityShapeMap>;
 

@@ -2,15 +2,9 @@
 import type {EntityGeneric, VisualProperties} from 'library/types/entity';
 import type {LibraryResources} from 'library/types';
 
-const elementAmount = 1;
+const elementAmount = 25;
 
 export const mainMenu = (library: LibraryResources) => {
-    // const {createEntity} = library;
-
-    // const {sketch} = createEntity('b1');
-
-    // console.log(sketch);
-
     const rowsOrColumns = Math.sqrt(elementAmount);
 
     const paddingY = innerHeight * 0.1;
@@ -41,7 +35,7 @@ export const mainMenu = (library: LibraryResources) => {
             library.createEntity('b1', {
                 ...baseVisualProperties,
                 show: false, // Test if this is working properly
-                showDelay: 1000,
+                showDelay: i * timeoutDifference,
                 sketch: {
                     // type: 'optional',
                     x: startX + column * squareDistance,
@@ -49,11 +43,11 @@ export const mainMenu = (library: LibraryResources) => {
                     w: squareLength,
                     h: squareLength,
                     radii: 25,
-                    fill: '#0a0',
+                    fill: '#000',
                     stroke: '#00f',
                     lineWidth: 1,
-                    fontSize: 5,
-                    textFill: '#f0f',
+                    fontSize: 24,
+                    textFill: '#fff',
                     text: (i + 1).toString(),
                     // font: '',
                     // textAlign: 'center',
@@ -83,10 +77,9 @@ export const mainMenu = (library: LibraryResources) => {
             }),
         );
 
-        const element = elements[i];
+        // const element = elements[i];
 
-        // Add this to showDelay on creation entity
-        element.setHideTime((elementAmount - 1) * timeoutDifference - i * timeoutDifference);
+        // element.setHideTime((elementAmount - 1) * timeoutDifference - i * timeoutDifference);
 
         // setTimeout(() => {
         //     element.show();
