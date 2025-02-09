@@ -5,11 +5,11 @@ import type {LibraryResources} from 'library/types';
 const elementAmount = 1;
 
 export const mainMenu = (library: LibraryResources) => {
-    const {createEntity} = library;
+    // const {createEntity} = library;
 
-    const {sketch} = createEntity('b1');
+    // const {sketch} = createEntity('b1');
 
-    console.log(sketch);
+    // console.log(sketch);
 
     const rowsOrColumns = Math.sqrt(elementAmount);
 
@@ -40,7 +40,8 @@ export const mainMenu = (library: LibraryResources) => {
         elements.push(
             library.createEntity('b1', {
                 ...baseVisualProperties,
-                show: false,
+                show: false, // Test if this is working properly
+                showDelay: 1000,
                 sketch: {
                     // type: 'optional',
                     x: startX + column * squareDistance,
@@ -60,7 +61,6 @@ export const mainMenu = (library: LibraryResources) => {
                     // radius: 8,
                 },
                 listeners: {
-                    // mouseup: undefined,
                     mouseup: evt => {
                         console.log(`Mouse UP: ${i}`, evt);
                     },
@@ -85,11 +85,12 @@ export const mainMenu = (library: LibraryResources) => {
 
         const element = elements[i];
 
+        // Add this to showDelay on creation entity
         element.setHideTime((elementAmount - 1) * timeoutDifference - i * timeoutDifference);
 
-        setTimeout(() => {
-            element.show();
-        }, timeoutDifference * i);
+        // setTimeout(() => {
+        //     element.show();
+        // }, timeoutDifference * i);
 
         column++;
         if (column > rowsOrColumns - 1) {

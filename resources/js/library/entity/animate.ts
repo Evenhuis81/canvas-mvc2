@@ -120,9 +120,8 @@ const createSetEngine = (engine: Engine, renders: Partial<Visuals>): SetEngine =
     };
 };
 
-// This get mixed up with entityListeners (callbacks are entitylisteners eventually), try seperate and combine the 2
+// This get mixed up with entityListeners (callbacks are essentially entitylisteners), try seperate and combine the 2
 const createSetCallback = (
-    // vProps: Partial<VisualProperties>,
     setEngine: SetEngine,
     {
         entityListenerEvents: {startTransition: startEvent, endTransition: endEvent},

@@ -2,7 +2,7 @@ import {Circle, Rect} from './shapes';
 
 type InsideRect = (rect: Rect) => boolean;
 type InsideCircle = (circle: Circle) => boolean;
-type Inside = (shape: Rect | Circle) => boolean | undefined;
+type Inside = (shape: InputShape) => boolean | undefined;
 
 export type LibraryInput = {
     mouse: {

@@ -4,7 +4,7 @@ import {setVisuals} from './animate';
 import {getProperties, uid} from 'library/helpers';
 import {createSketch} from './sketch';
 import type {Engine} from 'library/types/engine';
-import type {EntityConfig, EntityGeneric, GeneralProperties} from 'library/types/entity';
+import type {Entity, EntityConfig, EntityGeneric, GeneralProperties} from 'library/types/entity';
 import type {LibraryInput} from 'library/types/input';
 import type {EntityShapeMap} from 'library/types/entitySketch';
 
@@ -37,31 +37,33 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
 
         initialize(generalProperties, entity.show);
 
-        console.log(sketch);
-
         return entity;
     };
 
-const initialize = (gProps: GeneralProperties, show: () => void) => {
-    if (gProps.show) {
-        if (gProps.showDelay) {
-            setTimeout(() => {
-                gProps.show = false;
+const initialize = (gProps: GeneralProperties, show: Entity['show']) => {
+    // console.log(gProps.show);
 
-                gProps.showDelay = 0;
+    if (!gProps.show && !gProps.showDelay) return show();
 
-                show();
-            }, gProps.showDelay);
+    if (gProps.showDelay) {
+        setTimeout(() => {
+            gProps.show = false;
 
-            return;
-        }
+            gProps.showDelay = 0;
 
-        show();
+            show();
+        }, gProps.showDelay);
+
+        return;
     }
+
+    show();
 };
 
 // TODO::Set defaults for options if no options is provided (empty entity default)
 const extractOptions = <K extends keyof EntityShapeMap>(options: EntityConfig<K> = {}) => {
+    console.log(options);
+
     const {id, name, disabled, show, showDelay, clicked, hideDelay, ...rest} = {
         id: options.id ?? `entity-${uid()}`,
         ...getProperties(defaultProperties, options),

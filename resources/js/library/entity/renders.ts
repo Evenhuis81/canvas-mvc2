@@ -44,7 +44,6 @@ export const createB1Renders = (
 ) => {
     const {id, name} = props;
 
-    // Required<EngineDraw> | undefined
     const draw = createB1Draw(context, sketch, sketch.colors);
 
     const hovers = {

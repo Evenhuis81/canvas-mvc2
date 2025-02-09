@@ -3,23 +3,25 @@ import {EventHandler, GeneralProperties, VisualProperties} from 'library/types/e
 export const createUserMethods = (
     vProps: Partial<VisualProperties>,
     gProps: GeneralProperties,
-    callbacks: any, // Callbacks
     eventHandler: EventHandler,
 ) => {
     const show = () => {
+        // Should this handle all different scenarios? (showDelay + show + callBack + Input- & EntityListener)
+
         // TODO::Add to Library Error
         if (gProps.show) return console.log('show is already active');
 
         gProps.show = true;
 
-        // eventHandler.activateInputListeners();
+        // TODO::Make this an option
+        eventHandler.activateInputListeners();
 
         // callbacks.start(quickShow);
     };
 
     const hide = () => {
         // TODO::Add to Library Error/Log
-        if (!gProps.show) console.log('hide trigger while gProps.show = false');
+        if (!gProps.show) return console.log('hide trigger while gProps.show = false');
 
         // const hideMe = () => {
         // gProps.show = false;
