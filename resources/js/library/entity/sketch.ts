@@ -1,28 +1,47 @@
-import {getSketchRGBAColorsFromHexString} from 'library/colors';
-import {Colors} from 'library/types/color';
-import {EntityShapeMap, EntitySketchReturn} from 'library/types/entitySketch';
+import {hexToRgb} from 'library/colors';
+import type {EntityColors, EntityShapeMap} from 'library/types/entitySketch';
 
-// const createDefaultSketch = <K extends keyof EntityShapeMap>(type: K) => ({...defaultSketch[type]});
+const storedColors = {
+    fill: {a: 1, r: 50, g: 0, b: 0},
+    stroke: {a: 1, r: 0, g: 50, b: 0},
+    textFill: {a: 1, r: 255, g: 155, b: 255},
+};
 
-// type ShapeInc<K extends keyof EntityShapeMap> = WithRequired<Partial<EntityShapeMap[K]>, 'type'>;
+const colorsFromType = {
+    entityRect: {fill: storedColors.fill, stroke: storedColors.stroke},
+    entityCircle: {fill: storedColors.fill, stroke: storedColors.stroke},
+    b1: {fill: storedColors.fill, stroke: storedColors.stroke, textFill: storedColors.textFill},
+};
 
-export const createSketch = <K extends keyof EntityShapeMap>(
+type SketchColor = 'fill' | 'stroke' | 'textFill';
+
+type IncSketchC = Partial<SketchColorMap<SketchColor>>;
+
+type SketchColorMap<T extends SketchColor> = {
+    [K in T]: string;
+};
+
+export const getSketchRGBAColorsFromHexString = <K extends keyof EntityShapeMap, T extends SketchColor>(
     type: K,
-    shape?: Partial<EntityShapeMap[K]>,
-): EntityShapeMap[K] & {colors: Colors} => {
-    const colors = getSketchRGBAColorsFromHexString({
-        fill: shape?.fill ?? '#ff0000',
-        stroke: shape?.stroke ?? '#00ff00',
-    });
+    colors: SketchColorMap<T>,
+): EntityColors[K] => {
+    for (const key in colors) storedColors[key] = {a: 1, ...hexToRgb(colors[key])};
+
+    return colorsFromType[type];
+};
+
+export const createSketch = <K extends keyof EntityShapeMap>(type: K, shape: EntityShapeMap[K]): void => {
+    // ): EntityShapeMap[K] & {colors: EntityColors[K]} => {
+    // const colors = getSketchRGBAColorsFromHexString(type, shape);
 
     const sketch = {
         ...defaultSketch[type],
         ...shape,
         type,
-        colors,
+        // colors,
     };
 
-    return sketch;
+    // return sketch;
 };
 
 const entityB1: EntityShapeMap['b1'] = {

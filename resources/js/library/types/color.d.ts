@@ -1,10 +1,10 @@
-type RGB = {
+export type RGB = {
     r: number;
     g: number;
     b: number;
 };
 
-type RGBA = RGB & {a: number};
+export type RGBA = RGB & {a: number};
 
 // | EntityColors
 export type Colors = {

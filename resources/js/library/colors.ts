@@ -1,4 +1,5 @@
 import {Colors} from './types/color';
+import {EntityColors, EntityShapeMap} from './types/entitySketch';
 
 // https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
 export const hexToRgb = (hex: string) => {
@@ -18,36 +19,16 @@ export const hexToRgb = (hex: string) => {
     };
 };
 
-export const getSketchRGBAColorsFromHexStringPartial = ({
-    fill,
-    stroke,
-    textFill,
-}: {
-    fill?: string;
-    stroke?: string;
-    textFill?: string;
-}) => ({
-    fill: fill ? {a: 1, ...hexToRgb(fill)} : undefined,
-    stroke: stroke ? {a: 1, ...hexToRgb(stroke)} : undefined,
-    textFill: textFill ? {a: 1, ...hexToRgb(textFill)} : undefined,
-});
-
-export const getSketchRGBAColorsFromHexString = ({
-    fill,
-    stroke,
-    textFill,
-}: {
-    fill?: string;
-    stroke?: string;
-    textFill?: string;
-}) => ({
-    fill: fill ? {a: 1, ...hexToRgb(fill)} : defaultColors().fill,
-    stroke: stroke ? {a: 1, ...hexToRgb(stroke)} : defaultColors().stroke,
-    textFill: textFill ? {a: 1, ...hexToRgb(textFill)} : defaultColors().textFill,
-});
-
-const defaultColors = () => ({
-    fill: {a: 1, r: 50, g: 0, b: 0},
-    stroke: {a: 1, r: 0, g: 50, b: 0},
-    textFill: {a: 1, r: 255, g: 155, b: 255},
-});
+// export const getSketchRGBAColorsFromHexStringPartial = ({
+//     fill,
+//     stroke,
+//     textFill,
+// }: {
+//     fill?: string;
+//     stroke?: string;
+//     textFill?: string;
+// }) => ({
+//     fill: fill ? {a: 1, ...hexToRgb(fill)} : undefined,
+//     stroke: stroke ? {a: 1, ...hexToRgb(stroke)} : undefined,
+//     textFill: textFill ? {a: 1, ...hexToRgb(textFill)} : undefined,
+// });

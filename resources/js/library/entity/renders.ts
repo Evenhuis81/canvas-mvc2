@@ -294,8 +294,6 @@ const createAnimationNoise = (sketch: EntityShapeMap['b1']) => () => {
     }
 };
 
-// max property is default 60, need for deltaTime, adj is change in property
-// make this a createProperties that picks the needed properties for each update respectively
 const upd = {
     origin: {
         lw: 0,
