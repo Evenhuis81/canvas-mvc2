@@ -17,6 +17,12 @@ export type EntityColors = {
     b1: Colors;
 };
 
+export type EntityShapeMapReturn = {
+    entityRect: EntityRect & {colors: EntityColors['entityRect']};
+    entityCircle: EntityCircle & {colors: EntityColors['entityCircle']};
+    b1: EntityB1 & {colors: EntityColors['b1']};
+};
+
 export type EntityRect = Rect & Fill & Stroke & {type: 'rect'};
 
 export type EntityCircle = Circle & Fill & Stroke & {type: 'circle'};

@@ -1,7 +1,8 @@
 import {hexToRgb} from 'library/colors';
-import type {EntityColors, EntityShapeMap} from 'library/types/entitySketch';
+import {Colors} from 'library/types/color';
+import type {EntityColors, EntityShapeMap, EntityShapeMapReturn} from 'library/types/entitySketch';
 
-const storedColors = {
+const storedColors: Record<SketchColor, Colors[SketchColor]> = {
     fill: {a: 1, r: 50, g: 0, b: 0},
     stroke: {a: 1, r: 0, g: 50, b: 0},
     textFill: {a: 1, r: 255, g: 155, b: 255},
@@ -15,7 +16,7 @@ const colorsFromType = {
 
 type SketchColor = 'fill' | 'stroke' | 'textFill';
 
-type IncSketchC = Partial<SketchColorMap<SketchColor>>;
+// type IncSketchC = Partial<SketchColorMap<SketchColor>>;
 
 type SketchColorMap<T extends SketchColor> = {
     [K in T]: string;
@@ -27,21 +28,29 @@ export const getSketchRGBAColorsFromHexString = <K extends keyof EntityShapeMap,
 ): EntityColors[K] => {
     for (const key in colors) storedColors[key] = {a: 1, ...hexToRgb(colors[key])};
 
+    // for (const key in storedColors) {
+    // }
     return colorsFromType[type];
 };
 
-export const createSketch = <K extends keyof EntityShapeMap>(type: K, shape: EntityShapeMap[K]): void => {
-    // ): EntityShapeMap[K] & {colors: EntityColors[K]} => {
-    // const colors = getSketchRGBAColorsFromHexString(type, shape);
+export const createSketch = <T extends keyof EntityShapeMap>(
+    type: T,
+    shape: EntityShapeMap[T],
+): EntityShapeMapReturn[T] => {
+    const colors = colorsFromType[type];
+
+    // for (const key in colors) {
+    //     shape[key];
+    // }
 
     const sketch = {
         ...defaultSketch[type],
         ...shape,
         type,
-        // colors,
+        colors,
     };
 
-    // return sketch;
+    return sketch;
 };
 
 const entityB1: EntityShapeMap['b1'] = {
