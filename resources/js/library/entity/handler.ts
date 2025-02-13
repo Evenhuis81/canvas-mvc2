@@ -79,8 +79,6 @@ const createAddEntityInputListener =
     (type, listener, active = true) => {
         const id = Symbol();
 
-        // const shapeType = sketch.type === 'b1' ? 'rect' : sketch.type === 'entityCircle' ? 'circle' : sketch.type === 'entityRect' ? 'rect' : 'rect'
-
         entityInputListenerHandlers[type] = [
             type,
             () => input.addListener({type, listener, id, shape: sketch, props}),

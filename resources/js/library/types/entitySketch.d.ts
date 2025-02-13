@@ -1,30 +1,37 @@
-import {Colors, RGBA} from './color';
+// import {Colors, RGBA} from './color';
+import {RGBA} from './color';
 import {Circle, Fill, Rect, Stroke, Text} from './shapes';
 
 export type EntityShapeMap = {
-    entityRect: EntityRect;
-    entityCircle: EntityCircle;
-    b1: EntityB1;
+    button1: EntityButton1;
+    circle1: EntityCircle1;
+    rect1: EntityRectangle1;
 };
 
-// export type EntitySketchReturn<T extends keyof EntityShapeMap> = {
-//     [K in T]: EntityShapeMap[K] & {colors: Colors};
-// };
+// type SketchColor = 'fill' | 'stroke' | 'textFill';
+
+type SketchColors<T extends keyof EntityColors> = {
+    [K in T]: {[U in keyof EntityColors[K]]: EntityColors[K][U]};
+};
+
+export type EntityRectangle1 = Rect & Fill & Stroke & {type: 'rect'};
+
+export type EntityCircle1 = Circle & Fill & Stroke & {type: 'circle'};
+
+export type EntityButton1 = EntityRectangle1 & Text & {radii: number};
 
 export type EntityColors = {
-    entityRect: Omit<Colors, 'textFill'>;
-    entityCircle: Omit<Colors, 'textFill'>;
-    b1: Colors;
+    button1: {
+        fill: RGBA;
+        stroke: RGBA;
+        textFill: RGBA;
+    };
+    circle1: {
+        fill: RGBA;
+        stroke: RGBA;
+    };
+    rect1: {
+        fill: RGBA;
+        stroke: RGBA;
+    };
 };
-
-export type EntityShapeMapReturn = {
-    entityRect: EntityRect & {colors: EntityColors['entityRect']};
-    entityCircle: EntityCircle & {colors: EntityColors['entityCircle']};
-    b1: EntityB1 & {colors: EntityColors['b1']};
-};
-
-export type EntityRect = Rect & Fill & Stroke & {type: 'rect'};
-
-export type EntityCircle = Circle & Fill & Stroke & {type: 'circle'};
-
-export type EntityB1 = EntityRect & Text & {radii: number};

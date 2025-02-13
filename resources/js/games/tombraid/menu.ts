@@ -5,6 +5,10 @@ import type {LibraryResources} from 'library/types';
 const elementAmount = 25;
 
 export const mainMenu = (library: LibraryResources) => {
+    // const cc = library.createEntity('rect1');
+
+    // cc.sketch.colors.
+
     const rowsOrColumns = Math.sqrt(elementAmount);
 
     const paddingY = innerHeight * 0.1;
@@ -25,23 +29,24 @@ export const mainMenu = (library: LibraryResources) => {
         endSpeed: 5,
     };
 
-    const elements: EntityGeneric<'b1'>[] = [];
+    const elements: EntityGeneric<'button1'>[] = [];
 
     let column = 0;
     let row = 0;
 
     for (let i = 0; i < elementAmount; i++) {
         elements.push(
-            library.createEntity('b1', {
+            library.createEntity('button1', {
                 ...baseVisualProperties,
-                show: false, // Test if this is working properly
+                show: false,
                 showDelay: i * timeoutDifference,
                 sketch: {
-                    // type: 'optional',
+                    // type: 'optional', // 'circle1' | 'rect1' | 'button1'
                     x: startX + column * squareDistance,
                     y: startY + row * squareDistance,
                     w: squareLength,
                     h: squareLength,
+                    // radius: 5,
                     radii: 25,
                     fill: '#000',
                     stroke: '#00f',
