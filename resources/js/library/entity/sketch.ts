@@ -1,57 +1,58 @@
-import {hexToRgb} from 'library/colors';
-import type {EntityColors, EntityShapeMap} from 'library/types/entitySketch';
+// import {hexToRgb} from 'library/colors';
+import type {EntityColorStrings, EntityColors, EntityShapeMap, SketchColor} from 'library/types/entitySketch';
 
-const storedColors = {
-    fill: {a: 1, r: 50, g: 0, b: 0},
-    stroke: {a: 1, r: 0, g: 50, b: 0},
-    textFill: {a: 1, r: 255, g: 155, b: 255},
+const storedColorStrings = {
+    fill: '',
+    stroke: '',
+    textFill: '',
 };
 
-export type EntityColorStrings = {
-    button1: {
-        fill: string;
-        stroke: string;
-        textFill: string;
-    };
-    circle1: {
-        fill: string;
-        stroke: string;
-    };
-    rect1: {
-        fill: string;
-        stroke: string;
-    };
-};
+// const storedColors = {
+//     fill: {a: 1, r: 50, g: 0, b: 0},
+//     stroke: {a: 1, r: 0, g: 50, b: 0},
+//     textFill: {a: 1, r: 255, g: 155, b: 255},
+// };
 
-const rgbaButton1 = (cc: EntityColorStrings['button1']) => {};
+// const createColorsFromType () => ({
 
-const colorsFromType = {
-    button1: {fill: storedColors.fill, stroke: storedColors.stroke, textFill: storedColors.textFill},
-    rect1: {fill: storedColors.fill, stroke: storedColors.stroke},
-    circle1: {fill: storedColors.fill, stroke: storedColors.stroke},
-};
+// })
+
+const colorsFromType = <T extends keyof EntityShapeMap>(type: T): EntityColors[T] => ({
+    // button1: {fill: storedColors.fill, stroke: storedColors.stroke, textFill: storedColors.textFill},
+    // rect1: {fill: storedColors.fill, stroke: storedColors.stroke},
+    // circle1: {fill: storedColors.fill, stroke: storedColors.stroke},
+});
 
 export const setSketchRGBAColorsFromHexString = <T extends keyof EntityShapeMap>(
     type: T,
-    colorStrings?: Partial<EntityColorStrings[T]>,
-): EntityColors[T] => {
-    if (colorStrings && type === 'button1') rgbaButton1(colorStrings);
-    // return colorsFromType[type];
-    // if (colorStrings && colorStrings.fill)
-    // for (const key in colors) storedColors[key] = {a: 1, ...hexToRgb(colors[key])};
-    // return {
-    //     ...defaultSketch[type],
-    //     colors: colorsFromType[type],
-    // };
+    shape: Partial<EntityColorStrings[T]>,
+    colorStrings: Partial<EntityColorStrings[T]>,
+): {colors: EntityColors[T]} => {
+    for (const key in colorStrings) colorStrings[key] = shape[key];
+
+    const colors = createColorsFromType(type);
+
+    return {
+        // ...defaultSketch[type],
+        colors: colorsFromType[type](),
+    };
 };
 
 export const createSketch = <K extends keyof EntityShapeMap>(
     type: K,
-    shape?: Partial<EntityShapeMap[K]>,
+    shape: Partial<EntityShapeMap[K]>,
 ): EntityShapeMap[K] & {colors: EntityColors[K]} => {
     const colors = colorsFromType[type];
 
-    setSketchRGBAColorsFromHexString(type, shape);
+    const rr = {
+        fill: '',
+        stroke: '',
+        textFill: '',
+    };
+
+    setSketchRGBAColorsFromHexString(type, shape, rr);
+
+    // setSketchRGBAColorsFromHexString(type, shape);
 
     return {
         ...defaultSketch[type],
