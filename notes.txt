@@ -11,6 +11,8 @@
 11. Entity colors optional, convert partial sketch to default or required sketch for engine draw
 12. Phaser linear implementation in Engine, find better place?, implement cubic bezier add to to percentage(linear)
 13. Input add-and remove listeners with generic using type as index, need unique keys for index per index type
+14. Generic sketch create with color hardcoded (?) in, preferably with generic color aswell, but this seems to be quite hard to do.
+15.
 
 // Notes on sun @forum, 18-08-2024+:
 // 1. Generalize Types for all kinds of shapes and make shapes and methods for tv and static shows equal

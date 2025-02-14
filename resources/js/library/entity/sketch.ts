@@ -43,7 +43,7 @@ export const getSketchWithRGBAColorsFromHexString = <T extends keyof EntityShape
     };
 };
 
-type EntityShapeMapInternal = {
+export type EntityShapeMapInternal = {
     button1: EntityShapeMap['button1'];
     rect1: EntityShapeMap['rect1'];
     circle1: EntityShapeMap['circle1'];
@@ -55,18 +55,14 @@ type EntityShapeMapInternal = {
 export const createSketch = <K extends keyof EntityShapeMap>(
     type: K,
     shape?: Partial<EntityShapeMap[K]>,
-): EntityShapeMapInternal[K] => {
-    const sketch = getSketchWithRGBAColorsFromHexString(type, colorStrings, shape);
-
-    // return {
-    //     ...defaultSketch[type],
-    //     ...shape,
-    //     colors,
-    // };
-    return sketch;
-};
+): EntityShapeMap[K] & {colors: EntityColors[K]} => ({
+    ...defaultSketch[type],
+    ...shape,
+    colors: getSketchRGBAColorsFromHexString(type, colorStrings, shape),
+});
 
 const button1: EntityShapeMap['button1'] = {
+    sketchType: 'button',
     type: 'rect', // Shape Type (for library input)
     x: 100,
     y: 50,

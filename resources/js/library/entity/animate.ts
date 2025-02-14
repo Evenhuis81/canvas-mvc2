@@ -1,5 +1,4 @@
-import {createB1Renders} from './renders';
-import type {Colors} from 'library/types/color';
+import {createB1Renders, createRenders} from './renders';
 import type {Engine} from 'library/types/engine';
 import type {LibraryInput} from 'library/types/input';
 import type {
@@ -10,7 +9,7 @@ import type {
     VisualProperties,
     Visuals,
 } from 'library/types/entity';
-import {EntityShapeMap} from 'library/types/entitySketch';
+import {EntityColors, EntityShapeMap} from 'library/types/entitySketch';
 
 export const setVisuals = <K extends keyof EntityShapeMap>(
     gProps: GeneralProperties,
@@ -24,14 +23,16 @@ export const setVisuals = <K extends keyof EntityShapeMap>(
     const {animation, hover, start, end} = vProps;
 
     // TODO::Make this dynamic for any sketch possibility
-    const renders = createB1Renders(
-        gProps,
-        sketch as EntityShapeMap['button1'] & {colors: Colors},
-        vProps,
-        input,
-        context,
-        eventHandler,
-    );
+    // const renders = createB1Renders(
+    const renders = createRenders(sketch);
+    //     gProps,
+    //     sketch as EntityShapeMap['button1'] & {colors: EntityColors['button1']},
+    //     // sketch,
+    //     vProps,
+    //     input,
+    //     context,
+    //     eventHandler,
+    // );
 
     const visuals = {
         animation: animation ? renders.animations[animation]() : undefined,
@@ -47,13 +48,11 @@ export const setVisuals = <K extends keyof EntityShapeMap>(
 
     const setEngine = createSetEngine(engine, visuals);
 
-    // transforms empty callbacks to functional callbacks
-    // set(vProps, setEngine, eventHandler);
+    // transforms empty callbacks to functional callbacks, abstract and implement in eventHandler
     const setCallback = createSetCallback(setEngine, eventHandler);
 
     eventHandler.callbacks = {...setCallback};
 
-    // Separation of concern?
     return {setVisual, setEngine};
 };
 

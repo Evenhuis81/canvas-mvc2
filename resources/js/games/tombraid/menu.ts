@@ -38,23 +38,23 @@ export const mainMenu = (library: LibraryResources) => {
         elements.push(
             library.createEntity('button1', {
                 ...baseVisualProperties,
-                show: false,
-                showDelay: i * timeoutDifference,
+                // show: false,
+                showDelay: i * timeoutDifference + 1,
                 sketch: {
                     // type: 'circle1' | 'rect1' | 'button1' // optional
                     x: startX + column * squareDistance,
                     y: startY + row * squareDistance,
-                    // w: squareLength,
-                    // h: squareLength,
+                    w: squareLength,
+                    h: squareLength,
                     // radius: 5,
-                    // radii: 25,
+                    radii: 25,
 
                     fill: '#000',
                     stroke: '#0ff',
-                    // lineWidth: 5,
-                    // fontSize: 24,
+                    lineWidth: 2,
+                    fontSize: 24,
                     textFill: '#fff',
-                    // text: (i + 1).toString(),
+                    text: (i + 1).toString(),
                     // font: '',
                     // textAlign: 'center',
                     // textBaseLine: 'alphabetic',
@@ -67,9 +67,9 @@ export const mainMenu = (library: LibraryResources) => {
                     touchend: evt => {
                         console.log(`Touch END: ${i}`, evt);
                     },
-                    startTransition: evt => {
-                        console.log(`Start Transition: ${i}`, evt);
-                    },
+                    // startTransition: evt => {
+                    //     console.log(`Start Transition: ${i}`, evt);
+                    // },
                     endOfStartTransition: evt => {
                         console.log(`End Of Start Transition: ${i}`, evt);
                     },
@@ -82,6 +82,8 @@ export const mainMenu = (library: LibraryResources) => {
                 },
             }),
         );
+
+        // console.log(elements[0]);
 
         // const element = elements[i];
 

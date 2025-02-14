@@ -3,6 +3,7 @@ import {EngineDrawConfig} from 'library/types/engine';
 import type {Callbacks, EventHandler, GeneralProperties, VisualProperties} from 'library/types/entity';
 import type {EntityColors, EntityShapeMap} from 'library/types/entitySketch';
 import type {LibraryInput} from 'library/types/input';
+import {EntityShapeMapInternal} from './sketch';
 
 // Creating visual methods based on 'b1 entity', make dynamic
 const createB1Draw = (
@@ -33,12 +34,17 @@ const createB1Draw = (
     },
 });
 
-
+export const createRenders = <T extends keyof EntityShapeMap>(
+    sketch: EntityShapeMapInternal[T] & {colors: EntityColors[T]},
+) => {
+    // if (sketch.sketchType === 'button') sketch.colors.
+};
 
 // Hardcoded to reflect upon b1 entity only
-export const createB1Renders = <T extends keyof EntityShapeMap>(
+export const createB1Renders = (
     props: GeneralProperties,
-    sketch: EntityShapeMap[T] & {colors: EntityColors[T]},
+    // sketch: EntityShapeMap[T] & {colors: EntityColors[T]},
+    sketch: EntityShapeMap['button1'] & {colors: EntityColors['button1']},
     {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
     input: LibraryInput,
     context: CanvasRenderingContext2D,
@@ -46,12 +52,7 @@ export const createB1Renders = <T extends keyof EntityShapeMap>(
 ) => {
     const {id, name} = props;
 
-    if (sketch.sketchType === 'button1') {
-        sketch.
-    }
-
-    // const draw = createDraw();
-    // const draw = createB1Draw(context, sketch, sketch.colors);
+    const draw = createB1Draw(context, sketch, sketch.colors);
 
     const hovers = {
         bold: () => {
@@ -136,8 +137,6 @@ export const createB1Renders = <T extends keyof EntityShapeMap>(
         transitions,
         animations,
         draw,
-
-
     };
 };
 
@@ -232,8 +231,6 @@ const createTransitionSlideinleft = () => () => {
     //
 };
 
-
-
 let phase = 1;
 
 const createTransitionExplode = (
@@ -272,8 +269,6 @@ const createTransitionExplode = (
     return {update, prepare, end};
 };
 
-
-
 const createTransitionUpdate =
     (
         {mouse}: LibraryInput, // only mouse, no hover on touch
@@ -289,8 +284,6 @@ const createTransitionUpdate =
 
             return;
         }
-
-
 
         transition.reverse();
     };

@@ -8,8 +8,8 @@ import type {Entity, EntityConfig, EntityGeneric, GeneralProperties} from 'libra
 import type {LibraryInput} from 'library/types/input';
 import type {EntityShapeMap} from 'library/types/entitySketch';
 
-export default (context: CanvasRenderingContext2D, engine: Engine, input: LibraryInput) =>
-    <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig<K>): EntityGeneric<K> => {
+export default (context: CanvasRenderingContext2D, engine: Engine, input: LibraryInput) => ({
+    final: <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig<K>): EntityGeneric<K> => {
         // Extract internal properties from options
         const {generalProperties, visualProperties, listeners, shape} = extractOptions(options);
 
@@ -38,9 +38,14 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
         initialize(generalProperties, entity.show);
 
         return entity;
-    };
+    },
+    // test: <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig<K>): EntityGeneric<K> => {
+    //     //
+    // },
+});
 
 const initialize = (gProps: GeneralProperties, show: Entity['show']) => {
+    console.log(gProps.showDelay);
     // show is used initially to show or hide when no showDelay is set. After it's used internally to indicate if entity is active
     if (!gProps.show && !gProps.showDelay) return;
 
