@@ -41,20 +41,22 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
     };
 
 const initialize = (gProps: GeneralProperties, show: Entity['show']) => {
-    if (!gProps.show && !gProps.showDelay) return show();
+    // show is used initially to show or hide when no showDelay is set. After it's used internally to indicate if entity is active
+    if (!gProps.show && !gProps.showDelay) return;
 
     if (gProps.showDelay) {
         setTimeout(() => {
-            gProps.show = false;
-
-            gProps.showDelay = 0;
-
             show();
+            gProps.show = true;
         }, gProps.showDelay);
+
+        gProps.show = false;
+        gProps.showDelay = 0;
 
         return;
     }
 
+    gProps.show = true;
     show();
 };
 

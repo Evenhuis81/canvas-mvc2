@@ -1,10 +1,9 @@
-import {Colors} from './types/color';
-import {EntityColors, EntityShapeMap} from './types/entitySketch';
-
 // https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
 export const hexToRgb = (hex: string) => {
     // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
     var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+
+    console.log(hex);
 
     hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
 
@@ -19,16 +18,4 @@ export const hexToRgb = (hex: string) => {
     };
 };
 
-// export const getSketchRGBAColorsFromHexStringPartial = ({
-//     fill,
-//     stroke,
-//     textFill,
-// }: {
-//     fill?: string;
-//     stroke?: string;
-//     textFill?: string;
-// }) => ({
-//     fill: fill ? {a: 1, ...hexToRgb(fill)} : undefined,
-//     stroke: stroke ? {a: 1, ...hexToRgb(stroke)} : undefined,
-//     textFill: textFill ? {a: 1, ...hexToRgb(textFill)} : undefined,
-// });
+export const hexToRgba = (hex: string) => ({a: 1, ...hexToRgb(hex)});

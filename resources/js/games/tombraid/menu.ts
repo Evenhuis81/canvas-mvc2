@@ -5,9 +5,9 @@ import type {LibraryResources} from 'library/types';
 const elementAmount = 25;
 
 export const mainMenu = (library: LibraryResources) => {
-    // const cc = library.createEntity('rect1');
+    // const circle = library.createEntity('circle1');
 
-    // cc.sketch.colors.
+    // circle.sketch.
 
     const rowsOrColumns = Math.sqrt(elementAmount);
 
@@ -41,19 +41,20 @@ export const mainMenu = (library: LibraryResources) => {
                 show: false,
                 showDelay: i * timeoutDifference,
                 sketch: {
-                    // type: 'optional', // 'circle1' | 'rect1' | 'button1'
+                    // type: 'circle1' | 'rect1' | 'button1' // optional
                     x: startX + column * squareDistance,
                     y: startY + row * squareDistance,
-                    w: squareLength,
-                    h: squareLength,
+                    // w: squareLength,
+                    // h: squareLength,
                     // radius: 5,
-                    radii: 25,
+                    // radii: 25,
+
                     fill: '#000',
-                    stroke: '#00f',
-                    lineWidth: 1,
-                    fontSize: 24,
+                    stroke: '#0ff',
+                    // lineWidth: 5,
+                    // fontSize: 24,
                     textFill: '#fff',
-                    text: (i + 1).toString(),
+                    // text: (i + 1).toString(),
                     // font: '',
                     // textAlign: 'center',
                     // textBaseLine: 'alphabetic',

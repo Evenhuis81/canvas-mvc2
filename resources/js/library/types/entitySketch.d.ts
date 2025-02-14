@@ -2,9 +2,9 @@ import {RGBA} from './color';
 import {Circle, Fill, Rect, Stroke, Text} from './shapes';
 
 export type EntityShapeMap = {
-    button1: EntityButton1;
-    circle1: EntityCircle1;
-    rect1: EntityRectangle1;
+    button1: EntityButton1 & {sketchType: 'button1'};
+    circle1: EntityCircle1 & {sketchType: 'circle1'};
+    rect1: EntityRectangle1 & {sketchType: 'rect1'};
 };
 
 export type SketchColor = 'fill' | 'stroke' | 'textFill';

@@ -26,7 +26,7 @@ export const setVisuals = <K extends keyof EntityShapeMap>(
     // TODO::Make this dynamic for any sketch possibility
     const renders = createB1Renders(
         gProps,
-        sketch as EntityShapeMap['b1'] & {colors: Colors},
+        sketch as EntityShapeMap['button1'] & {colors: Colors},
         vProps,
         input,
         context,

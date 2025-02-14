@@ -1,13 +1,13 @@
 import type {Colors} from 'library/types/color';
 import {EngineDrawConfig} from 'library/types/engine';
 import type {Callbacks, EventHandler, GeneralProperties, VisualProperties} from 'library/types/entity';
-import type {EntityShapeMap} from 'library/types/entitySketch';
+import type {EntityColors, EntityShapeMap} from 'library/types/entitySketch';
 import type {LibraryInput} from 'library/types/input';
 
 // Creating visual methods based on 'b1 entity', make dynamic
 const createB1Draw = (
     ctx: CanvasRenderingContext2D,
-    sketch: EntityShapeMap['b1'],
+    sketch: EntityShapeMap['button1'],
     {fill, stroke, textFill}: Colors,
 ): EngineDrawConfig => ({
     id: 'b1Draw',
@@ -33,10 +33,12 @@ const createB1Draw = (
     },
 });
 
+
+
 // Hardcoded to reflect upon b1 entity only
-export const createB1Renders = (
+export const createB1Renders = <T extends keyof EntityShapeMap>(
     props: GeneralProperties,
-    sketch: EntityShapeMap['b1'] & {colors: Colors},
+    sketch: EntityShapeMap[T] & {colors: EntityColors[T]},
     {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
     input: LibraryInput,
     context: CanvasRenderingContext2D,
@@ -44,7 +46,12 @@ export const createB1Renders = (
 ) => {
     const {id, name} = props;
 
-    const draw = createB1Draw(context, sketch, sketch.colors);
+    if (sketch.sketchType === 'button1') {
+        sketch.
+    }
+
+    // const draw = createDraw();
+    // const draw = createB1Draw(context, sketch, sketch.colors);
 
     const hovers = {
         bold: () => {
@@ -129,10 +136,12 @@ export const createB1Renders = (
         transitions,
         animations,
         draw,
+
+
     };
 };
 
-const createHoverBold = (sketch: EntityShapeMap['b1']) => {
+const createHoverBold = (sketch: EntityShapeMap['button1']) => {
     const origin = {
         lineWidth: sketch.lineWidth,
         f: sketch.fontSize,
@@ -223,10 +232,12 @@ const createTransitionSlideinleft = () => () => {
     //
 };
 
+
+
 let phase = 1;
 
 const createTransitionExplode = (
-    sketch: EntityShapeMap['b1'],
+    sketch: EntityShapeMap['button1'],
     {fill, stroke, textFill}: Colors,
     callbacks: Callbacks,
 ) => {
@@ -261,10 +272,12 @@ const createTransitionExplode = (
     return {update, prepare, end};
 };
 
+
+
 const createTransitionUpdate =
     (
         {mouse}: LibraryInput, // only mouse, no hover on touch
-        sketch: EntityShapeMap['b1'],
+        sketch: EntityShapeMap['button1'],
         transition: {
             forward: () => void;
             reverse: () => void;
@@ -277,10 +290,12 @@ const createTransitionUpdate =
             return;
         }
 
+
+
         transition.reverse();
     };
 
-const createAnimationNoise = (sketch: EntityShapeMap['b1']) => () => {
+const createAnimationNoise = (sketch: EntityShapeMap['button1']) => () => {
     sketch.x += upd.adj.x;
     sketch.y += upd.adj.y;
 
