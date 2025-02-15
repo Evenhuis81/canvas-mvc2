@@ -1,9 +1,8 @@
 import type {Colors} from 'library/types/color';
 import {EngineDrawConfig} from 'library/types/engine';
 import type {Callbacks, EventHandler, GeneralProperties, VisualProperties} from 'library/types/entity';
-import type {EntityColors, EntityShapeMap} from 'library/types/entitySketch';
+import type {EntityColors, EntityShapeMap, EntityShapeMapComplete} from 'library/types/entitySketch';
 import type {LibraryInput} from 'library/types/input';
-import {EntityShapeMapInternal} from './sketch';
 
 // Creating visual methods based on 'b1 entity', make dynamic
 const createB1Draw = (
@@ -34,9 +33,7 @@ const createB1Draw = (
     },
 });
 
-export const createRenders = <T extends keyof EntityShapeMap>(
-    sketch: EntityShapeMapInternal[T] & {colors: EntityColors[T]},
-) => {
+export const createRenders = <T extends keyof EntityShapeMap>(sketch: EntityShapeMapComplete<T>) => {
     // if (sketch.sketchType === 'button') sketch.colors.
 };
 

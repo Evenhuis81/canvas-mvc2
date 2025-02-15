@@ -43,7 +43,7 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
         runEngine: () => engine.run(),
         runEngineOnce: () => engine.runOnce(),
         createPhaser: () => getCreatePhaser(engine),
-        createEntity: getCreateEntity(context, engine, input).final,
+        createEntity: getCreateEntity(context, engine, input),
     };
 };
 
