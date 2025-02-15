@@ -1,4 +1,4 @@
-import {Circle, Pos, Rect} from './types/shapes';
+import type {Circle, Pos, Rect} from './types/shapes';
 import type {InputListener, InputListenerEventMap, InputListenerStore, InputShape} from './types/input';
 
 const resizeCB: (() => void)[] = [];
@@ -154,14 +154,14 @@ export const getCanvasInput = (canvas: HTMLCanvasElement) => {
     });
 
     const pressedInsideMouse = (shape: InputShape) => {
-        if (shape.type === 'rect' && insideMouseRect(shape)) return true;
-        if (shape.type === 'circle' && insideMouseCircle(shape)) return true;
+        if (shape.shapeType === 'rect' && insideMouseRect(shape)) return true;
+        if (shape.shapeType === 'circle' && insideMouseCircle(shape)) return true;
 
         return false;
     };
     const pushedInsideTouch = (shape: InputShape) => {
-        if (shape.type === 'rect' && insideTouchRect(shape)) return true;
-        if (shape.type === 'circle' && insideTouchCircle(shape)) return true;
+        if (shape.shapeType === 'rect' && insideTouchRect(shape)) return true;
+        if (shape.shapeType === 'circle' && insideTouchCircle(shape)) return true;
 
         return false;
     };
@@ -184,8 +184,8 @@ export const getCanvasInput = (canvas: HTMLCanvasElement) => {
     };
 
     const insideMouse = (shape: InputShape) => {
-        if (shape.type === 'rect') return insideMouseRect(shape);
-        if (shape.type === 'circle') return insideMouseCircle(shape);
+        if (shape.shapeType === 'rect') return insideMouseRect(shape);
+        if (shape.shapeType === 'circle') return insideMouseCircle(shape);
 
         return false;
     };
