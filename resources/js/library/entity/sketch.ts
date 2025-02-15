@@ -1,5 +1,10 @@
 import {hexToRgba} from 'library/colors';
-import type {EntityColorStrings, EntityColors, EntityShapeMap} from 'library/types/entitySketch';
+import type {
+    EntityColorStrings,
+    EntityColors,
+    EntityShapeMap,
+    EntityShapeMapComplete,
+} from 'library/types/entitySketch';
 
 const colorStrings = {
     fill: '#650',
@@ -31,7 +36,8 @@ export const getSketchRGBAColorsFromHexString = <T extends keyof EntityShapeMap>
 export const createSketch = <K extends keyof EntityShapeMap>(
     type: K,
     shape?: Partial<EntityShapeMap[K]>,
-): EntityShapeMap[K] & {colors: EntityColors[K]} => {
+    // ): EntityShapeMap[K] & {colors: EntityColors[K]} => {
+): EntityShapeMapComplete<K>[K] => {
     const sketch = {
         ...defaultSketch[type],
         ...shape,

@@ -1,47 +1,49 @@
 import type {Colors} from 'library/types/color';
-import {EngineDrawConfig} from 'library/types/engine';
+import type {EngineDrawConfig} from 'library/types/engine';
 import type {Callbacks, EventHandler, GeneralProperties, VisualProperties} from 'library/types/entity';
-import type {EntityColors, EntityShapeMap, EntityShapeMapComplete} from 'library/types/entitySketch';
+import type {EntityShapeMap, EntityShapeMapComplete} from 'library/types/entitySketch';
 import type {LibraryInput} from 'library/types/input';
 
-// Creating visual methods based on 'b1 entity', make dynamic
-const createB1Draw = (
-    ctx: CanvasRenderingContext2D,
-    sketch: EntityShapeMap['button1'],
-    {fill, stroke, textFill}: Colors,
-): EngineDrawConfig => ({
-    id: 'b1Draw',
-    name: 'b1 Draw (hardcoded)',
-    fn: () => {
-        ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
-        ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
-        ctx.lineWidth = sketch.lineWidth;
+// ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
+// ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
+// ctx.lineWidth = sketch.lineWidth;
 
-        ctx.beginPath();
-        ctx.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.radii);
-        ctx.fill();
-        ctx.stroke();
+// ctx.beginPath();
+// ctx.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.radii);
+// ctx.fill();
+// ctx.stroke();
 
-        ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
-        ctx.font = `${sketch.fontSize}px ${sketch.font}`;
+// ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
+// ctx.font = `${sketch.fontSize}px ${sketch.font}`;
 
-        ctx.textAlign = sketch.textAlign;
-        ctx.textBaseline = sketch.textBaseLine;
+// ctx.textAlign = sketch.textAlign;
+// ctx.textBaseline = sketch.textBaseLine;
 
-        ctx.beginPath();
-        ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5); // adjustment needs be baked in
-    },
+// ctx.beginPath();
+// ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5); // adjustment needs be baked in
+
+const createDrawSketches = (context: CanvasRenderingContext2D) => ({
+    button1: () => {},
+    circle1: () => {},
+    rect1: () => {},
 });
 
-export const createRenders = <T extends keyof EntityShapeMap>(sketch: EntityShapeMapComplete<T>) => {
-    // if (sketch.sketchType === 'button') sketch.colors.
+const createDraw = <T extends keyof EntityShapeMap>(
+    context: CanvasRenderingContext2D,
+    sketch: EntityShapeMapComplete<T>[T],
+): EngineDrawConfig => {
+    const drawSketches = createDrawSketches(context);
+
+    return {
+        id: 'b1Draw',
+        name: 'b1 Draw (hardcoded)',
+        fn: () => {},
+    };
 };
 
-// Hardcoded to reflect upon b1 entity only
-export const createB1Renders = (
+export const createRenders = <T extends keyof EntityShapeMap>(
     props: GeneralProperties,
-    // sketch: EntityShapeMap[T] & {colors: EntityColors[T]},
-    sketch: EntityShapeMap['button1'] & {colors: EntityColors['button1']},
+    sketch: EntityShapeMapComplete<T>[T],
     {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
     input: LibraryInput,
     context: CanvasRenderingContext2D,
@@ -49,7 +51,8 @@ export const createB1Renders = (
 ) => {
     const {id, name} = props;
 
-    const draw = createB1Draw(context, sketch, sketch.colors);
+    // const draw = createB1Draw(context, sketch, sketch.colors);
+    const draw = createDraw(context, sketch);
 
     const hovers = {
         bold: () => {
@@ -137,10 +140,10 @@ export const createB1Renders = (
     };
 };
 
-const createHoverBold = (sketch: EntityShapeMap['button1']) => {
+const createHoverBold = <T extends keyof EntityShapeMap>(sketch: EntityShapeMapComplete<T>[T]) => {
     const origin = {
         lineWidth: sketch.lineWidth,
-        f: sketch.fontSize,
+        f: sketch.sketchType === 'button1' ? sketch.fontSize : 16,
     };
 
     const steps = 30;
@@ -151,21 +154,21 @@ const createHoverBold = (sketch: EntityShapeMap['button1']) => {
 
     const forward = () => {
         sketch.lineWidth += lwAdj;
-        sketch.fontSize += fAdj;
+        sketch.sketchType === 'button1' ? (sketch.fontSize += fAdj) : '';
 
         if (sketch.lineWidth > origin.lineWidth + lwRange) {
             sketch.lineWidth = origin.lineWidth + lwRange;
-            sketch.fontSize = origin.f + fRange;
+            sketch.sketchType === 'button1' ? (sketch.fontSize = origin.f + fRange) : '';
         }
     };
 
     const reverse = () => {
         sketch.lineWidth -= lwAdj;
-        sketch.fontSize -= fAdj;
+        sketch.sketchType === 'button1' ? (sketch.fontSize -= fAdj) : '';
 
         if (sketch.lineWidth < origin.lineWidth) {
             sketch.lineWidth = origin.lineWidth;
-            sketch.fontSize = origin.f;
+            sketch.sketchType === 'button1' ? (sketch.fontSize = origin.f) : '';
         }
     };
 
@@ -267,9 +270,9 @@ const createTransitionExplode = (
 };
 
 const createTransitionUpdate =
-    (
+    <T extends keyof EntityShapeMap>(
         {mouse}: LibraryInput, // only mouse, no hover on touch
-        sketch: EntityShapeMap['button1'],
+        sketch: EntityShapeMapComplete<T>[T],
         transition: {
             forward: () => void;
             reverse: () => void;
@@ -285,19 +288,21 @@ const createTransitionUpdate =
         transition.reverse();
     };
 
-const createAnimationNoise = (sketch: EntityShapeMap['button1']) => () => {
-    sketch.x += upd.adj.x;
-    sketch.y += upd.adj.y;
+const createAnimationNoise =
+    <T extends keyof EntityShapeMap>(sketch: EntityShapeMapComplete<T>[T]) =>
+    () => {
+        sketch.x += upd.adj.x;
+        sketch.y += upd.adj.y;
 
-    upd.count++;
+        upd.count++;
 
-    if (upd.count > 60) {
-        upd.adj.x *= -1;
-        upd.adj.y *= -1;
+        if (upd.count > 60) {
+            upd.adj.x *= -1;
+            upd.adj.y *= -1;
 
-        upd.count = 0;
-    }
-};
+            upd.count = 0;
+        }
+    };
 
 const upd = {
     origin: {
