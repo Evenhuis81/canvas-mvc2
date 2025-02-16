@@ -1,26 +1,16 @@
 import type {Colors} from 'library/types/color';
 import type {EngineDrawConfig} from 'library/types/engine';
 import type {Callbacks, EventHandler, GeneralProperties, VisualProperties} from 'library/types/entity';
-import type {EntityShapeMap, EntityShapeMapComplete} from 'library/types/entitySketch';
+import type {EntityColors, EntityShapeMap, EntityShapeMapReturn} from 'library/types/entitySketch';
 import type {LibraryInput} from 'library/types/input';
 
-// ctx.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
-// ctx.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
-// ctx.lineWidth = sketch.lineWidth;
+type SketchKeys = 'button1' | 'rect1';
 
-// ctx.beginPath();
-// ctx.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.radii);
-// ctx.fill();
-// ctx.stroke();
+type CombinedSketch<T extends SketchKeys> = EntityShapeMap[T] & {colors: EntityColors[T]};
 
-// ctx.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
-// ctx.font = `${sketch.fontSize}px ${sketch.font}`;
-
-// ctx.textAlign = sketch.textAlign;
-// ctx.textBaseline = sketch.textBaseLine;
-
-// ctx.beginPath();
-// ctx.fillText(sketch.text, sketch.x, sketch.y + 1.5); // adjustment needs be baked in
+const cDraw = <T extends keyof EntityShapeMap>(sketch: EntityShapeMapReturn[T]) => {
+    //
+};
 
 const createDrawSketches = (context: CanvasRenderingContext2D) => ({
     button1: () => {},
@@ -30,7 +20,7 @@ const createDrawSketches = (context: CanvasRenderingContext2D) => ({
 
 const createDraw = <T extends keyof EntityShapeMap>(
     context: CanvasRenderingContext2D,
-    sketch: EntityShapeMapComplete<T>[T],
+    sketch: EntityShapeMapReturn[T],
 ): EngineDrawConfig => {
     const drawSketches = createDrawSketches(context);
 
@@ -43,7 +33,7 @@ const createDraw = <T extends keyof EntityShapeMap>(
 
 export const createRenders = <T extends keyof EntityShapeMap>(
     props: GeneralProperties,
-    sketch: EntityShapeMapComplete<T>[T],
+    sketch: EntityShapeMapReturn[T],
     {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
     input: LibraryInput,
     context: CanvasRenderingContext2D,

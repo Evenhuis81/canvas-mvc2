@@ -5,9 +5,9 @@ import type {LibraryResources} from 'library/types';
 const elementAmount = 25;
 
 export const mainMenu = (library: LibraryResources) => {
-    // const circle = library.createEntity('circle1');
+    // const circle = library.createEntity('button1');
 
-    // circle.sketch.
+    // circle.sketch.colors.
 
     const rowsOrColumns = Math.sqrt(elementAmount);
 
