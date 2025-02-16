@@ -7,17 +7,23 @@ export type EntityShapeMap = {
     rect1: EntityRectangle1;
 };
 
+export type EntityShapeMapReturn = {
+    button1: EntityButton1 & {colors: EntityColors['button1']};
+    circle1: EntityCircle1 & {colors: EntityColors['rect1']};
+    rect1: EntityRectangle1 & {colors: EntityColors['circle1']};
+};
+
 export type EntityShapeMapComplete<T extends keyof EntityShapeMap> = {
-    [K in T]: EntityShapeMap[T] & {colors: EntityColors[T]};
+    [K in T]: EntityShapeMapReturn[T];
 };
 
 export type SketchColor = 'fill' | 'stroke' | 'textFill';
 
-export type EntityRectangle1 = Rect & Fill & Stroke & {shapeType: 'rect'; sketchType: 'rect1'};
+export type EntityRectangle1 = Rect & Fill & Stroke & {sketchType: 'rect1'};
 
-export type EntityCircle1 = Circle & Fill & Stroke & {shapeType: 'circle'; sketchType: 'circle1'};
+export type EntityCircle1 = Circle & Fill & Stroke & {sketchType: 'circle1'};
 
-export type EntityButton1 = Omit<EntityRectangle1, 'sketchType'> & Text & {radii: number; sketchType: 'button1'};
+export type EntityButton1 = Rect & Fill & Stroke & Text & {radii: number; sketchType: 'button1'};
 
 export type EntityColorStrings = {
     button1: {

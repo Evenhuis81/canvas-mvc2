@@ -36,20 +36,19 @@ export const getSketchRGBAColorsFromHexString = <T extends keyof EntityShapeMap>
 export const createSketch = <K extends keyof EntityShapeMap>(
     type: K,
     shape?: Partial<EntityShapeMap[K]>,
-    // ): EntityShapeMap[K] & {colors: EntityColors[K]} => {
-): EntityShapeMapComplete<K>[K] => {
+): Omit<EntityShapeMapComplete<K>[K], 'colors'> => {
     const sketch = {
         ...defaultSketch[type],
-        ...shape,
-        colors: getSketchRGBAColorsFromHexString(type, colorStrings, shape),
+        // ...shape,
+        // colors: getSketchRGBAColorsFromHexString(type, colorStrings, shape),
     };
 
     return sketch;
 };
 
-const button1: EntityShapeMap['button1'] = {
+const button1: Omit<EntityShapeMapComplete<'button1'>['button1'], 'colors'> = {
     sketchType: 'button1',
-    shapeType: 'rect', // used by library input
+    // shapeType: 'rect', // used by library input
     x: 100,
     y: 50,
     w: 80,
@@ -67,9 +66,9 @@ const button1: EntityShapeMap['button1'] = {
     textBaseLine: 'middle',
 };
 
-const rect1: EntityShapeMap['rect1'] = {
+const rect1: Omit<EntityShapeMapComplete<'rect1'>['rect1'], 'colors'> = {
     sketchType: 'rect1',
-    shapeType: 'rect',
+    // shapeType: 'rect',
     x: 100,
     y: 50,
     w: 80,
@@ -79,9 +78,9 @@ const rect1: EntityShapeMap['rect1'] = {
     lineWidth: 2,
 };
 
-const circle1: EntityShapeMap['circle1'] = {
+const circle1: Omit<EntityShapeMapComplete<'circle1'>['circle1'], 'colors'> = {
     sketchType: 'circle1',
-    shapeType: 'circle',
+    // shapeType: 'circle',
     x: 100,
     y: 50,
     radius: 255,

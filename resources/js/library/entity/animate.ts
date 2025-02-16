@@ -1,4 +1,4 @@
-import {createB1Renders, createRenders} from './renders';
+import {createRenders} from './renders';
 import type {Engine} from 'library/types/engine';
 import type {LibraryInput} from 'library/types/input';
 import type {

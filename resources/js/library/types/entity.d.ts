@@ -1,6 +1,6 @@
 import {EngineDraw, EngineUpdate} from './engine';
 import {InputListenerEventMap} from './input';
-import {EntityColors, EntityShapeMap} from './entitySketch';
+import {EntityColors, EntityShapeMap, EntityShapeMapComplete} from './entitySketch';
 import {Colors} from './color';
 
 export type GeneralProperties = {
@@ -111,7 +111,7 @@ export type EntityGeneric<K extends keyof EntityShapeMap> = {
     removeListener: RemoveListener;
     setHideTime: SetHideTime;
     setVisual: SetVisual;
-    sketch: EntityShapeMap[K] & {colors: EntityColors[K]};
+    sketch: EntityShapeMapComplete<K>[K];
 };
 
 export type CreateEntity = <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig<K>) => EntityGeneric<K>;
