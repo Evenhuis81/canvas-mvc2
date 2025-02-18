@@ -51,4 +51,4 @@ export type InputListener<K extends keyof InputListenerEventMap> = {
     props: {pressed: boolean; pushed: boolean; clicked: boolean};
 };
 
-export type InputShape = (Circle & {shapeType: 'circle'}) | (Rect & {shapeType: 'rect'});
+export type InputShape = (Circle & {inputType: 'circle'}) | (Rect & {inputType: 'rect'});

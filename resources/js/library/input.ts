@@ -154,14 +154,14 @@ export const getCanvasInput = (canvas: HTMLCanvasElement) => {
     });
 
     const pressedInsideMouse = (shape: InputShape) => {
-        if (shape.shapeType === 'rect' && insideMouseRect(shape)) return true;
-        if (shape.shapeType === 'circle' && insideMouseCircle(shape)) return true;
+        if (shape.inputType === 'rect' && insideMouseRect(shape)) return true;
+        if (shape.inputType === 'circle' && insideMouseCircle(shape)) return true;
 
         return false;
     };
     const pushedInsideTouch = (shape: InputShape) => {
-        if (shape.shapeType === 'rect' && insideTouchRect(shape)) return true;
-        if (shape.shapeType === 'circle' && insideTouchCircle(shape)) return true;
+        if (shape.inputType === 'rect' && insideTouchRect(shape)) return true;
+        if (shape.inputType === 'circle' && insideTouchCircle(shape)) return true;
 
         return false;
     };
@@ -184,8 +184,8 @@ export const getCanvasInput = (canvas: HTMLCanvasElement) => {
     };
 
     const insideMouse = (shape: InputShape) => {
-        if (shape.shapeType === 'rect') return insideMouseRect(shape);
-        if (shape.shapeType === 'circle') return insideMouseCircle(shape);
+        if (shape.inputType === 'rect') return insideMouseRect(shape);
+        if (shape.inputType === 'circle') return insideMouseCircle(shape);
 
         return false;
     };
