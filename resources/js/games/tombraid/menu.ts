@@ -58,7 +58,6 @@ export const mainMenu = (library: LibraryResources) => {
                     // font: '',
                     // textAlign: 'center',
                     // textBaseLine: 'alphabetic',
-                    // radius: 8,
                 },
                 listeners: {
                     mouseup: evt => {

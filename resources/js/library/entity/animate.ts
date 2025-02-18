@@ -9,12 +9,12 @@ import type {
     VisualProperties,
     Visuals,
 } from 'library/types/entity';
-import {EntityColors, EntityShapeMap, EntityShapeMapComplete} from 'library/types/entitySketch';
+import {EntityShapeMap, EntitySketchMap} from 'library/types/entitySketch';
 
 export const setVisuals = <T extends keyof EntityShapeMap>(
     gProps: GeneralProperties,
     vProps: Partial<VisualProperties>,
-    sketch: EntityShapeMapComplete<T>[T],
+    sketch: EntitySketchMap[T],
     input: LibraryInput,
     engine: Engine,
     context: CanvasRenderingContext2D,
@@ -23,15 +23,7 @@ export const setVisuals = <T extends keyof EntityShapeMap>(
     const {animation, hover, start, end} = vProps;
 
     // const renders = createB1Renders(
-    const renders = createRenders(sketch);
-    //     gProps,
-    //     sketch as EntityShapeMap['button1'] & {colors: EntityColors['button1']},
-    //     // sketch,
-    //     vProps,
-    //     input,
-    //     context,
-    //     eventHandler,
-    // );
+    const renders = createRenders(gProps, sketch, vProps, input, context, eventHandler);
 
     const visuals = {
         animation: animation ? renders.animations[animation]() : undefined,

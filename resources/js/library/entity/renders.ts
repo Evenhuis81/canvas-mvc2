@@ -1,39 +1,44 @@
 import type {Colors} from 'library/types/color';
 import type {EngineDrawConfig} from 'library/types/engine';
 import type {Callbacks, EventHandler, GeneralProperties, VisualProperties} from 'library/types/entity';
-import type {EntityColors, EntityShapeMap, EntityShapeMapReturn} from 'library/types/entitySketch';
+import type {EntitySketchMap} from 'library/types/entitySketch';
 import type {LibraryInput} from 'library/types/input';
 
-type SketchKeys = 'button1' | 'rect1';
+const sketchDraw = (c: CanvasRenderingContext2D, sketch: EntitySketchMap['button1']) => () => {
+    const {fill, stroke, textFill} = sketch.color;
 
-type CombinedSketch<T extends SketchKeys> = EntityShapeMap[T] & {colors: EntityColors[T]};
+    c.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
+    c.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
+    c.lineWidth = sketch.lineWidth;
 
-const cDraw = <T extends keyof EntityShapeMap>(sketch: EntityShapeMapReturn[T]) => {
-    //
+    c.beginPath();
+    c.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.radii);
+    c.fill();
+    c.stroke();
+
+    c.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
+    c.font = `${sketch.fontSize}px ${sketch.font}`;
+    c.textAlign = 'center';
+    c.textBaseline = 'middle';
+
+    c.beginPath();
+    c.fillText(sketch.text, sketch.x, sketch.y + 1.5); // TODO::use textAscend / -descent
 };
 
-const createDrawSketches = (context: CanvasRenderingContext2D) => ({
-    button1: () => {},
-    circle1: () => {},
-    rect1: () => {},
-});
-
-const createDraw = <T extends keyof EntityShapeMap>(
+const createDraw = <T extends keyof EntitySketchMap>(
     context: CanvasRenderingContext2D,
-    sketch: EntityShapeMapReturn[T],
+    sketch: EntitySketchMap[T],
 ): EngineDrawConfig => {
-    const drawSketches = createDrawSketches(context);
-
     return {
-        id: 'b1Draw',
-        name: 'b1 Draw (hardcoded)',
-        fn: () => {},
+        id: `${sketch.type}-draw`,
+        name: `${sketch.type} Draw`,
+        fn: sketch.type === 'button1' ? sketchDraw(context, sketch) : () => {},
     };
 };
 
-export const createRenders = <T extends keyof EntityShapeMap>(
+export const createRenders = <T extends keyof EntitySketchMap>(
     props: GeneralProperties,
-    sketch: EntityShapeMapReturn[T],
+    sketch: EntitySketchMap[T],
     {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
     input: LibraryInput,
     context: CanvasRenderingContext2D,
@@ -41,7 +46,6 @@ export const createRenders = <T extends keyof EntityShapeMap>(
 ) => {
     const {id, name} = props;
 
-    // const draw = createB1Draw(context, sketch, sketch.colors);
     const draw = createDraw(context, sketch);
 
     const hovers = {
@@ -61,7 +65,7 @@ export const createRenders = <T extends keyof EntityShapeMap>(
     const transitions = {
         fadein1: () => {
             const {update: fn, prepare} = createTransitionFadein1(
-                sketch.colors,
+                sketch.color,
                 0.005 * startSpeed,
                 eventHandler.callbacks,
             );
@@ -77,7 +81,7 @@ export const createRenders = <T extends keyof EntityShapeMap>(
         },
         fadeout1: () => {
             const {update: fn, prepare} = createTransitionFadeout1(
-                sketch.colors,
+                sketch.color,
                 0.005 * endSpeed,
                 eventHandler.callbacks,
             );
@@ -99,7 +103,7 @@ export const createRenders = <T extends keyof EntityShapeMap>(
             },
         }),
         explode: () => {
-            const {update: fn, prepare} = createTransitionExplode(sketch, sketch.colors, eventHandler.callbacks);
+            const {update: fn, prepare} = createTransitionExplode(sketch, sketch.color, eventHandler.callbacks);
 
             return {
                 update: {
@@ -130,10 +134,10 @@ export const createRenders = <T extends keyof EntityShapeMap>(
     };
 };
 
-const createHoverBold = <T extends keyof EntityShapeMap>(sketch: EntityShapeMapComplete<T>[T]) => {
+const createHoverBold = <T extends keyof EntitySketchMap>(sketch: EntitySketchMap[T]) => {
     const origin = {
-        lineWidth: sketch.lineWidth,
-        f: sketch.sketchType === 'button1' ? sketch.fontSize : 16,
+        lineWidth: sketch.type === 'button1' ? sketch.lineWidth : 2,
+        f: sketch.type === 'button1' ? sketch.fontSize : 16,
     };
 
     const steps = 30;
@@ -144,21 +148,21 @@ const createHoverBold = <T extends keyof EntityShapeMap>(sketch: EntityShapeMapC
 
     const forward = () => {
         sketch.lineWidth += lwAdj;
-        sketch.sketchType === 'button1' ? (sketch.fontSize += fAdj) : '';
+        sketch.type === 'button1' ? (sketch.fontSize += fAdj) : '';
 
         if (sketch.lineWidth > origin.lineWidth + lwRange) {
             sketch.lineWidth = origin.lineWidth + lwRange;
-            sketch.sketchType === 'button1' ? (sketch.fontSize = origin.f + fRange) : '';
+            sketch.type === 'button1' ? (sketch.fontSize = origin.f + fRange) : '';
         }
     };
 
     const reverse = () => {
         sketch.lineWidth -= lwAdj;
-        sketch.sketchType === 'button1' ? (sketch.fontSize -= fAdj) : '';
+        sketch.type === 'button1' ? (sketch.fontSize -= fAdj) : '';
 
         if (sketch.lineWidth < origin.lineWidth) {
             sketch.lineWidth = origin.lineWidth;
-            sketch.sketchType === 'button1' ? (sketch.fontSize = origin.f) : '';
+            sketch.type === 'button1' ? (sketch.fontSize = origin.f) : '';
         }
     };
 
@@ -224,7 +228,7 @@ const createTransitionSlideinleft = () => () => {
 let phase = 1;
 
 const createTransitionExplode = (
-    sketch: EntityShapeMap['button1'],
+    sketch: EntitySketchMap['button1'],
     {fill, stroke, textFill}: Colors,
     callbacks: Callbacks,
 ) => {
@@ -260,9 +264,9 @@ const createTransitionExplode = (
 };
 
 const createTransitionUpdate =
-    <T extends keyof EntityShapeMap>(
+    <T extends keyof EntitySketchMap>(
         {mouse}: LibraryInput, // only mouse, no hover on touch
-        sketch: EntityShapeMapComplete<T>[T],
+        sketch: EntitySketchMap[T],
         transition: {
             forward: () => void;
             reverse: () => void;
@@ -279,7 +283,7 @@ const createTransitionUpdate =
     };
 
 const createAnimationNoise =
-    <T extends keyof EntityShapeMap>(sketch: EntityShapeMapComplete<T>[T]) =>
+    <T extends keyof EntitySketchMap>(sketch: EntitySketchMap[T]) =>
     () => {
         sketch.x += upd.adj.x;
         sketch.y += upd.adj.y;

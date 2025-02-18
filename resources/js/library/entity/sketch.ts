@@ -1,5 +1,5 @@
 import {hexToRgba} from 'library/colors';
-import type {EntityColorString, EntityColors, EntityShapeMap, EntitySketchMap} from 'library/types/entitySketch';
+import type {EntityColorString, EntityColor, EntityShapeMap, EntitySketchMap} from 'library/types/entitySketch';
 
 const colorString = {
     fill: '#650',
@@ -7,34 +7,38 @@ const colorString = {
     textFill: '#f8f',
 };
 
-const colorsFromType2 = {
+const colorFromType = {
     button1: {
         fill: hexToRgba(colorString.fill),
         stroke: hexToRgba(colorString.stroke),
         textFill: hexToRgba(colorString.textFill),
     },
-    rect1: {fill: hexToRgba(colorString.fill), stroke: hexToRgba(colorString.stroke)},
-    circle1: {fill: hexToRgba(colorString.fill), stroke: hexToRgba(colorString.stroke)},
+    rect: {fill: hexToRgba(colorString.fill), stroke: hexToRgba(colorString.stroke)},
+    circle: {fill: hexToRgba(colorString.fill), stroke: hexToRgba(colorString.stroke)},
+    line: {stroke: hexToRgba(colorString.stroke)},
+    text: {textFill: hexToRgba(colorString.textFill)},
 };
 
-const colorsFromType = (): {[K in keyof EntityShapeMap]: EntityColors[K]} => ({
+const createColorFromType = (): {[K in keyof EntityShapeMap]: EntityColor[K]} => ({
     button1: {
         fill: hexToRgba(colorString.fill),
         stroke: hexToRgba(colorString.stroke),
         textFill: hexToRgba(colorString.textFill),
     },
-    rect1: {fill: hexToRgba(colorString.fill), stroke: hexToRgba(colorString.stroke)},
-    circle1: {fill: hexToRgba(colorString.fill), stroke: hexToRgba(colorString.stroke)},
+    rect: {fill: hexToRgba(colorString.fill), stroke: hexToRgba(colorString.stroke)},
+    circle: {fill: hexToRgba(colorString.fill), stroke: hexToRgba(colorString.stroke)},
+    line: {stroke: hexToRgba(colorString.stroke)},
+    text: {textFill: hexToRgba(colorString.textFill)},
 });
 
 export const getSketchRGBAColorsFromHexString = <T extends keyof EntityShapeMap>(
     type: T,
     colorStrings: Partial<EntityColorString[T]>,
     shape?: Partial<EntityColorString[T]>,
-): EntityColors[T] => {
+): EntityColor[T] => {
     if (shape) for (const key in colorStrings) colorStrings[key] = shape[key] ?? colorStrings[key];
 
-    return colorsFromType()[type];
+    return createColorFromType()[type];
 };
 
 export const createSketch = <K extends keyof EntityShapeMap>(
@@ -44,7 +48,7 @@ export const createSketch = <K extends keyof EntityShapeMap>(
     const sketch = {
         ...defaultSketch[type],
         ...shape,
-        colors: getSketchRGBAColorsFromHexString(type, colorString, shape),
+        color: getSketchRGBAColorsFromHexString(type, colorString, shape),
     };
 
     return sketch;
@@ -53,6 +57,7 @@ export const createSketch = <K extends keyof EntityShapeMap>(
 export const defaultSketch: EntitySketchMap = {
     button1: {
         type: 'button1',
+        inputType: 'rect',
         x: 100,
         y: 50,
         w: 80,
@@ -68,10 +73,11 @@ export const defaultSketch: EntitySketchMap = {
         fontSize: 16,
         textAlign: 'center',
         textBaseLine: 'middle',
-        colors: colorsFromType2['button1'],
+        color: colorFromType['button1'],
     },
-    rect1: {
-        type: 'rect1',
+    rect: {
+        type: 'rect',
+        inputType: 'rect',
         x: 100,
         y: 50,
         w: 80,
@@ -79,31 +85,38 @@ export const defaultSketch: EntitySketchMap = {
         fill: '#000',
         stroke: '#f00',
         lineWidth: 2,
-        colors: colorsFromType2['rect1'],
+        color: colorFromType['rect'],
     },
-    circle1: {
-        type: 'circle1',
+    circle: {
+        type: 'circle',
+        inputType: 'circle',
         x: 100,
         y: 50,
         radius: 255,
         fill: '#000',
         stroke: '#f00',
         lineWidth: 2,
-        colors: colorsFromType2['circle1'],
+        color: colorFromType['circle'],
     },
     line: {
+        type: 'line',
+        inputType: 'none',
         x1: 50,
         y1: 50,
         x2: 100,
         y2: 100,
         stroke: '#f00',
         lineWidth: 2,
+        color: colorFromType['line'],
     },
     text: {
+        type: 'text',
+        text: 'entity text',
         textFill: '#fff',
         font: 'monospace',
         fontSize: 16,
         textAlign: 'center',
         textBaseLine: 'middle',
+        color: colorFromType['text'],
     },
 };
