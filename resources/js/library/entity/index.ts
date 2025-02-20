@@ -6,7 +6,7 @@ import {createSketch} from './sketch';
 import type {Engine} from 'library/types/engine';
 import type {Entity, EntityConfig, EntityGeneric, GeneralProperties} from 'library/types/entity';
 import type {LibraryInput} from 'library/types/input';
-import type {EntityShapeMap} from 'library/types/entitySketch';
+import type {EntityShapeMap, EntitySketchMap} from 'library/types/entitySketch';
 
 export default (context: CanvasRenderingContext2D, engine: Engine, input: LibraryInput) =>
     <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig<K>): EntityGeneric<K> => {
@@ -20,7 +20,7 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
         const {setVisual} = setVisuals(
             generalProperties,
             visualProperties,
-            sketch,
+            sketch as EntitySketchMap['button1'],
             input,
             engine,
             context,
@@ -41,7 +41,6 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
     };
 
 const initialize = (gProps: GeneralProperties, show: Entity['show']) => {
-    console.log(gProps.showDelay);
     // show is used initially to show or hide when no showDelay is set. After it's used internally to indicate if entity is active
     if (!gProps.show && !gProps.showDelay) return;
 

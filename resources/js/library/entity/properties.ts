@@ -13,6 +13,8 @@ export const createUserMethods = (gProps: GeneralProperties, eventHandler: Event
         // TODO::Make this an option
         eventHandler.activateInputListeners();
 
+        console.log('callback START');
+
         eventHandler.callbacks.start();
     };
 

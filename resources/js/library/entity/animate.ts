@@ -14,7 +14,8 @@ import {EntityShapeMap, EntitySketchMap} from 'library/types/entitySketch';
 export const setVisuals = <T extends keyof EntityShapeMap>(
     gProps: GeneralProperties,
     vProps: Partial<VisualProperties>,
-    sketch: EntitySketchMap[T],
+    // sketch: EntitySketchMap[T],
+    sketch: EntitySketchMap['button1'],
     input: LibraryInput,
     engine: Engine,
     context: CanvasRenderingContext2D,

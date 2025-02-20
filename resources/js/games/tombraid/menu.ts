@@ -2,7 +2,7 @@
 import type {EntityGeneric, VisualProperties} from 'library/types/entity';
 import type {LibraryResources} from 'library/types';
 
-const elementAmount = 25;
+const elementAmount = 1;
 
 export const mainMenu = (library: LibraryResources) => {
     // const circle = library.createEntity('button1');
@@ -24,9 +24,9 @@ export const mainMenu = (library: LibraryResources) => {
 
     const baseVisualProperties: Partial<VisualProperties> = {
         start: 'fadein1',
-        startSpeed: 5,
+        startSpeed: 1,
         end: 'fadeout1',
-        endSpeed: 5,
+        endSpeed: 1,
     };
 
     const elements: EntityGeneric<'button1'>[] = [];
@@ -39,7 +39,8 @@ export const mainMenu = (library: LibraryResources) => {
             library.createEntity('button1', {
                 ...baseVisualProperties,
                 // show: false,
-                showDelay: i * timeoutDifference + 1,
+                // showDelay: i * timeoutDifference + 1,
+                showDelay: 500,
                 sketch: {
                     // type: 'circle1' | 'rect1' | 'button1' // optional
                     x: startX + column * squareDistance,
@@ -66,9 +67,9 @@ export const mainMenu = (library: LibraryResources) => {
                     touchend: evt => {
                         console.log(`Touch END: ${i}`, evt);
                     },
-                    // startTransition: evt => {
-                    //     console.log(`Start Transition: ${i}`, evt);
-                    // },
+                    startTransition: evt => {
+                        console.log(`Start Transition: ${i}`, evt);
+                    },
                     endOfStartTransition: evt => {
                         console.log(`End Of Start Transition: ${i}`, evt);
                     },
