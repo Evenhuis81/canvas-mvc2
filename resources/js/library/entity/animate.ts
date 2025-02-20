@@ -11,7 +11,8 @@ import type {
 } from 'library/types/entity';
 import {EntityShapeMap, EntitySketchMap} from 'library/types/entitySketch';
 
-export const setVisuals = <T extends keyof EntityShapeMap>(
+// export const setVisuals = <T extends keyof EntityShapeMap>(
+export const setVisuals = (
     gProps: GeneralProperties,
     vProps: Partial<VisualProperties>,
     // sketch: EntitySketchMap[T],
@@ -19,19 +20,24 @@ export const setVisuals = <T extends keyof EntityShapeMap>(
     input: LibraryInput,
     engine: Engine,
     context: CanvasRenderingContext2D,
-    eventHandler: EventHandler,
+    // eventHandler: EventHandler,
 ) => {
     const {animation, hover, start, end} = vProps;
 
-    // const renders = createB1Renders(
-    const renders = createRenders(gProps, sketch, vProps, input, context, eventHandler);
+    const renders = createRenders(gProps, sketch, vProps, input, context);
 
-    const visuals = {
+    const startT = start ? renders.transitions[start]() : undefined;
+
+    // console.log(startT);
+    startT?.update.callback();
+
+    const visuals: Partial<Visuals> = {
         animation: animation ? renders.animations[animation]() : undefined,
         hover: hover ? renders.hovers[hover]() : undefined,
-        start: start ? renders.transitions[start]() : undefined,
+        // start: start ?  : undefined,
+        start: startT,
         end: end ? renders.transitions[end]() : undefined,
-        draw: renders.draw,
+        draw: renders.draw ?? undefined,
     };
 
     const mixedRenders = {...renders.animations, ...renders.hovers, ...renders.transitions};
@@ -41,13 +47,9 @@ export const setVisuals = <T extends keyof EntityShapeMap>(
     const setEngine = createSetEngine(engine, visuals);
 
     // transforms empty callbacks to functional callbacks, abstract and implement in eventHandler
-    const callbacks = createCallbacks(setEngine, eventHandler);
+    // const callbacks = createCallbacks(setEngine, eventHandler);
 
-    console.log(callbacks);
-
-    eventHandler.callbacks = {...callbacks};
-
-    return {setVisual, setEngine};
+    return {setVisual};
 };
 
 // TODO::remove duplications and if statements, see comments in createCallbacks -> renders object
@@ -130,39 +132,51 @@ const createCallbacks = (
         entityListeners: {startTransition, endOfStartTransition, endTransition, endOfEndTransition},
     }: EventHandler,
 ) => ({
-    start: () => {
-        console.log('start setEngine');
+    start: {
+        fn: () => {
+            console.log('start setEngine');
 
-        setEngine('draw', 'on');
-        setEngine('start', 'on');
+            setEngine('draw', 'on');
+            setEngine('start', 'on');
 
-        if (startTransition) startTransition(startEvent);
+            if (startTransition) startTransition(startEvent);
+        },
+        empty: false,
     },
-    endOfStart: () => {
-        console.log('endOfStart setEngine');
+    endOfStart: {
+        fn: () => {
+            console.log('endOfStart setEngine');
 
-        setEngine('start', 'off');
-        setEngine('animation', 'on');
-        setEngine('hover', 'on');
+            setEngine('start', 'off');
+            setEngine('animation', 'on');
+            setEngine('hover', 'on');
 
-        if (endOfStartTransition) endOfStartTransition(startEvent);
+            if (endOfStartTransition) endOfStartTransition(startEvent);
+        },
+        empty: false,
     },
-    end: () => {
-        console.log('end setEngine');
+    end: {
+        fn: () => {
+            console.log('end setEngine');
 
-        setEngine('end', 'on');
-        setEngine('hover', 'off');
-        setEngine('animation', 'off');
+            setEngine('end', 'on');
+            setEngine('hover', 'off');
+            setEngine('animation', 'off');
 
-        if (endTransition) endTransition(endEvent);
+            if (endTransition) endTransition(endEvent);
+        },
+        empty: false,
     },
-    endOfEnd: () => {
-        console.log('endOfEnd setEngine');
+    endOfEnd: {
+        fn: () => {
+            console.log('endOfEnd setEngine');
 
-        setEngine('end', 'off');
-        setEngine('animation', 'off');
-        setEngine('hover', 'off');
+            setEngine('end', 'off');
+            setEngine('animation', 'off');
+            setEngine('hover', 'off');
 
-        if (endOfEndTransition) endOfEndTransition(endEvent);
+            if (endOfEndTransition) endOfEndTransition(endEvent);
+        },
+        empty: false,
     },
 });

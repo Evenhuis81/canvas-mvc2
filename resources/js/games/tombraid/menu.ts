@@ -24,9 +24,9 @@ export const mainMenu = (library: LibraryResources) => {
 
     const baseVisualProperties: Partial<VisualProperties> = {
         start: 'fadein1',
-        startSpeed: 1,
+        startSpeed: 2,
         end: 'fadeout1',
-        endSpeed: 1,
+        endSpeed: 2,
     };
 
     const elements: EntityGeneric<'button1'>[] = [];

@@ -1,7 +1,6 @@
 import {EngineDraw, EngineUpdate} from './engine';
 import {InputListenerEventMap} from './input';
 import {EntityShapeMap, EntitySketchMap} from './entitySketch';
-import {Colors} from './color';
 
 export type GeneralProperties = {
     id: number | string;
@@ -23,7 +22,7 @@ export interface VisualProperties {
 }
 
 export type EntityAnimations = 'noise';
-export type EntityTransitions = 'fadein1' | 'fadeout1' | 'slideinleft' | 'explode';
+export type EntityTransitions = 'fadein1' | 'fadeout1' | 'explode';
 export type EntityHovers = 'bold';
 
 export type VisualType = EntityAnimations | EntityTransitions | EntityHovers;
@@ -92,14 +91,26 @@ export interface EventHandler {
     deactivateInputListeners: () => void;
     entityListenerEvents: EntityListenerEvents;
     entityListeners: Partial<EntityListeners>;
-    callbacks: Callbacks;
+    // callbacks: Callbacks;
 }
 
 export type Callbacks = {
-    start: () => void;
-    endOfStart: () => void;
-    end: () => void;
-    endOfEnd: () => void;
+    start: {
+        fn: () => void;
+        empty: boolean;
+    };
+    endOfStart: {
+        fn: () => void;
+        empty: boolean;
+    };
+    end: {
+        fn: () => void;
+        empty: boolean;
+    };
+    endOfEnd: {
+        fn: () => void;
+        empty: boolean;
+    };
 };
 
 export type Entity = EntityGeneric<keyof EntityShapeMap>;
@@ -124,10 +135,10 @@ export type Renderer = {
 };
 
 export interface Visuals {
-    animation?: Renderer;
-    hover?: Renderer;
-    start?: Renderer;
-    end?: Renderer;
+    animation: Renderer;
+    hover: Renderer;
+    start: Renderer;
+    end: Renderer;
     draw: Required<EngineDraw>;
 }
 

@@ -41,7 +41,7 @@ export const createRenders = (
     {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
     input: LibraryInput,
     context: CanvasRenderingContext2D,
-    eventHandler: EventHandler,
+    // eventHandler: EventHandler,
 ) => {
     const {id, name} = props;
 
@@ -63,52 +63,40 @@ export const createRenders = (
 
     const transitions = {
         fadein1: () => {
-            const {update: fn, prepare} = createTransitionFadein1(
-                sketch.color,
-                0.005 * startSpeed,
-                eventHandler.callbacks,
-            );
+            const {update: fn, prepare, callback} = createTransitionFadein1(sketch.color, 0.005 * startSpeed);
 
             return {
                 update: {
                     id: `${id}-fadein1`,
                     name: `transition-fadein1-${name}`,
                     fn,
+                    callback,
                 },
                 prepare,
             };
         },
         fadeout1: () => {
-            const {update: fn, prepare} = createTransitionFadeout1(
-                sketch.color,
-                0.005 * endSpeed,
-                eventHandler.callbacks,
-            );
+            const {update: fn, prepare, callback} = createTransitionFadeout1(sketch.color, 0.005 * endSpeed);
 
             return {
                 update: {
                     id: `${id}-fadeout1`,
                     name: `transition-fadeout1${name}`,
                     fn,
+                    callback,
                 },
                 prepare,
             };
         },
-        slideinleft: () => ({
-            update: {
-                id: `${id}-slideinleft`,
-                name: `transition-slideinleft-${name}`,
-                fn: createTransitionSlideinleft(sketch),
-            },
-        }),
         explode: () => {
-            const {update: fn, prepare} = createTransitionExplode(sketch, sketch.color, eventHandler.callbacks);
+            const {update: fn, prepare, callback} = createTransitionExplode(sketch, sketch.color);
 
             return {
                 update: {
                     id: `${id}-slideinleft`,
                     name: `transition-slideinleft-${name}`,
                     fn,
+                    callback,
                 },
                 prepare,
             };
@@ -168,7 +156,11 @@ const createHoverBold = (sketch: EntitySketchMap['button1']) => {
     return {forward, reverse};
 };
 
-const createTransitionFadein1 = ({fill, stroke, textFill}: Colors, alphaVelocity: number, callbacks: Callbacks) => {
+const createTransitionFadein1 = ({fill, stroke, textFill}: Colors, alphaVelocity: number) => {
+    const callback = () => {
+        console.log('callback fadein1');
+    };
+
     const update = () => {
         fill.a += alphaVelocity;
         stroke.a += alphaVelocity;
@@ -188,14 +180,19 @@ const createTransitionFadein1 = ({fill, stroke, textFill}: Colors, alphaVelocity
         stroke.a = 1;
         textFill.a = 1;
 
-        console.log('endOfStart');
-        callbacks.endOfStart();
+        // console.log('endOfStart in fadein1');
+        // callbacks.endOfStart.fn();
+        callback();
     };
 
-    return {update, prepare, end};
+    return {update, prepare, end, callback};
 };
 
-const createTransitionFadeout1 = ({fill, stroke, textFill}: Colors, alphaVelocity: number, callbacks: Callbacks) => {
+const createTransitionFadeout1 = ({fill, stroke, textFill}: Colors, alphaVelocity: number) => {
+    const callback = () => {
+        console.log('callback fadeout1');
+    };
+
     const update = () => {
         fill.a -= alphaVelocity;
         stroke.a -= alphaVelocity;
@@ -215,25 +212,21 @@ const createTransitionFadeout1 = ({fill, stroke, textFill}: Colors, alphaVelocit
         stroke.a = 0;
         textFill.a = 0;
 
-        console.log('endOFEnd');
-
-        callbacks.endOfEnd();
+        // console.log('endOFEnd');
+        // callbacks.endOfEnd.fn();
+        callback();
     };
 
-    return {update, prepare, end};
-};
-
-const createTransitionSlideinleft = (sketch: EntitySketchMap['button1']) => () => {
-    //
+    return {update, prepare, end, callback};
 };
 
 let phase = 1;
 
-const createTransitionExplode = (
-    sketch: EntitySketchMap['button1'],
-    {fill, stroke, textFill}: Colors,
-    callbacks: Callbacks,
-) => {
+const createTransitionExplode = (sketch: EntitySketchMap['button1'], {fill, stroke, textFill}: Colors) => {
+    const callback = () => {
+        console.log('callback explode');
+    };
+
     const update = () => {
         if (phase === 1) sketch.lineWidth += 0.1;
         else if (phase === 2) {
@@ -246,7 +239,8 @@ const createTransitionExplode = (
                 stroke.a -= 0;
                 textFill.a -= 0;
 
-                callbacks.endOfEnd();
+                // callbacks.endOfEnd.fn();
+                callback();
             }
         }
 
@@ -262,7 +256,7 @@ const createTransitionExplode = (
 
     const prepare = () => {};
 
-    return {update, prepare, end};
+    return {update, prepare, end, callback};
 };
 
 const createTransitionUpdate =

@@ -17,21 +17,22 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
 
         const eventHandler = createEventHandler(input, sketch, listeners);
 
-        const {setVisual} = setVisuals(
+        // Make sketch(Map) dynamic and create generic to add 'theme' sketches from library
+        const {setVisual, callbacks} = setVisuals(
             generalProperties,
             visualProperties,
             sketch as EntitySketchMap['button1'],
             input,
             engine,
             context,
-            eventHandler,
+            // eventHandler,
         ); // Also creates setEngine
 
         const entity: EntityGeneric<K> = {
             addListener: eventHandler.addListener,
             removeListener: eventHandler.removeListener,
             setVisual,
-            ...createUserMethods(generalProperties, eventHandler),
+            ...createUserMethods(generalProperties, eventHandler, callbacks),
             sketch,
         };
 
