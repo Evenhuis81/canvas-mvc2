@@ -101,11 +101,27 @@ const defaultDraw = {
     name: 'noDrawName',
 };
 
+type EngineFunction = {
+    draw: (timeStamp: DOMHighResTimeStamp) => void;
+    update: (event: EngineUpdateEvent) => void;
+};
+
+type SetEngineTypes = 'draw' | 'update';
+
+type UpdateOrDraw<T extends SetEngineTypes> = {
+    type: T;
+    id: string | number;
+    name: string;
+    fn: EngineFunction[T];
+};
+
 // TODO::Create a set/remove update/draw that orders according to id number (lower = first, higher = last)
 const createSetAndRemoveUpdatesAndDraws = (updates: EngineUpdateConfig[], draws: EngineDrawConfig[]) => {
     const setDraw = (draw: EngineDraw) => draws.push({...defaultDraw, ...draw});
 
     const setUpdate = (update: EngineUpdate) => updates.push({...defaultUpdate, ...update});
+
+    const set = (updateOrDraw: UpdateOrDraw<SetEngineTypes>) => {};
 
     const removeUpdate = (id: number | string) => {
         const index = updates.findIndex(update => update.id === id);

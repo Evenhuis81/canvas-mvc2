@@ -131,6 +131,7 @@ export type TransitionSpeed = 1 | 2 | 3 | 4 | 5;
 
 export type Renderer = {
     update: Required<EngineUpdate>;
+    set: boolean;
     prepare?: () => void;
 };
 
@@ -139,7 +140,6 @@ export interface Visuals {
     hover: Renderer;
     start: Renderer;
     end: Renderer;
-    draw: Required<EngineDraw>;
 }
 
 export type EngineState = 'on' | 'off'; // Future states: 'pauze' | 'continue'?;
