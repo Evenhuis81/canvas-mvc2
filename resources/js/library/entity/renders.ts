@@ -3,52 +3,6 @@ import type {EngineDrawConfig} from 'library/types/engine';
 import type {Callbacks, EventHandler, GeneralProperties, VisualProperties} from 'library/types/entity';
 import type {EntitySketchMap} from 'library/types/entitySketch';
 import type {LibraryInput} from 'library/types/input';
-import {Rect, Text} from 'library/types/shapes';
-
-type EntityColorStrings = {
-    fill: '';
-    stroke: '';
-    textFill: '';
-};
-
-type EntityRect = Rect & {type: 'rect'};
-type EntityRectFill = Rect & {fill: string; type: 'rectF'};
-type EntityRectStroke = Rect & {stroke: string; type: 'rectS'};
-type EntityRectFillStroke = Rect & {fill: string; stroke: string; type: 'rectFS'};
-type EntityRectStrokeFill = Rect & {stroke: string; fill: string; type: 'rectSF'};
-type EntityRectTextFill = Rect & Text & {textFill: string; fill: string; type: 'rectTF'};
-type EntityRectTextStroke = Rect & Text & {textFill: string; stroke: string; type: 'rectTS'};
-type EntityRectTextFillStroke = Rect & Text & {textFill: string; fill: string; stroke: string; type: 'rectTFS'};
-type EntityRectTextStrokeFill = Rect & Text & {textFill: string; stroke: string; fill: string; type: 'rectTSF'};
-
-type EntityShapMap = {
-    rect: EntityRect;
-    rectF: EntityRectFill;
-    rectS: EntityRectStroke;
-    rectFS: EntityRectFillStroke;
-    rectSF: EntityRectStrokeFill;
-    rectTF: EntityRectTextFill;
-    rectTS: EntityRectTextStroke;
-    rectTFS: EntityRectTextFillStroke;
-    rectTSF: EntityRectTextStrokeFill;
-};
-
-const rectangle = {
-    x: 100,
-    y: 50,
-    w: 30,
-    h: 15,
-};
-
-const drawRectTextFill = (rectT: RectTextFill) => {
-    //
-};
-
-const drawRect = <T extends keyof EntityShapMap>(rect: EntityShapMap[T]) => {
-    if (rect.type === 'rectTSF') {
-        rect.textF;
-    }
-};
 
 const sketchDraw = (c: CanvasRenderingContext2D, sketch: EntitySketchMap['button1']) => () => {
     const {fill, stroke, textFill} = sketch.color;
@@ -234,8 +188,7 @@ const createTransitionFadein1 = ({fill, stroke, textFill}: Colors, alphaVelocity
         stroke.a = 1;
         textFill.a = 1;
 
-        console.log('endOFStart');
-
+        console.log('endOfStart');
         callbacks.endOfStart();
     };
 

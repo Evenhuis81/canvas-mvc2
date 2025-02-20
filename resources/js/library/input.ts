@@ -64,7 +64,7 @@ export const getCanvasInput = (canvas: HTMLCanvasElement) => {
         mouse.buttonHeld[mouseEvent.button] = true;
 
         inputHandler.mousedown.forEach(input => {
-            if (pressedInsideMouse(input.shape)) {
+            if (input.shape && pressedInsideMouse(input.shape)) {
                 mouse.pressedInside = true;
 
                 input.listener(mouseEvent);
@@ -89,7 +89,7 @@ export const getCanvasInput = (canvas: HTMLCanvasElement) => {
         mouse.pressCounter++;
 
         inputHandler.mouseup.forEach(input => {
-            if (pressedInsideMouse(input.shape)) {
+            if (input.shape && pressedInsideMouse(input.shape)) {
                 input.props.pressed = true;
 
                 if (input.props.pushed) input.props.clicked = true;
@@ -122,7 +122,7 @@ export const getCanvasInput = (canvas: HTMLCanvasElement) => {
         touch.y = +(touchEvent.touches[0].clientY - canvasRect.top).toFixed(0);
 
         inputHandler.touchstart.forEach(m => {
-            if (pushedInsideTouch(m.shape)) m.listener(touchEvent);
+            if (m.shape && pushedInsideTouch(m.shape)) m.listener(touchEvent);
         });
     });
 
@@ -143,7 +143,7 @@ export const getCanvasInput = (canvas: HTMLCanvasElement) => {
         mouse.pressCounter++;
 
         inputHandler.touchend.forEach(input => {
-            if (pushedInsideTouch(input.shape)) {
+            if (input.shape && pushedInsideTouch(input.shape)) {
                 input.props.pushed = true;
 
                 if (input.props.pressed) input.props.clicked = true;

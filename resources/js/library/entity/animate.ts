@@ -41,9 +41,11 @@ export const setVisuals = <T extends keyof EntityShapeMap>(
     const setEngine = createSetEngine(engine, visuals);
 
     // transforms empty callbacks to functional callbacks, abstract and implement in eventHandler
-    const setCallback = createSetCallback(setEngine, eventHandler);
+    const callbacks = createCallbacks(setEngine, eventHandler);
 
-    eventHandler.callbacks = {...setCallback};
+    console.log(callbacks);
+
+    eventHandler.callbacks = {...callbacks};
 
     return {setVisual, setEngine};
 };
@@ -121,8 +123,7 @@ const createSetEngine = (engine: Engine, renders: Partial<Visuals>): SetEngine =
     };
 };
 
-// This get mixed up with entityListeners (callbacks are essentially entitylisteners), try seperate and combine the 2
-const createSetCallback = (
+const createCallbacks = (
     setEngine: SetEngine,
     {
         entityListenerEvents: {startTransition: startEvent, endTransition: endEvent},
@@ -130,12 +131,16 @@ const createSetCallback = (
     }: EventHandler,
 ) => ({
     start: () => {
+        console.log('start setEngine');
+
         setEngine('draw', 'on');
         setEngine('start', 'on');
 
         if (startTransition) startTransition(startEvent);
     },
     endOfStart: () => {
+        console.log('endOfStart setEngine');
+
         setEngine('start', 'off');
         setEngine('animation', 'on');
         setEngine('hover', 'on');
@@ -143,6 +148,8 @@ const createSetCallback = (
         if (endOfStartTransition) endOfStartTransition(startEvent);
     },
     end: () => {
+        console.log('end setEngine');
+
         setEngine('end', 'on');
         setEngine('hover', 'off');
         setEngine('animation', 'off');
@@ -150,6 +157,8 @@ const createSetCallback = (
         if (endTransition) endTransition(endEvent);
     },
     endOfEnd: () => {
+        console.log('endOfEnd setEngine');
+
         setEngine('end', 'off');
         setEngine('animation', 'off');
         setEngine('hover', 'off');

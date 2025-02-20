@@ -1,5 +1,6 @@
 import {hexToRgba} from 'library/colors';
 import type {EntityColorString, EntityColor, EntityShapeMap, EntitySketchMap} from 'library/types/entitySketch';
+import {Rect} from 'library/types/shapes';
 
 const colorString = {
     fill: '#650',
@@ -119,4 +120,49 @@ export const defaultSketch: EntitySketchMap = {
         textBaseLine: 'middle',
         color: colorFromType['text'],
     },
+};
+
+type EntityColorStrings = {
+    fill: '';
+    stroke: '';
+    textFill: '';
+};
+
+type EntityRect = Rect & {type: 'rect'};
+type EntityRectFill = Rect & {fill: string; type: 'rectF'};
+type EntityRectStroke = Rect & {stroke: string; type: 'rectS'};
+type EntityRectFillStroke = Rect & {fill: string; stroke: string; type: 'rectFS'};
+type EntityRectStrokeFill = Rect & {stroke: string; fill: string; type: 'rectSF'};
+type EntityRectTextFill = Rect & Text & {textFill: string; fill: string; type: 'rectTF'};
+type EntityRectTextStroke = Rect & Text & {textFill: string; stroke: string; type: 'rectTS'};
+type EntityRectTextFillStroke = Rect & Text & {textFill: string; fill: string; stroke: string; type: 'rectTFS'};
+type EntityRectTextStrokeFill = Rect & Text & {textFill: string; stroke: string; fill: string; type: 'rectTSF'};
+
+type EntityShapMap = {
+    rect: EntityRect;
+    rectF: EntityRectFill;
+    rectS: EntityRectStroke;
+    rectFS: EntityRectFillStroke;
+    rectSF: EntityRectStrokeFill;
+    rectTF: EntityRectTextFill;
+    rectTS: EntityRectTextStroke;
+    rectTFS: EntityRectTextFillStroke;
+    rectTSF: EntityRectTextStrokeFill;
+};
+
+const rectangle = {
+    x: 100,
+    y: 50,
+    w: 30,
+    h: 15,
+};
+
+const drawRectTextFill = (rectT: EntityRectTextFill) => {
+    //
+};
+
+const drawRect = <T extends keyof EntityShapMap>(rect: EntityShapMap[T]) => {
+    if (rect.type === 'rectTSF') {
+        // rect.textF;
+    }
 };

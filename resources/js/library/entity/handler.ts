@@ -80,7 +80,14 @@ const createAddEntityInputListener =
 
         entityInputListenerHandlers[type] = [
             type,
-            () => input.addListener({type, listener, id, shape: sketch, props}),
+            () =>
+                input.addListener({
+                    type,
+                    listener,
+                    id,
+                    shape: sketch.type === 'rect' || sketch.type === 'circle' ? sketch : undefined,
+                    props,
+                }),
             () => input.removeListener(type, id),
             active,
         ];
