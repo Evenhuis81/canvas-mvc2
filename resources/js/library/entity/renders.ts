@@ -179,22 +179,3 @@ const createTransitionExplode = (sketch: EntitySketchMap['button1'], {fill, stro
 
     return {update, prepare, end, callback};
 };
-
-const createTransitionUpdate =
-    (
-        {mouse}: LibraryInput, // only mouse, no hover on touch
-        sketch: EntitySketchMap['button1'],
-        transition: {
-            forward: () => void;
-            reverse: () => void;
-        },
-    ) =>
-    () => {
-        if (mouse.inside(sketch)) {
-            transition.forward();
-
-            return;
-        }
-
-        transition.reverse();
-    };

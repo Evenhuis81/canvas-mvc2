@@ -1,9 +1,7 @@
 import {GeneralProperties, VisualProperties} from 'library/types/entity';
 import {EntitySketchMap} from 'library/types/entitySketch';
 import {LibraryInput} from 'library/types/input';
-// export type EntityAnimations = 'noise';
-// export type EntityHovers = 'bold';
-// export type EntityTransitions = 'fadein1' | 'fadeout1' | 'explode';
+
 export const getCreateVisual = (
     gProps: GeneralProperties,
     vProps: Partial<VisualProperties>,
@@ -12,7 +10,7 @@ export const getCreateVisual = (
     ctx: CanvasRenderingContext2D,
 ) => ({
     noise: () => createAnimationNoise(sketch),
-    bold: () => createHoverBold(sketch),
+    bold: () => createTransitionUpdate(createHoverBold(sketch, input)),
     fadein1: () => createHoverBold(sketch),
     fadeout1: () => createHoverBold(sketch),
     explode: () => createHoverBold(sketch),
@@ -40,7 +38,7 @@ const createAnimationNoise = (sketch: EntitySketchMap['button1']) => () => {
     }
 };
 
-const createHoverBold = (sketch: EntitySketchMap['button1']) => {
+const createHoverBold = (sketch: EntitySketchMap['button1'], input: LibraryInput) => {
     const origin = {
         lineWidth: sketch.lineWidth,
         f: sketch.fontSize,
@@ -72,8 +70,18 @@ const createHoverBold = (sketch: EntitySketchMap['button1']) => {
         }
     };
 
-    return {forward, reverse};
+    return {forward, reverse, sketch, input};
 };
+
+type ArgsType = [() => void, () => void, EntitySketchMap['button1'], LibraryInput];
+
+const createTransitionUpdate =
+    ([...args]: ArgsType) =>
+    () => {
+        if (mouse.inside(sketch)) return forward();
+
+        return reverse();
+    };
 
 // const hovers = {
 //     bold: () => {
@@ -112,8 +120,9 @@ const sketchDraw = (c: CanvasRenderingContext2D, sketch: EntitySketchMap['button
     c.fillText(sketch.text, sketch.x, sketch.y + 1.5); // TODO::use textAscend / -descent
 };
 
-const createDraw = (context: CanvasRenderingContext2D, sketch: EntitySketchMap['button1']): EngineDraw => {
+const createDraw = (context: CanvasRenderingContext2D, sketch: EntitySketchMap['button1']) => {
     return {
+        type: 'draw',
         id: `${sketch.type}-draw`,
         name: `${sketch.type} Draw`,
         fn: sketchDraw(context, sketch),

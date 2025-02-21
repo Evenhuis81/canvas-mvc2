@@ -38,7 +38,18 @@ export const setVisuals = (
     const visuals: Partial<Visuals> = {};
     const createVisual = getCreateVisual(gProps, vProps, sketch, input, context);
 
-    const setVisual: SetVisual = (type, effect) => (visuals[type] = createVisual[effect]());
+    const setVisual: SetVisual = (type, effect) => {
+        const update = {
+            type: 'update',
+
+        }
+
+        visuals[type] = {
+            visual: {
+                fn: createVisual[effect](),
+            },
+            // prepare?
+    }
 
     // const setEngine = createSetEngine(engine, visuals);
 

@@ -130,7 +130,7 @@ export type CreateEntity = <K extends keyof EntityShapeMap>(type: K, options?: E
 export type TransitionSpeed = 1 | 2 | 3 | 4 | 5;
 
 export type Visual = {
-    update: EngineUpdate;
+    visual: EngineUpdate;
     prepare?: () => void;
 };
 
