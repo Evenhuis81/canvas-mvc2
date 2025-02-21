@@ -1,6 +1,7 @@
 import {Callbacks, EventHandler, GeneralProperties} from 'library/types/entity';
 
-export const createUserMethods = (gProps: GeneralProperties, eventHandler: EventHandler, callbacks: Callbacks) => {
+// param: callbacks removed
+export const createUserMethods = (gProps: GeneralProperties, eventHandler: EventHandler) => {
     const show = () => {
         // Should this handle all different scenarios? (showDelay + show + callBack + Input- & EntityListener)
         // Needs refactor for the different kind of options, find way to make this less complex
@@ -12,7 +13,7 @@ export const createUserMethods = (gProps: GeneralProperties, eventHandler: Event
 
         eventHandler.activateInputListeners();
 
-        callbacks.start.fn();
+        // callbacks.start.fn();
     };
 
     const hide = () => {
@@ -36,7 +37,7 @@ export const createUserMethods = (gProps: GeneralProperties, eventHandler: Event
 
         gProps.show = false;
 
-        callbacks.end.fn();
+        // callbacks.end.fn();
     };
 
     const setHideTime = (time: number) => (gProps.hideDelay = time);

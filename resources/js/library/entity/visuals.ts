@@ -2,19 +2,54 @@ import {GeneralProperties, VisualProperties} from 'library/types/entity';
 import {EntitySketchMap} from 'library/types/entitySketch';
 import {LibraryInput} from 'library/types/input';
 
+// const createTransitionFadein1 = ({fill, stroke, textFill}: Colors, alphaVelocity: number) => {
+//     const callback = () => {
+//         console.log('callback fadein1');
+//     };
+
+//     const update = () => {
+//         fill.a += alphaVelocity;
+//         stroke.a += alphaVelocity;
+//         textFill.a += alphaVelocity;
+
+//         if (fill.a >= 1) end();
+//     };
+
+//     const prepare = () => {
+//         fill.a = 0;
+//         stroke.a = 0;
+//         textFill.a = 0;
+//     };
+
+//     const end = () => {
+//         fill.a = 1;
+//         stroke.a = 1;
+//         textFill.a = 1;
+
+//         // console.log('endOfStart in fadein1');
+//         // callbacks.endOfStart.fn();
+//         callback();
+//     };
+
+//     return {update, prepare, end, callback};
+// };
+
 export const getCreateVisual = (
-    gProps: GeneralProperties,
-    vProps: Partial<VisualProperties>,
     sketch: EntitySketchMap['button1'],
     input: LibraryInput,
-    ctx: CanvasRenderingContext2D,
-) => ({
-    noise: () => createAnimationNoise(sketch),
-    bold: () => createTransitionUpdate(createHoverBold(sketch, input)),
-    fadein1: () => createHoverBold(sketch),
-    fadeout1: () => createHoverBold(sketch),
-    explode: () => createHoverBold(sketch),
-});
+    {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
+) =>
+    // gProps: GeneralProperties,
+    // ctx: CanvasRenderingContext2D,
+    ({
+        noise: () => createAnimationNoise(sketch),
+        bold: () => createTransitionUpdate(createHoverBold(sketch), sketch, input),
+        // fadeout1: () => createHoverBold(sketch),
+        // explode: () => createHoverBold(sketch),
+        fadein1: () => createTransitionFadein1(sketch.color, 0.005 * startSpeed),
+        fadeout1: () => () => {},
+        explode: () => () => {},
+    });
 
 const createAnimationNoise = (sketch: EntitySketchMap['button1']) => () => {
     const upd = {
@@ -38,7 +73,7 @@ const createAnimationNoise = (sketch: EntitySketchMap['button1']) => () => {
     }
 };
 
-const createHoverBold = (sketch: EntitySketchMap['button1'], input: LibraryInput) => {
+const createHoverBold = (sketch: EntitySketchMap['button1']) => {
     const origin = {
         lineWidth: sketch.lineWidth,
         f: sketch.fontSize,
@@ -70,37 +105,25 @@ const createHoverBold = (sketch: EntitySketchMap['button1'], input: LibraryInput
         }
     };
 
-    return {forward, reverse, sketch, input};
+    const returnObject = {forward, reverse};
+
+    return returnObject;
 };
 
-type ArgsType = [() => void, () => void, EntitySketchMap['button1'], LibraryInput];
-
 const createTransitionUpdate =
-    ([...args]: ArgsType) =>
+    (
+        {forward, reverse}: {forward: () => void; reverse: () => void},
+        sketch: EntitySketchMap['button1'],
+        {mouse}: LibraryInput, // hover is only for mouse
+    ) =>
     () => {
         if (mouse.inside(sketch)) return forward();
 
         return reverse();
     };
 
-// const hovers = {
-//     bold: () => {
-//         const hover = createHoverBold(sketch);
-
-//         return {
-//             update: {
-//                 id: `${id}-hover`,
-//                 name: `hover-bold-${name}`,
-//                 fn: createTransitionUpdate(input, sketch, hover),
-//             },
-//         };
-//     },
-// };
-
-const sketchDraw = (c: CanvasRenderingContext2D, sketch: EntitySketchMap['button1']) => () => {
+export const createSketchDraw = (c: CanvasRenderingContext2D, sketch: EntitySketchMap['button1']) => () => {
     const {fill, stroke, textFill} = sketch.color;
-
-    //
 
     c.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
     c.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
@@ -118,34 +141,4 @@ const sketchDraw = (c: CanvasRenderingContext2D, sketch: EntitySketchMap['button
 
     c.beginPath();
     c.fillText(sketch.text, sketch.x, sketch.y + 1.5); // TODO::use textAscend / -descent
-};
-
-const createDraw = (context: CanvasRenderingContext2D, sketch: EntitySketchMap['button1']) => {
-    return {
-        type: 'draw',
-        id: `${sketch.type}-draw`,
-        name: `${sketch.type} Draw`,
-        fn: sketchDraw(context, sketch),
-    };
-};
-
-const upd = {
-    origin: {
-        lw: 0,
-    },
-    range: {
-        lw: 1,
-    },
-    vel: {
-        x: 0,
-        y: 0,
-    },
-    adj: {
-        x: 0.5,
-        y: 0.5,
-    },
-    count: 0,
-    lw: 0,
-    max: 60,
-    angle: 0,
 };

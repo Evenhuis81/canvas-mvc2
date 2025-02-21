@@ -1,4 +1,4 @@
-import {EngineDraw, EngineUpdate} from './engine';
+import {EngineDraw, EngineUpdate, UpdateOrDraw} from './engine';
 import {InputListenerEventMap} from './input';
 import {EntityShapeMap, EntitySketchMap} from './entitySketch';
 
@@ -91,27 +91,7 @@ export interface EventHandler {
     deactivateInputListeners: () => void;
     entityListenerEvents: EntityListenerEvents;
     entityListeners: Partial<EntityListeners>;
-    // callbacks: Callbacks;
 }
-
-export type Callbacks = {
-    start: {
-        fn: () => void;
-        empty: boolean;
-    };
-    endOfStart: {
-        fn: () => void;
-        empty: boolean;
-    };
-    end: {
-        fn: () => void;
-        empty: boolean;
-    };
-    endOfEnd: {
-        fn: () => void;
-        empty: boolean;
-    };
-};
 
 export type Entity = EntityGeneric<keyof EntityShapeMap>;
 
@@ -130,8 +110,9 @@ export type CreateEntity = <K extends keyof EntityShapeMap>(type: K, options?: E
 export type TransitionSpeed = 1 | 2 | 3 | 4 | 5;
 
 export type Visual = {
-    visual: EngineUpdate;
+    visual: UpdateOrDraw<'update'>;
     prepare?: () => void;
+    callback?: () => void;
 };
 
 export type Visuals = {
@@ -141,7 +122,3 @@ export type Visuals = {
     end: Visual;
     draw: EngineDraw;
 };
-
-// export type EngineState = 'on' | 'off'; // Future states: 'pauze' | 'continue'?;
-
-// export type SetEngine = (type: keyof Visuals, state: EngineState) => void;

@@ -1,6 +1,4 @@
 import type {Colors} from 'library/types/color';
-import {EngineDraw} from 'library/types/engine';
-// import type {EngineDrawConfig} from 'library/types/engine';
 import type {Callbacks, EventHandler, GeneralProperties, VisualProperties} from 'library/types/entity';
 import type {EntitySketchMap} from 'library/types/entitySketch';
 import type {LibraryInput} from 'library/types/input';
@@ -8,29 +6,23 @@ import type {LibraryInput} from 'library/types/input';
 export const createRenders = (
     props: GeneralProperties,
     sketch: EntitySketchMap['button1'],
-    {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
+
     input: LibraryInput,
     context: CanvasRenderingContext2D,
     // eventHandler: EventHandler,
 ) => {
-    const {id, name} = props;
+    // export type EngineState = 'on' | 'off'; // Future states: 'pauze' | 'continue'?;
+    // export type SetEngine = (type: keyof Visuals, state: EngineState) => void;
+    // const setEngine = createSetEngine(engine, visuals);
 
-    const draw = createDraw(context, sketch);
+    // transforms empty callbacks to functional callbacks, abstract and implement in eventHandler
+    // const callbacks = createCallbacks(setEngine, eventHandler);
+
+    // const {id, name} = props;
+
+    // const draw = createDraw(context, sketch);
 
     const transitions = {
-        fadein1: () => {
-            const {update: fn, prepare, callback} = createTransitionFadein1(sketch.color, 0.005 * startSpeed);
-
-            return {
-                update: {
-                    id: `${id}-fadein1`,
-                    name: `transition-fadein1-${name}`,
-                    fn,
-                    callback,
-                },
-                prepare,
-            };
-        },
         fadeout1: () => {
             const {update: fn, prepare, callback} = createTransitionFadeout1(sketch.color, 0.005 * endSpeed);
 
@@ -58,55 +50,12 @@ export const createRenders = (
             };
         },
     };
-
-    const animations = {
-        noise: () => ({
-            update: {
-                id: `${id}-noise`,
-                name: `animation-noise-${name}`,
-                fn: createAnimationNoise(sketch),
-            },
-        }),
-    };
-
     return {
         hovers,
         transitions,
         animations,
         draw,
     };
-};
-
-const createTransitionFadein1 = ({fill, stroke, textFill}: Colors, alphaVelocity: number) => {
-    const callback = () => {
-        console.log('callback fadein1');
-    };
-
-    const update = () => {
-        fill.a += alphaVelocity;
-        stroke.a += alphaVelocity;
-        textFill.a += alphaVelocity;
-
-        if (fill.a >= 1) end();
-    };
-
-    const prepare = () => {
-        fill.a = 0;
-        stroke.a = 0;
-        textFill.a = 0;
-    };
-
-    const end = () => {
-        fill.a = 1;
-        stroke.a = 1;
-        textFill.a = 1;
-
-        // console.log('endOfStart in fadein1');
-        // callbacks.endOfStart.fn();
-        callback();
-    };
-
-    return {update, prepare, end, callback};
 };
 
 const createTransitionFadeout1 = ({fill, stroke, textFill}: Colors, alphaVelocity: number) => {
@@ -179,3 +128,80 @@ const createTransitionExplode = (sketch: EntitySketchMap['button1'], {fill, stro
 
     return {update, prepare, end, callback};
 };
+
+const createCallbacks = (
+    setEngine: SetEngine,
+    {
+        entityListenerEvents: {startTransition: startEvent, endTransition: endEvent},
+        entityListeners: {startTransition, endOfStartTransition, endTransition, endOfEndTransition},
+    }: EventHandler,
+) => ({
+    start: {
+        fn: () => {
+            console.log('start setEngine');
+
+            setEngine('draw', 'on');
+            setEngine('start', 'on');
+
+            if (startTransition) startTransition(startEvent);
+        },
+        empty: false,
+    },
+    endOfStart: {
+        fn: () => {
+            console.log('endOfStart setEngine');
+
+            setEngine('start', 'off');
+            setEngine('animation', 'on');
+            setEngine('hover', 'on');
+
+            if (endOfStartTransition) endOfStartTransition(startEvent);
+        },
+        empty: false,
+    },
+    end: {
+        fn: () => {
+            console.log('end setEngine');
+
+            setEngine('end', 'on');
+            setEngine('hover', 'off');
+            setEngine('animation', 'off');
+
+            if (endTransition) endTransition(endEvent);
+        },
+        empty: false,
+    },
+    endOfEnd: {
+        fn: () => {
+            console.log('endOfEnd setEngine');
+
+            setEngine('end', 'off');
+            setEngine('animation', 'off');
+            setEngine('hover', 'off');
+
+            if (endOfEndTransition) endOfEndTransition(endEvent);
+        },
+        empty: false,
+    },
+});
+
+// const upd = {
+//     origin: {
+//         lw: 0,
+//     },
+//     range: {
+//         lw: 1,
+//     },
+//     vel: {
+//         x: 0,
+//         y: 0,
+//     },
+//     adj: {
+//         x: 0.5,
+//         y: 0.5,
+//     },
+//     count: 0,
+//     lw: 0,
+//     max: 60,
+//     angle: 0,
+// };
