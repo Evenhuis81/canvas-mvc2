@@ -22,13 +22,13 @@ export interface VisualProperties {
 }
 
 export type EntityAnimations = 'noise';
-export type EntityTransitions = 'fadein1' | 'fadeout1' | 'explode';
 export type EntityHovers = 'bold';
+export type EntityTransitions = 'fadein1' | 'fadeout1' | 'explode';
 
-export type VisualType = EntityAnimations | EntityTransitions | EntityHovers;
+export type Effects = EntityAnimations | EntityTransitions | EntityHovers;
 
 export type SetHideTime = (time: number) => void;
-export type SetVisual = (kind: Exclude<keyof Visuals, 'draw'>, type: VisualType) => void;
+export type SetVisual = (type: Exclude<keyof Visuals, 'draw'>, effect: Effects) => void;
 
 export type EntityConfig<K extends keyof EntityShapeMap> = Partial<
     {sketch: Partial<EntityShapeMap[K]>} & GeneralProperties &
@@ -129,19 +129,19 @@ export type CreateEntity = <K extends keyof EntityShapeMap>(type: K, options?: E
 
 export type TransitionSpeed = 1 | 2 | 3 | 4 | 5;
 
-export type Renderer = {
-    update: Required<EngineUpdate>;
-    set: boolean;
+export type Visual = {
+    update: EngineUpdate;
     prepare?: () => void;
 };
 
-export interface Visuals {
-    animation: Renderer;
-    hover: Renderer;
-    start: Renderer;
-    end: Renderer;
-}
+export type Visuals = {
+    animation: Visual;
+    hover: Visual;
+    start: Visual;
+    end: Visual;
+    draw: EngineDraw;
+};
 
-export type EngineState = 'on' | 'off'; // Future states: 'pauze' | 'continue'?;
+// export type EngineState = 'on' | 'off'; // Future states: 'pauze' | 'continue'?;
 
-export type SetEngine = (type: keyof Visuals, state: EngineState) => void;
+// export type SetEngine = (type: keyof Visuals, state: EngineState) => void;

@@ -1,12 +1,13 @@
 import statistics from './statistics';
 import type {
     EngineDraw,
-    EngineDrawConfig,
+    EngineFunctionMap,
+    EngineHandle,
     EngineInfo,
     EngineProperties,
     EngineUpdate,
-    EngineUpdateConfig,
     EngineUpdateEvent,
+    UpdateOrDraw,
 } from './types/engine';
 
 const engineUpdateEvent = {
@@ -24,10 +25,12 @@ const engineProperties = {
 export const createEngine = (libraryID: number | string) => {
     const updateEvent = {...engineUpdateEvent};
     const properties = {...engineProperties};
-    const draws: EngineDrawConfig[] = [];
-    const updates: EngineUpdateConfig[] = [];
+    const functions: EngineFunctionMap = {
+        draw: [],
+        update: [],
+    };
 
-    const loop = createLoop(properties, updates, draws, updateEvent);
+    const loop = createLoop(properties, functions, updateEvent);
 
     const run = () => loop(0);
 
@@ -39,9 +42,9 @@ export const createEngine = (libraryID: number | string) => {
 
     const halt = () => (properties.stop = true);
 
-    const {setUpdate, setDraw, removeUpdate, removeDraw} = createSetAndRemoveUpdatesAndDraws(updates, draws);
+    const {handle, setUpdate, setDraw, removeUpdate, removeDraw} = createSetAndRemoveUpdatesAndDraws(functions);
 
-    const info = createInfo(updates, draws, updateEvent);
+    const info = createInfo(functions, updateEvent);
 
     const createStats = (context: CanvasRenderingContext2D) =>
         createEngineStats(libraryID, info, properties, context, setDraw, removeDraw);
@@ -62,21 +65,17 @@ export const createEngine = (libraryID: number | string) => {
 // TODO::Fix this with updateloop from https://isaacsukin.com/news/2015/01/detailed-explanation-javascript-game-loops-and-timing#starting-stopping
 let frame = 0;
 
-const createLoop = (
-    properties: EngineProperties,
-    updates: EngineUpdateConfig[],
-    draws: EngineDrawConfig[],
-    event: EngineUpdateEvent,
-) => {
+const createLoop = (properties: EngineProperties, functions: EngineFunctionMap, event: EngineUpdateEvent) => {
     const loop = (timeStamp: DOMHighResTimeStamp) => {
         event.timePassed = timeStamp - event.lastTime;
 
         event.lastTime = timeStamp;
 
+        // Swap these with other functions in the loop
         if (frame++ > 2) {
-            for (const update of updates) update.fn(event);
+            for (const update of functions.update) update.fn(event);
 
-            for (const draw of draws) draw.fn(timeStamp);
+            for (const draw of functions.draw) draw.fn(timeStamp);
         }
 
         properties.requestID = requestAnimationFrame(loop);
@@ -91,70 +90,64 @@ const createLoop = (
     return loop;
 };
 
-const defaultUpdate = {
+const defaultUpdate: Omit<UpdateOrDraw<'update'>, 'fn'> = {
+    type: 'update',
     id: 'noUpdateID',
     name: 'noUpdateName',
 };
 
-const defaultDraw = {
+const defaultDraw: Omit<UpdateOrDraw<'draw'>, 'fn'> = {
+    type: 'draw',
     id: 'noDrawID',
     name: 'noDrawName',
 };
 
-type EngineFunction = {
-    draw: (timeStamp: DOMHighResTimeStamp) => void;
-    update: (event: EngineUpdateEvent) => void;
-};
+const createSetAndRemoveUpdatesAndDraws = (functions: EngineFunctionMap) => {
+    const setDraw = (draw: EngineDraw) => functions.draw.push({...defaultDraw, ...draw});
 
-type SetEngineTypes = 'draw' | 'update';
+    const setUpdate = (update: EngineUpdate) => functions.update.push({...defaultUpdate, ...update});
 
-type UpdateOrDraw<T extends SetEngineTypes> = {
-    type: T;
-    id: string | number;
-    name: string;
-    fn: EngineFunction[T];
-};
+    const handle: EngineHandle = (updateOrDraw, set = true) => {
+        if (set) return functions[updateOrDraw.type].push(updateOrDraw);
 
-// TODO::Create a set/remove update/draw that orders according to id number (lower = first, higher = last)
-const createSetAndRemoveUpdatesAndDraws = (updates: EngineUpdateConfig[], draws: EngineDrawConfig[]) => {
-    const setDraw = (draw: EngineDraw) => draws.push({...defaultDraw, ...draw});
+        removeUpdate(updateOrDraw.id);
 
-    const setUpdate = (update: EngineUpdate) => updates.push({...defaultUpdate, ...update});
-
-    const set = (updateOrDraw: UpdateOrDraw<SetEngineTypes>) => {};
+        return;
+    };
 
     const removeUpdate = (id: number | string) => {
-        const index = updates.findIndex(update => update.id === id);
+        const index = functions.update.findIndex(update => update.id === id);
 
         if (index === -1) throw Error(`update with id '${id}' not found, nothing to remove`);
 
-        updates.splice(index, 1);
+        functions.update.splice(index, 1);
     };
 
     const removeDraw = (id: number | string) => {
-        const index = draws.findIndex(draw => draw.id === id);
+        const index = functions.draw.findIndex(draw => draw.id === id);
 
         if (index === -1) throw Error(`draw with id '${id}' not found, nothing to remove`);
 
-        draws.splice(index, 1);
+        functions.draw.splice(index, 1);
     };
 
     return {
         setUpdate,
         setDraw,
+        handle,
         removeUpdate,
         removeDraw,
     };
 };
 
-const createInfo = (updates: EngineUpdateConfig[], draws: EngineDrawConfig[], updateEvent: EngineUpdateEvent) => ({
+const createInfo = (functions: EngineFunctionMap, updateEvent: EngineUpdateEvent) => ({
     updates: {
-        length: () => updates.length,
-        ids: () => updates.map(update => update.id),
+        length: () => functions.update.length,
+        ids: () => functions.update.map(update => update.id),
     },
     draws: {
-        length: () => draws.length,
-        ids: () => draws.map(draw => draw.id),
+        length: () => functions.draw.length,
+        ids: () => functions.draw.map(draw => draw.id),
     },
     time: {
         passed: () => updateEvent.timePassed,

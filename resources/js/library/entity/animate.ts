@@ -10,6 +10,7 @@ import type {
     Visuals,
 } from 'library/types/entity';
 import {EntitySketchMap} from 'library/types/entitySketch';
+import {getCreateVisual} from './visuals';
 
 // export const setVisuals = <T extends keyof EntityShapeMap>(
 export const setVisuals = (
@@ -24,27 +25,22 @@ export const setVisuals = (
 ) => {
     const {animation, hover, start, end} = vProps;
 
-    const renders = createRenders(gProps, sketch, vProps, input, context);
+    // const renders = createRenders(gProps, sketch, vProps, input, context);
 
-    const startT = start ? renders.transitions[start]() : undefined;
+    // animation: animation ? createVisual[animation]() : undefined,
+    // hover: hover ? renders.hovers[hover]() : undefined,
+    // start: start ? renders.transitions[start]() : undefined,
+    // end: end ? renders.transitions[end]() : undefined,
+    // draw: renders.draw ?? undefined,
 
-    // console.log(startT);
-    startT?.update.callback();
+    // const mixedRenders = {...renders.animations, ...renders.hovers, ...renders.transitions};
 
-    const visuals: Partial<Visuals> = {
-        animation: animation ? renders.animations[animation]() : undefined,
-        hover: hover ? renders.hovers[hover]() : undefined,
-        // start: start ?  : undefined,
-        start: startT,
-        end: end ? renders.transitions[end]() : undefined,
-        draw: renders.draw ?? undefined,
-    };
+    const visuals: Partial<Visuals> = {};
+    const createVisual = getCreateVisual(gProps, vProps, sketch, input, context);
 
-    const mixedRenders = {...renders.animations, ...renders.hovers, ...renders.transitions};
+    const setVisual: SetVisual = (type, effect) => (visuals[type] = createVisual[effect]());
 
-    const setVisual: SetVisual = (kind, type) => (visuals[kind] = mixedRenders[type]());
-
-    const setEngine = createSetEngine(engine, visuals);
+    // const setEngine = createSetEngine(engine, visuals);
 
     // transforms empty callbacks to functional callbacks, abstract and implement in eventHandler
     // const callbacks = createCallbacks(setEngine, eventHandler);

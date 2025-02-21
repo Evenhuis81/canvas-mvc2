@@ -1,28 +1,37 @@
 import {WithOptional} from '.';
 
-export type EngineDrawConfig = {
-    id: number | string;
+type EngineFunction = {
+    draw: (timeStamp: DOMHighResTimeStamp) => void;
+    update: (event: EngineUpdateEvent) => void;
+};
+
+type EngineFunctionMap = {
+    [K in keyof EngineFunction]: UpdateOrDraw<K>[];
+};
+
+type UpdateOrDraw<T extends keyof EngineFunction> = {
+    type: T;
+    id: string | number;
     name: string;
-    fn: (deltaTime: DOMHighResTimeStamp) => void;
+    fn: EngineFunction[T];
 };
 
-export type EngineUpdateConfig = Omit<EngineDrawConfig, 'fn'> & {
-    fn: (evt: EngineUpdateEvent) => void;
-};
+export type EngineDraw = WithOptional<Omit<UpdateOrDraw<'draw'>, 'type'>, 'id' | 'name'>;
 
-export type EngineDraw = WithOptional<EngineDrawConfig, 'id' | 'name'>;
-
-export type EngineUpdate = WithOptional<EngineUpdateConfig, 'id' | 'name'>;
+export type EngineUpdate = WithOptional<Omit<UpdateOrDraw<'update'>, 'type'>, 'id' | 'name'>;
 
 export type EngineUpdateEvent = {
     timePassed: number;
     lastTime: number;
 };
 
+export type EngineHandle = <T extends keyof EngineFunctionMap>(updateOrDraw: UpdateOrDraw<T>, set?: boolean) => void;
+
 export interface Engine {
     run: () => void;
     runOnce: () => void;
     halt: () => void;
+    handle: EngineHandle;
     setUpdate: (update: EngineUpdate) => void;
     setDraw: (draw: EngineDraw) => void;
     removeUpdate: (id: number | string) => void;
