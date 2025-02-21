@@ -21,6 +21,10 @@ export interface VisualProperties {
     endSpeed: TransitionSpeed;
 }
 
+export type Callbacks<T extends keyof Visuals> = {
+    [K in T]: () => void;
+};
+
 export type EntityAnimations = 'noise';
 export type EntityHovers = 'bold';
 export type EntityTransitions = 'fadein1' | 'fadeout1' | 'explode';
@@ -111,9 +115,12 @@ export type TransitionSpeed = 1 | 2 | 3 | 4 | 5;
 
 export type Visual = {
     visual: UpdateOrDraw<'update'>;
-    prepare?: () => void;
+    pre?: () => void;
+    post?: () => void;
     callback?: () => void;
 };
+
+export type VisualInternal = Omit<Visual, 'visual'> & {visualFn: () => void};
 
 export type Visuals = {
     animation: Visual;

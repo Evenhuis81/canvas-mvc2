@@ -30,15 +30,21 @@ export const setVisuals = (
     const visuals: Partial<Visuals> = {};
     const createVisual = getCreateVisual(sketch, input, vProps);
 
-    const setVisual: SetVisual = (type, effect) =>
-        (visuals[type] = {
+    const setVisual: SetVisual = (type, effect) => {
+        const {visualFn: fn, pre, post, callback} = createVisual[effect]();
+
+        visuals[type] = {
             visual: {
                 id: `${gProps.id}-${type}-${effect}`,
                 name: `${type} ${effect}`,
                 type: 'update',
-                fn: createVisual[effect](),
+                fn,
             },
-        });
+            pre,
+            post,
+            callback,
+        };
+    };
 
     const setDraw = (sketch: EntitySketchMap['button1']) => {
         const draw = {

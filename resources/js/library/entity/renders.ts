@@ -1,5 +1,5 @@
 import type {Colors} from 'library/types/color';
-import type {Callbacks, EventHandler, GeneralProperties, VisualProperties} from 'library/types/entity';
+import type {EventHandler, GeneralProperties, VisualProperties} from 'library/types/entity';
 import type {EntitySketchMap} from 'library/types/entitySketch';
 import type {LibraryInput} from 'library/types/input';
 

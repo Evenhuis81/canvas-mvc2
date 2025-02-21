@@ -1,4 +1,4 @@
-import {GeneralProperties, VisualProperties} from 'library/types/entity';
+import {GeneralProperties, Visual, VisualInternal, VisualProperties} from 'library/types/entity';
 import {EntitySketchMap} from 'library/types/entitySketch';
 import {LibraryInput} from 'library/types/input';
 
@@ -43,35 +43,44 @@ export const getCreateVisual = (
     // ctx: CanvasRenderingContext2D,
     ({
         noise: () => createAnimationNoise(sketch),
-        bold: () => createTransitionUpdate(createHoverBold(sketch), sketch, input),
+        // bold: () => createTransitionUpdate(createHoverBold(sketch), sketch, input),
         // fadeout1: () => createHoverBold(sketch),
-        // explode: () => createHoverBold(sketch),
-        fadein1: () => createTransitionFadein1(sketch.color, 0.005 * startSpeed),
-        fadeout1: () => () => {},
-        explode: () => () => {},
+        fadein1: () => placeHolder(),
+        fadeout1: () => placeHolder(),
+        explode: () => placeHolder(),
+        bold: () => placeHolder(),
     });
 
-const createAnimationNoise = (sketch: EntitySketchMap['button1']) => () => {
-    const upd = {
-        adj: {
-            x: 0.5,
-            y: 0.5,
-        },
-        count: 0,
-    };
+const placeHolder = (): VisualInternal => ({
+    visualFn: () => {},
+    callback: () => {},
+    pre: () => {},
+    post: () => {},
+});
 
-    sketch.x += upd.adj.x;
-    sketch.y += upd.adj.y;
+const createAnimationNoise = (sketch: EntitySketchMap['button1']): VisualInternal => ({
+    visualFn: () => {
+        const upd = {
+            adj: {
+                x: 0.5,
+                y: 0.5,
+            },
+            count: 0,
+        };
 
-    upd.count++;
+        sketch.x += upd.adj.x;
+        sketch.y += upd.adj.y;
 
-    if (upd.count > 60) {
-        upd.adj.x *= -1;
-        upd.adj.y *= -1;
+        upd.count++;
 
-        upd.count = 0;
-    }
-};
+        if (upd.count > 60) {
+            upd.adj.x *= -1;
+            upd.adj.y *= -1;
+
+            upd.count = 0;
+        }
+    },
+});
 
 const createHoverBold = (sketch: EntitySketchMap['button1']) => {
     const origin = {
