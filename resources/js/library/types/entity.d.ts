@@ -21,18 +21,7 @@ export interface VisualProperties {
     endSpeed: TransitionSpeed;
 }
 
-export type Callbacks<T extends keyof Visuals> = {
-    [K in T]: () => void;
-};
-
-export type EntityAnimations = 'noise';
-export type EntityHovers = 'bold';
-export type EntityTransitions = 'fadein1' | 'fadeout1' | 'explode';
-
-export type Effects = EntityAnimations | EntityTransitions | EntityHovers;
-
 export type SetHideTime = (time: number) => void;
-export type SetVisual = (type: Exclude<keyof Visuals, 'draw'>, effect: Effects) => void;
 
 export type EntityConfig<K extends keyof EntityShapeMap> = Partial<
     {sketch: Partial<EntityShapeMap[K]>} & GeneralProperties &
@@ -113,19 +102,21 @@ export type CreateEntity = <K extends keyof EntityShapeMap>(type: K, options?: E
 
 export type TransitionSpeed = 1 | 2 | 3 | 4 | 5;
 
+type VisualType = 'animation' | 'hover' | 'start' | 'end' | 'draw';
+
+export type SetVisual = (type: Exclude<VisualType, 'draw'>, effect: Effects) => void;
+
+export type EntityAnimations = 'noise';
+export type EntityHovers = 'bold';
+export type EntityTransitions = 'fadein1' | 'fadeout1' | 'explode';
+
+export type Effects = EntityAnimations | EntityTransitions | EntityHovers;
+
 export type Visual = {
-    visual: UpdateOrDraw<'update'>;
+    render: EngineUpdate['fn'] | EngineDraw['fn'];
     pre?: () => void;
     post?: () => void;
     callback?: () => void;
 };
 
-export type VisualInternal = Omit<Visual, 'visual'> & {visualFn: () => void};
-
-export type Visuals = {
-    animation: Visual;
-    hover: Visual;
-    start: Visual;
-    end: Visual;
-    draw: EngineDraw;
-};
+export type Visuals = {[K in VisualType]: Omit<Visual, 'render'> & {render: UpdateOrDraw<'draw' | 'update'>}};

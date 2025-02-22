@@ -7,6 +7,7 @@ import type {
     GeneralProperties,
     // SetEngine,
     SetVisual,
+    Visual,
     VisualProperties,
     Visuals,
 } from 'library/types/entity';
@@ -17,28 +18,24 @@ export const setVisuals = (
     vProps: Partial<VisualProperties>,
     sketch: EntitySketchMap['button1'],
     input: LibraryInput,
-    engine: Engine,
     context: CanvasRenderingContext2D,
     // eventHandler: EventHandler,
 ) => {
-    const {animation, hover, start, end} = vProps;
-
-    // const renders = createRenders(gProps, sketch, vProps, input, context);
-    // const mixedRenders = {...renders.animations, ...renders.hovers, ...renders.transitions};
-    // const createVisual = getCreateVisual(gProps, vProps, sketch, input, context);
-
     const visuals: Partial<Visuals> = {};
+
     const createVisual = getCreateVisual(sketch, input, vProps);
 
+    const {animation, hover, start, end} = vProps;
+
     const setVisual: SetVisual = (type, effect) => {
-        const {visualFn: fn, pre, post, callback} = createVisual[effect]();
+        const {render, pre, post, callback} = createVisual[effect]();
 
         visuals[type] = {
-            visual: {
+            render: {
+                type: 'update',
                 id: `${gProps.id}-${type}-${effect}`,
                 name: `${type} ${effect}`,
-                type: 'update',
-                fn,
+                fn: render,
             },
             pre,
             post,
@@ -47,15 +44,27 @@ export const setVisuals = (
     };
 
     const setDraw = (sketch: EntitySketchMap['button1']) => {
-        const draw = {
-            type: 'draw',
-            id: `${sketch.type}-draw`,
-            name: `${sketch.type} Draw`,
-            fn: createSketchDraw(context, sketch),
+        const visual: Visuals['draw'] = {
+            render: {
+                type: 'draw',
+                id: `${sketch.type}-draw`,
+                name: `${sketch.type} Draw`,
+                fn: createSketchDraw(context, sketch),
+            },
+            // pre,
+            // post,
+            // callback,
         };
 
-        engine.setDraw(draw);
+        visuals.draw = visual;
+
+        if (animation) setVisual('animation', animation);
+        if (hover) setVisual('hover', hover);
+        if (start) setVisual('start', start);
+        if (end) setVisual('end', end);
     };
 
-    return {setVisual, setDraw};
+    setDraw(sketch);
+
+    return {visuals, setVisual, setDraw};
 };

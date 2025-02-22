@@ -23,10 +23,10 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
             visualProperties,
             sketch as EntitySketchMap['button1'],
             input,
-            engine,
             context,
-            // eventHandler,
-        ); // Also creates setEngine
+        );
+
+        // SetEngine here
 
         const entity: EntityGeneric<K> = {
             addListener: eventHandler.addListener,

@@ -1,38 +1,39 @@
-import {GeneralProperties, Visual, VisualInternal, VisualProperties} from 'library/types/entity';
-import {EntitySketchMap} from 'library/types/entitySketch';
+import {EngineUpdate} from 'library/types/engine';
+import {GeneralProperties, Visual, VisualProperties} from 'library/types/entity';
+import {EntityColor, EntitySketchMap} from 'library/types/entitySketch';
 import {LibraryInput} from 'library/types/input';
 
-// const createTransitionFadein1 = ({fill, stroke, textFill}: Colors, alphaVelocity: number) => {
-//     const callback = () => {
-//         console.log('callback fadein1');
-//     };
+const createTransitionFadein1 = ({fill, stroke, textFill}: EntityColor['button1'], alphaVelocity: number) => {
+    const callback = () => {
+        console.log('callback fadein1');
+    };
 
-//     const update = () => {
-//         fill.a += alphaVelocity;
-//         stroke.a += alphaVelocity;
-//         textFill.a += alphaVelocity;
+    const update = () => {
+        fill.a += alphaVelocity;
+        stroke.a += alphaVelocity;
+        textFill.a += alphaVelocity;
 
-//         if (fill.a >= 1) end();
-//     };
+        if (fill.a >= 1) end();
+    };
 
-//     const prepare = () => {
-//         fill.a = 0;
-//         stroke.a = 0;
-//         textFill.a = 0;
-//     };
+    const prepare = () => {
+        fill.a = 0;
+        stroke.a = 0;
+        textFill.a = 0;
+    };
 
-//     const end = () => {
-//         fill.a = 1;
-//         stroke.a = 1;
-//         textFill.a = 1;
+    const end = () => {
+        fill.a = 1;
+        stroke.a = 1;
+        textFill.a = 1;
 
-//         // console.log('endOfStart in fadein1');
-//         // callbacks.endOfStart.fn();
-//         callback();
-//     };
+        console.log('endOfStart in fadein1');
+        // callbacks.endOfStart.fn();
+        callback();
+    };
 
-//     return {update, prepare, end, callback};
-// };
+    return {update, prepare, end, callback};
+};
 
 export const getCreateVisual = (
     sketch: EntitySketchMap['button1'],
@@ -43,23 +44,21 @@ export const getCreateVisual = (
     // ctx: CanvasRenderingContext2D,
     ({
         noise: () => createAnimationNoise(sketch),
-        // bold: () => createTransitionUpdate(createHoverBold(sketch), sketch, input),
-        // fadeout1: () => createHoverBold(sketch),
+        bold: () => createTransitionUpdate(createHoverBold(sketch), sketch, input),
         fadein1: () => placeHolder(),
         fadeout1: () => placeHolder(),
         explode: () => placeHolder(),
-        bold: () => placeHolder(),
     });
 
-const placeHolder = (): VisualInternal => ({
-    visualFn: () => {},
-    callback: () => {},
-    pre: () => {},
-    post: () => {},
+const placeHolder = (): Visual => ({
+    render: () => {},
+    // callback: () => {},
+    // pre: () => {},
+    // post: () => {},
 });
 
-const createAnimationNoise = (sketch: EntitySketchMap['button1']): VisualInternal => ({
-    visualFn: () => {
+const createAnimationNoise = (sketch: EntitySketchMap['button1']): Visual => ({
+    render: () => {
         const upd = {
             adj: {
                 x: 0.5,
@@ -119,17 +118,21 @@ const createHoverBold = (sketch: EntitySketchMap['button1']) => {
     return returnObject;
 };
 
-const createTransitionUpdate =
-    (
-        {forward, reverse}: {forward: () => void; reverse: () => void},
-        sketch: EntitySketchMap['button1'],
-        {mouse}: LibraryInput, // hover is only for mouse
-    ) =>
-    () => {
+const createTransitionUpdate: (
+    transition: {forward: () => void; reverse: () => void},
+    sketch: EntitySketchMap['button1'],
+    input: LibraryInput,
+) => Visual = (
+    {forward, reverse},
+    sketch,
+    {mouse}, // hover is only for mouse
+) => ({
+    render: () => {
         if (mouse.inside(sketch)) return forward();
 
         return reverse();
-    };
+    },
+});
 
 export const createSketchDraw = (c: CanvasRenderingContext2D, sketch: EntitySketchMap['button1']) => () => {
     const {fill, stroke, textFill} = sketch.color;
