@@ -2,25 +2,19 @@ import type {Colors} from 'library/types/color';
 import type {EventHandler, GeneralProperties, VisualProperties} from 'library/types/entity';
 import type {EntitySketchMap} from 'library/types/entitySketch';
 import type {LibraryInput} from 'library/types/input';
+import type {SetEngine} from './engineRender';
 
 export const createRenders = (
-    props: GeneralProperties,
+    {id}: GeneralProperties,
+    {startSpeed, endSpeed}: VisualProperties,
     sketch: EntitySketchMap['button1'],
 
     input: LibraryInput,
     context: CanvasRenderingContext2D,
     // eventHandler: EventHandler,
 ) => {
-    // export type EngineState = 'on' | 'off'; // Future states: 'pauze' | 'continue'?;
-    // export type SetEngine = (type: keyof Visuals, state: EngineState) => void;
-    // const setEngine = createSetEngine(engine, visuals);
-
     // transforms empty callbacks to functional callbacks, abstract and implement in eventHandler
     // const callbacks = createCallbacks(setEngine, eventHandler);
-
-    // const {id, name} = props;
-
-    // const draw = createDraw(context, sketch);
 
     const transitions = {
         fadeout1: () => {
@@ -50,12 +44,12 @@ export const createRenders = (
             };
         },
     };
-    return {
-        hovers,
-        transitions,
-        animations,
-        draw,
-    };
+    // return {
+    //     hovers,
+    //     transitions,
+    //     animations,
+    //     draw,
+    // };
 };
 
 const createTransitionFadeout1 = ({fill, stroke, textFill}: Colors, alphaVelocity: number) => {

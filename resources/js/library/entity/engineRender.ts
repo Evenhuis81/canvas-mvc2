@@ -1,5 +1,5 @@
 import {Engine, EngineUpdate} from 'library/types/engine';
-import {SetEngine, Visuals} from 'library/types/entity';
+import {VisualType, Visuals} from 'library/types/entity';
 
 export const createEngineRenders = (engine: Engine, renders: Partial<Visuals>) => {
     const renderSet = {
@@ -34,8 +34,6 @@ export const createEngineRenders = (engine: Engine, renders: Partial<Visuals>) =
         rr;
         // if (state === 'on' && rendders[type]) return engine.setUpdate(rendders[type])
     };
-
-    const setVisual = <K extends keyof typeof renderSet>(type: K, render: EngineUpdate) => {};
 
     const animation = {
         on: () => {
@@ -92,19 +90,27 @@ export const createEngineRenders = (engine: Engine, renders: Partial<Visuals>) =
     return {animation, hover, start, end};
 };
 
-// Possible returnvalue for setEngine: fail or succeed on setting update/draw
-const createSetEngine = (engine: Engine, renders: Partial<Visuals>): SetEngine => {
-    const engineRenders = createEngineRenders(engine, renders);
+export type EngineState = 'on' | 'off'; // Future states: 'pauze' | 'continue';
+export type SetEngine = (type: keyof Visuals, state: EngineState) => void;
 
-    return (type, state) => {
-        if (state === 'on' && !engineRenders[type].set) {
-            engineRenders[type][state]();
+const createSetEngine = (engine: Engine, visuals: Partial<Visuals>): SetEngine => {
+    // const engineRenders = createEngineRenders(engine, renders);
 
-            engineRenders[type].set = true;
-        } else if (state === 'off' && engineRenders[type].set) {
-            engineRenders[type][state]();
+    const setEngine = (type: VisualType, state: EngineState) => {
+        const visual = visuals[type];
 
-            engineRenders[type].set = false;
+        if (!visual) {
+            engine.handle(visual.render);
         }
+        //     engineRenders[type][state]();
+
+        //     engineRenders[type].set = true;
+        // } else if (state === 'off' && engineRenders[type].set) {
+        //     engineRenders[type][state]();
+
+        //     engineRenders[type].set = false;
+        // }
     };
+
+    return setEngine;
 };
