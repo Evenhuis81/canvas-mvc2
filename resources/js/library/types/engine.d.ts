@@ -25,13 +25,13 @@ export type EngineUpdateEvent = {
     lastTime: number;
 };
 
-export type EngineHandle = <T extends keyof EngineFunctionMap>(updateOrDraw: UpdateOrDraw<T>, set?: boolean) => void;
+export type EngineSet = <T extends keyof EngineFunctionMap>(updateOrDraw: UpdateOrDraw<T>, set?: boolean) => void;
 
 export interface Engine {
     run: () => void;
     runOnce: () => void;
     halt: () => void;
-    handle: EngineHandle;
+    handle: EngineSet;
     setUpdate: (update: EngineUpdate) => void;
     setDraw: (draw: EngineDraw) => void;
     removeUpdate: (id: number | string) => void;

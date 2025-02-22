@@ -95,6 +95,7 @@ export type EntityGeneric<K extends keyof EntityShapeMap> = {
     removeListener: RemoveListener;
     setHideTime: SetHideTime;
     setVisual: SetVisual;
+    setDraw: SetDraw;
     sketch: EntitySketchMap[K];
 };
 
@@ -105,6 +106,7 @@ export type TransitionSpeed = 1 | 2 | 3 | 4 | 5;
 type VisualType = 'animation' | 'hover' | 'start' | 'end' | 'draw';
 
 export type SetVisual = (type: Exclude<VisualType, 'draw'>, effect: Effects) => void;
+export type SetDraw = (sketch: EntitySketchMap['button1']) => void;
 
 export type EntityAnimations = 'noise';
 export type EntityHovers = 'bold';
@@ -120,3 +122,7 @@ export type Visual = {
 };
 
 export type Visuals = {[K in VisualType]: Omit<Visual, 'render'> & {render: UpdateOrDraw<'draw' | 'update'>}};
+
+export type EngineState = 'on' | 'off'; // Future states: 'pauze' | 'continue';
+
+export type SetEngine = (type: keyof Visuals, state: EngineState) => void;

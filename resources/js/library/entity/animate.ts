@@ -1,17 +1,8 @@
-// import {createRenders} from './renders';
 import {createSketchDraw, getCreateVisual} from './visuals';
-import type {Engine} from 'library/types/engine';
 import type {LibraryInput} from 'library/types/input';
-import type {
-    EventHandler,
-    GeneralProperties,
-    // SetEngine,
-    SetVisual,
-    Visual,
-    VisualProperties,
-    Visuals,
-} from 'library/types/entity';
+import type {GeneralProperties, SetDraw, SetVisual, VisualProperties, Visuals} from 'library/types/entity';
 import type {EntitySketchMap} from 'library/types/entitySketch';
+import {Callbacks} from './callback';
 
 export const setVisuals = (
     gProps: GeneralProperties,
@@ -19,11 +10,10 @@ export const setVisuals = (
     sketch: EntitySketchMap['button1'],
     input: LibraryInput,
     context: CanvasRenderingContext2D,
-    // eventHandler: EventHandler,
+    visuals: Partial<Visuals>,
+    callbacks: Callbacks,
 ) => {
-    const visuals: Partial<Visuals> = {};
-
-    const createVisual = getCreateVisual(sketch, input, vProps);
+    const createVisual = getCreateVisual(sketch, input, vProps, callbacks);
 
     const {animation, hover, start, end} = vProps;
 
@@ -43,7 +33,7 @@ export const setVisuals = (
         };
     };
 
-    const setDraw = (sketch: EntitySketchMap['button1']) => {
+    const setDraw: SetDraw = sketch => {
         const visual: Visuals['draw'] = {
             render: {
                 type: 'draw',
@@ -66,5 +56,5 @@ export const setVisuals = (
 
     setDraw(sketch);
 
-    return {visuals, setVisual, setDraw};
+    return {setVisual, setDraw};
 };

@@ -4,9 +4,11 @@ import {setVisuals} from './animate';
 import {getProperties, uid} from 'library/helpers';
 import {createSketch} from './sketch';
 import type {Engine} from 'library/types/engine';
-import type {Entity, EntityConfig, EntityGeneric, GeneralProperties} from 'library/types/entity';
+import type {Entity, EntityConfig, EntityGeneric, GeneralProperties, Visuals} from 'library/types/entity';
 import type {LibraryInput} from 'library/types/input';
 import type {EntityShapeMap, EntitySketchMap} from 'library/types/entitySketch';
+import {createSetEngine} from './setEngine';
+import {createCallbacks} from './callback';
 
 export default (context: CanvasRenderingContext2D, engine: Engine, input: LibraryInput) =>
     <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig<K>): EntityGeneric<K> => {
@@ -17,21 +19,28 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
 
         const eventHandler = createEventHandler(input, sketch, listeners);
 
+        const visuals: Partial<Visuals> = {};
+
+        const setEngine = createSetEngine(engine, visuals);
+
+        const callbacks = createCallbacks(setEngine, eventHandler);
+
         // Make sketch(Map) dynamic and create generic to add 'theme' sketches from library
-        const {setVisual} = setVisuals(
+        const {setVisual, setDraw} = setVisuals(
             generalProperties,
             visualProperties,
             sketch as EntitySketchMap['button1'],
             input,
             context,
+            visuals,
+            callbacks,
         );
-
-        // SetEngine here
 
         const entity: EntityGeneric<K> = {
             addListener: eventHandler.addListener,
             removeListener: eventHandler.removeListener,
             setVisual,
+            setDraw,
             ...createUserMethods(generalProperties, eventHandler),
             sketch,
         };

@@ -1,60 +1,19 @@
-import {EngineUpdate} from 'library/types/engine';
-import {GeneralProperties, Visual, VisualProperties} from 'library/types/entity';
+import {Visual, VisualProperties} from 'library/types/entity';
 import {EntityColor, EntitySketchMap} from 'library/types/entitySketch';
 import {LibraryInput} from 'library/types/input';
-
-const createTransitionFadein1 = ({fill, stroke, textFill}: EntityColor['button1'], alphaVelocity: number) => {
-    const callback = () => {
-        console.log('callback fadein1');
-    };
-
-    const update = () => {
-        fill.a += alphaVelocity;
-        stroke.a += alphaVelocity;
-        textFill.a += alphaVelocity;
-
-        if (fill.a >= 1) end();
-    };
-
-    const prepare = () => {
-        fill.a = 0;
-        stroke.a = 0;
-        textFill.a = 0;
-    };
-
-    const end = () => {
-        fill.a = 1;
-        stroke.a = 1;
-        textFill.a = 1;
-
-        console.log('endOfStart in fadein1');
-        // callbacks.endOfStart.fn();
-        callback();
-    };
-
-    return {update, prepare, end, callback};
-};
+import {Callbacks} from './callback';
 
 export const getCreateVisual = (
     sketch: EntitySketchMap['button1'],
     input: LibraryInput,
     {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
-) =>
-    // gProps: GeneralProperties,
-    // ctx: CanvasRenderingContext2D,
-    ({
-        noise: () => createAnimationNoise(sketch),
-        bold: () => createTransitionUpdate(createHoverBold(sketch), sketch, input),
-        fadein1: () => placeHolder(),
-        fadeout1: () => placeHolder(),
-        explode: () => placeHolder(),
-    });
-
-const placeHolder = (): Visual => ({
-    render: () => {},
-    // callback: () => {},
-    // pre: () => {},
-    // post: () => {},
+    callbacks: Callbacks,
+) => ({
+    noise: () => createAnimationNoise(sketch),
+    bold: () => createTransition(createHoverBold(sketch), sketch, input),
+    fadein1: () => createTransitionFadein1(sketch.color, callbacks, 0.005 * startSpeed),
+    fadeout1: () => createTransitionFadeout1(sketch.color, callbacks, 0.005 * endSpeed),
+    explode: () => createTransitionExplode(sketch, callbacks),
 });
 
 const createAnimationNoise = (sketch: EntitySketchMap['button1']): Visual => ({
@@ -118,7 +77,7 @@ const createHoverBold = (sketch: EntitySketchMap['button1']) => {
     return returnObject;
 };
 
-const createTransitionUpdate: (
+const createTransition: (
     transition: {forward: () => void; reverse: () => void},
     sketch: EntitySketchMap['button1'],
     input: LibraryInput,
@@ -133,6 +92,97 @@ const createTransitionUpdate: (
         return reverse();
     },
 });
+
+const createTransitionFadein1 = (
+    {fill, stroke, textFill}: EntityColor['button1'],
+    callbacks: Callbacks,
+    alphaVelocity: number,
+): Visual => {
+    const render = () => {
+        fill.a += alphaVelocity;
+        stroke.a += alphaVelocity;
+        textFill.a += alphaVelocity;
+
+        if (fill.a >= 1) post();
+    };
+
+    const pre = () => {
+        fill.a = 0;
+        stroke.a = 0;
+        textFill.a = 0;
+    };
+
+    const post = () => {
+        fill.a = 1;
+        stroke.a = 1;
+        textFill.a = 1;
+
+        console.log('endOfStart in fadein1');
+        callbacks.endOfStart();
+    };
+
+    return {render, pre, post};
+};
+
+const createTransitionFadeout1 = (
+    {fill, stroke, textFill}: EntityColor['button1'],
+    callbacks: Callbacks,
+    alphaVelocity: number,
+): Visual => {
+    const render = () => {
+        fill.a -= alphaVelocity;
+        stroke.a -= alphaVelocity;
+        textFill.a -= alphaVelocity;
+
+        if (fill.a <= 0) post();
+    };
+
+    const pre = () => {
+        fill.a = 1;
+        stroke.a = 1;
+        textFill.a = 1;
+    };
+
+    const post = () => {
+        fill.a = 0;
+        stroke.a = 0;
+        textFill.a = 0;
+
+        callbacks.endOfEnd();
+    };
+
+    return {render, pre, post};
+};
+
+const createTransitionExplode = (sketch: EntitySketchMap['button1'], callbacks: Callbacks): Visual => {
+    const {fill, stroke, textFill} = sketch.color;
+    let phase = 1;
+
+    const render = () => {
+        if (phase === 1) sketch.lineWidth += 0.1;
+        else if (phase === 2) {
+            fill.a -= 0.01;
+            stroke.a -= 0.01;
+            textFill.a -= 0.01;
+
+            if (fill.a < 0) {
+                fill.a -= 0;
+                stroke.a -= 0;
+                textFill.a -= 0;
+
+                callbacks.endOfEnd();
+            }
+        }
+
+        if (sketch.lineWidth > 10) {
+            sketch.lineWidth = 10;
+
+            phase = 2;
+        }
+    };
+
+    return {render};
+};
 
 export const createSketchDraw = (c: CanvasRenderingContext2D, sketch: EntitySketchMap['button1']) => () => {
     const {fill, stroke, textFill} = sketch.color;

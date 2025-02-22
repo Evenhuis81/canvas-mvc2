@@ -1,10 +1,11 @@
 import statistics from './statistics';
 import type {
+    Engine,
     EngineDraw,
     EngineFunctionMap,
-    EngineHandle,
     EngineInfo,
     EngineProperties,
+    EngineSet,
     EngineUpdate,
     EngineUpdateEvent,
     UpdateOrDraw,
@@ -22,7 +23,7 @@ const engineProperties = {
     statsActive: false,
 };
 
-export const createEngine = (libraryID: number | string) => {
+export const createEngine = (libraryID: number | string): Engine => {
     const updateEvent = {...engineUpdateEvent};
     const properties = {...engineProperties};
     const functions: EngineFunctionMap = {
@@ -42,7 +43,7 @@ export const createEngine = (libraryID: number | string) => {
 
     const halt = () => (properties.stop = true);
 
-    const {handle, setUpdate, setDraw, removeUpdate, removeDraw} = createSetAndRemoveUpdatesAndDraws(functions);
+    const {handle, remove, setUpdate, setDraw, removeUpdate, removeDraw} = createSetAndRemoveUpdatesAndDraws(functions);
 
     const info = createInfo(functions, updateEvent);
 
@@ -54,6 +55,7 @@ export const createEngine = (libraryID: number | string) => {
         runOnce,
         halt,
         info,
+        handle,
         setUpdate,
         setDraw,
         removeUpdate,
@@ -107,34 +109,29 @@ const createSetAndRemoveUpdatesAndDraws = (functions: EngineFunctionMap) => {
 
     const setUpdate = (update: EngineUpdate) => functions.update.push({...defaultUpdate, ...update});
 
-    const handle: EngineHandle = (updateOrDraw, set = true) => {
+    const handle: EngineSet = (updateOrDraw, set = true) => {
+        // TODO::Check for doubles
         if (set) return functions[updateOrDraw.type].push(updateOrDraw);
 
-        removeUpdate(updateOrDraw.id);
-
-        return;
+        return remove(updateOrDraw.id, updateOrDraw.type);
     };
 
-    const removeUpdate = (id: number | string) => {
-        const index = functions.update.findIndex(update => update.id === id);
+    const removeUpdate = (id: string | number) => remove(id, 'update');
+    const removeDraw = (id: string | number) => remove(id, 'draw');
 
-        if (index === -1) throw Error(`update with id '${id}' not found, nothing to remove`);
+    const remove = (id: number | string, type: 'draw' | 'update') => {
+        const index = functions[type].findIndex(drawOrUpdate => drawOrUpdate.id === id);
 
-        functions.update.splice(index, 1);
-    };
+        if (index === -1) throw Error(`${type} with id '${id}' not found, nothing to remove`);
 
-    const removeDraw = (id: number | string) => {
-        const index = functions.draw.findIndex(draw => draw.id === id);
-
-        if (index === -1) throw Error(`draw with id '${id}' not found, nothing to remove`);
-
-        functions.draw.splice(index, 1);
+        functions[type].splice(index, 1);
     };
 
     return {
         setUpdate,
         setDraw,
         handle,
+        remove,
         removeUpdate,
         removeDraw,
     };
