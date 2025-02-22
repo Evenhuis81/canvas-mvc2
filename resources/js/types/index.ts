@@ -43,3 +43,17 @@ export interface AdminInvitation extends BaseModel {
     expiration_date: Date;
     inviter_user_id: number;
 }
+
+type ObjectEmitsOptions = Record<string, ((...args: any[]) => any) | null>;
+
+export type EmitsToProps<T extends ObjectEmitsOptions> = {
+    [K in `on${Capitalize<string & keyof T>}`]?: K extends `on${infer C}`
+        ? (
+              ...args: T[Uncapitalize<C>] extends (...args: infer P) => unknown
+                  ? P
+                  : T[Uncapitalize<C>] extends null
+                  ? unknown[]
+                  : never
+          ) => unknown
+        : never;
+};

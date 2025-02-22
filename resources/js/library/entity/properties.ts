@@ -1,23 +1,26 @@
-import {Callbacks, EventHandler, GeneralProperties} from 'library/types/entity';
+import {Callbacks, EventHandler, GeneralProperties, UserMethodCallbacks} from 'library/types/entity';
 
-// param: callbacks removed
-export const createUserMethods = (gProps: GeneralProperties, eventHandler: EventHandler) => {
+export const createUserMethods = (
+    gProps: GeneralProperties,
+    eventHandler: EventHandler,
+    callbacks: UserMethodCallbacks,
+) => {
     const show = () => {
         // Should this handle all different scenarios? (showDelay + show + callBack + Input- & EntityListener)
         // Needs refactor for the different kind of options, find way to make this less complex
 
-        // TODO::Add to Library Error
+        // TODO::Add to log system
         if (gProps.show) return console.log('show is already active');
 
         gProps.show = true;
 
         eventHandler.activateInputListeners();
 
-        // callbacks.start.fn();
+        callbacks.start();
     };
 
     const hide = () => {
-        // TODO::Add to Library Error/Log
+        // TODO::Add to log system
         if (!gProps.show) return console.log('hide trigger while gProps.show = false');
 
         // Hide delay requires a certain complexity, impelemnt in a later stage, read comment for show
@@ -37,9 +40,10 @@ export const createUserMethods = (gProps: GeneralProperties, eventHandler: Event
 
         gProps.show = false;
 
-        // callbacks.end.fn();
+        callbacks.end();
     };
 
+    // TODO::Give this a better spot
     const setHideTime = (time: number) => (gProps.hideDelay = time);
 
     return {show, hide, setHideTime};

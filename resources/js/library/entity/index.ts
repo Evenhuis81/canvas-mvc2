@@ -41,7 +41,7 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
             removeListener: eventHandler.removeListener,
             setVisual,
             setDraw,
-            ...createUserMethods(generalProperties, eventHandler),
+            ...createUserMethods(generalProperties, eventHandler, callbacks),
             sketch,
         };
 

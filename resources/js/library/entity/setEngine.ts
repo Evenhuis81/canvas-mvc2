@@ -1,12 +1,14 @@
 import type {Engine} from 'library/types/engine';
 import type {EngineState, SetEngine, VisualType, Visuals} from 'library/types/entity';
 
+// TODO::This needs options (ie. run pre/post?, transitionSpeed, listener handling, etc...)
 export const createSetEngine = (engine: Engine, visuals: Partial<Visuals>): SetEngine => {
-    // Possibly handle pre, post and callback here
     const setEngine = (type: VisualType, state: EngineState) => {
         const visual = visuals[type];
 
         if (!visual) return setEngineLog(type, state);
+
+        if (visual.pre) visual.pre();
 
         return engine.handle(visual.render, state === 'on');
     };

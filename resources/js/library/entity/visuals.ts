@@ -1,13 +1,12 @@
-import {Visual, VisualProperties} from 'library/types/entity';
+import {Callbacks, Visual, VisualCallbacks, VisualProperties} from 'library/types/entity';
 import {EntityColor, EntitySketchMap} from 'library/types/entitySketch';
 import {LibraryInput} from 'library/types/input';
-import {Callbacks} from './callback';
 
 export const getCreateVisual = (
     sketch: EntitySketchMap['button1'],
     input: LibraryInput,
     {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
-    callbacks: Callbacks,
+    callbacks: VisualCallbacks,
 ) => ({
     noise: () => createAnimationNoise(sketch),
     bold: () => createTransition(createHoverBold(sketch), sketch, input),
@@ -95,7 +94,7 @@ const createTransition: (
 
 const createTransitionFadein1 = (
     {fill, stroke, textFill}: EntityColor['button1'],
-    callbacks: Callbacks,
+    callbacks: VisualCallbacks,
     alphaVelocity: number,
 ): Visual => {
     const render = () => {
@@ -107,6 +106,8 @@ const createTransitionFadein1 = (
     };
 
     const pre = () => {
+        console.log('pre function trigger fadein1');
+
         fill.a = 0;
         stroke.a = 0;
         textFill.a = 0;
@@ -126,7 +127,7 @@ const createTransitionFadein1 = (
 
 const createTransitionFadeout1 = (
     {fill, stroke, textFill}: EntityColor['button1'],
-    callbacks: Callbacks,
+    callbacks: VisualCallbacks,
     alphaVelocity: number,
 ): Visual => {
     const render = () => {
@@ -138,6 +139,8 @@ const createTransitionFadeout1 = (
     };
 
     const pre = () => {
+        console.log('pre function trigger fadeout1');
+
         fill.a = 1;
         stroke.a = 1;
         textFill.a = 1;
@@ -148,13 +151,14 @@ const createTransitionFadeout1 = (
         stroke.a = 0;
         textFill.a = 0;
 
+        console.log('endOfEnd in fadeout1');
         callbacks.endOfEnd();
     };
 
     return {render, pre, post};
 };
 
-const createTransitionExplode = (sketch: EntitySketchMap['button1'], callbacks: Callbacks): Visual => {
+const createTransitionExplode = (sketch: EntitySketchMap['button1'], callbacks: VisualCallbacks): Visual => {
     const {fill, stroke, textFill} = sketch.color;
     let phase = 1;
 

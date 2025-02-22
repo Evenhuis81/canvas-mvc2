@@ -1,8 +1,7 @@
 import {createSketchDraw, getCreateVisual} from './visuals';
 import type {LibraryInput} from 'library/types/input';
-import type {GeneralProperties, SetDraw, SetVisual, VisualProperties, Visuals} from 'library/types/entity';
+import type {Callbacks, GeneralProperties, SetDraw, SetVisual, VisualProperties, Visuals} from 'library/types/entity';
 import type {EntitySketchMap} from 'library/types/entitySketch';
-import {Callbacks} from './callback';
 
 export const setVisuals = (
     gProps: GeneralProperties,

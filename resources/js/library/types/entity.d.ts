@@ -21,8 +21,6 @@ export interface VisualProperties {
     endSpeed: TransitionSpeed;
 }
 
-export type SetHideTime = (time: number) => void;
-
 export type EntityConfig<K extends keyof EntityShapeMap> = Partial<
     {sketch: Partial<EntityShapeMap[K]>} & GeneralProperties &
         VisualProperties & {
@@ -32,6 +30,18 @@ export type EntityConfig<K extends keyof EntityShapeMap> = Partial<
 
 export type StartTransitionEvent = {testProperty: string};
 export type EndTransitionEvent = {pressed: boolean; pushed: boolean; clicked: boolean};
+
+type CallbackTypes = 'start' | 'end' | 'endOfStart' | 'endOfEnd';
+
+export type Callbacks = {
+    [K in CallbackTypes]: () => void;
+};
+
+export type VisualCallbacks = Omit<Callbacks, 'start' | 'end'>;
+
+export type UserMethodCallbacks = Omit<Callbacks, 'endOfStart' | 'endOfEnd'>;
+
+export type SetHideTime = (time: number) => void;
 
 export type EntityListenerEvents = {
     startTransition: StartTransitionEvent;
@@ -84,6 +94,7 @@ export interface EventHandler {
     deactivateInputListeners: () => void;
     entityListenerEvents: EntityListenerEvents;
     entityListeners: Partial<EntityListeners>;
+    callbacks: Callbacks;
 }
 
 export type Entity = EntityGeneric<keyof EntityShapeMap>;
