@@ -1,6 +1,6 @@
 import {EngineDraw, EngineUpdate, UpdateOrDraw} from './engine';
-import {InputListenerEventMap} from './input';
 import {EntityShapeMap, EntitySketchMap} from './entitySketch';
+import {InputListenerEventMap} from './input';
 
 export type GeneralProperties = {
     id: number | string;
@@ -94,7 +94,6 @@ export interface EventHandler {
     deactivateInputListeners: () => void;
     entityListenerEvents: EntityListenerEvents;
     entityListeners: Partial<EntityListeners>;
-    callbacks: Callbacks;
 }
 
 export type Entity = EntityGeneric<keyof EntityShapeMap>;

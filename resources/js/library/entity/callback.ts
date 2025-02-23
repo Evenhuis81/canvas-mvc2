@@ -1,4 +1,5 @@
-import {EventHandler, SetEngine, Callbacks} from 'library/types/entity';
+/* eslint-disable max-lines-per-function */
+import {Callbacks, EventHandler, SetEngine} from 'library/types/entity';
 
 // TODO::Test destructuring of eventhandler for keep of reference and if start&endOfStart needs same event
 export const createCallbacks = (
@@ -14,7 +15,7 @@ export const createCallbacks = (
         if (entityListeners.startTransition) entityListeners.startTransition(entityListenerEvents.startTransition);
     },
     endOfStart: () => {
-        console.log('endOfStart setEngine');
+        console.log('endOfStart callback');
 
         setEngine('start', 'off');
         setEngine('animation', 'on');

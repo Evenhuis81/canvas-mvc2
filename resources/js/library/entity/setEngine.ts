@@ -8,7 +8,7 @@ export const createSetEngine = (engine: Engine, visuals: Partial<Visuals>): SetE
 
         if (!visual) return setEngineLog(type, state);
 
-        if (visual.pre) visual.pre();
+        if (state === 'on' && visual.pre) visual.pre();
 
         return engine.handle(visual.render, state === 'on');
     };
@@ -27,7 +27,8 @@ const setEngineLog = (type: string, state: string) => console.log(`setEngine: ${
 //         draw: false,
 //     };
 
-//     const rendders: {animation?: EngineUpdate & {id: string | number}; hover?: EngineUpdate & {id: string | number}} = {
+//     const rendders: {animation?: EngineUpdate & {id: string | number}; hover?:
+//     EngineUpdate & {id: string | number}} = {
 //         animation: undefined,
 //         hover: undefined,
 //     };

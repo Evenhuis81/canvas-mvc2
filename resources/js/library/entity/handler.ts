@@ -1,3 +1,7 @@
+/* eslint-disable max-lines-per-function */
+/* eslint-disable max-len */
+/* eslint-disable complexity */
+import {EntityShapeMap, EntitySketchMap} from 'library/types/entitySketch';
 import type {
     AddEntityInputListener,
     EndTransitionEvent,
@@ -8,7 +12,6 @@ import type {
     EntityListeners,
     EventHandler,
 } from 'library/types/entity';
-import {EntityShapeMap} from 'library/types/entitySketch';
 import type {InputListenerEventMap, LibraryInput} from 'library/types/input';
 
 export const createEventHandler = <K extends keyof EntityShapeMap>(
@@ -46,6 +49,8 @@ export const createEventHandler = <K extends keyof EntityShapeMap>(
 
     if (!listeners) return handler;
 
+    console.log(listeners);
+
     // Make generic with split object: (https://stackoverflow.com/questions/75323570/what-is-the-correct-type-for-splitting-an-object-in-two-complimentary-objects-in)
     const {startTransition, endTransition, endOfStartTransition, endOfEndTransition, ...entityInputListeners} =
         listeners;
@@ -77,7 +82,7 @@ const createAddEntityInputListener =
                     type,
                     listener,
                     id,
-                    shape: sketch.type === 'rect' || sketch.type === 'circle' ? sketch : undefined,
+                    shape: sketch as EntitySketchMap['rect'],
                     props,
                 }),
             () => input.removeListener(type, id),

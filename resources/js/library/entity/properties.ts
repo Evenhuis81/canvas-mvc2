@@ -1,4 +1,4 @@
-import {Callbacks, EventHandler, GeneralProperties, UserMethodCallbacks} from 'library/types/entity';
+import {EventHandler, GeneralProperties, UserMethodCallbacks} from 'library/types/entity';
 
 export const createUserMethods = (
     gProps: GeneralProperties,
@@ -13,6 +13,8 @@ export const createUserMethods = (
         if (gProps.show) return console.log('show is already active');
 
         gProps.show = true;
+
+        // console.log(eventHandler);
 
         eventHandler.activateInputListeners();
 

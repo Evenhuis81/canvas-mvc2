@@ -1,5 +1,5 @@
-import {RGBA} from './color';
 import {Circle, Fill, Line, Rect, Stroke, Text} from './shapes';
+import {RGBA} from './color';
 
 export type EntityShapeMap = {
     button1: EntityButton1;
@@ -25,7 +25,8 @@ export type EntityLine1 = Line & Stroke & {inputType: 'none'; type: 'line'};
 
 export type EntityText1 = Text & {type: 'text'};
 
-export type EntityButton1 = Omit<EntityRectangle1, 'type'> & Text & {radii: number; type: 'button1'}; // inputType inherit ('rect')
+// inputType inherit ('rect')
+export type EntityButton1 = Omit<EntityRectangle1, 'type'> & Text & {radii: number; type: 'button1'};
 
 // TODO::Mrege this with SV / TV sketches / shapes
 export type EntityColorString = {

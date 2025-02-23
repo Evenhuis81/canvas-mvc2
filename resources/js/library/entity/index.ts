@@ -1,14 +1,14 @@
+import {createCallbacks} from './callback';
 import {createEventHandler} from './handler';
-import {createUserMethods, defaultProperties} from './properties';
-import {setVisuals} from './animate';
-import {getProperties, uid} from 'library/helpers';
+import {createSetEngine} from './setEngine';
 import {createSketch} from './sketch';
+import {createUserMethods, defaultProperties} from './properties';
+import {getProperties, uid} from 'library/helpers';
+import {setVisuals} from './animate';
 import type {Engine} from 'library/types/engine';
 import type {Entity, EntityConfig, EntityGeneric, GeneralProperties, Visuals} from 'library/types/entity';
-import type {LibraryInput} from 'library/types/input';
 import type {EntityShapeMap, EntitySketchMap} from 'library/types/entitySketch';
-import {createSetEngine} from './setEngine';
-import {createCallbacks} from './callback';
+import type {LibraryInput} from 'library/types/input';
 
 export default (context: CanvasRenderingContext2D, engine: Engine, input: LibraryInput) =>
     <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig<K>): EntityGeneric<K> => {
@@ -51,13 +51,13 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
     };
 
 const initialize = (gProps: GeneralProperties, show: Entity['show']) => {
-    // show is used initially to show or hide when no showDelay is set. After it's used internally to indicate if entity is active
+    // Show is used initially to show or hide when no showDelay is set.
+    // After it's used internally to indicate if entity is active.
     if (!gProps.show && !gProps.showDelay) return;
 
     if (gProps.showDelay) {
         setTimeout(() => {
             show();
-            gProps.show = true;
         }, gProps.showDelay);
 
         gProps.show = false;
@@ -66,7 +66,6 @@ const initialize = (gProps: GeneralProperties, show: Entity['show']) => {
         return;
     }
 
-    gProps.show = true;
     show();
 };
 
