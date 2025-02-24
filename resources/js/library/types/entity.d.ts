@@ -94,7 +94,6 @@ export interface EventHandler {
     deactivateInputListeners: () => void;
     entityListenerEvents: EntityListenerEvents;
     entityListeners: Partial<EntityListeners>;
-    callbacks: Callbacks;
 }
 
 export type Entity = EntityGeneric<keyof EntityShapeMap>;

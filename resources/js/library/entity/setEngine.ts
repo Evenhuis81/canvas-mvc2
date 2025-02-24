@@ -8,7 +8,7 @@ export const createSetEngine = (engine: Engine, visuals: Partial<Visuals>): SetE
 
         if (!visual) return setEngineLog(type, state);
 
-        if (visual.pre) visual.pre();
+        if (state === 'on' && visual.pre) visual.pre();
 
         return engine.handle(visual.render, state === 'on');
     };

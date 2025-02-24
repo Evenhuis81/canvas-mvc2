@@ -57,7 +57,6 @@ const initialize = (gProps: GeneralProperties, show: Entity['show']) => {
     if (gProps.showDelay) {
         setTimeout(() => {
             show();
-            gProps.show = true;
         }, gProps.showDelay);
 
         gProps.show = false;
@@ -66,7 +65,6 @@ const initialize = (gProps: GeneralProperties, show: Entity['show']) => {
         return;
     }
 
-    gProps.show = true;
     show();
 };
 

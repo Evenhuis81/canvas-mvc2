@@ -61,13 +61,23 @@ export const createEventHandler = <K extends keyof EntityShapeMap>(
 };
 
 const createAddEntityInputListener =
-    <K extends keyof EntityShapeMap>(
+    <T extends keyof EntityShapeMap>(
         entityInputListenerHandlers: {[type: string]: EntityInputListenerHandler},
         input: LibraryInput,
-        sketch: EntityShapeMap[K],
+        sketch: EntityShapeMap[T],
         props: EndTransitionEvent,
     ): AddEntityInputListener =>
-    (type, listener, active = true) => {
+    <K extends EntityInputListenerType>(
+        type: K, // = ID (1 type per entity)
+        listener: (evt: HTMLElementEventMap[K]) => void,
+        active: boolean = true,
+    ) => {
+        const newListener = (evt: HTMLElementEventMap[K], inputType:    ) => {
+            //
+
+            listener(evt);
+        };
+
         const id = Symbol();
 
         entityInputListenerHandlers[type] = [
@@ -75,10 +85,11 @@ const createAddEntityInputListener =
             () =>
                 input.addListener({
                     type,
+                    // listener: newListener,
                     listener,
                     id,
-                    shape: sketch.type === 'rect' || sketch.type === 'circle' ? sketch : undefined,
-                    props,
+                    shape: sketch.inputType !== 'none' ? sketch : undefined,
+                    // props,
                 }),
             () => input.removeListener(type, id),
             active,
