@@ -23,7 +23,7 @@ export type EntityCircle1 = Circle & Fill & Stroke & {inputType: 'circle'; type:
 
 export type EntityLine1 = Line & Stroke & {inputType: 'none'; type: 'line'};
 
-export type EntityText1 = Text & {type: 'text'};
+export type EntityText1 = Text & {inputType: 'none'; type: 'text'};
 
 // inputType inherit ('rect')
 export type EntityButton1 = Omit<EntityRectangle1, 'type'> & Text & {radii: number; type: 'button1'};

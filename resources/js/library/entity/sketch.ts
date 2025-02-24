@@ -112,6 +112,7 @@ export const defaultSketch: EntitySketchMap = {
     },
     text: {
         type: 'text',
+        inputType: 'none',
         text: 'entity text',
         textFill: '#fff',
         font: 'monospace',
