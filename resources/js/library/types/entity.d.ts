@@ -1,6 +1,6 @@
 import {EngineDraw, EngineUpdate, UpdateOrDraw} from './engine';
-import {InputListenerEventMap} from './input';
 import {EntityShapeMap, EntitySketchMap} from './entitySketch';
+import {InputListenerEventMap} from './input';
 
 export type GeneralProperties = {
     id: number | string;

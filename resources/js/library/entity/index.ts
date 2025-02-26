@@ -1,7 +1,11 @@
+import {createCallbacks} from './callback';
 import {createEventHandler} from './handler';
 import {setVisuals} from './visual';
 import {getProperties, uid} from 'library/helpers';
 import {createSketch} from './sketch';
+import {createUserMethods, defaultProperties} from './properties';
+import {getProperties, uid} from 'library/helpers';
+import {setVisuals} from './animate';
 import type {Engine} from 'library/types/engine';
 import type {
     EngineState,

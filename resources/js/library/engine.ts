@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import statistics from './statistics';
 import type {
     Engine,
@@ -43,7 +44,7 @@ export const createEngine = (libraryID: number | string): Engine => {
 
     const halt = () => (properties.stop = true);
 
-    const {handle, remove, setUpdate, setDraw, removeUpdate, removeDraw} = createSetAndRemoveUpdatesAndDraws(functions);
+    const {handle, setUpdate, setDraw, removeUpdate, removeDraw} = createSetAndRemoveUpdatesAndDraws(functions);
 
     const info = createInfo(functions, updateEvent);
 
@@ -64,7 +65,8 @@ export const createEngine = (libraryID: number | string): Engine => {
     };
 };
 
-// TODO::Fix this with updateloop from https://isaacsukin.com/news/2015/01/detailed-explanation-javascript-game-loops-and-timing#starting-stopping
+// TODO::Fix this with updateloop:
+// https://isaacsukin.com/news/2015/01/detailed-explanation-javascript-game-loops-and-timing#starting-stopping
 let frame = 0;
 
 const createLoop = (properties: EngineProperties, functions: EngineFunctionMap, event: EngineUpdateEvent) => {
@@ -131,7 +133,7 @@ const createSetAndRemoveUpdatesAndDraws = (functions: EngineFunctionMap) => {
         setUpdate,
         setDraw,
         handle,
-        remove,
+        // remove,
         removeUpdate,
         removeDraw,
     };

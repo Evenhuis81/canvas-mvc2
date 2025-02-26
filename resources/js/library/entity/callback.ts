@@ -14,7 +14,7 @@ export const createCallbacks = (
         // if (entityListeners.startTransition) entityListeners.startTransition(entityListenerEvents.startTransition);
     },
     endOfStart: () => {
-        console.log('endOfStart setEngine');
+        console.log('endOfStart callback');
 
         activateInputListeners();
 

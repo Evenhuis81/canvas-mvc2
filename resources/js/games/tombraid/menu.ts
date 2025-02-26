@@ -20,7 +20,7 @@ export const mainMenu = (library: LibraryResources) => {
     const startY = paddingY / 2 + squareLength / 2;
     const startX = paddingX / 2 + squareLength / 2;
 
-    const timeoutDifference = 75;
+    // const timeoutDifference = 75;
 
     const baseVisualProperties: Partial<VisualProperties> = {
         start: 'fadein1',
@@ -40,7 +40,7 @@ export const mainMenu = (library: LibraryResources) => {
                 ...baseVisualProperties,
                 // show: false,
                 // showDelay: i * timeoutDifference + 1,
-                showDelay: 500,
+                showDelay: 1500,
                 sketch: {
                     // type: 'circle1' | 'rect1' | 'button1' // optional
                     x: startX + column * squareDistance,
@@ -72,6 +72,8 @@ export const mainMenu = (library: LibraryResources) => {
                     },
                     endOfStartTransition: evt => {
                         console.log(`End Of Start Transition: ${i}`, evt);
+
+                        // evt.testProperty
                     },
                     endTransition: evt => {
                         console.log(`End Transition: ${i}`, evt);

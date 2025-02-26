@@ -1,6 +1,7 @@
 import {Visual, VisualCallbacks, VisualProperties} from 'library/types/entity';
 import {EntityColor, EntitySketchMap} from 'library/types/entitySketch';
 import {LibraryInput} from 'library/types/input';
+import {Visual, VisualCallbacks, VisualProperties} from 'library/types/entity';
 
 export const getCreateVisual = (
     sketch: EntitySketchMap['button1'],
