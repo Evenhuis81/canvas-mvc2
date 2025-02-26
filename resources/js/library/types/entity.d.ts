@@ -98,11 +98,11 @@ export interface EntityHandler {
 export type Entity = EntityGeneric<keyof EntityShapeMap>;
 
 export type EntityGeneric<K extends keyof EntityShapeMap> = {
-    show: (quickShow?: boolean) => void;
-    hide: (quickHide?: boolean) => void;
+    show: () => void;
+    hide: () => void;
     addListener: AddListener;
     removeListener: RemoveListener;
-    setHideTime: SetHideTime;
+    // setHideTime: SetHideTime;
     setVisual: SetVisual;
     setDraw: SetDraw;
     sketch: EntitySketchMap[K];
