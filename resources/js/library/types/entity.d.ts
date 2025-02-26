@@ -87,12 +87,11 @@ export type AddListener = (
 export type RemoveEntityInputListener = (type: EntityInputListenerType) => void;
 export type RemoveListener = (type: keyof EntityListenerEvents | EntityInputListenerType) => void;
 
-export interface EventHandler {
+export interface EntityHandler {
     addListener: AddListener;
     removeListener: RemoveListener;
     activateInputListeners: () => void;
     deactivateInputListeners: () => void;
-    entityListenerEvents: EntityListenerEvents;
     entityListeners: Partial<EntityListeners>;
 }
 

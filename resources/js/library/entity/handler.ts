@@ -1,12 +1,11 @@
 import type {
     AddEntityInputListener,
-    EndTransitionEvent,
+    EntityHandler,
     EntityInputListenerHandler,
     EntityInputListenerType,
     EntityInputListeners,
     EntityListenerEvents,
     EntityListeners,
-    EventHandler,
 } from 'library/types/entity';
 import {EntityShapeMap} from 'library/types/entitySketch';
 import type {InputListenerEventMap, LibraryInput} from 'library/types/input';
@@ -17,17 +16,11 @@ export const createEventHandler = <K extends keyof EntityShapeMap>(
     listeners?: Partial<EntityListeners & EntityInputListeners<EntityInputListenerType>>,
 ) => {
     const entityInputListenerHandlers: {[type: string]: EntityInputListenerHandler} = {};
-    const entityListenerEvents = createEntityListenerEvents();
     const entityListeners: Partial<EntityListeners> = {};
     const activate = () => Object.values(entityInputListenerHandlers).forEach(handler => handler[1]());
     const deactivate = () => Object.values(entityInputListenerHandlers).forEach(handler => handler[2]());
 
-    const addEntityInputListener = createAddEntityInputListener(
-        entityInputListenerHandlers,
-        input,
-        sketch,
-        entityListenerEvents.endTransition,
-    );
+    const addEntityInputListener = createAddEntityInputListener(entityInputListenerHandlers, input, sketch);
 
     const {addListener, removeListener} = createAddAndRemoveListener(
         entityInputListenerHandlers,
@@ -35,10 +28,9 @@ export const createEventHandler = <K extends keyof EntityShapeMap>(
         addEntityInputListener,
     );
 
-    const handler: EventHandler = {
+    const handler: EntityHandler = {
         addListener,
         removeListener,
-        entityListenerEvents,
         entityListeners,
         activateInputListeners: activate,
         deactivateInputListeners: deactivate,
@@ -65,18 +57,17 @@ const createAddEntityInputListener =
         entityInputListenerHandlers: {[type: string]: EntityInputListenerHandler},
         input: LibraryInput,
         sketch: EntityShapeMap[T],
-        props: EndTransitionEvent,
     ): AddEntityInputListener =>
     <K extends EntityInputListenerType>(
         type: K, // = ID (1 type per entity)
         listener: (evt: HTMLElementEventMap[K]) => void,
         active: boolean = true,
     ) => {
-        const newListener = (evt: HTMLElementEventMap[K], inputType:    ) => {
-            //
+        // const newListener = (evt: HTMLElementEventMap[K], inputType: string) => {
+        //     console.log(inputType);
 
-            listener(evt);
-        };
+        //     listener(evt);
+        // };
 
         const id = Symbol();
 
@@ -89,7 +80,6 @@ const createAddEntityInputListener =
                     listener,
                     id,
                     shape: sketch.inputType !== 'none' ? sketch : undefined,
-                    // props,
                 }),
             () => input.removeListener(type, id),
             active,
@@ -147,16 +137,4 @@ const createAddAndRemoveListener = (
 
         return undefined;
     },
-});
-
-const startTransition = {testProperty: 'testProperty startTransition'};
-const endOfStartTransition = {testProperty: 'testProperty endOfStartTransition'};
-const endTransition = {pressed: false, pushed: false, clicked: false};
-const endOfEndTransition = {pressed: false, pushed: false, clicked: false};
-
-const createEntityListenerEvents = () => ({
-    startTransition: {...startTransition},
-    endOfStartTransition: {...endOfStartTransition},
-    endTransition: {...endTransition},
-    endOfEndTransition: {...endOfEndTransition},
 });

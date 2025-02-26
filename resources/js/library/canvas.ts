@@ -1,7 +1,6 @@
 import {uid} from './helpers';
 import {CanvasOptions, LibraryOptions} from './types';
 
-// Make this a seperate module when enough default objects arrise
 const defaultCanvasOptions = {
     backgroundColor: '#999',
     width: 300,
@@ -14,23 +13,22 @@ export const setCanvas = (
     container: HTMLDivElement,
     options?: Partial<LibraryOptions>,
 ): void => {
-    // Container could/should be optional
     setContainer(canvas, container);
 
     setLibraryOptions(canvas, options);
 };
 
-let count = 99;
+let count = 199;
 
 export const getCanvas = (options?: Partial<CanvasOptions>) => {
     const canvasOptions = {...defaultCanvasOptions, ...options};
 
     const canvas = document.createElement('canvas');
 
-    // if (canvasOptions.focus) {
-    canvas.tabIndex = ++count; // no tabIndex = no focus, prevents listeners from working on canvas
+    console.log(count++);
+
+    canvas.tabIndex = count++; // no tabIndex = no focus, prevents listeners from working on canvas
     canvas.focus();
-    // }
 
     if (!canvasOptions.contextMenu) {
         canvas.addEventListener('contextmenu', e => {

@@ -9,15 +9,16 @@ export type LibraryInput = {
         buttonHeld: Record<number, boolean>;
         x: number;
         y: number;
-        inside: Inside;
-        insideRect: InsideRect;
-        insideCircle: InsideCircle;
+        insideShape: Inside;
+        // insideRect: InsideRect;
+        // insideCircle: InsideCircle;
     };
     touch: {
         x: number;
         y: number;
-        insideRect: InsideRect;
-        insideCircle: InsideCircle;
+        insideShape: Inside;
+        // insideRect: InsideRect;
+        // insideCircle: InsideCircle;
         ended: boolean;
     };
     keyboard: {

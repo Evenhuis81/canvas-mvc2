@@ -9,7 +9,7 @@ const keyHeldMap: Record<string, boolean> = {};
 
 let resizeTimeout: NodeJS.Timeout;
 
-const getInputEvents = () => ({
+const getInputProperties = () => ({
     mouse: {
         x: 0,
         y: 0,
@@ -40,8 +40,8 @@ const inputHandler: InputListenerStore = {
 };
 
 export const getCanvasInput = (canvas: HTMLCanvasElement) => {
-    const canvasRect = canvas.getBoundingClientRect();
-    const {mouse, keyboard, touch} = getInputEvents();
+    let canvasRect = canvas.getBoundingClientRect();
+    const {mouse, keyboard, touch} = getInputProperties();
 
     const addListener = <K extends keyof InputListenerEventMap>(listener: InputListener<K>) =>
         inputHandler[listener.type].push(listener);
@@ -143,26 +143,9 @@ export const getCanvasInput = (canvas: HTMLCanvasElement) => {
         });
     });
 
-    const pressedInside = (inputPos: Pos, shape: InputShape) => {
-        if (shape.inputType === 'rect' && insideRect(inputPos, shape)) return true;
-        if (shape.inputType === 'circle' && insideCircle(inputPos, shape)) return true;
-
-        return false;
-    };
-
-    const insideRect = (inputPos: Pos, rect: Rect) =>
-        inputPos.x >= rect.x - rect.w / 2 &&
-        inputPos.x < rect.x + rect.w / 2 &&
-        inputPos.y >= rect.y - rect.h / 2 &&
-        inputPos.y < rect.y + rect.h / 2;
-
-    const insideCircle = (inputPos: Pos, circle: Circle) => {
-        const distance = distanceShape(inputPos, circle);
-
-        return distance <= circle.radius;
-    };
-
     const resize = () => {
+        canvasRect = canvas.getBoundingClientRect();
+
         for (let i = 0; i < resizeCB.length; i++) resizeCB[i]();
     };
 
@@ -172,18 +155,11 @@ export const getCanvasInput = (canvas: HTMLCanvasElement) => {
         resizeTimeout = setTimeout(resize, 250);
     };
 
-    const distanceShape = (pos1: Pos, pos2: Pos) => {
-        const pos1sq = Math.sqrt(pos1.x * pos1.x + pos1.y * pos1.y);
-        const pos2sq = Math.sqrt(pos2.x * pos2.x + pos2.y * pos2.y);
-
-        return pos1sq - pos2sq;
-    };
-
     return {
         mouse: Object.assign(mouse, {
-            inside: (shape: InputShape) => pressedInside(mouse, shape),
+            insideShape: (shape: InputShape) => pressedInside(mouse, shape),
         }),
-        touch: Object.assign(touch, {inside: (shape: InputShape) => pressedInside(touch, shape)}),
+        touch: Object.assign(touch, {insideShape: (shape: InputShape) => pressedInside(touch, shape)}),
         addListener,
         removeListener,
         keyboard,
@@ -193,3 +169,29 @@ export const getCanvasInput = (canvas: HTMLCanvasElement) => {
 export const setResize = (cbjh: () => unknown) => resizeCB.push(cbjh);
 
 export const setConsoleToggle = (cbs: () => unknown) => consoleToggleCB.push(cbs);
+
+const pressedInside = (inputPos: Pos, shape: InputShape) => {
+    if (shape.inputType === 'rect' && insideRect(inputPos, shape)) return true;
+    if (shape.inputType === 'circle' && insideCircle(inputPos, shape)) return true;
+
+    return false;
+};
+
+const insideRect = (inputPos: Pos, rect: Rect) =>
+    inputPos.x >= rect.x - rect.w / 2 &&
+    inputPos.x < rect.x + rect.w / 2 &&
+    inputPos.y >= rect.y - rect.h / 2 &&
+    inputPos.y < rect.y + rect.h / 2;
+
+const insideCircle = (inputPos: Pos, circle: Circle) => {
+    const distance = distanceShape(inputPos, circle);
+
+    return distance <= circle.radius;
+};
+
+const distanceShape = (pos1: Pos, pos2: Pos) => {
+    const pos1sq = Math.sqrt(pos1.x * pos1.x + pos1.y * pos1.y);
+    const pos2sq = Math.sqrt(pos2.x * pos2.x + pos2.y * pos2.y);
+
+    return pos1sq - pos2sq;
+};

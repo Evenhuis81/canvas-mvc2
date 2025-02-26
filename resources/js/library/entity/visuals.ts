@@ -1,4 +1,4 @@
-import {Callbacks, Visual, VisualCallbacks, VisualProperties} from 'library/types/entity';
+import {Visual, VisualCallbacks, VisualProperties} from 'library/types/entity';
 import {EntityColor, EntitySketchMap} from 'library/types/entitySketch';
 import {LibraryInput} from 'library/types/input';
 
@@ -6,13 +6,12 @@ export const getCreateVisual = (
     sketch: EntitySketchMap['button1'],
     input: LibraryInput,
     {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
-    callbacks: VisualCallbacks,
 ) => ({
     noise: () => createAnimationNoise(sketch),
     bold: () => createTransition(createHoverBold(sketch), sketch, input),
-    fadein1: () => createTransitionFadein1(sketch.color, callbacks, 0.005 * startSpeed),
-    fadeout1: () => createTransitionFadeout1(sketch.color, callbacks, 0.005 * endSpeed),
-    explode: () => createTransitionExplode(sketch, callbacks),
+    fadein1: () => createTransitionFadein1(sketch.color, 0.005 * startSpeed),
+    fadeout1: () => createTransitionFadeout1(sketch.color, 0.005 * endSpeed),
+    explode: () => createTransitionExplode(sketch),
 });
 
 const createAnimationNoise = (sketch: EntitySketchMap['button1']): Visual => ({
@@ -86,17 +85,13 @@ const createTransition: (
     {mouse}, // hover is only for mouse
 ) => ({
     render: () => {
-        if (mouse.inside(sketch)) return forward();
+        if (mouse.insideShape(sketch)) return forward();
 
         return reverse();
     },
 });
 
-const createTransitionFadein1 = (
-    {fill, stroke, textFill}: EntityColor['button1'],
-    callbacks: VisualCallbacks,
-    alphaVelocity: number,
-): Visual => {
+const createTransitionFadein1 = ({fill, stroke, textFill}: EntityColor['button1'], alphaVelocity: number): Visual => {
     const render = () => {
         fill.a += alphaVelocity;
         stroke.a += alphaVelocity;
@@ -106,8 +101,6 @@ const createTransitionFadein1 = (
     };
 
     const pre = () => {
-        console.log('pre function trigger fadein1');
-
         fill.a = 0;
         stroke.a = 0;
         textFill.a = 0;
@@ -117,19 +110,12 @@ const createTransitionFadein1 = (
         fill.a = 1;
         stroke.a = 1;
         textFill.a = 1;
-
-        console.log('endOfStart in fadein1');
-        callbacks.endOfStart();
     };
 
     return {render, pre, post};
 };
 
-const createTransitionFadeout1 = (
-    {fill, stroke, textFill}: EntityColor['button1'],
-    callbacks: VisualCallbacks,
-    alphaVelocity: number,
-): Visual => {
+const createTransitionFadeout1 = ({fill, stroke, textFill}: EntityColor['button1'], alphaVelocity: number): Visual => {
     const render = () => {
         fill.a -= alphaVelocity;
         stroke.a -= alphaVelocity;
@@ -139,8 +125,6 @@ const createTransitionFadeout1 = (
     };
 
     const pre = () => {
-        console.log('pre function trigger fadeout1');
-
         fill.a = 1;
         stroke.a = 1;
         textFill.a = 1;
@@ -150,15 +134,12 @@ const createTransitionFadeout1 = (
         fill.a = 0;
         stroke.a = 0;
         textFill.a = 0;
-
-        console.log('endOfEnd in fadeout1');
-        callbacks.endOfEnd();
     };
 
     return {render, pre, post};
 };
 
-const createTransitionExplode = (sketch: EntitySketchMap['button1'], callbacks: VisualCallbacks): Visual => {
+const createTransitionExplode = (sketch: EntitySketchMap['button1']): Visual => {
     const {fill, stroke, textFill} = sketch.color;
     let phase = 1;
 
@@ -174,7 +155,7 @@ const createTransitionExplode = (sketch: EntitySketchMap['button1'], callbacks: 
                 stroke.a -= 0;
                 textFill.a -= 0;
 
-                callbacks.endOfEnd();
+                // callbacks.endOfEnd();
             }
         }
 

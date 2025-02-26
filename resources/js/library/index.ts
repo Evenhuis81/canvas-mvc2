@@ -8,8 +8,6 @@ import {uid} from './helpers';
 import type {Engine} from './types/engine';
 import type {LibraryOptions} from './types';
 
-// export const resources: Record<string | number, LibraryResources> = {};
-
 export const initialize = (id?: string | number, options?: Partial<LibraryOptions>) => {
     const libraryID = id ?? uid();
 

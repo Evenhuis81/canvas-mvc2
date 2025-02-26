@@ -9,12 +9,10 @@ export const setVisuals = (
     sketch: EntitySketchMap['button1'],
     input: LibraryInput,
     context: CanvasRenderingContext2D,
-    visuals: Partial<Visuals>,
-    callbacks: Callbacks,
 ) => {
-    const createVisual = getCreateVisual(sketch, input, vProps, callbacks);
-
+    const createVisual = getCreateVisual(sketch, input, vProps);
     const {animation, hover, start, end} = vProps;
+    const visuals: Partial<Visuals> = {};
 
     const setVisual: SetVisual = (type, effect) => {
         const {render, pre, post, callback} = createVisual[effect]();
@@ -55,5 +53,5 @@ export const setVisuals = (
 
     setDraw(sketch);
 
-    return {setVisual, setDraw};
+    return {visuals, setVisual, setDraw};
 };

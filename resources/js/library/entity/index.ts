@@ -1,14 +1,19 @@
 import {createEventHandler} from './handler';
-import {createUserMethods, defaultProperties} from './properties';
-import {setVisuals} from './animate';
+import {setVisuals} from './visual';
 import {getProperties, uid} from 'library/helpers';
 import {createSketch} from './sketch';
 import type {Engine} from 'library/types/engine';
-import type {Entity, EntityConfig, EntityGeneric, GeneralProperties, Visuals} from 'library/types/entity';
+import type {
+    EngineState,
+    Entity,
+    EntityConfig,
+    EntityGeneric,
+    GeneralProperties,
+    VisualType,
+    Visuals,
+} from 'library/types/entity';
 import type {LibraryInput} from 'library/types/input';
 import type {EntityShapeMap, EntitySketchMap} from 'library/types/entitySketch';
-import {createSetEngine} from './setEngine';
-import {createCallbacks} from './callback';
 
 export default (context: CanvasRenderingContext2D, engine: Engine, input: LibraryInput) =>
     <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig<K>): EntityGeneric<K> => {
@@ -19,36 +24,68 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
 
         const eventHandler = createEventHandler(input, sketch, listeners);
 
-        const visuals: Partial<Visuals> = {};
-
-        const setEngine = createSetEngine(engine, visuals);
-
-        const callbacks = createCallbacks(setEngine, eventHandler);
-
-        // Make sketch(Map) dynamic and create generic to add 'theme' sketches from library
-        const {setVisual, setDraw} = setVisuals(
+        // Look @ transition explode callback
+        const {setVisual, setDraw, visuals} = setVisuals(
             generalProperties,
             visualProperties,
             sketch as EntitySketchMap['button1'],
             input,
             context,
-            visuals,
-            callbacks,
         );
 
-        const entity: EntityGeneric<K> = {
+        initialize(generalProperties, show);
+
+        return {
             addListener: eventHandler.addListener,
             removeListener: eventHandler.removeListener,
             setVisual,
             setDraw,
-            ...createUserMethods(generalProperties, eventHandler, callbacks),
+            // ...createUserMethods(generalProperties, eventHandler, callbacks),
+            show,
+            hide,
+            setHideTime,
             sketch,
         };
-
-        initialize(generalProperties, entity.show);
-
-        return entity;
     };
+
+// const {setEngine, visuals} = createSetEngine(engine);
+// const callbacks = createCallbacks(setEngine, eventHandler);
+
+// const show = () => {
+//     if (generalProperties.show) return console.log('show is already active');
+
+//     generalProperties.show = true;
+
+//     // callbacks.start();
+// };
+
+// const hide = () => {
+//     if (!generalProperties.show) return console.log('hide is already active');
+
+//     generalProperties.show = false;
+
+//     // callbacks.end();
+// };
+
+// const setHideTime = (time: number) => (generalProperties.hideDelay = time);
+
+// // TODO::This needs options (ie. run pre/post?, transitionSpeed, listener handling, etc...)
+// const createSetEngine = (engine: Engine) => {
+//     const setEngine = (type: VisualType, state: EngineState) => {
+//         const visual = visuals[type];
+
+//         if (!visual) return setEngineLog(type, state);
+
+//         if (state === 'on' && visual.pre) visual.pre();
+
+//         return engine.handle(visual.render, state === 'on');
+//     };
+
+//     return {setEngine, visuals};
+// };
+
+// const setEngineLog = (type: string, state: string) =>
+//     console.log(`setEngine: ${type} is not set, state: ${state}`);
 
 const initialize = (gProps: GeneralProperties, show: Entity['show']) => {
     // show is used initially to show or hide when no showDelay is set. After it's used internally to indicate if entity is active
@@ -91,4 +128,19 @@ const extractOptions = <K extends keyof EntityShapeMap>(options: EntityConfig<K>
     const {listeners, sketch: shape} = rest2;
 
     return {generalProperties, visualProperties, listeners, shape};
+};
+
+const defaultProperties = {
+    // generalProperties (mixed internal properties + id set in abstractOptions)
+    name: 'noName', // + counter/uid?
+    disabled: false,
+    show: true,
+    showDelay: 0,
+    clicked: false, // Also in transitionEventProps
+    hideDelay: 0,
+    // visualProperties (types can be undefined)
+    // animateAtEnd: false,
+    // animateAtStart: false,
+    // startSpeed: 3,
+    // endSpeed: 3,
 };
