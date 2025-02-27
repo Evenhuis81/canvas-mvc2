@@ -14,7 +14,7 @@ export const getCreateVisual = (
     explode: (next?: () => void) => createTransitionExplode(sketch),
 });
 
-const createAnimationNoise = (sketch: EntitySketchMap['button1']): Visual => ({
+const createAnimationNoise = (sketch: EntitySketchMap['button1']):  => ({
     render: () => {
         const upd = {
             adj: {
@@ -91,7 +91,7 @@ const createTransition: (
     },
 });
 
-const createTransitionFadein1 = ({fill, stroke, textFill}: EntityColor['button1'], alphaVelocity: number): Visual => {
+const createTransitionFadein1 = ({fill, stroke, textFill}: EntityColor['button1'], alphaVelocity: number): Visual<'update'> => {
     const render = () => {
         fill.a += alphaVelocity;
         stroke.a += alphaVelocity;
