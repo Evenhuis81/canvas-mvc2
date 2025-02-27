@@ -1,18 +1,17 @@
-import {Visual, VisualCallbacks, VisualProperties} from 'library/types/entity';
+import {Visual, VisualProperties} from 'library/types/entity';
 import {EntityColor, EntitySketchMap} from 'library/types/entitySketch';
 import {LibraryInput} from 'library/types/input';
-import {Visual, VisualCallbacks, VisualProperties} from 'library/types/entity';
 
 export const getCreateVisual = (
     sketch: EntitySketchMap['button1'],
     input: LibraryInput,
     {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
 ) => ({
-    noise: () => createAnimationNoise(sketch),
-    bold: () => createTransition(createHoverBold(sketch), sketch, input),
-    fadein1: () => createTransitionFadein1(sketch.color, 0.005 * startSpeed),
-    fadeout1: () => createTransitionFadeout1(sketch.color, 0.005 * endSpeed),
-    explode: () => createTransitionExplode(sketch),
+    noise: (next?: () => void) => createAnimationNoise(sketch),
+    bold: (next?: () => void) => createTransition(createHoverBold(sketch), sketch, input),
+    fadein1: (next?: () => void) => createTransitionFadein1(sketch.color, 0.005 * startSpeed),
+    fadeout1: (next?: () => void) => createTransitionFadeout1(sketch.color, 0.005 * endSpeed),
+    explode: (next?: () => void) => createTransitionExplode(sketch),
 });
 
 const createAnimationNoise = (sketch: EntitySketchMap['button1']): Visual => ({

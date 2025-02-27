@@ -1,24 +1,12 @@
-import {createCallbacks} from './callback';
 import {createEventHandler} from './handler';
-import {setVisuals} from './visual';
 import {getProperties, uid} from 'library/helpers';
 import {createSketch} from './sketch';
-import {createUserMethods, defaultProperties} from './properties';
-import {getProperties, uid} from 'library/helpers';
-import {setVisuals} from './animate';
 import type {Engine} from 'library/types/engine';
-import type {
-    EngineState,
-    Entity,
-    EntityConfig,
-    EntityGeneric,
-    GeneralProperties,
-    VisualType,
-    Visuals,
-} from 'library/types/entity';
+import type {EntityConfig, EntityGeneric} from 'library/types/entity';
 import type {LibraryInput} from 'library/types/input';
 import type {EntityShapeMap, EntitySketchMap} from 'library/types/entitySketch';
 import initialize from './initialize';
+import {setVisuals} from './visual';
 
 export default (context: CanvasRenderingContext2D, engine: Engine, input: LibraryInput) =>
     <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig<K>): EntityGeneric<K> => {
@@ -30,7 +18,7 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
         const eventHandler = createEventHandler(input, sketch, listeners);
 
         // Look @ transition explode callback
-        const {setVisual, setDraw, visuals} = setVisuals(
+        const {getVisual, setDraw} = setVisuals(
             generalProperties,
             visualProperties,
             sketch as EntitySketchMap['button1'],
@@ -38,13 +26,13 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
             context,
         );
 
-        const {show, hide} = initialize(generalProperties);
+        const {show, hide} = initialize(generalProperties, visualProperties, getVisual);
 
         return {
             addListener: eventHandler.addListener,
             removeListener: eventHandler.removeListener,
-            setVisual,
-            setDraw,
+            // setVisual,
+            // setDraw,
             show,
             hide,
             sketch,

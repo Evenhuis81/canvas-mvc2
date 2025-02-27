@@ -1,7 +1,16 @@
 import {createSketchDraw, getCreateVisual} from './visuals';
 import type {LibraryInput} from 'library/types/input';
-import type {Callbacks, GeneralProperties, SetDraw, SetVisual, VisualProperties, Visuals} from 'library/types/entity';
+import type {
+    GeneralProperties,
+    GetVisual,
+    SetDraw,
+    Visual,
+    VisualProperties,
+    VisualType,
+    Visuals,
+} from 'library/types/entity';
 import type {EntitySketchMap} from 'library/types/entitySketch';
+import {UpdateOrDraw} from 'library/types/engine';
 
 export const setVisuals = (
     gProps: GeneralProperties,
@@ -11,13 +20,16 @@ export const setVisuals = (
     context: CanvasRenderingContext2D,
 ) => {
     const createVisual = getCreateVisual(sketch, input, vProps);
-    const {animation, hover, start, end} = vProps;
     const visuals: Partial<Visuals> = {};
 
-    const setVisual: SetVisual = (type, effect) => {
-        const {render, pre, post, callback} = createVisual[effect]();
+    const getVisual: GetVisual = (
+        type,
+        effect,
+        next?: () => void,
+    ): Omit<Visual, 'render'> & {render: UpdateOrDraw<'update' | 'draw'>} => {
+        const {render, pre, post} = createVisual[effect](next);
 
-        visuals[type] = {
+        return {
             render: {
                 type: 'update',
                 id: `${gProps.id}-${type}-${effect}`,
@@ -26,7 +38,6 @@ export const setVisuals = (
             },
             pre,
             post,
-            callback,
         };
     };
 
@@ -40,18 +51,14 @@ export const setVisuals = (
             },
             // pre,
             // post,
-            // callback,
+            // next,
         };
 
         visuals.draw = visual;
-
-        if (animation) setVisual('animation', animation);
-        if (hover) setVisual('hover', hover);
-        if (start) setVisual('start', start);
-        if (end) setVisual('end', end);
     };
 
+    // TODOS::Sketch optional (duration only with phaser)
     setDraw(sketch);
 
-    return {visuals, setVisual, setDraw};
+    return {visuals, getVisual, setDraw};
 };

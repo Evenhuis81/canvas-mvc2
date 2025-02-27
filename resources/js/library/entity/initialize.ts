@@ -1,32 +1,44 @@
-import {GeneralProperties} from 'library/types/entity';
+import {GeneralProperties, GetVisual, VisualProperties, Visuals} from 'library/types/entity';
 
-export default (gProps: GeneralProperties) => {
-    // show is used initially to show or hide when no showDelay is set. After it's used internally to indicate if entity is active
+export default (gProps: GeneralProperties, vProps: Partial<VisualProperties>, getVisual: GetVisual) => {
     const show = () => {
         if (!gProps.show) return;
 
-        gProps.show = false;
-
         if (gProps.showDelay) {
             setTimeout(() => {
-                setEngine('draw', 'on');
-                setEngine('start', 'on');
+                if (vProps.start) {
+                    const visual = getVisual('start', vProps.start);
+                    if (visuals.start?.pre) visuals.start.pre();
+                }
+                if (visuals.start) {
+                    if (visuals.start.pre)
+                }
+                // if (visuals.draw) {
 
+                // }
+                // setEngine('draw', 'on');
+                // setEngine('start', 'on');
                 // if (entityListeners.startTransition) entityListeners.startTransition(entityListenerEvents.startTransition);
             }, gProps.showDelay);
 
+            gProps.show = false;
             gProps.showDelay = 0;
         }
     };
 
-    const hide = () => {
-        //
-    };
+    const hide = () => {};
 
     if (gProps.show) show();
 
     return {show, hide};
 };
+
+// const {animation, hover, start, end} = vProps;
+// if (animation) setVisual('animation', animation);
+// if (hover) setVisual('hover', hover);
+// if (start) setVisual('start', start);
+// if (end) setVisual('end', end);
+// setDraw(sketch);
 
 // const {setEngine, visuals} = createSetEngine(engine);
 // const callbacks = createCallbacks(setEngine, eventHandler);
@@ -62,3 +74,51 @@ export default (gProps: GeneralProperties) => {
 
 // const setEngineLog = (type: string, state: string) =>
 //     console.log(`setEngine: ${type} is not set, state: ${state}`);
+
+// TODO::Test destructuring of eventhandler for keep of reference and if start&endOfStart needs same event
+// export const createCallbacks = (
+//     setEngine: SetEngine,
+//     {deactivateInputListeners, activateInputListeners}: EntityHandler,
+// ): Callbacks => ({
+//     start: () => {
+//         console.log('start setEngine');
+
+//         setEngine('draw', 'on');
+//         setEngine('start', 'on');
+
+//         // if (entityListeners.startTransition) entityListeners.startTransition(entityListenerEvents.startTransition);
+//     },
+//     endOfStart: () => {
+//         console.log('endOfStart callback');
+
+//         activateInputListeners();
+
+//         setEngine('start', 'off');
+//         setEngine('animation', 'on');
+//         setEngine('hover', 'on');
+
+//         // if (entityListeners.endOfStartTransition)
+//         //     entityListeners.endOfStartTransition(entityListenerEvents.endOfStartTransition);
+//     },
+//     end: () => {
+//         console.log('end setEngine');
+
+//         deactivateInputListeners();
+
+//         setEngine('end', 'on');
+//         setEngine('hover', 'off');
+//         setEngine('animation', 'off');
+
+//         // if (entityListeners.endTransition) entityListeners.endTransition(entityListenerEvents.endTransition);
+//     },
+//     endOfEnd: () => {
+//         console.log('endOfEnd setEngine');
+
+//         setEngine('end', 'off');
+//         setEngine('animation', 'off');
+//         setEngine('hover', 'off');
+
+//         // if (entityListeners.endOfEndTransition)
+//         //     entityListeners.endOfEndTransition(entityListenerEvents.endOfEndTransition);
+//     },
+// });
