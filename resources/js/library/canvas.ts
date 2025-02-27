@@ -38,6 +38,8 @@ export const getCanvas = (options?: Partial<CanvasOptions>) => {
         });
     }
 
+    console.log(options);
+
     canvas.width = canvasOptions.width;
     canvas.height = canvasOptions.height;
     canvas.style.backgroundColor = canvasOptions.backgroundColor;

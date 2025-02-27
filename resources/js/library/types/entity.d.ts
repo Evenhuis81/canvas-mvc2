@@ -1,4 +1,4 @@
-import {UpdateOrDraw} from './engine';
+import {EngineUpdate, UpdateOrDraw} from './engine';
 import {EntityShapeMap, EntitySketchMap} from './entitySketch';
 import {InputListenerEventMap} from './input';
 
@@ -128,6 +128,12 @@ export type EffectType = EntityAnimations | EntityTransitions | EntityHovers;
 // type EngineFunction = {
 //     draw: EngineDraw
 // }
+
+export type VisualCreation = {
+    render: EngineUpdate['fn'];
+    pre?: () => void;
+    post?: () => void;
+};
 
 export type Visual<T extends 'draw' | 'update'> = {
     render: UpdateOrDraw<T>;

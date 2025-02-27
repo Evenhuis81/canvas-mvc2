@@ -1,4 +1,5 @@
-import {Visual, VisualProperties} from 'library/types/entity';
+import {EngineDraw} from 'library/types/engine';
+import {Visual, VisualCreation, VisualProperties} from 'library/types/entity';
 import {EntityColor, EntitySketchMap} from 'library/types/entitySketch';
 import {LibraryInput} from 'library/types/input';
 
@@ -7,23 +8,23 @@ export const getCreateVisual = (
     input: LibraryInput,
     {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
 ) => ({
-    noise: (next?: () => void) => createAnimationNoise(sketch),
-    bold: (next?: () => void) => createTransition(createHoverBold(sketch), sketch, input),
-    fadein1: (next?: () => void) => createTransitionFadein1(sketch.color, 0.005 * startSpeed),
-    fadeout1: (next?: () => void) => createTransitionFadeout1(sketch.color, 0.005 * endSpeed),
-    explode: (next?: () => void) => createTransitionExplode(sketch),
+    noise: () => createAnimationNoise(sketch),
+    bold: () => createTransition(createHoverBold(sketch), sketch, input),
+    fadein1: () => createTransitionFadein1(sketch.color, 0.005 * startSpeed),
+    fadeout1: () => createTransitionFadeout1(sketch.color, 0.005 * endSpeed),
+    explode: () => createTransitionExplode(sketch),
 });
 
-const createAnimationNoise = (sketch: EntitySketchMap['button1']):  => ({
-    render: () => {
-        const upd = {
-            adj: {
-                x: 0.5,
-                y: 0.5,
-            },
-            count: 0,
-        };
+const upd = {
+    adj: {
+        x: 0.5,
+        y: 0.5,
+    },
+    count: 0,
+};
 
+const createAnimationNoise = (sketch: EntitySketchMap['button1']): VisualCreation => ({
+    render: () => {
         sketch.x += upd.adj.x;
         sketch.y += upd.adj.y;
 
@@ -79,7 +80,7 @@ const createTransition: (
     transition: {forward: () => void; reverse: () => void},
     sketch: EntitySketchMap['button1'],
     input: LibraryInput,
-) => Visual = (
+) => VisualCreation = (
     {forward, reverse},
     sketch,
     {mouse}, // hover is only for mouse
@@ -91,7 +92,10 @@ const createTransition: (
     },
 });
 
-const createTransitionFadein1 = ({fill, stroke, textFill}: EntityColor['button1'], alphaVelocity: number): Visual<'update'> => {
+const createTransitionFadein1 = (
+    {fill, stroke, textFill}: EntityColor['button1'],
+    alphaVelocity: number,
+): VisualCreation => {
     const render = () => {
         fill.a += alphaVelocity;
         stroke.a += alphaVelocity;
@@ -115,7 +119,10 @@ const createTransitionFadein1 = ({fill, stroke, textFill}: EntityColor['button1'
     return {render, pre, post};
 };
 
-const createTransitionFadeout1 = ({fill, stroke, textFill}: EntityColor['button1'], alphaVelocity: number): Visual => {
+const createTransitionFadeout1 = (
+    {fill, stroke, textFill}: EntityColor['button1'],
+    alphaVelocity: number,
+): VisualCreation => {
     const render = () => {
         fill.a -= alphaVelocity;
         stroke.a -= alphaVelocity;
@@ -139,7 +146,7 @@ const createTransitionFadeout1 = ({fill, stroke, textFill}: EntityColor['button1
     return {render, pre, post};
 };
 
-const createTransitionExplode = (sketch: EntitySketchMap['button1']): Visual => {
+const createTransitionExplode = (sketch: EntitySketchMap['button1']): VisualCreation => {
     const {fill, stroke, textFill} = sketch.color;
     let phase = 1;
 
@@ -169,23 +176,25 @@ const createTransitionExplode = (sketch: EntitySketchMap['button1']): Visual => 
     return {render};
 };
 
-export const createSketchDraw = (c: CanvasRenderingContext2D, sketch: EntitySketchMap['button1']) => () => {
-    const {fill, stroke, textFill} = sketch.color;
+export const createSketchDraw =
+    (c: CanvasRenderingContext2D, sketch: EntitySketchMap['button1']): EngineDraw['fn'] =>
+    () => {
+        const {fill, stroke, textFill} = sketch.color;
 
-    c.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
-    c.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
-    c.lineWidth = sketch.lineWidth;
+        c.fillStyle = `rgba(${fill.r}, ${fill.g}, ${fill.b}, ${fill.a})`;
+        c.strokeStyle = `rgba(${stroke.r}, ${stroke.g}, ${stroke.b}, ${stroke.a})`;
+        c.lineWidth = sketch.lineWidth;
 
-    c.beginPath();
-    c.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.radii);
-    c.fill();
-    c.stroke();
+        c.beginPath();
+        c.roundRect(sketch.x - sketch.w / 2, sketch.y - sketch.h / 2, sketch.w, sketch.h, sketch.radii);
+        c.fill();
+        c.stroke();
 
-    c.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
-    c.font = `${sketch.fontSize}px ${sketch.font}`;
-    c.textAlign = sketch.textAlign;
-    c.textBaseline = sketch.textBaseLine;
+        c.fillStyle = `rgba(${textFill.r}, ${textFill.g}, ${textFill.b}, ${textFill.a})`;
+        c.font = `${sketch.fontSize}px ${sketch.font}`;
+        c.textAlign = sketch.textAlign;
+        c.textBaseline = sketch.textBaseLine;
 
-    c.beginPath();
-    c.fillText(sketch.text, sketch.x, sketch.y + 1.5); // TODO::use textAscend / -descent
-};
+        c.beginPath();
+        c.fillText(sketch.text, sketch.x, sketch.y + 1.5); // TODO::use textAscend / -descent
+    };

@@ -1,18 +1,27 @@
-import {GeneralProperties, GetVisual, VisualProperties, Visuals} from 'library/types/entity';
+import {Engine} from 'library/types/engine';
+import {GeneralProperties, GetDraw, GetVisual, VisualProperties} from 'library/types/entity';
 
-export default (gProps: GeneralProperties, vProps: Partial<VisualProperties>, getVisual: GetVisual) => {
+export default (
+    gProps: GeneralProperties,
+    vProps: Partial<VisualProperties>,
+    getVisual: GetVisual,
+    getDraw: GetDraw,
+    engine: Engine,
+) => {
+    // Pre-creation of visuals here for efficiency testing
     const show = () => {
         if (!gProps.show) return;
 
         if (gProps.showDelay) {
             setTimeout(() => {
                 if (vProps.start) {
-                    const visual = getVisual('start', vProps.start);
-                    if (visuals.start?.pre) visuals.start.pre();
+                    const {render, pre, post, next} = getVisual('start', vProps.start);
+
+                    if (pre) pre();
+
+                    engine.handle(render);
                 }
-                if (visuals.start) {
-                    if (visuals.start.pre)
-                }
+
                 // if (visuals.draw) {
 
                 // }
@@ -33,6 +42,7 @@ export default (gProps: GeneralProperties, vProps: Partial<VisualProperties>, ge
     return {show, hide};
 };
 
+// TODOS::Sketch optional (duration only with phaser)
 // const {animation, hover, start, end} = vProps;
 // if (animation) setVisual('animation', animation);
 // if (hover) setVisual('hover', hover);

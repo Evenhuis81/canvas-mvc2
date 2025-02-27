@@ -82,6 +82,14 @@ export const routes: RouteRecordRaw[] = [
             shouldBeLoggedIn: false,
         },
     },
+    {
+        path: '/reverse',
+        component: () => import('./games/reverse/Reverse.vue'),
+        name: 'Reverse Gravity',
+        meta: {
+            shouldBeLoggedIn: false,
+        },
+    },
     // {
     //     path: '/statistics',
     //     component: () => import('./library/Statistics.vue'),
