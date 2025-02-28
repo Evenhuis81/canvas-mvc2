@@ -2,7 +2,7 @@ import {Circle, Fill, Line, Rect, Stroke, Text} from './shapes';
 import {RGBA} from './color';
 
 export type EntityShapeMap = {
-    button1: EntityButton1;
+    button: EntityButton1;
     circle: EntityCircle1;
     rect: EntityRectangle1;
     line: EntityLine1;
@@ -10,7 +10,7 @@ export type EntityShapeMap = {
 };
 
 export type EntitySketchMap = {
-    button1: EntityShapeMap['button1'] & {color: EntityColor['button1']};
+    button: EntityShapeMap['button'] & {color: EntityColor['button']};
     circle: EntityShapeMap['circle'] & {color: EntityColor['circle']};
     rect: EntityShapeMap['rect'] & {color: EntityColor['rect']};
     line: EntityShapeMap['line'] & {color: EntityColor['line']};
@@ -30,7 +30,7 @@ export type EntityButton1 = Omit<EntityRectangle1, 'type'> & Text & {radii: numb
 
 // TODO::Mrege this with SV / TV sketches / shapes
 export type EntityColorString = {
-    button1: {
+    button: {
         fill: string;
         stroke: string;
     };
@@ -51,7 +51,7 @@ export type EntityColorString = {
 };
 
 export type EntityColor = {
-    button1: {
+    button: {
         fill: RGBA;
         stroke: RGBA;
         textFill: RGBA;

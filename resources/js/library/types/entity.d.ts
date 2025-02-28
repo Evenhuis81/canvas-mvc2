@@ -1,6 +1,6 @@
 import {EngineUpdate, UpdateOrDraw} from './engine';
 import {EntityShapeMap, EntitySketchMap} from './entitySketch';
-import {InputListenerEventMap} from './input';
+import {InputListenerEventMap, LibraryInput} from './input';
 
 export type GeneralProperties = {
     id: number | string;
@@ -114,20 +114,22 @@ export type TransitionSpeed = 1 | 2 | 3 | 4 | 5;
 
 type VisualType = 'animation' | 'hover' | 'start' | 'end' | 'draw';
 
-// (type: VisualType, effect: EffectType, next?: () => void): Visual<'update'>
 export type GetVisual = (type: Exclude<VisualType, 'draw'>, effect: EffectType, next?: () => void) => Visual<'update'>;
-export type GetDraw = (sketch: EntitySketchMap['button1']) => Visual<'draw'>;
+export type GetDraw = (sketch: EntitySketchMap['button']) => Visual<'draw'>;
 
 export type EntityAnimations = 'noise';
-export type EntityHovers = 'bold';
-export type EntityTransitions = 'fadein1' | 'fadeout1' | 'explode';
+export type EntityHovers = 'enlarge';
+export type EntityTransitions = 'fadein' | 'fadeout' | 'explode';
 
 export type EffectType = EntityAnimations | EntityTransitions | EntityHovers;
 
-// EngineUpdate['fn'] | EngineDraw['fn']
-// type EngineFunction = {
-//     draw: EngineDraw
-// }
+export type VisualNext = () => void;
+
+export type VisualConfig = {
+    visualType: VisualType;
+    effectType: EffectType;
+    get: (sketch: EntitySketchMap['button'], next: VisualNext, input: LibraryInput) => VisualCreation;
+};
 
 export type VisualCreation = {
     render: EngineUpdate['fn'];
@@ -140,8 +142,6 @@ export type Visual<T extends 'draw' | 'update'> = {
     pre?: () => void;
     post?: () => void;
 };
-
-// export type Visuals = {[K in VisualType]: };
 
 export type EngineState = 'on' | 'off'; // Future states: 'pauze' | 'continue';
 

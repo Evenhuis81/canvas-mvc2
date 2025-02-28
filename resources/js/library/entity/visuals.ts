@@ -1,33 +1,7 @@
 import {EngineDraw} from 'library/types/engine';
-import {EffectType, VisualCreation, VisualProperties, VisualType} from 'library/types/entity';
+import {VisualConfig, VisualCreation} from 'library/types/entity';
 import {EntitySketchMap} from 'library/types/entitySketch';
 import {LibraryInput} from 'library/types/input';
-
-export const getCreateVisual = (
-    sketch: EntitySketchMap['button1'],
-    input: LibraryInput,
-    {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
-) => {
-    const createVisual = <VT extends VisualType, ET extends EffectType>(visual: {
-        visualType: VT;
-        effectType: ET;
-        get: (sketch: EntitySketchMap['button1'], next: VisualNext, input: LibraryInput) => VisualCreation;
-    }) => {
-        const next = () => {};
-
-        return visual.get(sketch, next, input);
-    };
-
-    const v = createVisual(fadeIn);
-
-    // return {
-    //     noise: () => createAnimationNoise(sketch),
-    //     bold: () => createTransition(createHoverBold(sketch), sketch, input),
-    //     fadein1: () => createTransitionFadein1(sketch),
-    //     fadeout1: () => createTransitionFadeout1(sketch.color, 0.005 * endSpeed),
-    //     explode: () => createTransitionExplode(sketch),
-    // };
-};
 
 const noise: VisualConfig = {
     visualType: 'animation',
@@ -54,7 +28,7 @@ const noise: VisualConfig = {
     },
 };
 
-const enlargeTransition = (sketch: EntitySketchMap['button1']) => {
+const enlargeTransition = (sketch: EntitySketchMap['button']) => {
     const origin = {
         lineWidth: sketch.lineWidth,
         f: sketch.fontSize,
@@ -91,7 +65,7 @@ const enlargeTransition = (sketch: EntitySketchMap['button1']) => {
 
 const enlarge: VisualConfig = {
     visualType: 'hover',
-    effectType: 'bold', // change to enlarge
+    effectType: 'enlarge', // change to enlarge
     get: (sketch, next, input) => {
         const transition = enlargeTransition(sketch);
 
@@ -101,7 +75,7 @@ const enlarge: VisualConfig = {
 
 const createTransition: (
     transition: {forward: () => void; reverse: () => void},
-    sketch: EntitySketchMap['button1'],
+    sketch: EntitySketchMap['button'],
     input: LibraryInput,
 ) => VisualCreation = (
     {forward, reverse},
@@ -115,17 +89,9 @@ const createTransition: (
     },
 });
 
-type VisualNext = () => void;
-
-type VisualConfig = {
-    visualType: VisualType;
-    effectType: EffectType;
-    get: (sketch: EntitySketchMap['button1'], next: VisualNext, input: LibraryInput) => VisualCreation;
-};
-
-const fadeIn: VisualConfig = {
+const fadein: VisualConfig = {
     visualType: 'start',
-    effectType: 'fadein1',
+    effectType: 'fadein',
     get: (sketch, next) => {
         const {fill, stroke, textFill} = sketch.color;
         const alphaVelocity = 0.05;
@@ -154,7 +120,7 @@ const fadeIn: VisualConfig = {
 
 const fadeout: VisualConfig = {
     visualType: 'start',
-    effectType: 'fadein1',
+    effectType: 'fadein',
     get: (sketch, next) => {
         const {fill, stroke, textFill} = sketch.color;
         const alphaVelocity = 0.05;
@@ -216,8 +182,16 @@ const explode: VisualConfig = {
     },
 };
 
+export const createVisual = {
+    noise,
+    enlarge,
+    fadein,
+    fadeout,
+    explode,
+};
+
 export const createSketchDraw =
-    (c: CanvasRenderingContext2D, sketch: EntitySketchMap['button1']): EngineDraw['fn'] =>
+    (c: CanvasRenderingContext2D, sketch: EntitySketchMap['button']): EngineDraw['fn'] =>
     () => {
         const {fill, stroke, textFill} = sketch.color;
 
