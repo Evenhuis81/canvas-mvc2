@@ -41,8 +41,6 @@ export const createEventHandler = <K extends keyof EntityShapeMap>(
 
     if (!listeners) return handler;
 
-    console.log(listeners);
-
     // Make generic with split object: (https://stackoverflow.com/questions/75323570/what-is-the-correct-type-for-splitting-an-object-in-two-complimentary-objects-in)
     const {startTransition, endTransition, endOfStartTransition, endOfEndTransition, ...entityInputListeners} =
         listeners;

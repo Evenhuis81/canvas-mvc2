@@ -1,47 +1,37 @@
-import {createSketchDraw} from './visuals';
+import {createSketchDraw, effects} from './visuals';
 import type {LibraryInput} from 'library/types/input';
 import type {
     EffectType,
     GeneralProperties,
-    GetVisual,
+    GetDraw,
     Visual,
+    VisualConfig,
     VisualCreation,
     VisualNext,
+    VisualProperties,
     VisualType,
 } from 'library/types/entity';
 import type {EntitySketchMap} from 'library/types/entitySketch';
 
-export const setVisuals = (
+export const createVisual = (
     gProps: GeneralProperties,
-    // vProps: Partial<VisualProperties>,
+    vProps: Partial<VisualProperties>,
     sketch: EntitySketchMap['button'],
     input: LibraryInput,
     context: CanvasRenderingContext2D,
 ) => {
-    const createVisual = <VT extends VisualType, ET extends EffectType>(visual: {
-        visualType: VT;
-        effectType: ET;
-        get: (sketch: EntitySketchMap['button'], next: VisualNext, input: LibraryInput) => VisualCreation;
-    }) => {
-        let next = () => {
-            if (visual.visualType === 'start') {
-            }
-            //
-        };
-
-        return visual.get(sketch, next, input);
-    };
-
-    // const createVisual = getCreateVisual(sketch, input, vProps);
-
-    const getVisual: GetVisual = (type, effect) => {
-        const {render, pre, post} = createVisual[effect]();
-
+    // <VT extends VisualType, ET extends EffectType>
+    const getVisual = (
+        effectType: EffectType,
+        // get: (sketch: EntitySketchMap['button'], next: VisualNext, input: LibraryInput) => VisualCreation,
+        next: VisualNext,
+    ): Visual<'update'> => {
+        const {render, pre, post} = get(sketch, next, input);
         return {
             render: {
                 type: 'update',
-                id: `${gProps.id}-${type}-${effect}`,
-                name: `${type} ${effect}`,
+                id: `${gProps.id}-${visual.visualType}-${visual.effectType}`,
+                name: `${visual.visualType} ${visual.effectType}`,
                 fn: render,
             },
             pre,
@@ -49,16 +39,22 @@ export const setVisuals = (
         };
     };
 
-    const getDraw = (sketch: EntitySketchMap['button']): Visual<'draw'> => {
-        return {
-            render: {
-                type: 'draw',
-                id: `${sketch.type}-draw`,
-                name: `${sketch.type} Draw`,
-                fn: createSketchDraw(context, sketch),
-            },
-        };
-    };
+    const getDraw: GetDraw = () => ({
+        render: {
+            type: 'draw',
+            id: `${sketch.type}-draw`,
+            name: `${sketch.type} Draw`,
+            fn: createSketchDraw(context, sketch),
+        },
+    });
 
-    return {getVisual, getDraw};
+    const visuals: Partial<Visual> = {};
+
+    const getEffect = (effect: EffectType): VisualConfig => effects[effect];
+
+    return {
+        getVisual,
+        getDraw,
+        getEffect,
+    };
 };

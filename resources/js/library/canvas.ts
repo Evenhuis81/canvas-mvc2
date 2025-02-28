@@ -18,14 +18,13 @@ export const setCanvas = (
     setLibraryOptions(canvas, options);
 };
 
+// Make this an internal option object
 let count = 199;
 
 export const getCanvas = (options?: Partial<CanvasOptions>) => {
     const canvasOptions = {...defaultCanvasOptions, ...options};
 
     const canvas = document.createElement('canvas');
-
-    console.log(count++);
 
     canvas.tabIndex = count++; // no tabIndex = no focus, prevents listeners from working on canvas
     canvas.focus();
@@ -37,8 +36,6 @@ export const getCanvas = (options?: Partial<CanvasOptions>) => {
             return false;
         });
     }
-
-    console.log(options);
 
     canvas.width = canvasOptions.width;
     canvas.height = canvasOptions.height;

@@ -1,12 +1,13 @@
 import {Engine} from 'library/types/engine';
-import {GeneralProperties, GetDraw, GetVisual, VisualProperties} from 'library/types/entity';
+import {EffectType, GeneralProperties, GetDraw, GetVisual, VisualConfig, VisualProperties} from 'library/types/entity';
 
 export default (
     gProps: GeneralProperties,
     vProps: Partial<VisualProperties>,
-    getVisual: GetVisual,
-    getDraw: GetDraw,
     engine: Engine,
+    getVisual: GetVisual,
+    getEffect: (effect: EffectType) => VisualConfig,
+    getDraw: GetDraw,
 ) => {
     // Pre-creation of visuals here for efficiency testing
     const show = () => {
@@ -15,11 +16,9 @@ export default (
         if (gProps.showDelay) {
             setTimeout(() => {
                 if (vProps.start) {
-                    const {render, pre, post, next} = getVisual('start', vProps.start);
-
-                    if (pre) pre();
-
-                    engine.handle(render);
+                    // const {render, pre, post} = getVisual('start', vProps.start);
+                    // if (pre) pre();
+                    // engine.handle(render);
                 }
 
                 // if (visuals.draw) {

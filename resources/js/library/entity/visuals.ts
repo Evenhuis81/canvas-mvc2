@@ -66,7 +66,7 @@ const enlargeTransition = (sketch: EntitySketchMap['button']) => {
 const enlarge: VisualConfig = {
     visualType: 'hover',
     effectType: 'enlarge', // change to enlarge
-    get: (sketch, next, input) => {
+    get: (sketch, _, input) => {
         const transition = enlargeTransition(sketch);
 
         return createTransition(transition, sketch, input);
@@ -152,16 +152,16 @@ const explode: VisualConfig = {
     effectType: 'explode',
     get: (sketch, next) => {
         const {fill, stroke, textFill} = sketch.color;
-        const alphaVelocity = 0.05;
+        const alphaVelocity = 0.01;
         let phase = 1;
 
         return {
             render: () => {
                 if (phase === 1) sketch.lineWidth += 0.1;
                 else if (phase === 2) {
-                    fill.a -= 0.01;
-                    stroke.a -= 0.01;
-                    textFill.a -= 0.01;
+                    fill.a -= alphaVelocity;
+                    stroke.a -= alphaVelocity;
+                    textFill.a -= alphaVelocity;
 
                     if (fill.a < 0) {
                         fill.a -= 0;
@@ -182,7 +182,7 @@ const explode: VisualConfig = {
     },
 };
 
-export const createVisual = {
+export const effects = {
     noise,
     enlarge,
     fadein,

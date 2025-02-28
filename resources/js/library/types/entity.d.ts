@@ -114,8 +114,8 @@ export type TransitionSpeed = 1 | 2 | 3 | 4 | 5;
 
 type VisualType = 'animation' | 'hover' | 'start' | 'end' | 'draw';
 
-export type GetVisual = (type: Exclude<VisualType, 'draw'>, effect: EffectType, next?: () => void) => Visual<'update'>;
-export type GetDraw = (sketch: EntitySketchMap['button']) => Visual<'draw'>;
+export type GetVisual = (visual: VisualConfig, next: VisualNext) => Visual<'update'>;
+export type GetDraw = () => Visual<'draw'>;
 
 export type EntityAnimations = 'noise';
 export type EntityHovers = 'enlarge';
