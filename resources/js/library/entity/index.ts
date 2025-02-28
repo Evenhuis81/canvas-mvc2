@@ -26,7 +26,7 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
             context,
         );
 
-        const {show, hide} = initialize(generalProperties, visualProperties, getVisual, getDraw);
+        const {show, hide} = initialize(generalProperties, visualProperties, getVisual, getDraw, engine);
 
         return {
             addListener: eventHandler.addListener,

@@ -1,45 +1,60 @@
 import {EngineDraw} from 'library/types/engine';
-import {Visual, VisualCreation, VisualProperties} from 'library/types/entity';
-import {EntityColor, EntitySketchMap} from 'library/types/entitySketch';
+import {EffectType, VisualCreation, VisualProperties, VisualType} from 'library/types/entity';
+import {EntitySketchMap} from 'library/types/entitySketch';
 import {LibraryInput} from 'library/types/input';
 
 export const getCreateVisual = (
     sketch: EntitySketchMap['button1'],
     input: LibraryInput,
     {startSpeed = 3, endSpeed = 3}: Partial<VisualProperties>,
-) => ({
-    noise: () => createAnimationNoise(sketch),
-    bold: () => createTransition(createHoverBold(sketch), sketch, input),
-    fadein1: () => createTransitionFadein1(sketch.color, 0.005 * startSpeed),
-    fadeout1: () => createTransitionFadeout1(sketch.color, 0.005 * endSpeed),
-    explode: () => createTransitionExplode(sketch),
-});
+) => {
+    const createVisual = <VT extends VisualType, ET extends EffectType>(visual: {
+        visualType: VT;
+        effectType: ET;
+        get: (sketch: EntitySketchMap['button1'], next: VisualNext, input: LibraryInput) => VisualCreation;
+    }) => {
+        const next = () => {};
 
-const upd = {
-    adj: {
-        x: 0.5,
-        y: 0.5,
-    },
-    count: 0,
+        return visual.get(sketch, next, input);
+    };
+
+    const v = createVisual(fadeIn);
+
+    // return {
+    //     noise: () => createAnimationNoise(sketch),
+    //     bold: () => createTransition(createHoverBold(sketch), sketch, input),
+    //     fadein1: () => createTransitionFadein1(sketch),
+    //     fadeout1: () => createTransitionFadeout1(sketch.color, 0.005 * endSpeed),
+    //     explode: () => createTransitionExplode(sketch),
+    // };
 };
 
-const createAnimationNoise = (sketch: EntitySketchMap['button1']): VisualCreation => ({
-    render: () => {
-        sketch.x += upd.adj.x;
-        sketch.y += upd.adj.y;
+const noise: VisualConfig = {
+    visualType: 'animation',
+    effectType: 'noise',
+    get: sketch => {
+        const adjust = {x: 0.5, y: 0.5};
+        let count = 0;
 
-        upd.count++;
+        return {
+            render: () => {
+                sketch.x += adjust.x;
+                sketch.y += adjust.y;
 
-        if (upd.count > 60) {
-            upd.adj.x *= -1;
-            upd.adj.y *= -1;
+                count++;
 
-            upd.count = 0;
-        }
+                if (count > 60) {
+                    adjust.x *= -1;
+                    adjust.y *= -1;
+
+                    count = 0;
+                }
+            },
+        };
     },
-});
+};
 
-const createHoverBold = (sketch: EntitySketchMap['button1']) => {
+const enlargeTransition = (sketch: EntitySketchMap['button1']) => {
     const origin = {
         lineWidth: sketch.lineWidth,
         f: sketch.fontSize,
@@ -71,9 +86,17 @@ const createHoverBold = (sketch: EntitySketchMap['button1']) => {
         }
     };
 
-    const returnObject = {forward, reverse};
+    return {forward, reverse};
+};
 
-    return returnObject;
+const enlarge: VisualConfig = {
+    visualType: 'hover',
+    effectType: 'bold', // change to enlarge
+    get: (sketch, next, input) => {
+        const transition = enlargeTransition(sketch);
+
+        return createTransition(transition, sketch, input);
+    },
 };
 
 const createTransition: (
@@ -92,88 +115,105 @@ const createTransition: (
     },
 });
 
-const createTransitionFadein1 = (
-    {fill, stroke, textFill}: EntityColor['button1'],
-    alphaVelocity: number,
-): VisualCreation => {
-    const render = () => {
-        fill.a += alphaVelocity;
-        stroke.a += alphaVelocity;
-        textFill.a += alphaVelocity;
+type VisualNext = () => void;
 
-        if (fill.a >= 1) post();
-    };
-
-    const pre = () => {
-        fill.a = 0;
-        stroke.a = 0;
-        textFill.a = 0;
-    };
-
-    const post = () => {
-        fill.a = 1;
-        stroke.a = 1;
-        textFill.a = 1;
-    };
-
-    return {render, pre, post};
+type VisualConfig = {
+    visualType: VisualType;
+    effectType: EffectType;
+    get: (sketch: EntitySketchMap['button1'], next: VisualNext, input: LibraryInput) => VisualCreation;
 };
 
-const createTransitionFadeout1 = (
-    {fill, stroke, textFill}: EntityColor['button1'],
-    alphaVelocity: number,
-): VisualCreation => {
-    const render = () => {
-        fill.a -= alphaVelocity;
-        stroke.a -= alphaVelocity;
-        textFill.a -= alphaVelocity;
+const fadeIn: VisualConfig = {
+    visualType: 'start',
+    effectType: 'fadein1',
+    get: (sketch, next) => {
+        const {fill, stroke, textFill} = sketch.color;
+        const alphaVelocity = 0.05;
 
-        if (fill.a <= 0) post();
-    };
+        return {
+            render: () => {
+                fill.a += alphaVelocity;
+                stroke.a += alphaVelocity;
+                textFill.a += alphaVelocity;
 
-    const pre = () => {
-        fill.a = 1;
-        stroke.a = 1;
-        textFill.a = 1;
-    };
-
-    const post = () => {
-        fill.a = 0;
-        stroke.a = 0;
-        textFill.a = 0;
-    };
-
-    return {render, pre, post};
+                if (fill.a >= 1) next();
+            },
+            pre: () => {
+                fill.a = 0;
+                stroke.a = 0;
+                textFill.a = 0;
+            },
+            post: () => {
+                fill.a = 1;
+                stroke.a = 1;
+                textFill.a = 1;
+            },
+        };
+    },
 };
 
-const createTransitionExplode = (sketch: EntitySketchMap['button1']): VisualCreation => {
-    const {fill, stroke, textFill} = sketch.color;
-    let phase = 1;
+const fadeout: VisualConfig = {
+    visualType: 'start',
+    effectType: 'fadein1',
+    get: (sketch, next) => {
+        const {fill, stroke, textFill} = sketch.color;
+        const alphaVelocity = 0.05;
 
-    const render = () => {
-        if (phase === 1) sketch.lineWidth += 0.1;
-        else if (phase === 2) {
-            fill.a -= 0.01;
-            stroke.a -= 0.01;
-            textFill.a -= 0.01;
+        return {
+            render: () => {
+                fill.a -= alphaVelocity;
+                stroke.a -= alphaVelocity;
+                textFill.a -= alphaVelocity;
 
-            if (fill.a < 0) {
-                fill.a -= 0;
-                stroke.a -= 0;
-                textFill.a -= 0;
+                if (fill.a <= 0) next();
+            },
+            pre: () => {
+                fill.a = 1;
+                stroke.a = 1;
+                textFill.a = 1;
+            },
+            post: () => {
+                fill.a = 0;
+                stroke.a = 0;
+                textFill.a = 0;
+            },
+        };
+    },
+};
 
-                // callbacks.endOfEnd();
-            }
-        }
+const explode: VisualConfig = {
+    visualType: 'end',
+    effectType: 'explode',
+    get: (sketch, next) => {
+        const {fill, stroke, textFill} = sketch.color;
+        const alphaVelocity = 0.05;
+        let phase = 1;
 
-        if (sketch.lineWidth > 10) {
-            sketch.lineWidth = 10;
+        return {
+            render: () => {
+                if (phase === 1) sketch.lineWidth += 0.1;
+                else if (phase === 2) {
+                    fill.a -= 0.01;
+                    stroke.a -= 0.01;
+                    textFill.a -= 0.01;
 
-            phase = 2;
-        }
-    };
+                    if (fill.a < 0) {
+                        fill.a -= 0;
+                        stroke.a -= 0;
+                        textFill.a -= 0;
 
-    return {render};
+                        next();
+                    }
+                }
+
+                if (sketch.lineWidth > 10) {
+                    sketch.lineWidth = 10;
+
+                    phase = 2;
+                }
+            },
+        };
+    },
 };
 
 export const createSketchDraw =
