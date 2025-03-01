@@ -23,20 +23,20 @@ export const mainMenu = (library: LibraryResources) => {
     // const timeoutDifference = 75;
 
     const baseVisualProperties: Partial<VisualProperties> = {
-        start: 'fadein1',
+        start: 'fadein',
         startSpeed: 2,
-        end: 'fadeout1',
+        end: 'fadeout',
         endSpeed: 2,
     };
 
-    const elements: EntityGeneric<'button1'>[] = [];
+    const elements: EntityGeneric<'button'>[] = [];
 
     let column = 0;
     let row = 0;
 
     for (let i = 0; i < elementAmount; i++) {
         elements.push(
-            library.createEntity('button1', {
+            library.createEntity('button', {
                 ...baseVisualProperties,
                 // show: false,
                 // showDelay: i * timeoutDifference + 1,
@@ -73,7 +73,9 @@ export const mainMenu = (library: LibraryResources) => {
                     endOfStartTransition: evt => {
                         console.log(`End Of Start Transition: ${i}`, evt);
 
-                        // evt.testProperty
+                        setTimeout(() => {
+                            evt.end();
+                        }, 2000);
                     },
                     endTransition: evt => {
                         console.log(`End Transition: ${i}`, evt);

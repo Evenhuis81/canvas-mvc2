@@ -1,14 +1,6 @@
 import {createSketchDraw, effects} from './visuals';
 import type {LibraryInput} from 'library/types/input';
-import type {
-    EffectType,
-    GeneralProperties,
-    GetDraw,
-    GetVisual,
-    Visual,
-    VisualNext,
-    VisualType,
-} from 'library/types/entity';
+import type {GeneralProperties, GetDraw, GetVisual} from 'library/types/entity';
 import type {EntitySketchMap} from 'library/types/entitySketch';
 
 export const createVisual = (

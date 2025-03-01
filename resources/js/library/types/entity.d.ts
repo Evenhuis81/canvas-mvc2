@@ -1,5 +1,5 @@
 import {EngineUpdate, UpdateOrDraw} from './engine';
-import {BaseSketch, EntityShapeMap, EntitySketchMap} from './entitySketch';
+import {EntityShapeMap, EntitySketchMap} from './entitySketch';
 import {InputListenerEventMap, LibraryInput} from './input';
 
 export type GeneralProperties = {
@@ -43,11 +43,13 @@ export type UserMethodCallbacks = Omit<Callbacks, 'endOfStart' | 'endOfEnd'>;
 
 export type SetHideTime = (time: number) => void;
 
+type BaseEvent = {pressed: boolean; pushed: boolean; clicked: boolean; start: () => void; end: () => void};
+
 export type EntityListenerEvents = {
-    startTransition: StartTransitionEvent;
-    endOfStartTransition: StartTransitionEvent;
-    endTransition: EndTransitionEvent;
-    endOfEndTransition: EndTransitionEvent;
+    startTransition: BaseEvent;
+    endOfStartTransition: BaseEvent;
+    endTransition: BaseEvent;
+    endOfEndTransition: BaseEvent;
 };
 
 export type EntityListeners = {
@@ -98,8 +100,8 @@ export interface EntityHandler {
 export type Entity = EntityGeneric<keyof EntityShapeMap>;
 
 export type EntityGeneric<T extends keyof EntitySketchMap> = {
-    show: () => void;
-    hide: () => void;
+    start: () => void;
+    end: () => void;
     addListener: AddListener;
     removeListener: RemoveListener;
     // setHideTime: SetHideTime;
@@ -130,10 +132,10 @@ export type VisualNext = () => void;
 export type VisualConfig = {
     visualType: VisualType;
     effectType: EffectType;
-    get: (sketch: BaseSketch, next: VisualNext, input: LibraryInput) => VisualCreation;
+    get: (sketch: EntitySketchMap['button'], next: VisualNext, input: LibraryInput) => VisualCreation;
 };
 
-export type Effect = (sketch: BaseSketch, next: VisualNext, input: LibraryInput) => VisualCreation;
+export type Effect = (sketch: EntitySketchMap['button'], next: VisualNext, input: LibraryInput) => VisualCreation;
 
 export type VisualCreation = {
     render: EngineUpdate['fn'];

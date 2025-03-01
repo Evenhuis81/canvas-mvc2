@@ -17,7 +17,6 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
 
         const eventHandler = createEventHandler(input, sketch, listeners);
 
-        // Look @ transition explode callback
         const {getVisual, getDraw} = createVisual(
             generalProperties,
             sketch as EntitySketchMap['button'],
@@ -25,15 +24,15 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
             context,
         );
 
-        const {show, hide} = initialize(generalProperties, visualProperties, engine, getVisual, getDraw);
+        const {start, end} = initialize(generalProperties, visualProperties, eventHandler, engine, getVisual, getDraw);
 
         return {
             addListener: eventHandler.addListener,
             removeListener: eventHandler.removeListener,
             // setVisual,
             // setDraw,
-            show,
-            hide,
+            start,
+            end,
             sketch,
         };
     };

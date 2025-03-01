@@ -1,45 +1,76 @@
 import {Engine} from 'library/types/engine';
-import {
-    EffectType,
-    GeneralProperties,
-    GetDraw,
-    GetVisual,
-    Visual,
-    VisualConfig,
-    VisualProperties,
-} from 'library/types/entity';
+import {EntityHandler, GeneralProperties, GetDraw, GetVisual, VisualProperties} from 'library/types/entity';
 
 export default (
     gProps: GeneralProperties,
     vProps: Partial<VisualProperties>,
+    {entityListeners, activateInputListeners, deactivateInputListeners}: EntityHandler,
     engine: Engine,
     getVisual: GetVisual,
     getDraw: GetDraw,
 ) => {
     // Pre-creation of visuals here for efficiency testing
-    const visuals: Partial<Visual<'update' | 'draw'>> = {};
+    // Are startListener and endListener needed?
+    // const visuals: Partial<Visual<'update' | 'draw'>> = {};
 
-    const show = () => {
+    const start = () => {
         if (!gProps.show) return;
 
         if (gProps.showDelay) {
             setTimeout(() => {
+                const {render: renderDraw, pre: preDraw, post: postDraw} = getDraw();
+
+                if (preDraw) preDraw();
+
+                engine.handle(renderDraw);
+
                 if (vProps.start) {
-                    const next = () => {};
+                    const next = () => {
+                        if (postStart) postStart();
 
-                    const {render, pre, post} = getVisual('start', vProps.start, next);
+                        engine.handle(renderStart, false);
 
-                    if (pre) pre();
+                        if (entityListeners.endOfStartTransition) entityListeners.endOfStartTransition(transitionEvent);
 
-                    engine.handle(render);
+                        if (vProps.animation) {
+                            const {
+                                render: renderAnimation,
+                                pre: preAnimation,
+                                post: postAnimation,
+                            } = getVisual('animation', vProps.animation, () => {});
+
+                            if (preAnimation) preAnimation();
+
+                            engine.handle(renderAnimation);
+
+                            if (vProps.hover) {
+                                const {
+                                    render: renderHover,
+                                    pre: preHover,
+                                    post: postHover,
+                                } = getVisual('hover', vProps.hover, () => {});
+
+                                if (preHover) preHover();
+
+                                engine.handle(renderHover);
+                            }
+                        }
+                    };
+
+                    const {
+                        render: renderStart,
+                        pre: preStart,
+                        post: postStart,
+                    } = getVisual('start', vProps.start, next);
+
+                    if (preStart) preStart();
+
+                    engine.handle(renderStart);
+
+                    activateInputListeners();
+
+                    if (entityListeners.startTransition) entityListeners.startTransition(transitionEvent); // obsolete?
                 }
-
-                // if (visuals.draw) {
-
-                // }
-                // setEngine('draw', 'on');
-                // setEngine('start', 'on');
-                // if (entityListeners.startTransition) entityListeners.startTransition(entityListenerEvents.startTransition);
             }, gProps.showDelay);
 
             gProps.show = false;
@@ -47,14 +78,52 @@ export default (
         }
     };
 
-    const hide = () => {};
+    const end = () => {
+        if (vProps.end) {
+            const next = () => {
+                if (postEnd) postEnd();
 
-    if (gProps.show) show();
+                engine.handle(renderEnd, false);
 
-    return {show, hide};
+                // if (postDraw) postDraw();
+
+                // engine.handle(renderDraw);
+
+                if (entityListeners.endOfEndTransition) entityListeners.endOfEndTransition(transitionEvent);
+            };
+
+            const {render: renderEnd, pre: preEnd, post: postEnd} = getVisual('end', vProps.end, next);
+
+            if (preEnd) preEnd();
+
+            engine.handle(renderEnd);
+
+            // setEngine('hover', 'off');
+            // setEngine('animation', 'off');
+
+            deactivateInputListeners();
+
+            if (entityListeners.endTransition) entityListeners.endTransition(transitionEvent); // obsolete?
+        }
+    };
+
+    // export type StartTransitionEvent = {testProperty: string};
+    // export type EndTransitionEvent = {pressed: boolean; pushed: boolean; clicked: boolean};
+
+    const transitionEvent = {
+        pressed: false,
+        pushed: false,
+        clicked: false,
+        start,
+        end,
+    };
+
+    if (gProps.show) start();
+
+    return {start, end};
 };
 
-// TODOS::Sketch optional (duration only with phaser)
+// TODO::Sketch optional (duration only with phaser)
 // const {animation, hover, start, end} = vProps;
 // if (animation) setVisual('animation', animation);
 // if (hover) setVisual('hover', hover);
@@ -97,7 +166,6 @@ export default (
 // const setEngineLog = (type: string, state: string) =>
 //     console.log(`setEngine: ${type} is not set, state: ${state}`);
 
-// TODO::Test destructuring of eventhandler for keep of reference and if start&endOfStart needs same event
 // export const createCallbacks = (
 //     setEngine: SetEngine,
 //     {deactivateInputListeners, activateInputListeners}: EntityHandler,
@@ -123,15 +191,9 @@ export default (
 //         //     entityListeners.endOfStartTransition(entityListenerEvents.endOfStartTransition);
 //     },
 //     end: () => {
-//         console.log('end setEngine');
-
-//         deactivateInputListeners();
-
 //         setEngine('end', 'on');
 //         setEngine('hover', 'off');
 //         setEngine('animation', 'off');
-
-//         // if (entityListeners.endTransition) entityListeners.endTransition(entityListenerEvents.endTransition);
 //     },
 //     endOfEnd: () => {
 //         console.log('endOfEnd setEngine');

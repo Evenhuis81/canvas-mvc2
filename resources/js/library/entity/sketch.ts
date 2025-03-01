@@ -21,7 +21,7 @@ const colorFromType = {
 };
 
 const createColorFromType = (): {[K in keyof EntityShapeMap]: EntityColor[K]} => ({
-    button1: {
+    button: {
         fill: hexToRgba(colorString.fill),
         stroke: hexToRgba(colorString.stroke),
         textFill: hexToRgba(colorString.textFill),
@@ -56,8 +56,8 @@ export const createSketch = <K extends keyof EntityShapeMap>(
 };
 
 export const defaultSketch: EntitySketchMap = {
-    button1: {
-        type: 'button1',
+    button: {
+        type: 'button',
         inputType: 'rect',
         x: 100,
         y: 50,

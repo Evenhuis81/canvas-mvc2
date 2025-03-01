@@ -1,7 +1,7 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable max-len */
 /* eslint-disable complexity */
-import {EntityShapeMap, EntitySketchMap} from 'library/types/entitySketch';
+import {EntityShapeMap} from 'library/types/entitySketch';
 import type {
     AddEntityInputListener,
     EntityHandler,

@@ -1,9 +1,9 @@
 import {EngineDraw} from 'library/types/engine';
-import {Effect, EffectType, VisualConfig, VisualCreation, VisualNext} from 'library/types/entity';
-import {BaseSketch, EntitySketchMap} from 'library/types/entitySketch';
+import {Effect, EffectType, VisualCreation} from 'library/types/entity';
+import {EntitySketchMap} from 'library/types/entitySketch';
 import {LibraryInput} from 'library/types/input';
 
-const noise = (sketch: BaseSketch) => {
+const noise = (sketch: EntitySketchMap['button']) => {
     const adjust = {x: 0.5, y: 0.5};
     let count = 0;
 
@@ -24,7 +24,7 @@ const noise = (sketch: BaseSketch) => {
     };
 };
 
-const enlargeTransition = (sketch: BaseSketch) => {
+const enlargeTransition = (sketch: EntitySketchMap['button']) => {
     const origin = {
         lineWidth: sketch.lineWidth,
         f: sketch.fontSize,
@@ -67,7 +67,7 @@ const enlarge: Effect = (sketch, _, input) => {
 
 const createTransition: (
     transition: {forward: () => void; reverse: () => void},
-    sketch: BaseSketch,
+    sketch: EntitySketchMap['button'],
     input: LibraryInput,
 ) => VisualCreation = (
     {forward, reverse},
@@ -173,7 +173,7 @@ export const effects: {
 };
 
 export const createSketchDraw =
-    (c: CanvasRenderingContext2D, sketch: BaseSketch): EngineDraw['fn'] =>
+    (c: CanvasRenderingContext2D, sketch: EntitySketchMap['button']): EngineDraw['fn'] =>
     () => {
         const {fill, stroke, textFill} = sketch.color;
 

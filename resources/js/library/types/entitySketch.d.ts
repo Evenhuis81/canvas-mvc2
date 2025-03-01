@@ -1,4 +1,4 @@
-import {Circle, Fill, Line, Pos, Rect, Stroke, Text} from './shapes';
+import {Circle, Fill, Line, Rect, Stroke, Text} from './shapes';
 import {RGBA} from './color';
 
 export type EntityShapeMap = {
@@ -17,10 +17,10 @@ export type EntitySketchMap = {
     text: EntityShapeMap['text'] & {color: EntityColor['text']};
 };
 
-export type BaseSketch = Rect &
-    Fill &
-    Stroke &
-    Text & {radii: number; inputType: 'rect'} & {color: EntityColor['rect']};
+// export type BaseSketch = Rect &
+//     Fill &
+//     Stroke &
+//     Text & {radii: number; inputType: 'rect'} & {color: EntityColor['rect']};
 
 export type EntityRectangle1 = Rect & Fill & Stroke & {inputType: 'rect'; type: 'rect'};
 
@@ -31,7 +31,7 @@ export type EntityLine1 = Line & Stroke & {inputType: 'none'; type: 'line'};
 export type EntityText1 = Text & {inputType: 'none'; type: 'text'};
 
 // inputType inherit ('rect')
-export type EntityButton1 = Omit<EntityRectangle1, 'type'> & Text & {radii: number; type: 'button1'};
+export type EntityButton1 = Omit<EntityRectangle1, 'type'> & Text & {radii: number; type: 'button'};
 
 // TODO::Mrege this with SV / TV sketches / shapes
 export type EntityColorString = {
@@ -56,11 +56,11 @@ export type EntityColorString = {
 };
 
 export type EntityColor = {
-    base: {
-        fill: RGBA;
-        stroke: RGBA;
-        textFill: RGBA;
-    };
+    // base: {
+    //     fill: RGBA;
+    //     stroke: RGBA;
+    //     textFill: RGBA;
+    // };
     button: {
         fill: RGBA;
         stroke: RGBA;
