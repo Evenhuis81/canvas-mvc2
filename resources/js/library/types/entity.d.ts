@@ -28,8 +28,14 @@ export type EntityConfig<K extends keyof EntityShapeMap> = Partial<
         }
 >;
 
-export type StartTransitionEvent = {testProperty: string};
-export type EndTransitionEvent = {pressed: boolean; pushed: boolean; clicked: boolean};
+export type StartTransitionEvent = {
+    pressed: boolean;
+    pushed: boolean;
+    clicked: boolean;
+    start: () => void;
+    end: () => void;
+};
+export type EndTransitionEvent = StartTransitionEvent;
 
 type CallbackTypes = 'start' | 'end' | 'endOfStart' | 'endOfEnd';
 
@@ -43,13 +49,11 @@ export type UserMethodCallbacks = Omit<Callbacks, 'endOfStart' | 'endOfEnd'>;
 
 export type SetHideTime = (time: number) => void;
 
-type BaseEvent = {pressed: boolean; pushed: boolean; clicked: boolean; start: () => void; end: () => void};
-
 export type EntityListenerEvents = {
-    startTransition: BaseEvent;
-    endOfStartTransition: BaseEvent;
-    endTransition: BaseEvent;
-    endOfEndTransition: BaseEvent;
+    startTransition: StartTransitionEvent;
+    endOfStartTransition: StartTransitionEvent;
+    endTransition: EndTransitionEvent;
+    endOfEndTransition: EndTransitionEvent;
 };
 
 export type EntityListeners = {
@@ -149,6 +153,14 @@ export type Visual<T extends 'draw' | 'update'> = {
     post?: () => void;
 };
 
-export type EngineState = 'on' | 'off'; // Future states: 'pauze' | 'continue';
+export type VisualsComplete = {
+    [K in VisualType]: Visual<'draw' | 'update'>;
+};
 
-export type SetEngine = (type: VisualType, state: EngineState) => void;
+export type Visuals = Partial<VisualsComplete> & {
+    draw: Visual<'draw'>;
+};
+
+// export type EngineState = 'on' | 'off'; // Future states: 'pauze' | 'continue';
+
+// export type SetEngine = (type: VisualType, state: EngineState) => void;

@@ -82,6 +82,10 @@ export const mainMenu = (library: LibraryResources) => {
                     },
                     endOfEndTransition: evt => {
                         console.log(`End of End Transition: ${i}`, evt);
+
+                        setTimeout(() => {
+                            evt.start();
+                        }, 2000);
                     },
                 },
             }),

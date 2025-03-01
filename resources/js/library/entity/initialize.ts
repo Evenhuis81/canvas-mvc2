@@ -1,5 +1,13 @@
 import {Engine} from 'library/types/engine';
-import {EntityHandler, GeneralProperties, GetDraw, GetVisual, VisualProperties} from 'library/types/entity';
+import {
+    EntityHandler,
+    GeneralProperties,
+    GetDraw,
+    GetVisual,
+    Visual,
+    VisualProperties,
+    Visuals,
+} from 'library/types/entity';
 
 export default (
     gProps: GeneralProperties,
@@ -11,18 +19,20 @@ export default (
 ) => {
     // Pre-creation of visuals here for efficiency testing
     // Are startListener and endListener needed?
-    // const visuals: Partial<Visual<'update' | 'draw'>> = {};
+    const {animation, hover, start, end} = vProps;
+    const visuals: Visuals = {
+        draw: getDraw(),
+    };
 
-    const start = () => {
+    const startShow = () => {
         if (!gProps.show) return;
 
         if (gProps.showDelay) {
             setTimeout(() => {
-                const {render: renderDraw, pre: preDraw, post: postDraw} = getDraw();
+                // Test this with destructuring (change post before end is run, but after it's destructured)
+                if (visuals.draw.pre) visuals.draw.pre();
 
-                if (preDraw) preDraw();
-
-                engine.handle(renderDraw);
+                engine.handle(visuals.draw.render);
 
                 if (vProps.start) {
                     const next = () => {
@@ -38,6 +48,7 @@ export default (
                                 pre: preAnimation,
                                 post: postAnimation,
                             } = getVisual('animation', vProps.animation, () => {});
+                            visuals.animation = {render: renderAnimation, pre: preAnimation, post: postAnimation};
 
                             if (preAnimation) preAnimation();
 
@@ -49,6 +60,7 @@ export default (
                                     pre: preHover,
                                     post: postHover,
                                 } = getVisual('hover', vProps.hover, () => {});
+                                visuals.hover = {render: renderHover, pre: preHover, post: postHover};
 
                                 if (preHover) preHover();
 
@@ -62,6 +74,7 @@ export default (
                         pre: preStart,
                         post: postStart,
                     } = getVisual('start', vProps.start, next);
+                    visuals.start = {render: renderStart, pre: preStart, post: postStart};
 
                     if (preStart) preStart();
 
@@ -78,49 +91,52 @@ export default (
         }
     };
 
-    const end = () => {
+    const endShow = () => {
+        // if (ending) return;
+
         if (vProps.end) {
             const next = () => {
                 if (postEnd) postEnd();
 
                 engine.handle(renderEnd, false);
 
-                // if (postDraw) postDraw();
+                if (visuals.draw.post) visuals.draw.post();
 
-                // engine.handle(renderDraw);
+                engine.handle(visuals.draw.render);
 
                 if (entityListeners.endOfEndTransition) entityListeners.endOfEndTransition(transitionEvent);
             };
 
             const {render: renderEnd, pre: preEnd, post: postEnd} = getVisual('end', vProps.end, next);
+            visuals.end = {render: renderEnd, pre: preEnd, post: postEnd};
 
             if (preEnd) preEnd();
 
             engine.handle(renderEnd);
 
-            // setEngine('hover', 'off');
-            // setEngine('animation', 'off');
+            if (visuals.hover) engine.handle(visuals.hover.render, false);
+            if (visuals.animation) engine.handle(visuals.animation.render, false);
 
             deactivateInputListeners();
 
             if (entityListeners.endTransition) entityListeners.endTransition(transitionEvent); // obsolete?
+
+            gProps.showDelay = 500;
+            gProps.show = true;
         }
     };
-
-    // export type StartTransitionEvent = {testProperty: string};
-    // export type EndTransitionEvent = {pressed: boolean; pushed: boolean; clicked: boolean};
 
     const transitionEvent = {
         pressed: false,
         pushed: false,
         clicked: false,
-        start,
-        end,
+        start: startShow,
+        end: endShow,
     };
 
-    if (gProps.show) start();
+    if (gProps.show) startShow();
 
-    return {start, end};
+    return {start: startShow, end: endShow};
 };
 
 // TODO::Sketch optional (duration only with phaser)
