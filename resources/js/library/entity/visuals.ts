@@ -1,34 +1,30 @@
 import {EngineDraw} from 'library/types/engine';
-import {VisualConfig, VisualCreation} from 'library/types/entity';
-import {EntitySketchMap} from 'library/types/entitySketch';
+import {Effect, EffectType, VisualConfig, VisualCreation, VisualNext} from 'library/types/entity';
+import {BaseSketch, EntitySketchMap} from 'library/types/entitySketch';
 import {LibraryInput} from 'library/types/input';
 
-const noise: VisualConfig = {
-    visualType: 'animation',
-    effectType: 'noise',
-    get: sketch => {
-        const adjust = {x: 0.5, y: 0.5};
-        let count = 0;
+const noise = (sketch: BaseSketch) => {
+    const adjust = {x: 0.5, y: 0.5};
+    let count = 0;
 
-        return {
-            render: () => {
-                sketch.x += adjust.x;
-                sketch.y += adjust.y;
+    return {
+        render: () => {
+            sketch.x += adjust.x;
+            sketch.y += adjust.y;
 
-                count++;
+            count++;
 
-                if (count > 60) {
-                    adjust.x *= -1;
-                    adjust.y *= -1;
+            if (count > 60) {
+                adjust.x *= -1;
+                adjust.y *= -1;
 
-                    count = 0;
-                }
-            },
-        };
-    },
+                count = 0;
+            }
+        },
+    };
 };
 
-const enlargeTransition = (sketch: EntitySketchMap['button']) => {
+const enlargeTransition = (sketch: BaseSketch) => {
     const origin = {
         lineWidth: sketch.lineWidth,
         f: sketch.fontSize,
@@ -63,19 +59,15 @@ const enlargeTransition = (sketch: EntitySketchMap['button']) => {
     return {forward, reverse};
 };
 
-const enlarge: VisualConfig = {
-    visualType: 'hover',
-    effectType: 'enlarge', // change to enlarge
-    get: (sketch, _, input) => {
-        const transition = enlargeTransition(sketch);
+const enlarge: Effect = (sketch, _, input) => {
+    const transition = enlargeTransition(sketch);
 
-        return createTransition(transition, sketch, input);
-    },
+    return createTransition(transition, sketch, input);
 };
 
 const createTransition: (
     transition: {forward: () => void; reverse: () => void},
-    sketch: EntitySketchMap['button'],
+    sketch: BaseSketch,
     input: LibraryInput,
 ) => VisualCreation = (
     {forward, reverse},
@@ -89,100 +81,90 @@ const createTransition: (
     },
 });
 
-const fadein: VisualConfig = {
-    visualType: 'start',
-    effectType: 'fadein',
-    get: (sketch, next) => {
-        const {fill, stroke, textFill} = sketch.color;
-        const alphaVelocity = 0.05;
+const fadein: Effect = (sketch, next) => {
+    const {fill, stroke, textFill} = sketch.color;
+    const alphaVelocity = 0.05;
 
-        return {
-            render: () => {
-                fill.a += alphaVelocity;
-                stroke.a += alphaVelocity;
-                textFill.a += alphaVelocity;
+    return {
+        render: () => {
+            fill.a += alphaVelocity;
+            stroke.a += alphaVelocity;
+            textFill.a += alphaVelocity;
 
-                if (fill.a >= 1) next();
-            },
-            pre: () => {
-                fill.a = 0;
-                stroke.a = 0;
-                textFill.a = 0;
-            },
-            post: () => {
-                fill.a = 1;
-                stroke.a = 1;
-                textFill.a = 1;
-            },
-        };
-    },
+            if (fill.a >= 1) next();
+        },
+        pre: () => {
+            fill.a = 0;
+            stroke.a = 0;
+            textFill.a = 0;
+        },
+        post: () => {
+            fill.a = 1;
+            stroke.a = 1;
+            textFill.a = 1;
+        },
+    };
 };
 
-const fadeout: VisualConfig = {
-    visualType: 'start',
-    effectType: 'fadein',
-    get: (sketch, next) => {
-        const {fill, stroke, textFill} = sketch.color;
-        const alphaVelocity = 0.05;
+const fadeout: Effect = (sketch, next) => {
+    const {fill, stroke, textFill} = sketch.color;
+    const alphaVelocity = 0.05;
 
-        return {
-            render: () => {
+    return {
+        render: () => {
+            fill.a -= alphaVelocity;
+            stroke.a -= alphaVelocity;
+            textFill.a -= alphaVelocity;
+
+            if (fill.a <= 0) next();
+        },
+        pre: () => {
+            fill.a = 1;
+            stroke.a = 1;
+            textFill.a = 1;
+        },
+        post: () => {
+            fill.a = 0;
+            stroke.a = 0;
+            textFill.a = 0;
+        },
+    };
+};
+
+const explode: Effect = (sketch, next) => {
+    const {fill, stroke, textFill} = sketch.color;
+    const alphaVelocity = 0.01;
+    let phase = 1;
+
+    return {
+        render: () => {
+            if (phase === 1) sketch.lineWidth += 0.1;
+            else if (phase === 2) {
                 fill.a -= alphaVelocity;
                 stroke.a -= alphaVelocity;
                 textFill.a -= alphaVelocity;
 
-                if (fill.a <= 0) next();
-            },
-            pre: () => {
-                fill.a = 1;
-                stroke.a = 1;
-                textFill.a = 1;
-            },
-            post: () => {
-                fill.a = 0;
-                stroke.a = 0;
-                textFill.a = 0;
-            },
-        };
-    },
+                if (fill.a < 0) {
+                    fill.a -= 0;
+                    stroke.a -= 0;
+                    textFill.a -= 0;
+
+                    next();
+                }
+            }
+
+            if (sketch.lineWidth > 10) {
+                sketch.lineWidth = 10;
+
+                phase = 2;
+            }
+        },
+    };
 };
 
-const explode: VisualConfig = {
-    visualType: 'end',
-    effectType: 'explode',
-    get: (sketch, next) => {
-        const {fill, stroke, textFill} = sketch.color;
-        const alphaVelocity = 0.01;
-        let phase = 1;
-
-        return {
-            render: () => {
-                if (phase === 1) sketch.lineWidth += 0.1;
-                else if (phase === 2) {
-                    fill.a -= alphaVelocity;
-                    stroke.a -= alphaVelocity;
-                    textFill.a -= alphaVelocity;
-
-                    if (fill.a < 0) {
-                        fill.a -= 0;
-                        stroke.a -= 0;
-                        textFill.a -= 0;
-
-                        next();
-                    }
-                }
-
-                if (sketch.lineWidth > 10) {
-                    sketch.lineWidth = 10;
-
-                    phase = 2;
-                }
-            },
-        };
-    },
-};
-
-export const effects = {
+export const effects: {
+    [K in EffectType]: Effect;
+} = {
     noise,
     enlarge,
     fadein,
@@ -191,7 +173,7 @@ export const effects = {
 };
 
 export const createSketchDraw =
-    (c: CanvasRenderingContext2D, sketch: EntitySketchMap['button']): EngineDraw['fn'] =>
+    (c: CanvasRenderingContext2D, sketch: BaseSketch): EngineDraw['fn'] =>
     () => {
         const {fill, stroke, textFill} = sketch.color;
 

@@ -1,5 +1,5 @@
 import {EngineUpdate, UpdateOrDraw} from './engine';
-import {EntityShapeMap, EntitySketchMap} from './entitySketch';
+import {BaseSketch, EntityShapeMap, EntitySketchMap} from './entitySketch';
 import {InputListenerEventMap, LibraryInput} from './input';
 
 export type GeneralProperties = {
@@ -95,9 +95,10 @@ export interface EntityHandler {
     entityListeners: Partial<EntityListeners>;
 }
 
-export type Entity = EntityGeneric<keyof EntityShapeMap>;
+// export type Entity = EntityGeneric<keyof EntityShapeMap>;
 
-export type EntityGeneric<K extends keyof EntityShapeMap> = {
+// export type EntityGeneric<K extends keyof EntityShapeMap> = {
+export type EntityGeneric = {
     show: () => void;
     hide: () => void;
     addListener: AddListener;
@@ -105,7 +106,8 @@ export type EntityGeneric<K extends keyof EntityShapeMap> = {
     // setHideTime: SetHideTime;
     // setVisual: SetVisual;
     // setDraw: SetDraw;
-    sketch: EntitySketchMap[K];
+    // sketch: EntitySketchMap[K];
+    sketch: BaseSketch;
 };
 
 export type CreateEntity = <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig<K>) => EntityGeneric<K>;
@@ -128,8 +130,10 @@ export type VisualNext = () => void;
 export type VisualConfig = {
     visualType: VisualType;
     effectType: EffectType;
-    get: (sketch: EntitySketchMap['button'], next: VisualNext, input: LibraryInput) => VisualCreation;
+    get: (sketch: BaseSketch, next: VisualNext, input: LibraryInput) => VisualCreation;
 };
+
+export type Effect = (sketch: BaseSketch, next: VisualNext, input: LibraryInput) => VisualCreation;
 
 export type VisualCreation = {
     render: EngineUpdate['fn'];

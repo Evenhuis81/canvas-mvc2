@@ -1,5 +1,13 @@
 import {Engine} from 'library/types/engine';
-import {EffectType, GeneralProperties, GetDraw, GetVisual, VisualConfig, VisualProperties} from 'library/types/entity';
+import {
+    EffectType,
+    GeneralProperties,
+    GetDraw,
+    GetVisual,
+    Visual,
+    VisualConfig,
+    VisualProperties,
+} from 'library/types/entity';
 
 export default (
     gProps: GeneralProperties,
@@ -9,6 +17,8 @@ export default (
     getEffect: (effect: EffectType) => VisualConfig,
     getDraw: GetDraw,
 ) => {
+    const visuals: Partial<Visual<'update' | 'draw'>> = {};
+
     // Pre-creation of visuals here for efficiency testing
     const show = () => {
         if (!gProps.show) return;

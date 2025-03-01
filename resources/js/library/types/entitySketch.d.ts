@@ -1,4 +1,4 @@
-import {Circle, Fill, Line, Rect, Stroke, Text} from './shapes';
+import {Circle, Fill, Line, Pos, Rect, Stroke, Text} from './shapes';
 import {RGBA} from './color';
 
 export type EntityShapeMap = {
@@ -16,6 +16,11 @@ export type EntitySketchMap = {
     line: EntityShapeMap['line'] & {color: EntityColor['line']};
     text: EntityShapeMap['text'] & {color: EntityColor['text']};
 };
+
+export type BaseSketch = Rect &
+    Fill &
+    Stroke &
+    Text & {radii: number; inputType: 'rect'; type: 'base'} & {color: EntityColor['base']};
 
 export type EntityRectangle1 = Rect & Fill & Stroke & {inputType: 'rect'; type: 'rect'};
 
@@ -51,6 +56,11 @@ export type EntityColorString = {
 };
 
 export type EntityColor = {
+    base: {
+        fill: RGBA;
+        stroke: RGBA;
+        textFill: RGBA;
+    };
     button: {
         fill: RGBA;
         stroke: RGBA;
