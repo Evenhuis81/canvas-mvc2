@@ -20,7 +20,7 @@ export type EntitySketchMap = {
 export type BaseSketch = Rect &
     Fill &
     Stroke &
-    Text & {radii: number; inputType: 'rect'; type: 'base'} & {color: EntityColor['base']};
+    Text & {radii: number; inputType: 'rect'} & {color: EntityColor['rect']};
 
 export type EntityRectangle1 = Rect & Fill & Stroke & {inputType: 'rect'; type: 'rect'};
 

@@ -14,21 +14,24 @@ export default (
     vProps: Partial<VisualProperties>,
     engine: Engine,
     getVisual: GetVisual,
-    getEffect: (effect: EffectType) => VisualConfig,
     getDraw: GetDraw,
 ) => {
+    // Pre-creation of visuals here for efficiency testing
     const visuals: Partial<Visual<'update' | 'draw'>> = {};
 
-    // Pre-creation of visuals here for efficiency testing
     const show = () => {
         if (!gProps.show) return;
 
         if (gProps.showDelay) {
             setTimeout(() => {
                 if (vProps.start) {
-                    // const {render, pre, post} = getVisual('start', vProps.start);
-                    // if (pre) pre();
-                    // engine.handle(render);
+                    const next = () => {};
+
+                    const {render, pre, post} = getVisual('start', vProps.start, next);
+
+                    if (pre) pre();
+
+                    engine.handle(render);
                 }
 
                 // if (visuals.draw) {

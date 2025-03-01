@@ -4,13 +4,12 @@ import {createSketch} from './sketch';
 import type {Engine} from 'library/types/engine';
 import type {EntityConfig, EntityGeneric} from 'library/types/entity';
 import type {LibraryInput} from 'library/types/input';
-import type {BaseSketch, EntityShapeMap, EntitySketchMap} from 'library/types/entitySketch';
+import type {EntityShapeMap, EntitySketchMap} from 'library/types/entitySketch';
 import initialize from './initialize';
 import {createVisual} from './visual';
 
 export default (context: CanvasRenderingContext2D, engine: Engine, input: LibraryInput) =>
-    // <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig<K>): EntityGeneric<K> => {
-    (type: K, options?: EntityConfig<K>): EntityGeneric => {
+    <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig<K>): EntityGeneric<K> => {
         // Extract internal properties from options
         const {generalProperties, visualProperties, listeners, shape} = extractOptions(options);
 
@@ -19,9 +18,14 @@ export default (context: CanvasRenderingContext2D, engine: Engine, input: Librar
         const eventHandler = createEventHandler(input, sketch, listeners);
 
         // Look @ transition explode callback
-        const {getVisual, getDraw} = createVisual(generalProperties, visualProperties, sketch, input, context);
+        const {getVisual, getDraw} = createVisual(
+            generalProperties,
+            sketch as EntitySketchMap['button'],
+            input,
+            context,
+        );
 
-        const {show, hide} = initialize(generalProperties, visualProperties, engine, getVisual, getEffect, getDraw);
+        const {show, hide} = initialize(generalProperties, visualProperties, engine, getVisual, getDraw);
 
         return {
             addListener: eventHandler.addListener,

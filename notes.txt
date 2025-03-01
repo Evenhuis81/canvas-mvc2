@@ -14,7 +14,9 @@
 14. Generic sketch create with color hardcoded (?) in, preferably with generic color aswell, but this seems to be quite hard to do.
 15. Use consistent TODO's:
     -// TODO::Add to log system
-16. EngineRender.ts: move commented
+17. EngineRender.ts: move commented
+18. Next in getVisual should be optional and only set if post function is available
+
 
 // Notes on sun @forum, 18-08-2024+:
 // 1. Generalize Types for all kinds of shapes and make shapes and methods for tv and static shows equal

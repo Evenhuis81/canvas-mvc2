@@ -95,10 +95,9 @@ export interface EntityHandler {
     entityListeners: Partial<EntityListeners>;
 }
 
-// export type Entity = EntityGeneric<keyof EntityShapeMap>;
+export type Entity = EntityGeneric<keyof EntityShapeMap>;
 
-// export type EntityGeneric<K extends keyof EntityShapeMap> = {
-export type EntityGeneric = {
+export type EntityGeneric<T extends keyof EntitySketchMap> = {
     show: () => void;
     hide: () => void;
     addListener: AddListener;
@@ -107,7 +106,7 @@ export type EntityGeneric = {
     // setVisual: SetVisual;
     // setDraw: SetDraw;
     // sketch: EntitySketchMap[K];
-    sketch: BaseSketch;
+    sketch: EntitySketchMap[T];
 };
 
 export type CreateEntity = <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig<K>) => EntityGeneric<K>;
@@ -116,7 +115,8 @@ export type TransitionSpeed = 1 | 2 | 3 | 4 | 5;
 
 type VisualType = 'animation' | 'hover' | 'start' | 'end' | 'draw';
 
-export type GetVisual = (visual: VisualConfig, next: VisualNext) => Visual<'update'>;
+export type GetVisual = (visualType: VisualType, effectType: EffectType, next: VisualNext) => Visual<'update'>;
+
 export type GetDraw = () => Visual<'draw'>;
 
 export type EntityAnimations = 'noise';

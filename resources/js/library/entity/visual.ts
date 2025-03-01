@@ -4,23 +4,20 @@ import type {
     EffectType,
     GeneralProperties,
     GetDraw,
+    GetVisual,
     Visual,
-    VisualConfig,
-    VisualCreation,
     VisualNext,
-    VisualProperties,
     VisualType,
 } from 'library/types/entity';
-import type {BaseSketch, EntitySketchMap} from 'library/types/entitySketch';
+import type {EntitySketchMap} from 'library/types/entitySketch';
 
 export const createVisual = (
     gProps: GeneralProperties,
-    vProps: Partial<VisualProperties>,
-    sketch: BaseSketch,
+    sketch: EntitySketchMap['button'],
     input: LibraryInput,
     context: CanvasRenderingContext2D,
 ) => {
-    const getVisual = (visualType: VisualType, effectType: EffectType, next: VisualNext): Visual<'update'> => {
+    const getVisual: GetVisual = (visualType, effectType, next) => {
         const {render, pre, post} = effects[effectType](sketch, next, input);
         return {
             render: {
@@ -43,11 +40,8 @@ export const createVisual = (
         },
     });
 
-    // const getEffect = (effect: EffectType): VisualConfig => effects[effect];
-
     return {
         getVisual,
         getDraw,
-        // getEffect,
     };
 };
