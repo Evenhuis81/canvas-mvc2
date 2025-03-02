@@ -1,12 +1,10 @@
 <template>
-    <div>DD</div>
+    <div id="reverse-container" />
 </template>
 
 <script lang="ts" setup>
 import {onMounted} from 'vue';
-import createReverse from './index';
+import reverse from './index';
 
-onMounted(() => {
-    const reverse = createReverse();
-});
+onMounted(() => reverse());
 </script>
