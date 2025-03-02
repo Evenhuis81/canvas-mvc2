@@ -1,24 +1,24 @@
-import {ScreenProperties} from '.';
+import {WorldProperties} from '.';
 
 export const createCharacter = (
     id: string,
-    {unitScale}: ScreenProperties,
+    world: WorldProperties,
     c: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement,
 ) => {
     const char = {
-        x: 9,
-        scaledX: 7 * unitScale, // only a startposition, gets updated from character.update
+        x: 9, // adjust with worldSpeed
+        scaledX: 7 * world.unitScale + world.xOffset, // only a startposition, gets updated from character.update
         y: 7,
-        scaledY: 2 * unitScale,
+        scaledY: 2 * world.unitScale + world.yOffset,
         w: 1,
-        scaledW: unitScale,
+        scaledW: world.unitScale,
         h: 1,
-        scaledH: unitScale,
+        scaledH: world.unitScale,
         face: 'up',
         vy: 0.05,
         fill: '#009',
-        img: new Image(),
+        // img: new Image(), // implement in a later stage
     };
 
     const draw = {
@@ -52,8 +52,8 @@ export const createCharacter = (
         fn: () => {
             char.y += char.vy;
 
-            char.scaledX = char.x * unitScale;
-            char.scaledY = char.y * unitScale;
+            char.scaledX = char.x * world.unitScale + world.xOffset;
+            char.scaledY = char.y * world.unitScale + world.yOffset;
         },
     };
 
@@ -66,5 +66,5 @@ export const createCharacter = (
         }
     });
 
-    return {draw, update};
+    return {draw, update, char};
 };

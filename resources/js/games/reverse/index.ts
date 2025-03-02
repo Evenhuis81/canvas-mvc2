@@ -11,28 +11,64 @@ const libraryOptions = {
     backgroundColor: '#000',
 };
 
-export type ScreenProperties = {
-    unitScale: number; // unitLength & unitHeight
+export type WorldProperties = {
+    unitsX: number;
+    unitsY: number;
+    xOffset: number;
+    yOffset: number;
+    xMargin: number;
+    yMargin: number;
+    unitScale: number; // unitLength & unitHeight = same
+    display: 'portrait' | 'landscape';
 };
 
-const screen = {
+const world: WorldProperties = {
+    unitsX: 16,
+    unitsY: 8,
+    xOffset: 0,
+    yOffset: 0,
+    xMargin: 0,
+    yMargin: 0,
     unitScale: 0,
+    display: 'portrait',
+};
+
+const setScreen = (canvas: HTMLCanvasElement) => {
+    world.unitScale = canvas.width / world.unitsX / 2;
+
+    if (canvas.width > canvas.height) {
+        console.log('landscape');
+
+        world.display = 'portrait';
+
+        world.yMargin = (canvas.height - world.unitScale * world.unitsY) / 2;
+
+        return;
+    }
+
+    console.log('portrait');
+
+    world.display = 'landscape';
+
+    world.xMargin = (canvas.width - world.unitScale * 16) / 2;
 };
 
 export default () => {
     const library = initialize(libraryID, libraryOptions);
     const {canvas, context, engine} = library;
 
-    screen.unitScale = canvas.width / 16; //
+    setScreen(canvas);
 
-    const character = createCharacter(libraryID, screen, context, canvas);
+    const {draw: charDraw, update: charUpdate, char: charProps} = createCharacter(libraryID, world, context, canvas);
 
-    const level = createLevel(context, screen.unitScale);
+    const {update: levelUpdate, draw: levelDraw} = createLevel(context, world);
 
-    engine.setDraw({fn: level.draw});
+    // TODO::Create full engineDraw/update (+id, name)
+    engine.setUpdate({fn: levelUpdate});
+    engine.setDraw({fn: levelDraw});
 
-    engine.setUpdate(character.update);
-    engine.setDraw(character.draw);
+    engine.setUpdate(charUpdate);
+    engine.setDraw(charDraw);
 
     library.runEngine();
 };
