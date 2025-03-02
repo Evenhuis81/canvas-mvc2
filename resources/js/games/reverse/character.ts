@@ -1,13 +1,22 @@
-export const createCharacter = (id: string, c: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
-    // Screen set to 16 x 9 (tiles width based on canvasWidth + tiles height based on width)
-    const unit = canvas.width / 16;
+import {ScreenProperties} from '.';
 
+export const createCharacter = (
+    id: string,
+    {unitScale}: ScreenProperties,
+    c: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+) => {
     const char = {
-        x: canvas.width / 2,
-        y: canvas.height / 2,
-        w: 20,
-        h: 20,
-        vy: 3,
+        x: 9,
+        scaledX: 7 * unitScale, // only a startposition, gets updated from character.update
+        y: 7,
+        scaledY: 2 * unitScale,
+        w: 1,
+        scaledW: unitScale,
+        h: 1,
+        scaledH: unitScale,
+        face: 'up',
+        vy: 0.05,
         fill: '#009',
         img: new Image(),
     };
@@ -16,13 +25,25 @@ export const createCharacter = (id: string, c: CanvasRenderingContext2D, canvas:
         id: `${id}-characterDraw`,
         name: 'draw character',
         fn: () => {
-            c.beginPath();
-
             c.fillStyle = '#009';
 
-            c.rect(char.x, char.y, char.w, char.h);
+            c.beginPath();
+            if (char.face === 'up') faceUp();
+            else faceDown();
             c.fill();
         },
+    };
+
+    const faceUp = () => {
+        c.moveTo(char.scaledX + char.scaledW / 2, char.scaledY);
+        c.lineTo(char.scaledX + char.scaledW, char.scaledY + char.scaledH);
+        c.lineTo(char.scaledX, char.scaledY + char.scaledH);
+    };
+
+    const faceDown = () => {
+        c.moveTo(char.scaledX + char.scaledW / 2, char.scaledY + char.scaledH); //  + char.scaledH
+        c.lineTo(char.scaledX + char.scaledW, char.scaledY); // -char.scaledH
+        c.lineTo(char.scaledX, char.scaledY); // -char.scaledH
     };
 
     const update = {
@@ -30,11 +51,19 @@ export const createCharacter = (id: string, c: CanvasRenderingContext2D, canvas:
         name: 'update character',
         fn: () => {
             char.y += char.vy;
+
+            char.scaledX = char.x * unitScale;
+            char.scaledY = char.y * unitScale;
         },
     };
 
+    canvas.focus();
+
     canvas.addEventListener('keyup', ({code}) => {
-        if (code === 'Space') char.vy = -char.vy;
+        if (code === 'Space') {
+            char.vy = -char.vy;
+            char.face = char.vy > 0 ? 'up' : 'down';
+        }
     });
 
     return {draw, update};
