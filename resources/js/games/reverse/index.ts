@@ -1,6 +1,8 @@
 import {initialize} from 'library/index';
 import {createCharacter} from './character';
 import {createLevel} from './level';
+import {createBaseEntity} from 'library/entity';
+import {BaseSketch} from 'library/entity/sketch';
 
 const libraryID = 'reverse';
 
@@ -53,6 +55,8 @@ export default () => {
     const library = initialize(libraryID, libraryOptions);
     const {canvas, context, engine} = library;
 
+    const baseEntity = createBaseEntity(context, engine);
+
     setScreen(canvas);
 
     const {draw: charDraw, update: charUpdate, char: charProps} = createCharacter(libraryID, world, context, canvas);
@@ -65,6 +69,22 @@ export default () => {
 
     engine.setUpdate(charUpdate);
     engine.setDraw(charDraw);
+
+    const text1 = {
+        pos: charProps.pos,
+        text: 'Test',
+    };
+
+    const t1 = baseEntity('text', text1);
+
+    const textUpdate = () => {
+        t1.sketch.x = charProps.scaledX;
+        t1.sketch.y = charProps.scaledY;
+    };
+
+    t1.show();
+
+    engine.setUpdate({fn: textUpdate});
 
     library.runEngine();
 };

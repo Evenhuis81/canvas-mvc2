@@ -42,9 +42,16 @@ export const getSketchRGBAColorsFromHexString = <T extends keyof EntityShapeMap>
     return createColorFromType()[type];
 };
 
-export const createBaseSketch = <K extends keyof BaseSketch>(type: K) => ({...baseSketch[type]});
+export const createSketch = <T extends keyof BaseSketch>(
+    type: T,
+    sketchConfig?: Partial<BaseSketch[T]>,
+): BaseSketch[T] & {type: T} => ({
+    ...baseSketch[type],
+    ...sketchConfig,
+    type,
+});
 
-export const createSketch = <K extends keyof EntityShapeMap>(
+export const createSketch2 = <K extends keyof EntityShapeMap>(
     type: K,
     shape?: Partial<EntityShapeMap[K]>,
 ): EntitySketchMap[K] => {
@@ -127,6 +134,8 @@ export const defaultSketch: EntitySketchMap = {
 
 export type BaseSketch = {
     text: {
+        x: number;
+        y: number;
         text: string;
         textFill: string;
         font: string;
@@ -134,10 +143,22 @@ export type BaseSketch = {
         textAlign: CanvasTextAlign;
         textBaseLine: CanvasTextBaseline;
     };
+    textPointer: BaseSketch['text'] & {
+        fill: string;
+        radius: number;
+        position: 'left' | 'center' | 'right';
+    };
+};
+
+type BaseSketchWithType = {
+    text: BaseSketch['text'] & {type: 'text'};
+    textPointer: BaseSketch['textPointer'] & {type: 'textPointer'};
 };
 
 const baseSketch: BaseSketch = {
     text: {
+        x: 0,
+        y: 0,
         text: 'entity text',
         textFill: '#fff',
         font: 'monospace',
@@ -145,6 +166,25 @@ const baseSketch: BaseSketch = {
         textAlign: 'center',
         textBaseLine: 'middle',
     },
+    textPointer: {
+        x: 0,
+        y: 0,
+        text: 'entity text',
+        textFill: '#fff',
+        font: 'monospace',
+        fontSize: 16,
+        textAlign: 'center',
+        textBaseLine: 'middle',
+        // Pointer:
+        fill: '#0f0',
+        radius: 0.2,
+        position: 'center',
+    },
+};
+
+const baseSketchWithType = {
+    text: {...baseSketch.text, type: 'text'},
+    textPointer: {...baseSketch.textPointer, type: 'textPointer'},
 };
 
 type EntityRect = Rect & {type: 'rect'};
@@ -176,12 +216,43 @@ const rectangle = {
     h: 15,
 };
 
-const drawRectTextFill = (rectT: EntityRectTextFill) => {
-    //
+let textAdjust = 1.5;
+export const createBaseSketchDraw = <T extends keyof BaseSketch>(
+    context: CanvasRenderingContext2D,
+    sketch: BaseSketchWithType[T],
+) => {
+    // if (sketch.type === 'text') {
+    //     sketch.fill
+    // }
+
+    const fn = () => {};
+
+    return fn;
 };
 
-const drawRect = <T extends keyof EntityShapMap>(rect: EntityShapMap[T]) => {
-    if (rect.type === 'rectTSF') {
-        // rect.textF;
-    }
+const baseSketches = {
+    text: (c: CanvasRenderingContext2D, sketch: BaseSketch['text']) => {
+        c.fillStyle = sketch.textFill;
+        c.font = `${sketch.fontSize}px ${sketch.font}`;
+        c.textAlign = sketch.textAlign;
+        c.textBaseline = sketch.textBaseLine;
+
+        c.beginPath();
+        c.fillText(sketch.text, sketch.x, sketch.y + textAdjust);
+    },
+    textPointer: (c: CanvasRenderingContext2D, sketch: BaseSketch['textPointer']) => {
+        c.fillStyle = sketch.textFill;
+        c.font = `${sketch.fontSize}px ${sketch.font}`;
+        c.textAlign = sketch.textAlign;
+        c.textBaseline = sketch.textBaseLine;
+
+        c.beginPath();
+        c.fillText(sketch.text, sketch.x, sketch.y + textAdjust);
+
+        // (if sketch.position === 'left') etc...
+        c.beginPath();
+        c.fillStyle = sketch.fill;
+        c.arc(sketch.x, sketch.y, sketch.radius, 0, Math.PI * 2);
+        c.fill();
+    },
 };
