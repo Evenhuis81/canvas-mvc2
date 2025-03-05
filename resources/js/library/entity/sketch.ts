@@ -150,10 +150,7 @@ export type BaseSketch = {
     };
 };
 
-type BaseSketchWithType = {
-    text: BaseSketch['text'] & {type: 'text'};
-    textPointer: BaseSketch['textPointer'] & {type: 'textPointer'};
-};
+export type BaseSketchWithType = {[K in keyof BaseSketch]: BaseSketch[K] & {type: K}};
 
 const baseSketch: BaseSketch = {
     text: {
@@ -182,77 +179,59 @@ const baseSketch: BaseSketch = {
     },
 };
 
-const baseSketchWithType = {
+const baseSketchWithType: BaseSketchWithType = {
     text: {...baseSketch.text, type: 'text'},
     textPointer: {...baseSketch.textPointer, type: 'textPointer'},
-};
-
-type EntityRect = Rect & {type: 'rect'};
-type EntityRectFill = Rect & {fill: string; type: 'rectF'};
-type EntityRectStroke = Rect & {stroke: string; type: 'rectS'};
-type EntityRectFillStroke = Rect & {fill: string; stroke: string; type: 'rectFS'};
-type EntityRectStrokeFill = Rect & {stroke: string; fill: string; type: 'rectSF'};
-type EntityRectTextFill = Rect & Text & {textFill: string; fill: string; type: 'rectTF'};
-type EntityRectTextStroke = Rect & Text & {textFill: string; stroke: string; type: 'rectTS'};
-type EntityRectTextFillStroke = Rect & Text & {textFill: string; fill: string; stroke: string; type: 'rectTFS'};
-type EntityRectTextStrokeFill = Rect & Text & {textFill: string; stroke: string; fill: string; type: 'rectTSF'};
-
-type EntityShapMap = {
-    rect: EntityRect;
-    rectF: EntityRectFill;
-    rectS: EntityRectStroke;
-    rectFS: EntityRectFillStroke;
-    rectSF: EntityRectStrokeFill;
-    rectTF: EntityRectTextFill;
-    rectTS: EntityRectTextStroke;
-    rectTFS: EntityRectTextFillStroke;
-    rectTSF: EntityRectTextStrokeFill;
-};
-
-const rectangle = {
-    x: 100,
-    y: 50,
-    w: 30,
-    h: 15,
 };
 
 let textAdjust = 1.5;
 export const createBaseSketchDraw = <T extends keyof BaseSketch>(
     context: CanvasRenderingContext2D,
-    sketch: BaseSketchWithType[T],
-) => {
-    // if (sketch.type === 'text') {
-    //     sketch.fill
-    // }
+    sketchType: T,
+): {fn: () => void; sketch: BaseSketchWithType[T]} => {
+    const {draw, sketch: newSketch} = baseSketches[sketchType](context, sketchType);
 
-    const fn = () => {};
-
-    return fn;
+    return {
+        fn: draw,
+        sketch: newSketch,
+    };
 };
 
 const baseSketches = {
-    text: (c: CanvasRenderingContext2D, sketch: BaseSketch['text']) => {
-        c.fillStyle = sketch.textFill;
-        c.font = `${sketch.fontSize}px ${sketch.font}`;
-        c.textAlign = sketch.textAlign;
-        c.textBaseline = sketch.textBaseLine;
+    text: <T extends keyof BaseSketch>(c: CanvasRenderingContext2D, type: T): BaseSketchWithType[T] => {
+        const sketch = {...baseSketchWithType[type]};
 
-        c.beginPath();
-        c.fillText(sketch.text, sketch.x, sketch.y + textAdjust);
+        const draw = () => {
+            c.fillStyle = sketch.textFill;
+            c.font = `${sketch.fontSize}px ${sketch.font}`;
+            c.textAlign = sketch.textAlign;
+            c.textBaseline = sketch.textBaseLine;
+
+            c.beginPath();
+            c.fillText(sketch.text, sketch.x, sketch.y + textAdjust);
+        };
+
+        return {draw, sketch};
     },
-    textPointer: (c: CanvasRenderingContext2D, sketch: BaseSketch['textPointer']) => {
-        c.fillStyle = sketch.textFill;
-        c.font = `${sketch.fontSize}px ${sketch.font}`;
-        c.textAlign = sketch.textAlign;
-        c.textBaseline = sketch.textBaseLine;
+    textPointer: <T extends keyof BaseSketch>(c: CanvasRenderingContext2D, type: T) => {
+        const sketch = {...baseSketchWithType[type]};
 
-        c.beginPath();
-        c.fillText(sketch.text, sketch.x, sketch.y + textAdjust);
+        const draw = () => {
+            c.fillStyle = sketch.textFill;
+            c.font = `${sketch.fontSize}px ${sketch.font}`;
+            c.textAlign = sketch.textAlign;
+            c.textBaseline = sketch.textBaseLine;
 
-        // (if sketch.position === 'left') etc...
-        c.beginPath();
-        c.fillStyle = sketch.fill;
-        c.arc(sketch.x, sketch.y, sketch.radius, 0, Math.PI * 2);
-        c.fill();
+            c.beginPath();
+            c.fillText(sketch.text, sketch.x, sketch.y + textAdjust);
+
+            // (if sketch.position === 'left') etc...
+            c.beginPath();
+            c.fillStyle = sketch.fill;
+            c.arc(sketch.x, sketch.y, sketch.radius, 0, Math.PI * 2);
+            c.fill();
+        };
+
+        return {draw, sketch};
     },
 };

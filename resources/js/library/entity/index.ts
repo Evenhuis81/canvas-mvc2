@@ -1,5 +1,5 @@
 // import {getProperties, uid} from 'library/helpers';
-import {BaseSketch, createBaseSketchDraw, createSketch} from './sketch';
+import {BaseSketch, BaseSketchWithType, createBaseSketchDraw, createSketch} from './sketch';
 import type {Engine} from 'library/types/engine';
 // import type {EntityConfig, EntityGeneric} from 'library/types/entity';
 // import type {LibraryInput} from 'library/types/input';
@@ -11,7 +11,7 @@ export type BaseEntity = <T extends keyof BaseSketch>(
     type: T,
     sketchConfig?: Partial<BaseSketch[T]>,
 ) => {
-    sketch: BaseSketch[T] & {type: T};
+    sketch: BaseSketchWithType[T];
     show: () => void;
 };
 
@@ -21,9 +21,9 @@ export const createBaseEntity =
         const sketch = createSketch(type, sketchConfig);
 
         const show = () => {
-            const sketchDraw = createBaseSketchDraw(context, sketch);
+            const sketchDraw = createBaseSketchDraw(context, type);
 
-            engine.setDraw({fn: sketchDraw});
+            engine.setDraw({fn: sketchDraw.fn});
         };
 
         return {

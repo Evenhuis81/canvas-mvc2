@@ -75,7 +75,9 @@ export default () => {
         text: 'Test',
     };
 
-    const t1 = baseEntity('text', text1);
+    const t1 = baseEntity('textPointer', text1);
+
+    t1.sketch.type;
 
     const textUpdate = () => {
         t1.sketch.x = charProps.scaledX;
