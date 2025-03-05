@@ -45,10 +45,9 @@ export const getSketchRGBAColorsFromHexString = <T extends keyof EntityShapeMap>
 export const createSketch = <T extends keyof BaseSketch>(
     type: T,
     sketchConfig?: Partial<BaseSketch[T]>,
-): BaseSketch[T] & {type: T} => ({
-    ...baseSketch[type],
+): BaseSketchWithType[T] => ({
+    ...baseSketchWithType[type],
     ...sketchConfig,
-    type,
 });
 
 export const createSketch2 = <K extends keyof EntityShapeMap>(
@@ -184,54 +183,43 @@ const baseSketchWithType: BaseSketchWithType = {
     textPointer: {...baseSketch.textPointer, type: 'textPointer'},
 };
 
-let textAdjust = 1.5;
-export const createBaseSketchDraw = <T extends keyof BaseSketch>(
+export const createBaseSketchDraw = <T extends keyof BaseSketchWithType>(
     context: CanvasRenderingContext2D,
-    sketchType: T,
-): {fn: () => void; sketch: BaseSketchWithType[T]} => {
-    const {draw, sketch: newSketch} = baseSketches[sketchType](context, sketchType);
+    sketch: BaseSketchWithType[T],
+) => {
+    let draw: () => void;
 
-    return {
-        fn: draw,
-        sketch: newSketch,
-    };
+    if (sketch.type === 'text') {
+        //
+        draw = baseSketches[sketch.type](context, sketch);
+    }
+
+    return draw;
 };
 
+let textAdjust = 1.5;
 const baseSketches = {
-    text: <T extends keyof BaseSketch>(c: CanvasRenderingContext2D, type: T): BaseSketchWithType[T] => {
-        const sketch = {...baseSketchWithType[type]};
+    text: (c: CanvasRenderingContext2D, sketch: BaseSketchWithType['text']) => () => {
+        c.fillStyle = sketch.textFill;
+        c.font = `${sketch.fontSize}px ${sketch.font}`;
+        c.textAlign = sketch.textAlign;
+        c.textBaseline = sketch.textBaseLine;
 
-        const draw = () => {
-            c.fillStyle = sketch.textFill;
-            c.font = `${sketch.fontSize}px ${sketch.font}`;
-            c.textAlign = sketch.textAlign;
-            c.textBaseline = sketch.textBaseLine;
-
-            c.beginPath();
-            c.fillText(sketch.text, sketch.x, sketch.y + textAdjust);
-        };
-
-        return {draw, sketch};
+        c.beginPath();
+        c.fillText(sketch.text, sketch.x, sketch.y + textAdjust);
     },
-    textPointer: <T extends keyof BaseSketch>(c: CanvasRenderingContext2D, type: T) => {
-        const sketch = {...baseSketchWithType[type]};
+    textPointer: (c: CanvasRenderingContext2D, sketch: BaseSketchWithType['textPointer']) => () => {
+        c.fillStyle = sketch.textFill;
+        c.font = `${sketch.fontSize}px ${sketch.font}`;
+        c.textAlign = sketch.textAlign;
+        c.textBaseline = sketch.textBaseLine;
 
-        const draw = () => {
-            c.fillStyle = sketch.textFill;
-            c.font = `${sketch.fontSize}px ${sketch.font}`;
-            c.textAlign = sketch.textAlign;
-            c.textBaseline = sketch.textBaseLine;
+        c.beginPath();
+        c.fillText(sketch.text, sketch.x, sketch.y + textAdjust);
 
-            c.beginPath();
-            c.fillText(sketch.text, sketch.x, sketch.y + textAdjust);
-
-            // (if sketch.position === 'left') etc...
-            c.beginPath();
-            c.fillStyle = sketch.fill;
-            c.arc(sketch.x, sketch.y, sketch.radius, 0, Math.PI * 2);
-            c.fill();
-        };
-
-        return {draw, sketch};
+        c.beginPath();
+        c.fillStyle = sketch.fill;
+        c.arc(sketch.x, sketch.y, sketch.radius, 0, Math.PI * 2);
+        c.fill();
     },
 };
