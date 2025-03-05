@@ -2,7 +2,7 @@ import {createContainer, getCanvas, getContainer, getContext2D, setCanvas} from 
 import {createEngine} from './engine';
 import {getCanvasInput} from 'library/input';
 // import {getSV} from './views/sv';
-import getCreateEntity from './entity';
+import getCreateEntity from './entity/full-entity';
 import {getCreatePhaser} from 'games/phaser/phaser'; // refactor to default export in style of 'createEntity'
 import {uid} from './helpers';
 import type {Engine} from './types/engine';

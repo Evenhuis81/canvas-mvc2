@@ -42,6 +42,8 @@ export const getSketchRGBAColorsFromHexString = <T extends keyof EntityShapeMap>
     return createColorFromType()[type];
 };
 
+export const createBaseSketch = <K extends keyof BaseSketch>(type: K) => ({...baseSketch[type]});
+
 export const createSketch = <K extends keyof EntityShapeMap>(
     type: K,
     shape?: Partial<EntityShapeMap[K]>,
@@ -123,10 +125,26 @@ export const defaultSketch: EntitySketchMap = {
     },
 };
 
-type EntityColorStrings = {
-    fill: '';
-    stroke: '';
-    textFill: '';
+export type BaseSketch = {
+    text: {
+        text: string;
+        textFill: string;
+        font: string;
+        fontSize: number;
+        textAlign: CanvasTextAlign;
+        textBaseLine: CanvasTextBaseline;
+    };
+};
+
+const baseSketch: BaseSketch = {
+    text: {
+        text: 'entity text',
+        textFill: '#fff',
+        font: 'monospace',
+        fontSize: 16,
+        textAlign: 'center',
+        textBaseLine: 'middle',
+    },
 };
 
 type EntityRect = Rect & {type: 'rect'};

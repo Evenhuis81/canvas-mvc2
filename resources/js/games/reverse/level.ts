@@ -15,7 +15,7 @@ export const createLevel = (ctx: CanvasRenderingContext2D, world: WorldPropertie
         for (let y = 0; y < 9; y++) {
             for (let x = 0; x < 32; x++) {
                 if (level1[y][x] === 'X') {
-                    console.log(levelOffset.x);
+                    // console.log(levelOffset.x); // TODO::Add to statistics
 
                     ctx.beginPath();
                     ctx.rect(

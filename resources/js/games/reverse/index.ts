@@ -18,13 +18,13 @@ export type WorldProperties = {
     yOffset: number;
     xMargin: number;
     yMargin: number;
-    unitScale: number; // unitLength & unitHeight = same
+    unitScale: number; // unitLength & unitHeight is the same
     display: 'portrait' | 'landscape';
 };
 
 const world: WorldProperties = {
     unitsX: 16,
-    unitsY: 8,
+    unitsY: 9,
     xOffset: 0,
     yOffset: 0,
     xMargin: 0,
@@ -37,16 +37,12 @@ const setScreen = (canvas: HTMLCanvasElement) => {
     world.unitScale = canvas.width / world.unitsX / 2;
 
     if (canvas.width > canvas.height) {
-        console.log('landscape');
-
         world.display = 'portrait';
 
         world.yMargin = (canvas.height - world.unitScale * world.unitsY) / 2;
 
         return;
     }
-
-    console.log('portrait');
 
     world.display = 'landscape';
 
