@@ -1,92 +1,19 @@
-import {hexToRgba} from 'library/colors';
-import type {EntityColorString, EntityColor, EntityShapeMap, EntitySketchMap} from 'library/types/entitySketch';
-import {Rect} from 'library/types/shapes';
+import {Circle, Fill, Pos, Rect, Stroke, Text} from 'library/types/shapes';
+import {createEntity} from '.';
+import {Engine} from 'library/types/engine';
 
-const colorString = {
-    fill: '#650',
-    stroke: '#050',
-    textFill: '#f8f',
-};
-
-const colorFromType = {
-    button1: {
-        fill: hexToRgba(colorString.fill),
-        stroke: hexToRgba(colorString.stroke),
-        textFill: hexToRgba(colorString.textFill),
-    },
-    rect: {fill: hexToRgba(colorString.fill), stroke: hexToRgba(colorString.stroke)},
-    circle: {fill: hexToRgba(colorString.fill), stroke: hexToRgba(colorString.stroke)},
-    line: {stroke: hexToRgba(colorString.stroke)},
-    text: {textFill: hexToRgba(colorString.textFill)},
-};
-
-const createColorFromType = (): {[K in keyof EntityShapeMap]: EntityColor[K]} => ({
-    button: {
-        fill: hexToRgba(colorString.fill),
-        stroke: hexToRgba(colorString.stroke),
-        textFill: hexToRgba(colorString.textFill),
-    },
-    rect: {fill: hexToRgba(colorString.fill), stroke: hexToRgba(colorString.stroke)},
-    circle: {fill: hexToRgba(colorString.fill), stroke: hexToRgba(colorString.stroke)},
-    line: {stroke: hexToRgba(colorString.stroke)},
-    text: {textFill: hexToRgba(colorString.textFill)},
-});
-
-export const getSketchRGBAColorsFromHexString = <T extends keyof EntityShapeMap>(
-    type: T,
-    colorStrings: Partial<EntityColorString[T]>,
-    shape?: Partial<EntityColorString[T]>,
-): EntityColor[T] => {
-    if (shape) for (const key in colorStrings) colorStrings[key] = shape[key] ?? colorStrings[key];
-
-    return createColorFromType()[type];
-};
-
-export const createSketch = <T extends keyof BaseSketch>(
-    type: T,
-    sketchConfig?: Partial<BaseSketch[T]>,
-): BaseSketchWithType[T] => ({
-    ...baseSketchWithType[type],
-    ...sketchConfig,
-});
-
-export const createSketch2 = <K extends keyof EntityShapeMap>(
-    type: K,
-    shape?: Partial<EntityShapeMap[K]>,
-): EntitySketchMap[K] => {
-    const sketch = {
-        ...defaultSketch[type],
-        ...shape,
-        color: getSketchRGBAColorsFromHexString(type, colorString, shape),
-    };
-
-    return sketch;
-};
-
-export const defaultSketch: EntitySketchMap = {
-    button: {
-        type: 'button',
-        inputType: 'rect',
-        x: 100,
-        y: 50,
-        w: 80,
-        h: 40,
-        radii: 5,
-        fill: '#000',
-        stroke: '#f00',
-        lineWidth: 4,
-        // Text Part
-        text: 'Entity B1',
+const defaultSketches: DefaultSketches = {
+    text: {
+        x: 0,
+        y: 0,
+        text: 'Entity Text',
         textFill: '#fff',
         font: 'monospace',
         fontSize: 16,
         textAlign: 'center',
         textBaseLine: 'middle',
-        color: colorFromType['button1'],
     },
     rect: {
-        type: 'rect',
-        inputType: 'rect',
         x: 100,
         y: 50,
         w: 80,
@@ -94,132 +21,77 @@ export const defaultSketch: EntitySketchMap = {
         fill: '#000',
         stroke: '#f00',
         lineWidth: 2,
-        color: colorFromType['rect'],
     },
     circle: {
-        type: 'circle',
-        inputType: 'circle',
         x: 100,
         y: 50,
         radius: 255,
         fill: '#000',
         stroke: '#f00',
         lineWidth: 2,
-        color: colorFromType['circle'],
-    },
-    line: {
-        type: 'line',
-        inputType: 'none',
-        x1: 50,
-        y1: 50,
-        x2: 100,
-        y2: 100,
-        stroke: '#f00',
-        lineWidth: 2,
-        color: colorFromType['line'],
-    },
-    text: {
-        type: 'text',
-        inputType: 'none',
-        text: 'entity text',
-        textFill: '#fff',
-        font: 'monospace',
-        fontSize: 16,
-        textAlign: 'center',
-        textBaseLine: 'middle',
-        color: colorFromType['text'],
     },
 };
 
-export type BaseSketch = {
-    text: {
-        x: number;
-        y: number;
-        text: string;
-        textFill: string;
-        font: string;
-        fontSize: number;
-        textAlign: CanvasTextAlign;
-        textBaseLine: CanvasTextBaseline;
-    };
-    textPointer: BaseSketch['text'] & {
-        fill: string;
-        radius: number;
-        position: 'left' | 'center' | 'right';
-    };
-};
-
-export type BaseSketchWithType = {[K in keyof BaseSketch]: BaseSketch[K] & {type: K}};
-
-const baseSketch: BaseSketch = {
-    text: {
-        x: 0,
-        y: 0,
-        text: 'entity text',
-        textFill: '#fff',
-        font: 'monospace',
-        fontSize: 16,
-        textAlign: 'center',
-        textBaseLine: 'middle',
-    },
-    textPointer: {
-        x: 0,
-        y: 0,
-        text: 'entity text',
-        textFill: '#fff',
-        font: 'monospace',
-        fontSize: 16,
-        textAlign: 'center',
-        textBaseLine: 'middle',
-        // Pointer:
-        fill: '#0f0',
-        radius: 0.2,
-        position: 'center',
-    },
-};
-
-const baseSketchWithType: BaseSketchWithType = {
-    text: {...baseSketch.text, type: 'text'},
-    textPointer: {...baseSketch.textPointer, type: 'textPointer'},
-};
-
-export const createBaseSketchDraw = <T extends keyof BaseSketchWithType>(
-    context: CanvasRenderingContext2D,
-    sketch: BaseSketchWithType[T],
-) => {
-    let draw: () => void;
-
-    if (sketch.type === 'text') {
-        //
-        draw = baseSketches[sketch.type](context, sketch);
-    }
-
-    return draw;
+type DefaultSketches = {
+    text: Text & Pos;
+    rect: Rect & Fill & Stroke;
+    circle: Circle & Fill & Stroke;
 };
 
 let textAdjust = 1.5;
-const baseSketches = {
-    text: (c: CanvasRenderingContext2D, sketch: BaseSketchWithType['text']) => () => {
-        c.fillStyle = sketch.textFill;
-        c.font = `${sketch.fontSize}px ${sketch.font}`;
-        c.textAlign = sketch.textAlign;
-        c.textBaseline = sketch.textBaseLine;
+export const defaultSketchesDraw = {
+    text: (c: CanvasRenderingContext2D) => () => {
+        const sketch = defaultSketches['text'];
 
-        c.beginPath();
-        c.fillText(sketch.text, sketch.x, sketch.y + textAdjust);
+        const draw = () => {
+            c.fillStyle = sketch.textFill;
+            c.font = `${sketch.fontSize}px ${sketch.font}`;
+            c.textAlign = sketch.textAlign;
+            c.textBaseline = sketch.textBaseLine;
+
+            c.beginPath();
+            c.fillText(sketch.text, sketch.x, sketch.y + textAdjust);
+        };
+
+        return {draw, sketch};
     },
-    textPointer: (c: CanvasRenderingContext2D, sketch: BaseSketchWithType['textPointer']) => () => {
-        c.fillStyle = sketch.textFill;
-        c.font = `${sketch.fontSize}px ${sketch.font}`;
-        c.textAlign = sketch.textAlign;
-        c.textBaseline = sketch.textBaseLine;
+    rect: (c: CanvasRenderingContext2D) => () => {
+        const sketch = defaultSketches['rect'];
 
-        c.beginPath();
-        c.fillText(sketch.text, sketch.x, sketch.y + textAdjust);
+        const draw = () => {
+            c.fillStyle = sketch.fill;
+            c.strokeStyle = sketch.stroke;
 
-        c.beginPath();
-        c.fillStyle = sketch.fill;
-        c.arc(sketch.x, sketch.y, sketch.radius, 0, Math.PI * 2);
-        c.fill();
+            c.beginPath();
+            c.rect(sketch.x, sketch.y, sketch.w, sketch.h);
+            c.fill();
+            c.stroke();
+        };
+
+        return {draw, sketch};
     },
+    circle: (c: CanvasRenderingContext2D) => () => {
+        const sketch = defaultSketches['circle'];
+
+        const draw = () => {
+            c.fillStyle = sketch.fill;
+            c.strokeStyle = sketch.stroke;
+
+            c.beginPath();
+            c.arc(sketch.x, sketch.y, sketch.radius, 0, Math.PI * 2);
+            c.fill();
+            c.stroke();
+        };
+
+        return {draw, sketch};
+    },
+};
+
+export const entitySketches = (context: CanvasRenderingContext2D, engine: Engine) => {
+    const entity = createEntity(context, engine, defaultSketchesDraw);
+    const createDraw = <T extends string>(type: T) => {
+        //
+    };
+
+    entity.create('text', {textFill: '#00f'});
 };

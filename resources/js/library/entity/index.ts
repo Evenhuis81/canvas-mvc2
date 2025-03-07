@@ -1,82 +1,54 @@
-// import {getProperties, uid} from 'library/helpers';
-import {BaseSketch, BaseSketchWithType, createBaseSketchDraw, createSketch} from './sketch';
-import type {Engine} from 'library/types/engine';
-// import type {EntityConfig, EntityGeneric} from 'library/types/entity';
-// import type {LibraryInput} from 'library/types/input';
-// import type {EntityShapeMap, EntitySketchMap} from 'library/types/entitySketch';
-// import initialize from './initialize';
-// import {createVisual} from './visual';
+import {Engine} from 'library/types/engine';
+import {defaultSketchesDraw} from './sketch';
 
-export type BaseEntity = <T extends keyof BaseSketch>(
-    type: T,
-    sketchConfig?: Partial<BaseSketch[T]>,
+export const createEntity = <
+    // T extends string,
+    Sketch extends object,
+    Types extends string,
+    Sketches extends Record<Types, Sketch>,
+    Draws extends {
+        [K in keyof Sketches]: (context: CanvasRenderingContext2D) => {draw: () => void; sketch: Sketches[Types]};
+    },
+>(
+    context: CanvasRenderingContext2D,
+    engine: Engine,
+    draws: Draws,
+    // sketches: Sketches,
 ) => {
-    sketch: BaseSketchWithType[T];
-    show: () => void;
-};
+    const create = <Type extends Types>(sketchType: Type, sketchConfig: Partial<Sketches[Type]>) => {
+        const {draw, sketch} = draws[sketchType](context);
 
-export const createBaseEntity =
-    (context: CanvasRenderingContext2D, engine: Engine): BaseEntity =>
-    <T extends keyof BaseSketch>(type: T, sketchConfig?: Partial<BaseSketch[T]>) => {
-        const sketch = createSketch(type, sketchConfig);
+        const sketchFinal = Object.assign(sketch, sketchConfig);
 
-        const show = () => {
-            const sketchDraw = createBaseSketchDraw(context, type);
+        // for (const key in sketchConfig) {
+        //     sketch[key]
+        // }
 
-            engine.setDraw({fn: sketchDraw.fn});
-        };
+        // const sketchFinal = {...sketches[sketchType], ...sketchConfig, type: sketchType};
+
+        // const show = () => {
+        // (context, {...sketches[sketchType], type: sketchType})
+        // const sketchDraw = draws[sketchType];
+
+        // sketchDraw(context, sketches[sketchType]);
+        //         engine.setDraw({fn: sketchDraw.fn});
+        // };
 
         return {
-            sketch,
-            show,
+            sketch: sketchFinal,
+            // show,
         };
-
-        // <K extends keyof EntityShapeMap>(type: K, options?: EntityConfig<K>): EntityGeneric<K> => {
-        // const {generalProperties, visualProperties, listeners, shape} = extractOptions(options);
-
-        // const eventHandler = createEventHandler(input, sketch, listeners);
-
-        // const {getVisual, getDraw} = createVisual(
-        //     generalProperties,
-        //     sketch as EntitySketchMap['button'],
-        //     input,
-        //     context,
-        // );
-
-        // const {start, end} = initialize(generalProperties, visualProperties, eventHandler, engine, getVisual, getDraw);
-
-        // return {
-        //     addListener: eventHandler.addListener,
-        //     removeListener: eventHandler.removeListener,
-        //     // setVisual,
-        //     // setDraw,
-        //     start,
-        //     end,
-        //     sketch,
-        // };
     };
+};
 
-// TODO::Set defaults for options if no options is provided (empty entity default)
-// const extractOptions = <K extends keyof EntityShapeMap>(options: EntityConfig<K> = {}) => {
-//     const {id, name, disabled, show, showDelay, clicked, hideDelay, ...rest} = {
-//         id: options.id ?? `entity-${uid()}`,
-//         ...getProperties(defaultProperties, options),
+//     const show = () => {
+//         const sketchDraw = createBaseSketchDraw(context, type);
+
+//         engine.setDraw({fn: sketchDraw.fn});
 //     };
 
-//     const generalProperties = {id, name, disabled, show, showDelay, clicked, hideDelay};
-
-//     const {start, end, animation, hover, startSpeed, endSpeed, ...rest2} = rest;
-
-//     const visualProperties = {
-//         start,
-//         end,
-//         animation,
-//         hover,
-//         startSpeed,
-//         endSpeed,
+//     return {
+//         sketch,
+//         show,
 //     };
-
-//     const {listeners, sketch: shape} = rest2;
-
-//     return {generalProperties, visualProperties, listeners, shape};
-// };
+// }
