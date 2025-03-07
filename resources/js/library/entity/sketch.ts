@@ -1,6 +1,6 @@
-import {Circle, Fill, Pos, Rect, Stroke, Text} from 'library/types/shapes';
+import type {Circle, Fill, Pos, Rect, Stroke, Text} from 'library/types/shapes';
+import type {Engine} from 'library/types/engine';
 import {createEntity} from '.';
-import {Engine} from 'library/types/engine';
 
 const defaultSketches: DefaultSketches = {
     text: {
@@ -39,8 +39,11 @@ type DefaultSketches = {
 };
 
 let textAdjust = 1.5;
-export const defaultSketchAndDraw = {
-    text: (c: CanvasRenderingContext2D) => () => {
+
+const defaultSketchAndDraw: {
+    [K in keyof DefaultSketches]: (c: CanvasRenderingContext2D) => {draw: () => void; sketch: DefaultSketches[K]};
+} = {
+    text: c => {
         const sketch = defaultSketches['text'];
 
         const draw = () => {
@@ -55,7 +58,7 @@ export const defaultSketchAndDraw = {
 
         return {draw, sketch};
     },
-    rect: (c: CanvasRenderingContext2D) => () => {
+    rect: c => {
         const sketch = defaultSketches['rect'];
 
         const draw = () => {
@@ -70,7 +73,7 @@ export const defaultSketchAndDraw = {
 
         return {draw, sketch};
     },
-    circle: (c: CanvasRenderingContext2D) => () => {
+    circle: c => {
         const sketch = defaultSketches['circle'];
 
         const draw = () => {
@@ -88,12 +91,31 @@ export const defaultSketchAndDraw = {
 };
 
 export const entitySketches = (context: CanvasRenderingContext2D, engine: Engine) => {
-    const drawAndSketch = <T extends keyof DefaultSketches>(
+    // const drawAndSketch = <T extends keyof DefaultSketches>(type: T, context: CanvasRenderingContext2D): {draw: () => void; sketch: DefaultSketches[T]} => {
+    const createSketchAndDraw = <T extends keyof DefaultSketches>(
         type: T,
-        context: CanvasRenderingContext2D,
-    ) => {draw: () => void; sketch: Sketches[T]}
+    ): {draw: () => void; sketch: DefaultSketches[T]} => {
+        return defaultSketchAndDraw[type](context);
+    };
+    // {draw: () => void; sketch: Sketches[T]}
 
-    const entity = createEntity<DefaultSketches>(context, engine, drawAndSketch);
+    // const returnObj = {
+    //     draw: () => {},
+    //     sketch: defaultSketches[type],
+    // }
+
+    // const returnObj = defaultSketchAndDraw[type](context);
+
+    // return returnObj;
+    // };
+
+    const entity = createEntity<{
+        [K in keyof DefaultSketches]: (c: CanvasRenderingContext2D) => {draw: () => void; sketch: DefaultSketches[K]};
+    }>(context, engine, createSketchAndDraw);
+
+    entity.create();
+
+    // const cc = entity.create('text');
     // const createDraw = <T extends string>(type: T) => {
     //     //
     // };
