@@ -39,7 +39,7 @@ type DefaultSketches = {
 };
 
 let textAdjust = 1.5;
-export const defaultSketchesDraw = {
+export const defaultSketchAndDraw = {
     text: (c: CanvasRenderingContext2D) => () => {
         const sketch = defaultSketches['text'];
 
@@ -88,10 +88,14 @@ export const defaultSketchesDraw = {
 };
 
 export const entitySketches = (context: CanvasRenderingContext2D, engine: Engine) => {
-    const entity = createEntity(context, engine, defaultSketchesDraw);
-    const createDraw = <T extends string>(type: T) => {
-        //
-    };
+    const drawAndSketch = <T extends keyof DefaultSketches>(
+        type: T,
+        context: CanvasRenderingContext2D,
+    ) => {draw: () => void; sketch: Sketches[T]}
 
-    entity.create('text', {textFill: '#00f'});
+    const entity = createEntity<DefaultSketches>(context, engine, drawAndSketch);
+    // const createDraw = <T extends string>(type: T) => {
+    //     //
+    // };
+    // entity.create('text', {textFill: '#00f'});
 };
