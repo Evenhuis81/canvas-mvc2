@@ -53,7 +53,8 @@ export default () => {
     const library = initialize(libraryID, libraryOptions);
     const {canvas, context, engine, entity} = library;
 
-    const cc = entity.create(context, engine);
+    const cc = entity.create('circle');
+    const rr = entity.create('rect');
 
     setScreen(canvas);
 
@@ -72,18 +73,18 @@ export default () => {
         text: 'Test',
     };
 
-    const t1 = baseEntity('textPointer', text1);
+    // const t1 = baseEntity('textPointer', text1);
 
-    t1.sketch.type;
+    // t1.sketch.type;
 
-    const textUpdate = () => {
-        t1.sketch.x = charProps.scaledX;
-        t1.sketch.y = charProps.scaledY;
-    };
+    // const textUpdate = () => {
+    //     t1.sketch.x = charProps.scaledX;
+    //     t1.sketch.y = charProps.scaledY;
+    // };
 
-    t1.show();
+    // t1.show();
 
-    engine.setUpdate({fn: textUpdate});
+    // engine.setUpdate({fn: textUpdate});
 
     library.runEngine();
 };

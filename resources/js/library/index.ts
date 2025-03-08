@@ -1,13 +1,12 @@
 import {createContainer, getCanvas, getContainer, getContext2D, setCanvas} from './canvas';
 import {createEngine} from './engine';
 import {getCanvasInput} from 'library/input';
-// import {getSV} from './views/sv';
-import getCreateEntity from './entity/full-entity';
 import {getCreatePhaser} from 'games/phaser/phaser'; // refactor to default export in style of 'createEntity'
 import {uid} from './helpers';
 import type {Engine} from './types/engine';
 import type {LibraryOptions} from './types';
-import {createEntity} from './entity/sketch';
+import {createEntity} from './entity/sketch/index';
+import {createDrawings, shapes} from './entity/sketch/incoming';
 
 export const initialize = (id?: string | number, options?: Partial<LibraryOptions>) => {
     const libraryID = id ?? uid();
@@ -27,8 +26,6 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
 
     const input = getCanvasInput(canvas);
 
-    // const sv = getSV(context, engine);
-
     const stats = createLibraryStatistics(engine, context, options?.engineStats);
 
     return {
@@ -40,7 +37,7 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
         runEngine: () => engine.run(),
         runEngineOnce: () => engine.runOnce(),
         createPhaser: () => getCreatePhaser(engine),
-        createEntity: createEntity(context, engine),
+        entity: createEntity(context, engine, shapes, createDrawings),
     };
 };
 

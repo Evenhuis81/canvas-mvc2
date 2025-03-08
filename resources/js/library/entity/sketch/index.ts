@@ -1,24 +1,37 @@
 import {Engine} from 'library/types/engine';
-import {EntitySketch, Shapes} from './types';
 
-export const createEntity = <EntityShapes extends object>(
+type EntitySketch<O extends object, T extends keyof O> = {
+    draw: (c: CanvasRenderingContext2D, dT: DOMHighResTimeStamp) => void;
+    shape: O[T];
+};
+
+export const createEntity = <EntityShapes extends {[K in keyof EntityShapes]: object}>(
     context: CanvasRenderingContext2D,
     engine: Engine,
-    createShape: () => void,
-    createDraw: () => void,
+    shapes: EntityShapes,
+    drawings: (
+        context: CanvasRenderingContext2D,
+        shapes: EntityShapes,
+    ) => {[K in keyof EntityShapes]: () => () => void},
 ) => {
-    // export type EntitySketch<S extends keyof Shapes> = {
-    //     draw: (c: CanvasRenderingContext2D, dT: DOMHighResTimeStamp) => void;
-    //     shape: Shapes[S];
-    // };
-    const createSketch = <T extends keyof Shapes>(type: T, context: CanvasRenderingContext2D): EntitySketch<T> => {
-        const shape = createShape();
-        const draw = createDraw(context, shape);
+    const drawing = drawings(context, shapes);
+
+    const create = <T extends keyof EntityShapes>(
+        type: T,
+        shapeConfig?: Partial<EntityShapes[T]>,
+    ): EntitySketch<EntityShapes, T> => {
+        const shape = shapes[type];
+
+        Object.assign(shape, shapeConfig);
 
         return {
-            draw: draw[type],
-            shape: shape[type],
+            draw: drawing[type](),
+            shape,
         };
+    };
+
+    return {
+        create,
     };
 };
 
