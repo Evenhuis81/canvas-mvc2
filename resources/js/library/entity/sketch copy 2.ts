@@ -108,11 +108,12 @@ export const entitySketches = (context: CanvasRenderingContext2D, engine: Engine
 
     // return returnObj;
     // };
-    // [K in keyof DefaultSketches]: (c: CanvasRenderingContext2D) => {draw: () => void; sketch: DefaultSketches[K]}
 
-    const entity = createEntity(context, engine, defaultSketches);
+    const entity = createEntity<{
+        [K in keyof DefaultSketches]: (c: CanvasRenderingContext2D) => {draw: () => void; sketch: DefaultSketches[K]};
+    }>(context, engine, createSketchAndDraw);
 
-    const cc = entity.create('circle');
+    entity.create();
 
     // const cc = entity.create('text');
     // const createDraw = <T extends string>(type: T) => {

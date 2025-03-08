@@ -1,23 +1,26 @@
 import {Engine} from 'library/types/engine';
 
-// drawAndSketch:
-
-export const createEntity = <SketchesAndDraws extends object>(
+export const createEntity = <Sketches extends object>(
     context: CanvasRenderingContext2D,
     engine: Engine,
-    createSketchAndDraw: <T extends keyof SketchesAndDraws>(type: T) => {draw: () => void; sketch: SketchesAndDraws[T]},
+    sketches: Sketches,
+    createDraw: <T extends keyof Sketches>(typ: T) => {draw: () => void; sketc: Sketches[T]},
 ) => {
-    const create = <Type extends keyof SketchesAndDraws>(type: Type) => {
-        const {draw, sketch: newSketch} = createSketchAndDraw(type);
+    const create = <Type extends keyof Sketches>(
+        type: Type,
+        sketchConfig?: Partial<Sketches[Type]>,
+    ): {show: () => void; sketch: Sketches[Type]} => {
+        // const {draw, sketch: newSketch} = createSketchAndDraw(type);
+        const newSketch = sketches[type];
 
-        // const sketchFinal = Object.assign(sketch, sketchConfig);
-        // const sketchFinal = {...sketches[sketchType], ...sketchConfig, type: sketchType};
+        // const sketchFinal = Object.assign(newSketch, sketchConfig);
+        const sketchFinal = {...sketches[type], ...sketchConfig, type};
 
-        engine.setDraw({fn: draw});
+        // engine.setDraw({fn: draw});
 
         return {
-            sketch: newSketch,
-            draw,
+            sketch: sketchFinal,
+            show: () => {},
         };
     };
 
