@@ -7,6 +7,7 @@ import {getCreatePhaser} from 'games/phaser/phaser'; // refactor to default expo
 import {uid} from './helpers';
 import type {Engine} from './types/engine';
 import type {LibraryOptions} from './types';
+import {createEntity} from './entity/sketch';
 
 export const initialize = (id?: string | number, options?: Partial<LibraryOptions>) => {
     const libraryID = id ?? uid();
@@ -30,8 +31,6 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
 
     const stats = createLibraryStatistics(engine, context, options?.engineStats);
 
-    // resources[libraryID] = {id: libraryID, canvas, context, engine, container, sv, input, stats};
-
     return {
         stats,
         canvas,
@@ -41,7 +40,7 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
         runEngine: () => engine.run(),
         runEngineOnce: () => engine.runOnce(),
         createPhaser: () => getCreatePhaser(engine),
-        createEntity: getCreateEntity(context, engine, input),
+        createEntity: createEntity(context, engine),
     };
 };
 

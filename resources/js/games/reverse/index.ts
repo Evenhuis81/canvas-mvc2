@@ -1,8 +1,6 @@
 import {initialize} from 'library/index';
 import {createCharacter} from './character';
 import {createLevel} from './level';
-import {createBaseEntity} from 'library/entity';
-import {BaseSketch} from 'library/entity/sketch';
 
 const libraryID = 'reverse';
 
@@ -53,9 +51,9 @@ const setScreen = (canvas: HTMLCanvasElement) => {
 
 export default () => {
     const library = initialize(libraryID, libraryOptions);
-    const {canvas, context, engine} = library;
+    const {canvas, context, engine, entity} = library;
 
-    const baseEntity = createBaseEntity(context, engine);
+    const cc = entity.create(context, engine);
 
     setScreen(canvas);
 
@@ -63,7 +61,6 @@ export default () => {
 
     const {update: levelUpdate, draw: levelDraw} = createLevel(context, world);
 
-    // TODO::Create full engineDraw/update (+id, name)
     engine.setUpdate({fn: levelUpdate});
     engine.setDraw({fn: levelDraw});
 

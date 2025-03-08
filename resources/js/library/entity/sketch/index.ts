@@ -1,87 +1,43 @@
-import {initialize} from 'library/index';
+import {Engine} from 'library/types/engine';
+import {EntitySketch, Shapes} from './types';
 
-const createShapes = () => ({
-    rect: {
-        x: 200,
-        y: 200,
-        w: 50,
-        h: 25,
-        fill: '#c22',
-    },
-    circle: {
-        x: 300,
-        y: 150,
-        r: 30,
-        fill: '#c90',
-    },
-});
+export const createEntity = <EntityShapes extends object>(
+    context: CanvasRenderingContext2D,
+    engine: Engine,
+    createShape: () => void,
+    createDraw: () => void,
+) => {
+    // export type EntitySketch<S extends keyof Shapes> = {
+    //     draw: (c: CanvasRenderingContext2D, dT: DOMHighResTimeStamp) => void;
+    //     shape: Shapes[S];
+    // };
+    const createSketch = <T extends keyof Shapes>(type: T, context: CanvasRenderingContext2D): EntitySketch<T> => {
+        const shape = createShape();
+        const draw = createDraw(context, shape);
 
-const createDraws = (c: CanvasRenderingContext2D, s: Shapes) => ({
-    rect: () => {
-        const shape = s['rect'];
-
-        const draw = () => {
-            c.fillStyle = shape.fill;
-
-            // c.beginPath();
-            c.rect(shape.x, shape.y, shape.w, shape.h);
-            c.fill();
+        return {
+            draw: draw[type],
+            shape: shape[type],
         };
-
-        return draw;
-    },
-    circle: () => {
-        const shape = s['circle'];
-
-        const draw = () => {
-            c.fillStyle = shape.fill;
-
-            // c.beginPath();
-            c.arc(shape.x, shape.y, shape.r, 0, Math.PI * 2);
-            c.fill();
-        };
-
-        return draw;
-    },
-});
-
-type Rect = {
-    x: number;
-    y: number;
-    w: number;
-    h: number;
-    fill: string;
-};
-
-type Circle = {
-    x: number;
-    y: number;
-    r: number;
-    fill: string;
-};
-
-type EntitySketch<S extends keyof Shapes> = {
-    draw: (c: CanvasRenderingContext2D, dT: DOMHighResTimeStamp) => void;
-    shape: Shapes[S];
-};
-
-type Shapes = {
-    circle: Circle;
-    rect: Rect;
-};
-
-const createSketch = <T extends keyof Shapes>(type: T, c: CanvasRenderingContext2D): EntitySketch<T> => {
-    const shapes = createShapes();
-    const draws = createDraws(c, shapes);
-
-    return {
-        draw: draws[type],
-        shape: shapes[type],
     };
 };
 
-const library = initialize();
+// const create = <Type extends keyof Sketches>(
+//     type: Type,
+//     sketchConfig?: Partial<Sketches[Type]>,
+// ): {show: () => void; sketch: Sketches[Type]} => {
+//     // const {draw, sketch: newSketch} = createSketchAndDraw(type);
+//     const newSketch = sketches[type];
 
-const rr = createSketch('rect', library.context);
+//     // const sketchFinal = Object.assign(newSketch, sketchConfig);
+//     const sketchFinal = {...sketches[type], ...sketchConfig, type};
 
-const cc = createSketch('circle', library.context);
+//     // engine.setDraw({fn: draw});
+
+//     return {
+//         sketch: sketchFinal,
+//         show: () => {},
+//     };
+// };
+
+// return {create};

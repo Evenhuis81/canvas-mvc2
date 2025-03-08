@@ -3,8 +3,8 @@ import {Engine} from 'library/types/engine';
 export const createEntity = <Sketches extends object>(
     context: CanvasRenderingContext2D,
     engine: Engine,
-    sketches: Sketches,
-    createDraw: <T extends keyof Sketches>(typ: T) => {draw: () => void; sketc: Sketches[T]},
+    // sketches: Sketches,
+    // createDraw: <T extends keyof Sketches>(typ: T) => {draw: () => void; sketc: Sketches[T]},
 ) => {
     const create = <Type extends keyof Sketches>(
         type: Type,
