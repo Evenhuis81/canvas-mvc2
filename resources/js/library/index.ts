@@ -6,7 +6,6 @@ import {uid} from './helpers';
 import type {Engine} from './types/engine';
 import type {LibraryOptions} from './types';
 import {createEntity} from './entity/sketch/index';
-import {createDrawings, shapes} from './entity/sketch/incoming';
 
 export const initialize = (id?: string | number, options?: Partial<LibraryOptions>) => {
     const libraryID = id ?? uid();
@@ -37,7 +36,7 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
         runEngine: () => engine.run(),
         runEngineOnce: () => engine.runOnce(),
         createPhaser: () => getCreatePhaser(engine),
-        entity: createEntity(context, engine, shapes, createDrawings),
+        entity: createEntity(context, engine, options?.shapes, options?.drawings),
     };
 };
 

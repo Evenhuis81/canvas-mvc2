@@ -13,7 +13,7 @@ type Circle = {
     fill: string;
 };
 
-type Shapes = {
+export type Shapes = {
     circle: Circle;
     rect: Rect;
 };
@@ -37,7 +37,7 @@ export const shapes: Shapes = {
 
 type Drawings = {[K in keyof Shapes]: () => () => void};
 
-type CreateDrawings = (ctx: CanvasRenderingContext2D, shapes: Shapes) => Drawings;
+export type CreateDrawings = (ctx: CanvasRenderingContext2D, shapes: Shapes) => Drawings;
 
 // This uses reference to shapes created by createSketch, check for reference keep
 export const createDrawings: CreateDrawings = (ctx, shapes) => ({

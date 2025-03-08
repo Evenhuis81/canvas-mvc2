@@ -8,26 +8,28 @@ type EntitySketch<O extends object, T extends keyof O> = {
 export const createEntity = <EntityShapes extends {[K in keyof EntityShapes]: object}>(
     context: CanvasRenderingContext2D,
     engine: Engine,
-    shapes: EntityShapes,
-    drawings: (
+    shapes?: EntityShapes,
+    drawings?: (
         context: CanvasRenderingContext2D,
         shapes: EntityShapes,
     ) => {[K in keyof EntityShapes]: () => () => void},
 ) => {
-    const drawing = drawings(context, shapes);
-
     const create = <T extends keyof EntityShapes>(
         type: T,
         shapeConfig?: Partial<EntityShapes[T]>,
-    ): EntitySketch<EntityShapes, T> => {
-        const shape = shapes[type];
+    ): EntitySketch<EntityShapes, T> | undefined => {
+        if (drawings && shapes) {
+            const shape = shapes[type];
 
-        Object.assign(shape, shapeConfig);
+            Object.assign(shape, shapeConfig);
 
-        return {
-            draw: drawing[type](),
-            shape,
-        };
+            return {
+                draw: drawings(context, shapes)[type](),
+                shape,
+            };
+        }
+
+        return;
     };
 
     return {
