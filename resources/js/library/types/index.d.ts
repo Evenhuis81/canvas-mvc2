@@ -2,7 +2,7 @@ import {Engine} from './engine';
 import {CreateEntity} from './entity';
 import {Phaser} from 'games/phaser/types';
 import {LibraryInput} from './input';
-import {Shapes} from 'library/entity/sketch/incoming';
+// import {Shapes} from 'library/entity/sketch/incoming';
 
 export type KeyWithCallback<A extends object> = {
     [K in keyof A]: [K, (evt: A[K]) => void];
@@ -54,8 +54,8 @@ export interface LibraryOptions extends CanvasOptions {
     dualView: boolean;
     // statistics: Partial<StatisticOptions>;
     engineStats: boolean;
-    shapes: Shapes;
-    drawings: (context: CanvasRenderingContext2D, shapes: Shapes) => {[K in keyof {}]: () => () => void};
+    // shapes: Shapes;
+    // drawings: (context: CanvasRenderingContext2D, shapes: Shapes) => {[K in keyof {}]: () => () => void};
 }
 
 export interface DualViewProperties {
