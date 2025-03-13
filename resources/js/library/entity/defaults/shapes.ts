@@ -13,8 +13,8 @@ export const defaultShapes: ShapeMap = {
         fill: '#c90',
     },
     text: {
-        x: 400,
-        y: 100,
+        x: 10,
+        y: 10,
         text: 'Entity Text',
         textFill: '#fff',
         font: 'monospace',
