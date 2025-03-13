@@ -29,9 +29,9 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
 
     const stats = createLibraryStatistics(engine, context, options?.engineStats);
 
-    const tv = getTV(context, input);
+    // const tv = getTV(context, input);
 
-    console.log(tv);
+    // console.log(tv);
 
     return {
         stats,

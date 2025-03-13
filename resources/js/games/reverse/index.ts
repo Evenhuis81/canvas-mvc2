@@ -1,7 +1,7 @@
 import {initialize} from 'library/index';
 import {createCharacter} from './character';
 import {createLevel} from './level';
-import {CreateElement, Entity} from 'library/entity';
+import {CreateElement} from 'library/entity';
 import {ShapeMap} from 'library/entity/defaults/shapes';
 import {Engine} from 'library/types/engine';
 import {level1} from './level1';
@@ -61,7 +61,7 @@ export default () => {
 
     const {draw: charDraw, update: charUpdate, char: charProps} = createCharacter(libraryID, world, context, canvas);
 
-    const {update: levelUpdate, draw: levelDraw, levelOffset} = createLevel(context, world);
+    const {update: levelUpdate, draw: levelDraw} = createLevel(context, world);
 
     engine.setUpdate({fn: levelUpdate});
     engine.setUpdate(charUpdate);
@@ -69,14 +69,14 @@ export default () => {
     engine.setDraw({fn: levelDraw});
     engine.setDraw(charDraw);
 
-    showStats(charProps, levelOffset, entity.create, engine);
+    showStats(charProps, world, entity.create, engine);
 
     library.runEngine();
 };
 
 const showStats = (
     charProps: {scaledW: number; scaledH: number; scaledX: number; scaledY: number; pos: {x: number; y: number}},
-    levelOffset: {x: number},
+    world: WorldProperties,
     createElement: CreateElement<ShapeMap>,
     engine: Engine,
 ) => {
@@ -122,9 +122,10 @@ const showStats = (
             tt.sketch.text = `scaledX: ${charProps.scaledX.toFixed(2)}, scaledY: ${charProps.scaledY.toFixed(2)}`;
             ttE.sketch.text = `levelOffset: ${levelOffset.x.toFixed(2)}`;
             tt2.sketch.text = `X: ${charProps.pos.x.toFixed(1)}, Y: ${charProps.pos.y.toFixed(1)}`;
-            tt3.sketch.text = `levelCharacter: ${
-                level1[Math.floor(charProps.pos.y)][Math.floor(charProps.pos.x) - levelOffset.x]
-            }`;
+            // tt3.sketch.text = `levelCharacter: ${
+            //     level1[Math.floor(charProps.pos.y)][Math.floor(charProps.pos.x + levelOffset.x)]
+            // }`;
+            tt3.sketch.text = `worldXoffset: ${world.xOffset}`;
             cc.sketch.x = charProps.scaledX;
             cc.sketch.y = charProps.scaledY;
             tt.sketch.x = charProps.scaledX;
