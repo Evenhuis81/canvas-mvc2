@@ -1,7 +1,9 @@
 import {EntitySketch} from 'library/types/entity';
 import {ShapeMap, defaultShapes} from './shapes';
 
-export const createDefaultSketch = (ctx: CanvasRenderingContext2D) => ({
+export const createDefaultSketch = (
+    ctx: CanvasRenderingContext2D,
+): {[K in keyof ShapeMap]: () => EntitySketch<ShapeMap[K]>} => ({
     rect: () => {
         const shape = {...defaultShapes['rect']};
 

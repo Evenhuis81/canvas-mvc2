@@ -1,6 +1,9 @@
 import {initialize} from 'library/index';
 import {createCharacter} from './character';
 import {createLevel} from './level';
+import {CreateElement, Entity} from 'library/entity';
+import {ShapeMap} from 'library/entity/defaults/shapes';
+import {Engine} from 'library/types/engine';
 
 const libraryID = 'reverse';
 
@@ -59,43 +62,13 @@ export default () => {
 
     const {update: levelUpdate, draw: levelDraw, levelOffset} = createLevel(context, world);
 
-    const cc = entity.create('circle', {
-        x: charProps.scaledX + charProps.scaledW / 2,
-        y: charProps.scaledY + charProps.scaledH / 2,
-        r: 5,
-        fill: '#f66',
-    });
-
-    const tt = entity.create('text', {
-        text: `scaledX: ${charProps.scaledX}, scaledY: ${charProps.scaledY}`,
-        x: charProps.scaledX + charProps.scaledW / 2,
-        y: charProps.scaledY + charProps.scaledH / 2,
-        textAlign: 'end',
-        textBaseLine: 'top',
-    });
-
-    const tt2 = entity.create('text', {text: `levelOffset: ${levelOffset.x.toFixed(2)}`, textAlign: 'start'});
-
     engine.setUpdate({fn: levelUpdate});
     engine.setUpdate(charUpdate);
-    engine.setUpdate({
-        fn: () => {
-            // tt.sketch.text = levelOffset.x.toFixed(2).toString();
-            tt.sketch.text = `scaledX: ${charProps.scaledX.toFixed(2)}, scaledY: ${charProps.scaledY.toFixed(2)}`;
-            tt2.sketch.text = `levelOffset: ${levelOffset.x.toFixed(2)}`;
-            cc.sketch.x = charProps.scaledX + charProps.scaledW / 2;
-            cc.sketch.y = charProps.scaledY + charProps.scaledH / 2;
-            tt.sketch.x = charProps.scaledX + charProps.scaledW / 2;
-            tt.sketch.y = charProps.scaledY + charProps.scaledH / 2;
-        },
-    });
 
     engine.setDraw({fn: levelDraw});
     engine.setDraw(charDraw);
 
-    cc.show();
-    tt.show();
-    tt2.show();
+    showStats(charProps, levelOffset, entity.create, engine);
 
     // const text1 = {
     //     pos: charProps.pos,
@@ -103,4 +76,55 @@ export default () => {
     // };
 
     library.runEngine();
+};
+
+const showStats = (
+    charProps: {scaledW: number; scaledH: number; scaledX: number; scaledY: number; pos: {x: number; y: number}},
+    levelOffset: {x: number},
+    createElement: CreateElement<ShapeMap>,
+    engine: Engine,
+) => {
+    const cc = createElement('circle', {
+        x: charProps.scaledX + charProps.scaledW / 2,
+        y: charProps.scaledY + charProps.scaledH / 2,
+        r: 5,
+        fill: '#f66',
+    });
+
+    const tt = createElement('text', {
+        text: `scaledX: ${charProps.scaledX}, scaledY: ${charProps.scaledY}`,
+        x: charProps.scaledX + charProps.scaledW / 2,
+        y: charProps.scaledY + charProps.scaledH / 2,
+        textAlign: 'end',
+        textBaseLine: 'top',
+    });
+
+    const tt2 = createElement('text', {
+        text: `X: ${charProps.pos.x}, Y: ${charProps.pos.y}`,
+        x: charProps.scaledX + charProps.scaledW / 2,
+        y: charProps.scaledY + charProps.scaledH / 2 + 15,
+        textAlign: 'end',
+        textBaseLine: 'top',
+    });
+
+    const ttE = createElement('text', {text: `levelOffset: ${levelOffset.x.toFixed(2)}`, textAlign: 'start'});
+
+    engine.setUpdate({
+        fn: () => {
+            tt.sketch.text = `scaledX: ${charProps.scaledX.toFixed(2)}, scaledY: ${charProps.scaledY.toFixed(2)}`;
+            ttE.sketch.text = `levelOffset: ${levelOffset.x.toFixed(2)}`;
+            tt2.sketch.text = `X: ${charProps.pos.x.toFixed(1)}, Y: ${charProps.pos.y.toFixed(1)}`;
+            cc.sketch.x = charProps.scaledX;
+            cc.sketch.y = charProps.scaledY;
+            tt.sketch.x = charProps.scaledX;
+            tt.sketch.y = charProps.scaledY;
+            tt2.sketch.x = charProps.scaledX;
+            tt2.sketch.y = charProps.scaledY + 15;
+        },
+    });
+
+    cc.show();
+    tt.show();
+    tt2.show();
+    ttE.show();
 };
