@@ -13,14 +13,14 @@ export const entity = <EntityShapes extends {[K in keyof EntityShapes]: EntitySh
     const create = <T extends keyof EntityShapes>(
         type: T,
         shapeConfig?: Partial<EntityShapes[T]>,
-    ): {sketch: EntitySketch<EntityShapes[T]>; show: () => void} => {
+    ): {sketch: EntityShapes[T]; show: () => void} => {
         const sketch = sketchMap[type]();
 
         Object.assign(sketch.shape, shapeConfig);
 
         const show = () => engine.setDraw({fn: sketch.draw});
 
-        return {sketch, show};
+        return {sketch: sketch.shape, show};
     };
 
     return {

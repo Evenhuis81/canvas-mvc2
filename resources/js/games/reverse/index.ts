@@ -77,7 +77,9 @@ export default () => {
 
     engine.setUpdate({
         fn: () => {
-            tt.sketch.shape.text = levelOffset.x.toFixed(2).toString();
+            tt.sketch.text = levelOffset.x.toFixed(2).toString();
+            tt.sketch.x = charProps.scaledX;
+            tt.sketch.y = charProps.scaledY;
         },
     });
 

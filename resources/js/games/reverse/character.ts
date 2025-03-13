@@ -1,4 +1,3 @@
-import {BaseEntity} from 'library/entity';
 import {WorldProperties} from '.';
 
 export const createCharacter = (
