@@ -5,7 +5,8 @@ import {getCreatePhaser} from 'games/phaser/phaser'; // refactor to default expo
 import {uid} from './helpers';
 import type {Engine} from './types/engine';
 import type {LibraryOptions} from './types';
-import {createEntity} from './entity/sketch/index';
+import {entity} from './entity';
+import {createDefaultSketch} from './entity/defaults';
 
 export const initialize = (id?: string | number, options?: Partial<LibraryOptions>) => {
     const libraryID = id ?? uid();
@@ -36,7 +37,7 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
         runEngine: () => engine.run(),
         runEngineOnce: () => engine.runOnce(),
         createPhaser: () => getCreatePhaser(engine),
-        entity: createEntity(context, engine, options?.shapes, options?.drawings),
+        entity: entity(context, engine, createDefaultSketch),
     };
 };
 

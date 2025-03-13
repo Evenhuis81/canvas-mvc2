@@ -161,6 +161,11 @@ export type Visuals = Partial<VisualsComplete> & {
     draw: Visual<'draw'>;
 };
 
+export type EntitySketch<Sketch extends object> = {
+    draw: (timestamp: DOMHighResTimeStamp) => void;
+    shape: Sketch;
+};
+
 // export type EngineState = 'on' | 'off'; // Future states: 'pauze' | 'continue';
 
 // export type SetEngine = (type: VisualType, state: EngineState) => void;

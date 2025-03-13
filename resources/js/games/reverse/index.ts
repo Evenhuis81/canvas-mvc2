@@ -55,12 +55,19 @@ export default () => {
 
     const cc = entity.create('circle');
     const rr = entity.create('rect');
+    const cc2 = entity.create('circle', {x: 400, y: 110, r: 5, fill: '#f66'});
+    const tt = entity.create('text');
+
+    cc.show();
+    cc2.show();
+    rr.show();
+    tt.show();
 
     setScreen(canvas);
 
     const {draw: charDraw, update: charUpdate, char: charProps} = createCharacter(libraryID, world, context, canvas);
 
-    const {update: levelUpdate, draw: levelDraw} = createLevel(context, world);
+    const {update: levelUpdate, draw: levelDraw, levelOffset} = createLevel(context, world);
 
     engine.setUpdate({fn: levelUpdate});
     engine.setDraw({fn: levelDraw});
@@ -68,23 +75,16 @@ export default () => {
     engine.setUpdate(charUpdate);
     engine.setDraw(charDraw);
 
-    const text1 = {
-        pos: charProps.pos,
-        text: 'Test',
-    };
+    engine.setUpdate({
+        fn: () => {
+            tt.sketch.shape.text = levelOffset.x.toFixed(2).toString();
+        },
+    });
 
-    // const t1 = baseEntity('textPointer', text1);
-
-    // t1.sketch.type;
-
-    // const textUpdate = () => {
-    //     t1.sketch.x = charProps.scaledX;
-    //     t1.sketch.y = charProps.scaledY;
+    // const text1 = {
+    //     pos: charProps.pos,
+    //     text: 'Test',
     // };
-
-    // t1.show();
-
-    // engine.setUpdate({fn: textUpdate});
 
     library.runEngine();
 };

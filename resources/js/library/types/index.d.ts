@@ -2,7 +2,23 @@ import {Engine} from './engine';
 import {CreateEntity} from './entity';
 import {Phaser} from 'games/phaser/types';
 import {LibraryInput} from './input';
-// import {Shapes} from 'library/entity/sketch/incoming';
+
+/**
+ * Removes undefined from tuples
+ */
+export type FilterUndefined<T extends unknown[]> = T extends []
+    ? []
+    : T extends [infer H, ...infer R]
+    ? H extends undefined
+        ? FilterUndefined<R>
+        : [H, ...FilterUndefined<R>]
+    : T;
+
+type DeepPartial<T> = T extends object
+    ? {
+          [P in keyof T]?: DeepPartial<T[P]>;
+      }
+    : T;
 
 export type KeyWithCallback<A extends object> = {
     [K in keyof A]: [K, (evt: A[K]) => void];
@@ -44,7 +60,6 @@ interface CanvasOptions {
     contextMenu: boolean;
 }
 
-// export interface LibraryOptions<S extends {[K in keyof T]: object}> extends CanvasOptions {
 export interface LibraryOptions extends CanvasOptions {
     containerID: string;
     center: boolean;
@@ -52,10 +67,8 @@ export interface LibraryOptions extends CanvasOptions {
     clear: boolean;
     dotMiddle: boolean;
     dualView: boolean;
-    // statistics: Partial<StatisticOptions>;
     engineStats: boolean;
-    // shapes: Shapes;
-    // drawings: (context: CanvasRenderingContext2D, shapes: Shapes) => {[K in keyof {}]: () => () => void};
+    // statistics: Partial<StatisticOptions>;
 }
 
 export interface DualViewProperties {
@@ -68,11 +81,4 @@ export interface DualViewProperties {
     transitioning: boolean;
     onActivation: () => void;
     onDeactivation: () => void;
-}
-
-interface CRUD {
-    create: () => void;
-    read: () => void;
-    update: () => void;
-    delete: () => void;
 }

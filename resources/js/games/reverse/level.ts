@@ -6,7 +6,7 @@ export const createLevel = (ctx: CanvasRenderingContext2D, world: WorldPropertie
         x: 0,
     };
     const update = () => {
-        // levelOffset.x -= 0.05;
+        levelOffset.x -= 0.01;
     };
 
     const draw = () => {
@@ -17,10 +17,8 @@ export const createLevel = (ctx: CanvasRenderingContext2D, world: WorldPropertie
         for (let y = 0; y < 9; y++) {
             for (let x = 0; x < 32; x++) {
                 if (level1[y][x] === 'X') {
-                    // console.log(levelOffset.x); // TODO::Add to statistics
-
-                    // tv.dotRect(x, y, w, h);
                     ctx.beginPath();
+
                     ctx.roundRect(
                         0.2 + x * world.unitScale + world.xOffset + levelOffset.x,
                         0.2 + y * world.unitScale + world.yOffset,
@@ -28,11 +26,12 @@ export const createLevel = (ctx: CanvasRenderingContext2D, world: WorldPropertie
                         world.unitScale * 0.6,
                         3,
                     );
+
                     ctx.stroke();
                 }
             }
         }
     };
 
-    return {update, draw};
+    return {update, draw, levelOffset};
 };
