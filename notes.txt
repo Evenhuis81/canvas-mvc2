@@ -16,6 +16,8 @@
     -// TODO::Add to log system
 17. EngineRender.ts: move commented
 18. Next in getVisual should be optional and only set if post function is available
+19. LevelOffset is floating point, collision checks integer will not work;
+
 
 
 // Notes on sun @forum, 18-08-2024+:

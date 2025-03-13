@@ -6,11 +6,10 @@ export const createLevel = (ctx: CanvasRenderingContext2D, world: WorldPropertie
         x: 0,
     };
     const update = () => {
-        // levelOffset.x -= 0.01;
+        levelOffset.x -= 0.03;
     };
 
     const draw = () => {
-        // ctx.fillStyle = 'red';
         ctx.strokeStyle = '#ccc';
         ctx.lineWidth = 1;
 

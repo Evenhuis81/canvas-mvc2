@@ -4,6 +4,7 @@ import {createLevel} from './level';
 import {CreateElement, Entity} from 'library/entity';
 import {ShapeMap} from 'library/entity/defaults/shapes';
 import {Engine} from 'library/types/engine';
+import {level1} from './level1';
 
 const libraryID = 'reverse';
 
@@ -70,11 +71,6 @@ export default () => {
 
     showStats(charProps, levelOffset, entity.create, engine);
 
-    // const text1 = {
-    //     pos: charProps.pos,
-    //     text: 'Test',
-    // };
-
     library.runEngine();
 };
 
@@ -107,24 +103,42 @@ const showStats = (
         textBaseLine: 'top',
     });
 
+    const tt3 = createElement('text', {
+        text: `levelCharacter: ${level1[Math.floor(charProps.pos.y)][Math.floor(charProps.pos.x)]}`,
+        x: charProps.scaledX + charProps.scaledW / 2,
+        y: charProps.scaledY + charProps.scaledH / 2 - 15,
+        textAlign: 'end',
+        textBaseLine: 'top',
+    });
+
     const ttE = createElement('text', {text: `levelOffset: ${levelOffset.x.toFixed(2)}`, textAlign: 'start'});
+
+    const testArr: number[][] = [[1]];
+
+    console.log(testArr[Math.floor(0.2)][0]);
 
     engine.setUpdate({
         fn: () => {
             tt.sketch.text = `scaledX: ${charProps.scaledX.toFixed(2)}, scaledY: ${charProps.scaledY.toFixed(2)}`;
             ttE.sketch.text = `levelOffset: ${levelOffset.x.toFixed(2)}`;
             tt2.sketch.text = `X: ${charProps.pos.x.toFixed(1)}, Y: ${charProps.pos.y.toFixed(1)}`;
+            tt3.sketch.text = `levelCharacter: ${
+                level1[Math.floor(charProps.pos.y)][Math.floor(charProps.pos.x) - levelOffset.x]
+            }`;
             cc.sketch.x = charProps.scaledX;
             cc.sketch.y = charProps.scaledY;
             tt.sketch.x = charProps.scaledX;
             tt.sketch.y = charProps.scaledY;
             tt2.sketch.x = charProps.scaledX;
             tt2.sketch.y = charProps.scaledY + 15;
+            tt3.sketch.x = charProps.scaledX;
+            tt3.sketch.y = charProps.scaledY - 15;
         },
     });
 
     cc.show();
     tt.show();
     tt2.show();
+    tt3.show();
     ttE.show();
 };

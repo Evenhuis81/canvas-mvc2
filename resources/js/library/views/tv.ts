@@ -4,8 +4,9 @@
 import {getPaintMethods} from './paint';
 import {setTVEvents} from './input';
 import {vec, vector, vector2} from '../vector';
+import {LibraryInput} from 'library/types/input';
 
-export const getTV = (context: CanvasRenderingContext2D, input: Input) => {
+export const getTV = (context: CanvasRenderingContext2D, input: LibraryInput) => {
     const paintMethods = getPaintMethods(properties, methods, context);
 
     // Make optional
@@ -73,6 +74,8 @@ const zoomMechanic = {
         properties.scale.y *= properties.scaleFactor;
     },
 };
+
+type Zoom = 'in' | 'out';
 
 const zoom = (scalePos: Vector, type: Zoom) => {
     screen2World(scalePos.x, scalePos.y);

@@ -7,6 +7,7 @@ import type {Engine} from './types/engine';
 import type {LibraryOptions} from './types';
 import {entity} from './entity';
 import {createDefaultSketch} from './entity/defaults';
+import {getTV} from './views/tv';
 
 export const initialize = (id?: string | number, options?: Partial<LibraryOptions>) => {
     const libraryID = id ?? uid();
@@ -27,6 +28,10 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
     const input = getCanvasInput(canvas);
 
     const stats = createLibraryStatistics(engine, context, options?.engineStats);
+
+    const tv = getTV(context, input);
+
+    console.log(tv);
 
     return {
         stats,
