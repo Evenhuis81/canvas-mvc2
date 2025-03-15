@@ -1,10 +1,14 @@
+import {CreateElement, Entity} from 'library/entity';
 import {WorldProperties} from '.';
+import {level1} from './level1';
+import {ShapeMap} from 'library/entity/defaults/shapes';
 
 export const createCharacter = (
     id: string,
     world: WorldProperties,
     c: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement,
+    createElement: CreateElement<ShapeMap>,
 ) => {
     const char = {
         pos: {
@@ -24,10 +28,12 @@ export const createCharacter = (
             right: false,
         },
         face: 'up',
+        grounded: true,
         vx: 0.05,
         vy: 0.05,
         fill: '#009',
         // img: new Image(), // implement in a later stage
+        errorSet: false,
     };
 
     const draw = {
@@ -55,16 +61,45 @@ export const createCharacter = (
         c.lineTo(char.scaledX, char.scaledY); // -char.scaledH
     };
 
+    const colT = createElement('text', {
+        text: 'COLLIDE',
+        fontSize: 32,
+        textFill: '#f00',
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+    });
+
     const update = {
         id: `${id}-characterUpdate`,
         name: 'update character',
         fn: () => {
-            // char.y += char.vy;
+            // if (char.move.up) char.pos.y -= char.vy;
+            // if (char.move.down) char.pos.y += char.vy;
+            // if (char.move.left) char.pos.x -= char.vx;
+            // if (char.move.right) char.pos.x += char.vx;
 
-            if (char.move.up) char.pos.y -= char.vy;
-            if (char.move.down) char.pos.y += char.vy;
-            if (char.move.left) char.pos.x -= char.vx;
-            if (char.move.right) char.pos.x += char.vx;
+            if (!char.grounded) {
+                char.pos.y += char.vy;
+
+                if (
+                    char.face === 'down' &&
+                    level1[Math.floor(char.pos.y)][Math.floor(char.pos.x - world.xOffset)] === 'X'
+                ) {
+                    char.grounded = true;
+                    // char.face = 'down';
+                    char.pos.y = Math.floor(char.pos.y + 1);
+                } else if (
+                    char.face === 'up' &&
+                    level1[Math.floor(char.pos.y + 1)][Math.floor(char.pos.x - world.xOffset)] === 'X'
+                ) {
+                    char.grounded = true;
+                    // char.face = 'up';
+                    char.pos.y = Math.floor(char.pos.y);
+                    //         colT.show();
+                }
+
+                //     colT.hide();
+            }
 
             char.scaledX = char.pos.x * world.unitScale + world.xOffset;
             char.scaledY = char.pos.y * world.unitScale + world.yOffset;
@@ -74,22 +109,23 @@ export const createCharacter = (
     canvas.focus();
 
     canvas.addEventListener('keyup', ({code}) => {
-        // if (code === 'Space') {
-        //     char.vy = -char.vy;
-        //     char.face = char.vy > 0 ? 'up' : 'down';
-        // }
-        if (code === 'KeyW') char.move.up = false;
-        else if (code === 'KeyS') char.move.down = false;
-        else if (code === 'KeyA') char.move.left = false;
-        else if (code === 'KeyD') char.move.right = false;
+        if (code === 'Space' && char.grounded) {
+            char.vy = -char.vy;
+            char.grounded = false;
+            char.face = char.vy > 0 ? 'up' : 'down';
+        }
+        // if (code === 'KeyW') char.move.up = false;
+        // else if (code === 'KeyS') char.move.down = false;
+        // else if (code === 'KeyA') char.move.left = false;
+        // else if (code === 'KeyD') char.move.right = false;
     });
 
-    canvas.addEventListener('keydown', ({code}) => {
-        if (code === 'KeyW') char.move.up = true;
-        else if (code === 'KeyS') char.move.down = true;
-        else if (code === 'KeyA') char.move.left = true;
-        else if (code === 'KeyD') char.move.right = true;
-    });
+    // canvas.addEventListener('keydown', ({code}) => {
+    //     if (code === 'KeyW') char.move.up = true;
+    //     else if (code === 'KeyS') char.move.down = true;
+    //     else if (code === 'KeyA') char.move.left = true;
+    //     else if (code === 'KeyD') char.move.right = true;
+    // });
 
     return {draw, update, char};
 };

@@ -35,7 +35,7 @@ export const createDefaultSketch = (
 
         const draw = () => {
             ctx.fillStyle = shape.textFill;
-            ctx.font = `${shape.fontSize}px ${shape.font}`;
+            ctx.font = `${shape.fontWeight} ${shape.fontSize}px ${shape.font}`;
             ctx.textAlign = shape.textAlign;
             ctx.textBaseline = shape.textBaseLine;
 

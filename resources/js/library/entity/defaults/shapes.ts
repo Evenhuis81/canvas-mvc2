@@ -19,6 +19,7 @@ export const defaultShapes: ShapeMap = {
         textFill: '#fff',
         font: 'monospace',
         fontSize: 16,
+        fontWeight: 'normal',
         textAlign: 'center',
         textBaseLine: 'middle',
     },
@@ -53,6 +54,7 @@ type Text = {
     // textStroke: string;
     font: string;
     fontSize: number; // becomes part of font (string literal)
+    fontWeight: 'normal' | 'bold';
     textAlign: CanvasTextAlign;
     textBaseLine: CanvasTextBaseline;
 };

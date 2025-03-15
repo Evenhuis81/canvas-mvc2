@@ -11,7 +11,7 @@ type EngineFunctionMap = {
 
 type UpdateOrDraw<T extends keyof EngineFunction> = {
     type: T;
-    id: string | number;
+    id: string | number | symbol;
     name: string;
     fn: EngineFunction[T];
 };
@@ -34,8 +34,8 @@ export interface Engine {
     handle: EngineSet;
     setUpdate: (update: EngineUpdate) => void;
     setDraw: (draw: EngineDraw) => void;
-    removeUpdate: (id: number | string) => void;
-    removeDraw: (id: number | string) => void;
+    removeUpdate: (id: number | string | symbol) => void;
+    removeDraw: (id: number | string | symbol) => void;
     info: EngineInfo;
     createStats: (context: CanvasRenderingContext2D) => EngineStatistics;
 }

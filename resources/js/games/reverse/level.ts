@@ -3,7 +3,7 @@ import {level1} from './level1';
 
 export const createLevel = (ctx: CanvasRenderingContext2D, world: WorldProperties) => {
     const update = () => {
-        world.xOffset -= 0.01;
+        world.xOffset -= world.xSpeed * 2;
     };
 
     const draw = () => {
@@ -16,8 +16,8 @@ export const createLevel = (ctx: CanvasRenderingContext2D, world: WorldPropertie
                     ctx.beginPath();
 
                     ctx.roundRect(
-                        0.2 + (x + world.xOffset) * world.unitScale,
-                        0.2 + (y + world.yOffset) * world.unitScale,
+                        (x + 0.2 + world.xOffset) * world.unitScale,
+                        (y + 0.2 + world.yOffset) * world.unitScale,
                         world.unitScale * 0.6,
                         world.unitScale * 0.6,
                         3,

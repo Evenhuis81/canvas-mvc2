@@ -20,6 +20,8 @@ export type WorldProperties = {
     unitsY: number;
     xOffset: number;
     yOffset: number;
+    xSpeed: number;
+    ySpeed: number;
     xMargin: number;
     yMargin: number;
     unitScale: number; // unitLength & unitHeight is the same
@@ -31,6 +33,8 @@ const world: WorldProperties = {
     unitsY: 9,
     xOffset: 0,
     yOffset: 0,
+    xSpeed: 0.002,
+    ySpeed: 0,
     xMargin: 0,
     yMargin: 0,
     unitScale: 0,
@@ -38,7 +42,7 @@ const world: WorldProperties = {
 };
 
 const setScreen = (canvas: HTMLCanvasElement) => {
-    world.unitScale = canvas.width / world.unitsX / 2;
+    world.unitScale = canvas.width / world.unitsX;
 
     if (canvas.width > canvas.height) {
         world.display = 'portrait';
@@ -55,21 +59,32 @@ const setScreen = (canvas: HTMLCanvasElement) => {
 
 export default () => {
     const library = initialize(libraryID, libraryOptions);
-    const {canvas, context, engine, entity} = library;
+    const {canvas, context, engine, entity, input} = library;
 
     setScreen(canvas);
 
-    const {draw: charDraw, update: charUpdate, char: charProps} = createCharacter(libraryID, world, context, canvas);
+    const {
+        draw: charDraw,
+        update: charUpdate,
+        char: charProps,
+    } = createCharacter(libraryID, world, context, canvas, entity.create);
 
     const {update: levelUpdate, draw: levelDraw} = createLevel(context, world);
 
-    engine.setUpdate({fn: levelUpdate});
+    // engine.setUpdate({fn: levelUpdate});
     engine.setUpdate(charUpdate);
 
     engine.setDraw({fn: levelDraw});
     engine.setDraw(charDraw);
 
     showStats(charProps, world, entity.create, engine);
+
+    engine.setUpdate({
+        fn: () => {
+            if (input.keyboard.keyHeld['ArrowLeft']) world.xOffset -= 0.005;
+            // console.log(input.keyboard.keyHeld);
+        },
+    });
 
     library.runEngine();
 };
@@ -81,8 +96,8 @@ const showStats = (
     engine: Engine,
 ) => {
     const cc = createElement('circle', {
-        x: charProps.scaledX + charProps.scaledW / 2,
-        y: charProps.scaledY + charProps.scaledH / 2,
+        x: charProps.scaledX + charProps.scaledW / 2 + world.unitScale,
+        y: charProps.scaledY + charProps.scaledH / 2 + 1,
         r: 5,
         fill: '#f66',
     });
@@ -103,43 +118,41 @@ const showStats = (
         textBaseLine: 'top',
     });
 
-    const tt3 = createElement('text', {
-        text: `levelCharacter: ${level1[Math.floor(charProps.pos.y)][Math.floor(charProps.pos.x)]}`,
-        x: charProps.scaledX + charProps.scaledW / 2,
-        y: charProps.scaledY + charProps.scaledH / 2 - 15,
-        textAlign: 'end',
-        textBaseLine: 'top',
+    // const tt3 = createElement('text', {
+    //     text: `levelCharacter: ${level1[Math.floor(charProps.pos.y)][Math.floor(charProps.pos.x)]}`,
+    //     x: charProps.scaledX + charProps.scaledW / 2,
+    //     y: charProps.scaledY + charProps.scaledH / 2 - 15,
+    //     textAlign: 'end',
+    //     textBaseLine: 'top',
+    // });
+
+    const ttE = createElement('text', {text: `world offset X: ${world.xOffset.toFixed(2)}`, textAlign: 'start'});
+    const ttEE = createElement('text', {
+        text: `level char: ${level1[Math.floor(charProps.pos.y)][Math.floor(charProps.pos.x - world.xOffset)]}`,
+        textAlign: 'start',
+        y: 25,
     });
-
-    const ttE = createElement('text', {text: `levelOffset: ${levelOffset.x.toFixed(2)}`, textAlign: 'start'});
-
-    const testArr: number[][] = [[1]];
-
-    console.log(testArr[Math.floor(0.2)][0]);
 
     engine.setUpdate({
         fn: () => {
             tt.sketch.text = `scaledX: ${charProps.scaledX.toFixed(2)}, scaledY: ${charProps.scaledY.toFixed(2)}`;
-            ttE.sketch.text = `levelOffset: ${levelOffset.x.toFixed(2)}`;
+            ttE.sketch.text = `world Offset X: ${world.xOffset.toFixed(2)}`;
+            ttEE.sketch.text = `level char: ${
+                level1[Math.floor(charProps.pos.y)][Math.floor(charProps.pos.x - world.xOffset)]
+            }`;
             tt2.sketch.text = `X: ${charProps.pos.x.toFixed(1)}, Y: ${charProps.pos.y.toFixed(1)}`;
-            // tt3.sketch.text = `levelCharacter: ${
-            //     level1[Math.floor(charProps.pos.y)][Math.floor(charProps.pos.x + levelOffset.x)]
-            // }`;
-            tt3.sketch.text = `worldXoffset: ${world.xOffset}`;
-            cc.sketch.x = charProps.scaledX;
-            cc.sketch.y = charProps.scaledY;
+            cc.sketch.x = charProps.scaledX + world.unitScale;
+            cc.sketch.y = charProps.scaledY + world.unitScale;
             tt.sketch.x = charProps.scaledX;
             tt.sketch.y = charProps.scaledY;
             tt2.sketch.x = charProps.scaledX;
             tt2.sketch.y = charProps.scaledY + 15;
-            tt3.sketch.x = charProps.scaledX;
-            tt3.sketch.y = charProps.scaledY - 15;
         },
     });
 
     cc.show();
     tt.show();
     tt2.show();
-    tt3.show();
     ttE.show();
+    ttEE.show();
 };

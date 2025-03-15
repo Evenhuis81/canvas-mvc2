@@ -1,7 +1,7 @@
 import {Engine} from 'library/types/engine';
 import {EntitySketch} from 'library/types/entity';
 
-type Element<O extends object, K extends keyof O> = {sketch: O[K]; show: () => void};
+type Element<O extends object, K extends keyof O> = {sketch: O[K]; show: () => void; hide: () => void};
 
 export type CreateElement<Shapes extends {[K in keyof Shapes]: Shapes[K]}> = <T extends keyof Shapes>(
     type: T,
@@ -24,12 +24,28 @@ export const entity: Entity = (context, engine, createSketchMap) => {
     return {
         create: (type, shapeConfig?) => {
             const sketch = sketchMap[type]();
+            const id = Symbol();
+            let showing = false;
 
             Object.assign(sketch.shape, shapeConfig);
 
-            const show = () => engine.setDraw({fn: sketch.draw});
+            const show = () => {
+                if (showing) return;
 
-            return {sketch: sketch.shape, show};
+                showing = true;
+
+                engine.setDraw({fn: sketch.draw, id});
+            };
+
+            const hide = () => {
+                if (!showing) return;
+
+                showing = false;
+
+                engine.removeDraw(id);
+            };
+
+            return {sketch: sketch.shape, show, hide};
         },
     };
 };
