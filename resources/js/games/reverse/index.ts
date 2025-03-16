@@ -71,7 +71,7 @@ export default () => {
 
     const {update: levelUpdate, draw: levelDraw} = createLevel(context, world);
 
-    // engine.setUpdate({fn: levelUpdate});
+    engine.setUpdate({fn: levelUpdate});
     engine.setUpdate(charUpdate);
 
     engine.setDraw({fn: levelDraw});
@@ -85,6 +85,24 @@ export default () => {
             // console.log(input.keyboard.keyHeld);
         },
     });
+
+    // TODO::Make this convenient in input library
+    // if (char.move.up) char.pos.y -= char.vy;
+    // if (char.move.down) char.pos.y += char.vy;
+    // if (char.move.left) char.pos.x -= char.vx;
+    // if (char.move.right) char.pos.x += char.vx;
+
+    // canvas.addEventListener('keydown', ({code}) => {
+    //     if (code === 'KeyW') char.move.up = true;
+    //     else if (code === 'KeyS') char.move.down = true;
+    //     else if (code === 'KeyA') char.move.left = true;
+    //     else if (code === 'KeyD') char.move.right = true;
+    // });
+
+    // if (code === 'KeyW') char.move.up = false;
+    // else if (code === 'KeyS') char.move.down = false;
+    // else if (code === 'KeyA') char.move.left = false;
+    // else if (code === 'KeyD') char.move.right = false;
 
     library.runEngine();
 };
