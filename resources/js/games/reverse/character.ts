@@ -3,44 +3,30 @@ import type {ReverseLevel} from './level';
 
 export const createCharacter = (
     world: WorldProperties,
-    c: CanvasRenderingContext2D,
+    ctx: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement,
     level: ReverseLevel,
 ) =>
     // createElement: CreateElement<ShapeMap>,
     {
-        const getStartPos = () => {
-            let x = -1;
-            let y = -1;
+        const pos = level.startPos(level.map);
+        // needs checking if standing on ground for char.grounded
 
-            y = level.map.findIndex(levelY => {
-                const iX = levelY.findIndex(levelX => levelX === 'S');
+        if (pos.x === -1 || pos.y === -1) throw Error('Player Start Position not found on level map');
 
-                x = iX;
-
-                return iX !== -1;
-            });
-
-            return {x, y};
-        };
-
-        const pos = getStartPos();
-
-        console.log(pos);
+        // Positioning player in middle and shifting world view with same amount
+        const middleMapX = Math.floor(world.xUnits / 2);
+        const xDiff = middleMapX - pos.x;
+        world.xOffset += xDiff;
+        pos.x += xDiff;
 
         const char = {
-            scaledX: 7 * world.unitScale + world.xOffset,
-            scaledY: 2 * world.unitScale + world.yOffset,
+            scaledX: pos.x * world.unitScale,
+            scaledY: pos.y * world.unitScale,
             w: 1,
             scaledW: world.unitScale,
             h: 1,
             scaledH: world.unitScale,
-            move: {
-                up: false,
-                down: false,
-                left: false,
-                right: false,
-            },
             face: 'up',
             grounded: true,
             vx: 0.05,
@@ -49,55 +35,67 @@ export const createCharacter = (
             level,
         };
 
-        const setLevel = (lvl: ReverseLevel) => (char.level = lvl);
+        const setLevel = (lvl: ReverseLevel) => {
+            char.level = lvl;
+
+            const newStartPosition = level.startPos(level.map);
+
+            pos.x = newStartPosition.x;
+            pos.y = newStartPosition.y;
+
+            char.scaledX = pos.x * world.unitScale;
+            char.scaledY = pos.y * world.unitScale;
+
+            char.grounded = true; // needs checking if standing on ground
+        };
 
         const draw = {
             id: `reverse-character-draw`,
             name: 'Draw Character',
             fn: () => {
-                c.fillStyle = '#009';
+                ctx.fillStyle = '#009';
 
-                c.beginPath();
+                ctx.beginPath();
 
                 char.face === 'up' ? faceUp() : faceDown();
 
-                c.fill();
+                ctx.fill();
             },
         };
 
         const faceUp = () => {
-            c.moveTo(char.scaledX + char.scaledW / 2, char.scaledY);
-            c.lineTo(char.scaledX + char.scaledW, char.scaledY + char.scaledH);
-            c.lineTo(char.scaledX, char.scaledY + char.scaledH);
+            ctx.moveTo(char.scaledX + char.scaledW / 2, char.scaledY);
+            ctx.lineTo(char.scaledX + char.scaledW, char.scaledY + char.scaledH);
+            ctx.lineTo(char.scaledX, char.scaledY + char.scaledH);
         };
 
         const faceDown = () => {
-            c.moveTo(char.scaledX + char.scaledW / 2, char.scaledY + char.scaledH); //  + char.scaledH
-            c.lineTo(char.scaledX + char.scaledW, char.scaledY); // -char.scaledH
-            c.lineTo(char.scaledX, char.scaledY); // -char.scaledH
+            ctx.moveTo(char.scaledX + char.scaledW / 2, char.scaledY + char.scaledH); //  + char.scaledH
+            ctx.lineTo(char.scaledX + char.scaledW, char.scaledY); // -char.scaledH
+            ctx.lineTo(char.scaledX, char.scaledY); // -char.scaledH
         };
 
         const update = {
             id: `reverse-character-update`,
             name: 'Update Character',
             fn: () => {
-                // if (!char.grounded) {
-                //     pos.y += char.vy;
+                if (!char.grounded) {
+                    pos.y += char.vy;
 
-                //     if (
-                //         char.face === 'down' && // = going up
-                //         char.level.getTile(Math.floor(pos.x + world.xOffset + 0.9), Math.floor(pos.y)) === 'X'
-                //     ) {
-                //         char.grounded = true;
-                //         pos.y = Math.floor(pos.y + 1);
-                //     } else if (
-                //         char.face === 'up' && // = going down
-                //         char.level.getTile(Math.floor(pos.x + world.xOffset + 0.9), Math.floor(pos.y + 1)) === 'X'
-                //     ) {
-                //         char.grounded = true;
-                //         pos.y = Math.floor(pos.y);
-                //     }
-                // }
+                    //     if (
+                    //         char.face === 'down' && // = going up
+                    //         char.level.getTile(Math.floor(pos.x + world.xOffset + 0.9), Math.floor(pos.y)) === 'X'
+                    //     ) {
+                    //         char.grounded = true;
+                    //         pos.y = Math.floor(pos.y + 1);
+                    //     } else if (
+                    //         char.face === 'up' && // = going down
+                    //         char.level.getTile(Math.floor(pos.x + world.xOffset + 0.9), Math.floor(pos.y + 1)) === 'X'
+                    //     ) {
+                    //         char.grounded = true;
+                    //         pos.y = Math.floor(pos.y);
+                    //     }
+                }
 
                 // Side movement check, grounded not important
                 // if (
@@ -122,8 +120,6 @@ export const createCharacter = (
                 char.vy = -char.vy;
                 char.grounded = false;
                 char.face = char.vy > 0 ? 'up' : 'down';
-
-                console.log(char.face);
             }
         });
 

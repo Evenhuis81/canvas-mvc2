@@ -10,6 +10,7 @@ export type ReverseLevel = {
     height: number;
     getTile: (x: number, y: number) => string;
     setTile: (x: number, y: number, levelCharacter: string) => void;
+    startPos: (levelMap: LevelMap) => {x: number; y: number};
 };
 
 export const getLevel = (levelID: number): ReverseLevel => ({
@@ -28,6 +29,7 @@ export const getLevel = (levelID: number): ReverseLevel => ({
         if (x >= 0 && x < levels[levelID][0].length && y >= 0 && y < levels[levelID].length)
             levels[levelID][y][x] = levelCharacter;
     },
+    startPos: getStartPos,
 });
 
 export const createLevelDraw = (ctx: CanvasRenderingContext2D, world: WorldProperties, level: ReverseLevel) => ({
@@ -56,3 +58,18 @@ export const createLevelDraw = (ctx: CanvasRenderingContext2D, world: WorldPrope
         }
     },
 });
+
+const getStartPos = (levelMap: LevelMap) => {
+    let x = -1;
+    let y = -1;
+
+    y = levelMap.findIndex(levelY => {
+        const iX = levelY.findIndex(levelX => levelX === 'S');
+
+        x = iX;
+
+        return iX !== -1;
+    });
+
+    return {x, y};
+};

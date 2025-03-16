@@ -1,22 +1,24 @@
 import {initialize} from 'library/index';
 import {createCharacter} from './character';
 import {createLevelDraw, getLevel} from './level';
-import type {CreateElement} from 'library/entity';
-import type {ShapeMap} from 'library/entity/defaults/shapes';
-import type {Engine} from 'library/types/engine';
+import {LibraryOptions} from 'library/types';
+// import type {CreateElement} from 'library/entity';
+// import type {ShapeMap} from 'library/entity/defaults/shapes';
+// import type {Engine} from 'library/types/engine';
 
 const libraryID = 'reverse';
 
-const libraryOptions = {
+const libraryOptions: Partial<LibraryOptions> = {
     containerID: `${libraryID}-container`,
     full: true,
     clear: true,
     backgroundColor: '#000',
+    dotMiddle: true,
 };
 
 export type WorldProperties = {
-    unitsX: number;
-    unitsY: number;
+    xUnits: number;
+    yUnits: number;
     xOffset: number;
     yOffset: number;
     xSpeed: number;
@@ -28,8 +30,8 @@ export type WorldProperties = {
 };
 
 const world: WorldProperties = {
-    unitsX: 16,
-    unitsY: 9,
+    xUnits: 16,
+    yUnits: 9,
     xOffset: 0,
     yOffset: 0,
     xSpeed: 0.002,
@@ -41,12 +43,12 @@ const world: WorldProperties = {
 };
 
 const setScreen = (canvas: HTMLCanvasElement) => {
-    world.unitScale = canvas.width / world.unitsX;
+    world.unitScale = canvas.width / world.xUnits;
 
     if (canvas.width > canvas.height) {
         world.display = 'portrait';
 
-        world.yMargin = (canvas.height - world.unitScale * world.unitsY) / 2;
+        world.yMargin = (canvas.height - world.unitScale * world.yUnits) / 2;
 
         return;
     }
@@ -74,7 +76,7 @@ export default () => {
     } = createCharacter(world, context, canvas, level);
 
     const levelUpdate = () => {
-        world.xOffset -= world.xSpeed * 2;
+        // world.xOffset -= world.xSpeed * 2;
     };
 
     engine.setUpdate({fn: levelUpdate});
