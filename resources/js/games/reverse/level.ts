@@ -1,18 +1,45 @@
 import {WorldProperties} from '.';
-import {level1} from './level1';
+import {levels} from './levelMap';
 
-export const createLevel = (ctx: CanvasRenderingContext2D, world: WorldProperties) => {
-    const update = () => {
-        world.xOffset -= world.xSpeed * 2;
-    };
+type LevelMap = string[][];
 
-    const draw = () => {
+export type ReverseLevel = {
+    id: number;
+    map: LevelMap;
+    width: number;
+    height: number;
+    getTile: (x: number, y: number) => string;
+    setTile: (x: number, y: number, levelCharacter: string) => void;
+};
+
+export const getLevel = (levelID: number): ReverseLevel => ({
+    id: levelID,
+    map: levels[levelID],
+    width: levels[levelID][0].length,
+    height: levels[levelID].length,
+    getTile: (x, y) => {
+        if (x >= 0 && x < levels[levelID][0].length && y >= 0 && y < levels[levelID].length)
+            return levels[levelID][y][x];
+        return ' ';
+    },
+    setTile: (x, y, levelCharacter) => {
+        if (levelCharacter.length != 1) return;
+
+        if (x >= 0 && x < levels[levelID][0].length && y >= 0 && y < levels[levelID].length)
+            levels[levelID][y][x] = levelCharacter;
+    },
+});
+
+export const createLevelDraw = (ctx: CanvasRenderingContext2D, world: WorldProperties, level: ReverseLevel) => ({
+    id: level.id,
+    name: `level${level.id}-draw`,
+    fn: () => {
         ctx.strokeStyle = '#ccc';
         ctx.lineWidth = 1;
 
-        for (let y = 0; y < 9; y++) {
-            for (let x = 0; x < 32; x++) {
-                if (level1[y][x] === 'X') {
+        for (let y = 0; y < level.height; y++) {
+            for (let x = 0; x < level.width; x++) {
+                if (level.map[y][x] === 'X') {
                     ctx.beginPath();
 
                     ctx.roundRect(
@@ -27,7 +54,5 @@ export const createLevel = (ctx: CanvasRenderingContext2D, world: WorldPropertie
                 }
             }
         }
-    };
-
-    return {update, draw};
-};
+    },
+});

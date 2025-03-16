@@ -1,122 +1,149 @@
-import {CreateElement, Entity} from 'library/entity';
-import {WorldProperties} from '.';
-import {level1} from './level1';
-import {ShapeMap} from 'library/entity/defaults/shapes';
+import type {WorldProperties} from '.';
+import type {ReverseLevel} from './level';
 
 export const createCharacter = (
-    id: string,
     world: WorldProperties,
     c: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement,
-    createElement: CreateElement<ShapeMap>,
-) => {
-    const char = {
-        pos: {
-            x: 9, // adjust with worldSpeed
-            y: 7,
-        },
-        scaledX: 7 * world.unitScale + world.xOffset, // only a startposition, gets updated from character.update
-        scaledY: 2 * world.unitScale + world.yOffset,
-        w: 1,
-        scaledW: world.unitScale,
-        h: 1,
-        scaledH: world.unitScale,
-        move: {
-            up: false,
-            down: false,
-            left: false,
-            right: false,
-        },
-        face: 'up',
-        grounded: true,
-        vx: 0.05,
-        vy: 0.05,
-        fill: '#009',
-        // img: new Image(), // implement in a later stage
-        errorSet: false,
-    };
+    level: ReverseLevel,
+) =>
+    // createElement: CreateElement<ShapeMap>,
+    {
+        const getStartPos = () => {
+            let x = -1;
+            let y = -1;
 
-    const draw = {
-        id: `${id}-characterDraw`,
-        name: 'draw character',
-        fn: () => {
-            c.fillStyle = '#009';
+            y = level.map.findIndex(levelY => {
+                const iX = levelY.findIndex(levelX => levelX === 'S');
 
-            c.beginPath();
-            if (char.face === 'up') faceUp();
-            else faceDown();
-            c.fill();
-        },
-    };
+                x = iX;
 
-    const faceUp = () => {
-        c.moveTo(char.scaledX + char.scaledW / 2, char.scaledY);
-        c.lineTo(char.scaledX + char.scaledW, char.scaledY + char.scaledH);
-        c.lineTo(char.scaledX, char.scaledY + char.scaledH);
-    };
+                return iX !== -1;
+            });
 
-    const faceDown = () => {
-        c.moveTo(char.scaledX + char.scaledW / 2, char.scaledY + char.scaledH); //  + char.scaledH
-        c.lineTo(char.scaledX + char.scaledW, char.scaledY); // -char.scaledH
-        c.lineTo(char.scaledX, char.scaledY); // -char.scaledH
-    };
+            return {x, y};
+        };
 
-    // const colT = createElement('text', {
-    //     text: 'COLLIDE',
-    //     fontSize: 32,
-    //     textFill: '#f00',
-    //     x: canvas.width / 2,
-    //     y: canvas.height / 2,
-    // });
+        const pos = getStartPos();
 
-    const update = {
-        id: `${id}-characterUpdate`,
-        name: 'update character',
-        fn: () => {
-            //
-            if (!char.grounded) {
-                char.pos.y += char.vy;
+        console.log(pos);
 
-                // Mind the +1, if char is between tiles, it fails.
-                if (
-                    char.face === 'down' &&
-                    level1[Math.floor(char.pos.y)][Math.floor(char.pos.x - world.xOffset + 0.99)] === 'X'
-                ) {
-                    char.grounded = true;
-                    char.pos.y = Math.floor(char.pos.y + 0.99);
-                } else if (
-                    char.face === 'up' &&
-                    level1[Math.floor(char.pos.y + 1)][Math.floor(char.pos.x - world.xOffset + 0.99)] === 'X'
-                ) {
-                    char.grounded = true;
-                    char.pos.y = Math.floor(char.pos.y);
-                }
+        const char = {
+            scaledX: 7 * world.unitScale + world.xOffset,
+            scaledY: 2 * world.unitScale + world.yOffset,
+            w: 1,
+            scaledW: world.unitScale,
+            h: 1,
+            scaledH: world.unitScale,
+            move: {
+                up: false,
+                down: false,
+                left: false,
+                right: false,
+            },
+            face: 'up',
+            grounded: true,
+            vx: 0.05,
+            vy: 0.05,
+            fill: '#009',
+            level,
+        };
+
+        const setLevel = (lvl: ReverseLevel) => (char.level = lvl);
+
+        const draw = {
+            id: `reverse-character-draw`,
+            name: 'Draw Character',
+            fn: () => {
+                c.fillStyle = '#009';
+
+                c.beginPath();
+
+                char.face === 'up' ? faceUp() : faceDown();
+
+                c.fill();
+            },
+        };
+
+        const faceUp = () => {
+            c.moveTo(char.scaledX + char.scaledW / 2, char.scaledY);
+            c.lineTo(char.scaledX + char.scaledW, char.scaledY + char.scaledH);
+            c.lineTo(char.scaledX, char.scaledY + char.scaledH);
+        };
+
+        const faceDown = () => {
+            c.moveTo(char.scaledX + char.scaledW / 2, char.scaledY + char.scaledH); //  + char.scaledH
+            c.lineTo(char.scaledX + char.scaledW, char.scaledY); // -char.scaledH
+            c.lineTo(char.scaledX, char.scaledY); // -char.scaledH
+        };
+
+        const update = {
+            id: `reverse-character-update`,
+            name: 'Update Character',
+            fn: () => {
+                // if (!char.grounded) {
+                //     pos.y += char.vy;
+
+                //     if (
+                //         char.face === 'down' && // = going up
+                //         char.level.getTile(Math.floor(pos.x + world.xOffset + 0.9), Math.floor(pos.y)) === 'X'
+                //     ) {
+                //         char.grounded = true;
+                //         pos.y = Math.floor(pos.y + 1);
+                //     } else if (
+                //         char.face === 'up' && // = going down
+                //         char.level.getTile(Math.floor(pos.x + world.xOffset + 0.9), Math.floor(pos.y + 1)) === 'X'
+                //     ) {
+                //         char.grounded = true;
+                //         pos.y = Math.floor(pos.y);
+                //     }
+                // }
+
+                // Side movement check, grounded not important
+                // if (
+                //     char.level.getTile(Math.floor(pos.x + world.xOffset + 0.9), Math.floor(pos.y)) === 'X' ||
+                //     char.level.getTile(Math.floor(pos.x + world.xOffset + 0.9), Math.floor(pos.y + 0.9)) === 'X'
+                // ) {
+                //     pos.x = Math.floor(pos.x + world.xOffset);
+                // }
+
+                char.scaledX = pos.x * world.unitScale;
+                char.scaledY = pos.y * world.unitScale;
+            },
+        };
+
+        // TODO::Fix this in library
+        canvas.focus();
+
+        canvas.addEventListener('keyup', ({code}) => {
+            if (code === 'Space' && char.grounded) {
+                // See comment in update, can be fixed here with a check before 'ungrounding'.
+                // Needs a different check while not gorounded? (depends on playstyle)
+                char.vy = -char.vy;
+                char.grounded = false;
+                char.face = char.vy > 0 ? 'up' : 'down';
+
+                console.log(char.face);
             }
+        });
 
-            // +1 will fail in certain situations
-            if (
-                level1[Math.floor(char.pos.y)][Math.floor(char.pos.x - world.xOffset + 0.99)] === 'X' ||
-                level1[Math.floor(char.pos.y + 0.99)][Math.floor(char.pos.x - world.xOffset + 0.99)] === 'X'
-            ) {
-                char.pos.x = Math.floor(char.pos.x + world.xOffset);
-            }
-
-            char.scaledX = char.pos.x * world.unitScale + world.xOffset;
-            char.scaledY = char.pos.y * world.unitScale + world.yOffset;
-        },
+        return {draw, update, char, pos, setLevel};
     };
 
-    canvas.focus();
+// TODO::Make this convenient in input library
+// if (char.move.up) char.pos.y -= char.vy;
+// if (char.move.down) char.pos.y += char.vy;
+// if (char.move.left) char.pos.x -= char.vx;
+// if (char.move.right) char.pos.x += char.vx;
 
-    canvas.addEventListener('keyup', ({code}) => {
-        if (code === 'Space' && char.grounded) {
-            // See comment in update, can be fixed here with a check before 'ungrounding'.
-            // Needs a different check while not gorounded? (depends on playstyle)
-            char.vy = -char.vy;
-            char.grounded = false;
-            char.face = char.vy > 0 ? 'up' : 'down';
-        }
-    });
+// canvas.addEventListener('keydown', ({code}) => {
+//     if (code === 'KeyW') char.move.up = true;
+//     else if (code === 'KeyS') char.move.down = true;
+//     else if (code === 'KeyA') char.move.left = true;
+//     else if (code === 'KeyD') char.move.right = true;
+// });
 
-    return {draw, update, char};
-};
+// if (code === 'KeyW') char.move.up = false;
+// else if (code === 'KeyS') char.move.down = false;
+// else if (code === 'KeyA') char.move.left = false;
+// else if (code === 'KeyD') char.move.right = false;

@@ -1,18 +1,17 @@
+import {BaseID} from '.';
+
 export type Statistic = {
-    id: string | number;
+    id: BaseID;
     name: string;
     fn: () => string;
 };
 
 export type StatisticResource = {
-    libraryID: string | number;
+    libraryID: BaseID;
     statistics: Statistic[];
     setDraw: Function;
     removeDraw: Function;
     active: boolean;
-    // canvas: HTMLCanvasElement;
-    // context: CanvasRenderingContext2D;
-    // engine: Engine;
 };
 
 export type StatProperties = {

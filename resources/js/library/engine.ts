@@ -1,5 +1,6 @@
 /* eslint-disable max-lines-per-function */
-import statistics from './statistics';
+import statistics from './stats/statistics';
+import {BaseID} from './types';
 import type {
     Engine,
     EngineDraw,
@@ -24,7 +25,7 @@ const engineProperties = {
     statsActive: false,
 };
 
-export const createEngine = (libraryID: number | string): Engine => {
+export const createEngine = (libraryID: BaseID): Engine => {
     const updateEvent = {...engineUpdateEvent};
     const properties = {...engineProperties};
     const functions: EngineFunctionMap = {
@@ -118,13 +119,13 @@ const createSetAndRemoveUpdatesAndDraws = (functions: EngineFunctionMap) => {
         return remove(updateOrDraw.id, updateOrDraw.type);
     };
 
-    const removeUpdate = (id: string | number) => remove(id, 'update');
-    const removeDraw = (id: string | number) => remove(id, 'draw');
+    const removeUpdate = (id: BaseID) => remove(id, 'update');
+    const removeDraw = (id: BaseID) => remove(id, 'draw');
 
-    const remove = (id: number | string, type: 'draw' | 'update') => {
+    const remove = (id: BaseID, type: 'draw' | 'update') => {
         const index = functions[type].findIndex(drawOrUpdate => drawOrUpdate.id === id);
 
-        if (index === -1) throw Error(`${type} with id '${id}' not found, nothing to remove`);
+        if (index === -1) throw Error(`${type} with id '${String(id)}' not found, nothing to remove`);
 
         functions[type].splice(index, 1);
     };
@@ -133,7 +134,6 @@ const createSetAndRemoveUpdatesAndDraws = (functions: EngineFunctionMap) => {
         setUpdate,
         setDraw,
         handle,
-        // remove,
         removeUpdate,
         removeDraw,
     };
@@ -155,12 +155,12 @@ const createInfo = (functions: EngineFunctionMap, updateEvent: EngineUpdateEvent
 });
 
 export const createEngineStats = (
-    libraryID: string | number,
+    libraryID: BaseID,
     {draws, updates}: EngineInfo,
     props: EngineProperties,
     context: CanvasRenderingContext2D,
     setDraw: (draw: EngineDraw) => void,
-    removeDraw: (id: number | string) => void,
+    removeDraw: (id: BaseID) => void,
 ) => {
     const setStatistics = () => {
         statistics.create(libraryID, context, setDraw, removeDraw);

@@ -1,4 +1,4 @@
-import {WithOptional} from '.';
+import {BaseID, WithOptional} from '.';
 
 type EngineFunction = {
     draw: (timeStamp: DOMHighResTimeStamp) => void;
@@ -11,7 +11,7 @@ type EngineFunctionMap = {
 
 type UpdateOrDraw<T extends keyof EngineFunction> = {
     type: T;
-    id: string | number | symbol;
+    id: BaseID;
     name: string;
     fn: EngineFunction[T];
 };
@@ -34,8 +34,8 @@ export interface Engine {
     handle: EngineSet;
     setUpdate: (update: EngineUpdate) => void;
     setDraw: (draw: EngineDraw) => void;
-    removeUpdate: (id: number | string | symbol) => void;
-    removeDraw: (id: number | string | symbol) => void;
+    removeUpdate: (id: BaseID) => void;
+    removeDraw: (id: BaseID) => void;
     info: EngineInfo;
     createStats: (context: CanvasRenderingContext2D) => EngineStatistics;
 }
@@ -48,11 +48,11 @@ export type EngineStatistics = {
 export type EngineInfo = {
     updates: {
         length: () => number;
-        ids: () => (string | number | undefined)[];
+        ids: () => (BaseID | undefined)[];
     };
     draws: {
         length: () => number;
-        ids: () => (string | number | undefined)[];
+        ids: () => (BaseID | undefined)[];
     };
     time: {
         passed: () => number;

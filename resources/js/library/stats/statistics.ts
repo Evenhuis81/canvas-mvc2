@@ -1,17 +1,18 @@
-import {uid} from './helpers';
-import {vector} from './vector';
-import {Statistic, StatisticResource} from './types/statistics';
-import {Engine, EngineDraw} from './types/engine';
+import {uid} from '../helpers';
+import {vector} from '../vector';
+import {Statistic, StatisticResource} from '../types/statistics';
+import {Engine, EngineDraw} from '../types/engine';
+import {BaseID} from 'library/types';
 
-const statisticsResource: Record<string | number, StatisticResource> = {};
-const toggleKey: Record<string | number, string> = {};
+const statisticsResource: Record<BaseID, StatisticResource> = {};
+const toggleKey: Record<BaseID, string> = {};
 
 export default {
     create: (
-        libraryID: number | string,
+        libraryID: BaseID,
         context: CanvasRenderingContext2D,
         setDraw: (draw: EngineDraw) => void,
-        removeDraw: (id: number | string) => void,
+        removeDraw: (id: BaseID) => void,
     ) => {
         const statistics: Statistic[] = [];
 
@@ -28,8 +29,8 @@ export default {
             active: false,
         };
     },
-    set: (id: number | string, stat: Statistic) => statisticsResource[id].statistics.push(stat),
-    setFn: (id: number | string, fn: () => string) => {
+    set: (id: BaseID, stat: Statistic) => statisticsResource[id].statistics.push(stat),
+    setFn: (id: BaseID, fn: () => string) => {
         const statID = uid();
 
         statisticsResource[id].statistics.push({
@@ -40,39 +41,39 @@ export default {
 
         return statID;
     },
-    remove: (id: string | number, statID: number | string) => {
+    remove: (id: BaseID, statID: BaseID) => {
         const index = statisticsResource[id].statistics.findIndex(stat => stat.id === statID);
 
-        if (index === -1) throw Error(`statistic with id '${id}' not found, nothing to remove`);
+        if (index === -1) throw Error(`statistic with id '${String(id)}' not found, nothing to remove`);
 
         statisticsResource[id].statistics.splice(index, 1);
     },
-    run: (id: number | string) => {
+    run: (id: BaseID) => {
         statisticsResource[id].active = true;
         statisticsResource[id].setDraw();
     },
-    halt: (id: string | number) => {
+    halt: (id: BaseID) => {
         // take screenshot and display as static image?
         statisticsResource[id].active = false;
         statisticsResource[id].removeDraw();
     },
-    destroy: (id: string | number) => {
+    destroy: (id: BaseID) => {
         statisticsResource[id].removeDraw();
 
         delete statisticsResource[id];
     },
-    setToggleKey: (id: string | number, key: string) => {
+    setToggleKey: (id: BaseID, key: string) => {
         toggleKey[id] = key;
     },
 };
 
-const createDraw = (libraryID: string | number, ctx: CanvasRenderingContext2D) => {
+const createDraw = (libraryID: BaseID, ctx: CanvasRenderingContext2D) => {
     const txtPosDefault = vector(10, 10);
     let txtPos = vector(10, 10);
     const txtMargin = 5;
 
     return {
-        id: `${libraryID}-statistic-draw`,
+        id: `${String(libraryID)}-statistic-draw`,
         name: `Statistic Show`,
         fn: () => {
             ctx.textAlign = 'center';
