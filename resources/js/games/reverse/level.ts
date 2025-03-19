@@ -21,13 +21,14 @@ export const getLevel = (levelID: number): ReverseLevel => ({
     getTile: (x, y) => {
         if (x >= 0 && x < levels[levelID][0].length && y >= 0 && y < levels[levelID].length)
             return levels[levelID][y][x];
+
         return ' ';
     },
-    setTile: (x, y, levelCharacter) => {
-        if (levelCharacter.length != 1) return;
+    setTile: (x, y, tileType) => {
+        if (tileType.length != 1) return;
 
         if (x >= 0 && x < levels[levelID][0].length && y >= 0 && y < levels[levelID].length)
-            levels[levelID][y][x] = levelCharacter;
+            levels[levelID][y][x] = tileType;
     },
     startPos: getStartPos,
 });

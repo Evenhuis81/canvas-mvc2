@@ -1,5 +1,8 @@
+import {Pos} from 'library/types/shapes';
 import type {WorldProperties} from '.';
 import type {ReverseLevel} from './level';
+
+const groundCheck = (pos: Pos, getTtile: (x: number, y: number) => string) => {};
 
 export const createCharacter = (
     world: WorldProperties,
@@ -10,15 +13,6 @@ export const createCharacter = (
     // createElement: CreateElement<ShapeMap>,
     {
         const pos = level.startPos(level.map);
-        // needs checking if standing on ground for char.grounded
-
-        if (pos.x === -1 || pos.y === -1) throw Error('Player Start Position not found on level map');
-
-        // Positioning player in middle and shifting world view with same amount
-        const middleMapX = Math.floor(world.xUnits / 2);
-        const xDiff = middleMapX - pos.x;
-        world.xOffset += xDiff;
-        pos.x += xDiff;
 
         const char = {
             scaledX: pos.x * world.unitScale,
@@ -28,17 +22,27 @@ export const createCharacter = (
             h: 1,
             scaledH: world.unitScale,
             face: 'up',
-            grounded: true,
+            grounded: groundCheck(pos, level.getTile),
             vx: 0.05,
             vy: 0.05,
             fill: '#009',
             level,
         };
 
+        if (pos.x === -1 || pos.y === -1) throw Error('Player Start Position not found on level map');
+
+        // Positioning player in middle and shifting world view with same amount
+        const middleMapX = Math.floor(world.xUnits / 2);
+        const xDiff = middleMapX - pos.x;
+        world.xOffset += xDiff;
+        pos.x += xDiff;
+
         const setLevel = (lvl: ReverseLevel) => {
             char.level = lvl;
 
             const newStartPosition = level.startPos(level.map);
+
+            // groundCheck()
 
             pos.x = newStartPosition.x;
             pos.y = newStartPosition.y;
@@ -109,9 +113,6 @@ export const createCharacter = (
                 char.scaledY = pos.y * world.unitScale;
             },
         };
-
-        // TODO::Fix this in library
-        canvas.focus();
 
         canvas.addEventListener('keyup', ({code}) => {
             if (code === 'Space' && char.grounded) {

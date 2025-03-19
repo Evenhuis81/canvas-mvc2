@@ -26,9 +26,6 @@ export const getCanvas = (options?: Partial<CanvasOptions>) => {
 
     const canvas = document.createElement('canvas');
 
-    canvas.tabIndex = count++; // no tabIndex = no focus, prevents listeners from working on canvas
-    canvas.focus();
-
     if (!canvasOptions.contextMenu) {
         canvas.addEventListener('contextmenu', e => {
             e.preventDefault();
@@ -85,4 +82,7 @@ export const setContainer = (canvas: HTMLCanvasElement, container: HTMLDivElemen
     container.style.justifyContent = 'center';
     container.style.alignItems = 'center';
     container.appendChild(canvas);
+
+    canvas.tabIndex = count++; // no tabIndex = no focus, prevents listeners from working on canvas
+    canvas.focus();
 };

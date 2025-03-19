@@ -1,7 +1,7 @@
 import {initialize} from 'library/index';
 import {createCharacter} from './character';
 import {createLevelDraw, getLevel} from './level';
-import {LibraryOptions} from 'library/types';
+import type {LibraryOptions} from 'library/types';
 // import type {CreateElement} from 'library/entity';
 // import type {ShapeMap} from 'library/entity/defaults/shapes';
 // import type {Engine} from 'library/types/engine';
@@ -62,6 +62,8 @@ export default () => {
     const library = initialize(libraryID, libraryOptions);
     const {canvas, context, engine, entity, input} = library;
 
+    console.log(entity);
+
     setScreen(canvas);
 
     const level = getLevel(1);
@@ -71,8 +73,8 @@ export default () => {
     const {
         draw: charDraw,
         update: charUpdate,
-        char: charProps,
-        pos: charPos,
+        // char: charProps,
+        // pos: charPos,
     } = createCharacter(world, context, canvas, level);
 
     const levelUpdate = () => {
@@ -89,7 +91,7 @@ export default () => {
 
     engine.setUpdate({
         fn: () => {
-            if (input.keyboard.keyHeld['ArrowLeft']) world.xOffset -= 0.005;
+            if (input.keyboard.keyHeld['ArrowLeft']) world.xOffset -= 0.01;
         },
     });
 
