@@ -1,4 +1,4 @@
-import {Circle, Rect} from './shapes';
+import {Circle, Pos, Rect} from './shapes';
 
 type InsideRect = (rect: Rect) => boolean;
 type InsideCircle = (circle: Circle) => boolean;
@@ -24,6 +24,7 @@ export type LibraryInput = {
     keyboard: {
         keyHeld: Record<string, boolean>;
     };
+    addMovement: (key: string, obj: Pos) => void;
     addListener: <K extends keyof InputListenerEventMap>(listener: InputListener<K>) => void;
     removeListener: (type: keyof InputListenerEventMap, id: symbol) => boolean;
 };

@@ -5,6 +5,8 @@ import type {LibraryOptions} from 'library/types';
 import type {CreateElement} from 'library/entity';
 import type {ShapeMap} from 'library/entity/defaults/shapes';
 import type {Engine} from 'library/types/engine';
+import {Pos} from 'library/types/shapes';
+import {LibraryInput} from 'library/types/input';
 
 const libraryID = 'reverse';
 
@@ -62,8 +64,6 @@ export default () => {
     const library = initialize(libraryID, libraryOptions);
     const {canvas, context, engine, entity, input} = library;
 
-    console.log(entity);
-
     setScreen(canvas);
 
     const level = getLevel(1);
@@ -77,11 +77,12 @@ export default () => {
         pos: charPos,
     } = createCharacter(world, context, canvas, level);
 
-    const levelUpdate = () => {
-        // world.xOffset -= world.xSpeed * 2;
-    };
+    activateMovement(charPos, input);
 
-    engine.setUpdate({fn: levelUpdate});
+    // engine.setUpdate({fn: () => {
+    // world.xOffset -= world.xSpeed * 2;
+    // }});
+
     engine.setUpdate(charUpdate);
 
     engine.setDraw(levelDraw);
@@ -97,6 +98,12 @@ export default () => {
     });
 
     library.runEngine();
+};
+
+const activateMovement = (pos: Pos, input: LibraryInput) => {
+    const keys = ['up', 'down', 'left', 'right'];
+
+    //
 };
 
 const showStats = (
@@ -122,13 +129,16 @@ const showStats = (
         text: 'Character Position',
     });
 
-    // char.face === 'down' &&
-    // char.level.getTile(Math.floor(pos.x), Math.floor(pos.y + 0.95)) === 'X'
-
     const face = createElement('text', {
         x: canvas.width / 2,
         y: 100,
         text: `face: ${charProps.face}`,
+    });
+
+    const worldOffsetX = createElement('text', {
+        x: canvas.width / 2,
+        y: 125,
+        text: `xOffset: ${world.xOffset.toFixed(2)}`,
     });
 
     const checkYLeft = createElement('pointer', {
@@ -155,6 +165,7 @@ const showStats = (
             // posPointer.sketch.text = `x: ${charProps.pos.x.toFixed(2)}, y: ${charProps.pos.y.toFixed(2)}`;
 
             face.sketch.text = `face: ${charProps.face}`;
+            worldOffsetX.sketch.text = `xOffset: ${world.xOffset.toFixed(2)}`;
 
             if (charProps.face === 'down') {
                 checkYLeft.sketch.x = charProps.scaledX;
@@ -188,6 +199,7 @@ const showStats = (
 
     // posPointer.show();
     face.show();
+    worldOffsetX.show();
     checkYLeft.show();
     checkYRight.show();
 };

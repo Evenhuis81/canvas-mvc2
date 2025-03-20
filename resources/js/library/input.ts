@@ -43,6 +43,10 @@ export const getCanvasInput = (canvas: HTMLCanvasElement) => {
     let canvasRect = canvas.getBoundingClientRect();
     const {mouse, keyboard, touch} = getInputProperties();
 
+    const addMovement = (key: string, obj: Pos) => {
+        //
+    };
+
     const addListener = <K extends keyof InputListenerEventMap>(listener: InputListener<K>) =>
         inputHandler[listener.type].push(listener);
 
@@ -160,6 +164,7 @@ export const getCanvasInput = (canvas: HTMLCanvasElement) => {
             insideShape: (shape: InputShape) => pressedInside(mouse, shape),
         }),
         touch: Object.assign(touch, {insideShape: (shape: InputShape) => pressedInside(touch, shape)}),
+        addMovement,
         addListener,
         removeListener,
         keyboard,
