@@ -79,34 +79,44 @@ export const createCharacter = (
             ctx.lineTo(char.scaledX, char.scaledY); // -char.scaledH
         };
 
+        let lastWorldOffsetX = world.xOffset;
+        let xInterval = 0;
+
         const update = {
             id: `reverse-character-update`,
             name: 'Update Character',
             fn: () => {
-                if (!char.grounded) {
-                    pos.y += char.vy;
+                xInterval = world.xOffset - lastWorldOffsetX;
+                lastWorldOffsetX = world.xOffset;
 
-                    if (
-                        char.face === 'down' &&
-                        char.level.getTile(Math.floor(pos.x), Math.floor(pos.y + 0.95)) === 'X'
-                    ) {
-                        char.grounded = true;
-                        char.face = 'up';
-                        pos.y = Math.floor(pos.y);
-                    } else if (char.face === 'up' && char.level.getTile(Math.floor(pos.x), Math.floor(pos.y)) === 'X') {
-                        char.grounded = true;
-                        char.face = 'down';
-                        pos.y = Math.floor(pos.y + 1);
-                    }
+                pos.y += char.vy;
+
+                // X Movement Check, before Y check, else it may 'snap' into unwanted position
+                if (
+                    char.level.getTile(Math.floor(pos.x + world.xOffset + 0.95), Math.floor(pos.y)) === 'X' ||
+                    char.level.getTile(Math.floor(pos.x + world.xOffset + 0.95), Math.floor(pos.y + 0.95)) === 'X'
+                ) {
+                    // This needs deltatime to be accurate
+                    // pos.x -= xInterval;
                 }
 
-                // Side movement check, independant of grounded
-                // if (
-                //     char.level.getTile(Math.floor(pos.x + world.xOffset + 0.9), Math.floor(pos.y)) === 'X' ||
-                //     char.level.getTile(Math.floor(pos.x + world.xOffset + 0.9), Math.floor(pos.y + 0.9)) === 'X'
-                // ) {
-                //     pos.x = Math.floor(pos.x + world.xOffset);
-                // }
+                if (
+                    char.level.getTile(Math.floor(pos.x - world.xOffset), Math.floor(pos.y + 0.95)) === 'X' ||
+                    char.level.getTile(Math.floor(pos.x - world.xOffset + 0.95), Math.floor(pos.y + 0.95)) === 'X'
+                ) {
+                    char.grounded = true;
+                    char.face = 'up';
+                    pos.y = Math.floor(pos.y);
+                }
+
+                if (
+                    char.level.getTile(Math.floor(pos.x - world.xOffset), Math.floor(pos.y)) === 'X' ||
+                    char.level.getTile(Math.floor(pos.x - world.xOffset + 0.95), Math.floor(pos.y)) === 'X'
+                ) {
+                    char.grounded = true;
+                    char.face = 'down';
+                    pos.y = Math.floor(pos.y + 1);
+                }
 
                 char.scaledX = pos.x * world.unitScale;
                 char.scaledY = pos.y * world.unitScale;

@@ -23,32 +23,45 @@ export const defaultShapes: ShapeMap = {
         textAlign: 'center',
         textBaseLine: 'middle',
     },
+    pointer: {
+        x: 200,
+        y: 100,
+        r: 10,
+        fill: '#f00',
+        text: 'Entity Pointer',
+        textFill: '#fff',
+        font: 'monospace',
+        fontSize: 16,
+        fontWeight: 'normal',
+        textAlign: 'start',
+        textBaseLine: 'middle',
+    },
+};
+
+type Pos = {
+    x: number;
+    y: number;
 };
 
 export type ShapeMap = {
-    rect: Rect;
-    circle: Circle;
-    text: Text;
+    rect: Rect & Pos;
+    circle: Circle & Pos;
+    text: Text & Pos;
+    pointer: Circle & Text & Pos;
 };
 
 type Rect = {
-    x: number;
-    y: number;
     w: number;
     h: number;
     fill: string;
 };
 
 type Circle = {
-    x: number;
-    y: number;
     r: number;
     fill: string;
 };
 
 type Text = {
-    x: number;
-    y: number;
     text: string;
     textFill: string;
     // textStroke: string;

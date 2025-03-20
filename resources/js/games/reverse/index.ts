@@ -1,6 +1,6 @@
 import {initialize} from 'library/index';
 import {createCharacter} from './character';
-import {createLevelDraw, getLevel} from './level';
+import {ReverseLevel, createLevelDraw, getLevel} from './level';
 import type {LibraryOptions} from 'library/types';
 import type {CreateElement} from 'library/entity';
 import type {ShapeMap} from 'library/entity/defaults/shapes';
@@ -87,11 +87,12 @@ export default () => {
     engine.setDraw(levelDraw);
     engine.setDraw(charDraw);
 
-    showStats(Object.assign(charProps, {pos: charPos}), world, entity.create, engine);
+    showStats(Object.assign(charProps, {pos: charPos}), world, entity.create, engine, canvas, level);
 
     engine.setUpdate({
         fn: () => {
             if (input.keyboard.keyHeld['ArrowLeft']) world.xOffset -= 0.05;
+            if (input.keyboard.keyHeld['ArrowRight']) world.xOffset += 0.05;
         },
     });
 
@@ -99,63 +100,134 @@ export default () => {
 };
 
 const showStats = (
-    charProps: {scaledW: number; scaledH: number; scaledX: number; scaledY: number; pos: {x: number; y: number}},
+    charProps: {
+        scaledW: number;
+        scaledH: number;
+        scaledX: number;
+        scaledY: number;
+        face: string;
+        pos: {x: number; y: number};
+    },
     world: WorldProperties,
     createElement: CreateElement<ShapeMap>,
     engine: Engine,
+    canvas: HTMLCanvasElement,
+    level: ReverseLevel,
 ) => {
-    const pos = createElement('circle', {
-        x: charProps.scaledX + charProps.scaledW / 2 + world.unitScale,
-        y: charProps.scaledY + charProps.scaledH / 2 + 1,
+    const posPointer = createElement('pointer', {
+        x: charProps.scaledX,
+        y: charProps.scaledY,
         r: 5,
-        fill: '#f66',
+        fill: '#f00',
+        text: 'Character Position',
     });
-    // const tt = createElement('text', {
-    //     text: `scaledX: ${charProps.scaledX}, scaledY: ${charProps.scaledY}`,
-    //     x: charProps.scaledX + charProps.scaledW / 2,
-    //     y: charProps.scaledY + charProps.scaledH / 2,
-    //     textAlign: 'end',
-    //     textBaseLine: 'top',
-    // });
-    // const tt2 = createElement('text', {
-    //     text: `X: ${charProps.pos.x}, Y: ${charProps.pos.y}`,
-    //     x: charProps.scaledX + charProps.scaledW / 2,
-    //     y: charProps.scaledY + charProps.scaledH / 2 + 15,
-    //     textAlign: 'end',
-    //     textBaseLine: 'top',
-    // });
-    // const tt3 = createElement('text', {
-    //     text: `levelCharacter: ${level1[Math.floor(charProps.pos.y)][Math.floor(charProps.pos.x)]}`,
-    //     x: charProps.scaledX + charProps.scaledW / 2,
-    //     y: charProps.scaledY + charProps.scaledH / 2 - 15,
-    //     textAlign: 'end',
-    //     textBaseLine: 'top',
-    // });
-    // const ttE = createElement('text', {text: `world offset X: ${world.xOffset.toFixed(2)}`, textAlign: 'start'});
-    // const ttEE = createElement('text', {
-    //     text: `level char: ${level1[Math.floor(charProps.pos.y)][Math.floor(charProps.pos.x - world.xOffset)]}`,
-    //     textAlign: 'start',
-    //     y: 25,
-    // });
-    // engine.setUpdate({
-    //     fn: () => {
-    //         tt.sketch.text = `scaledX: ${charProps.scaledX.toFixed(2)}, scaledY: ${charProps.scaledY.toFixed(2)}`;
-    //         ttE.sketch.text = `world Offset X: ${world.xOffset.toFixed(2)}`;
-    //         ttEE.sketch.text = `level char: ${
-    //             level1[Math.floor(charProps.pos.y)][Math.floor(charProps.pos.x - world.xOffset)]
-    //         }`;
-    //         tt2.sketch.text = `X: ${charProps.pos.x.toFixed(1)}, Y: ${charProps.pos.y.toFixed(1)}`;
-    //         cc.sketch.x = charProps.scaledX + world.unitScale;
-    //         cc.sketch.y = charProps.scaledY + world.unitScale;
-    //         tt.sketch.x = charProps.scaledX;
-    //         tt.sketch.y = charProps.scaledY;
-    //         tt2.sketch.x = charProps.scaledX;
-    //         tt2.sketch.y = charProps.scaledY + 15;
-    //     },
-    // });
-    // cc.show();
-    // tt.show();
-    // tt2.show();
-    // ttE.show();
-    // ttEE.show();
+
+    // char.face === 'down' &&
+    // char.level.getTile(Math.floor(pos.x), Math.floor(pos.y + 0.95)) === 'X'
+
+    const face = createElement('text', {
+        x: canvas.width / 2,
+        y: 100,
+        text: `face: ${charProps.face}`,
+    });
+
+    const checkYLeft = createElement('pointer', {
+        x: charProps.scaledX,
+        y: charProps.scaledY + world.unitScale / 2,
+        r: 5,
+        fill: '#0f0',
+        text: `create pointer checkYLeft`,
+        textAlign: 'end',
+    });
+
+    const checkYRight = createElement('pointer', {
+        x: charProps.scaledX + world.unitScale,
+        y: charProps.scaledY + world.unitScale / 2,
+        r: 5,
+        fill: '#00f',
+        text: `create pointer checkYRight`,
+    });
+
+    engine.setUpdate({
+        fn: () => {
+            // posPointer.sketch.x = charProps.scaledX;
+            // posPointer.sketch.y = charProps.scaledY;
+            // posPointer.sketch.text = `x: ${charProps.pos.x.toFixed(2)}, y: ${charProps.pos.y.toFixed(2)}`;
+
+            face.sketch.text = `face: ${charProps.face}`;
+
+            if (charProps.face === 'down') {
+                checkYLeft.sketch.x = charProps.scaledX;
+                checkYLeft.sketch.y = charProps.scaledY + world.unitScale;
+                checkYLeft.sketch.text = `Y left: ${level.getTile(
+                    Math.floor(charProps.pos.x),
+                    Math.floor(charProps.pos.y + 0.95),
+                )}`;
+                checkYRight.sketch.x = charProps.scaledX + world.unitScale;
+                checkYRight.sketch.y = charProps.scaledY + world.unitScale;
+                checkYRight.sketch.text = `Y right: ${level.getTile(
+                    Math.floor(charProps.pos.x + 0.95),
+                    Math.floor(charProps.pos.y + 0.95),
+                )}`;
+            } else {
+                checkYLeft.sketch.x = charProps.scaledX;
+                checkYLeft.sketch.y = charProps.scaledY;
+                checkYLeft.sketch.text = `Y left: ${level.getTile(
+                    Math.floor(charProps.pos.x),
+                    Math.floor(charProps.pos.y),
+                )}`;
+                checkYRight.sketch.x = charProps.scaledX + world.unitScale;
+                checkYRight.sketch.y = charProps.scaledY;
+                checkYRight.sketch.text = `Y right: ${level.getTile(
+                    Math.floor(charProps.pos.x + 0.95),
+                    Math.floor(charProps.pos.y),
+                )}`;
+            }
+        },
+    });
+
+    // posPointer.show();
+    face.show();
+    checkYLeft.show();
+    checkYRight.show();
 };
+
+//         tt.sketch.text = `scaledX: ${charProps.scaledX.toFixed(2)}, scaledY: ${charProps.scaledY.toFixed(2)}`;
+//         ttE.sketch.text = `world Offset X: ${world.xOffset.toFixed(2)}`;
+//         ttEE.sketch.text = `level char: ${
+//             level1[Math.floor(charProps.pos.y)][Math.floor(charProps.pos.x - world.xOffset)]
+//         }`;
+//         tt2.sketch.text = `X: ${charProps.pos.x.toFixed(1)}, Y: ${charProps.pos.y.toFixed(1)}`;
+
+// const tt = createElement('text', {
+//     text: `scaledX: ${charProps.scaledX}, scaledY: ${charProps.scaledY}`,
+//     x: charProps.scaledX + charProps.scaledW / 2,
+//     y: charProps.scaledY + charProps.scaledH / 2,
+//     textAlign: 'end',
+//     textBaseLine: 'top',
+// });
+// const tt2 = createElement('text', {
+//     text: `X: ${charProps.pos.x}, Y: ${charProps.pos.y}`,
+//     x: charProps.scaledX + charProps.scaledW / 2,
+//     y: charProps.scaledY + charProps.scaledH / 2 + 15,
+//     textAlign: 'end',
+//     textBaseLine: 'top',
+// });
+// const tt3 = createElement('text', {
+//     text: `levelCharacter: ${level1[Math.floor(charProps.pos.y)][Math.floor(charProps.pos.x)]}`,
+//     x: charProps.scaledX + charProps.scaledW / 2,
+//     y: charProps.scaledY + charProps.scaledH / 2 - 15,
+//     textAlign: 'end',
+//     textBaseLine: 'top',
+// });
+// const ttE = createElement('text', {text: `world offset X: ${world.xOffset.toFixed(2)}`, textAlign: 'start'});
+// const ttEE = createElement('text', {
+//     text: `level char: ${level1[Math.floor(charProps.pos.y)][Math.floor(charProps.pos.x - world.xOffset)]}`,
+//     textAlign: 'start',
+//     y: 25,
+// });
+// cc.show();
+// tt.show();
+// tt2.show();
+// ttE.show();
+// ttEE.show();
