@@ -2,7 +2,7 @@ import {Pos} from 'library/types/shapes';
 import type {WorldProperties} from '.';
 import type {ReverseLevel} from './level';
 
-const groundCheck = (pos: Pos, getTtile: (x: number, y: number) => string) => {};
+const groundCheck = (level: ReverseLevel, x: number, y: number): boolean => level.getTile(x, y) === 'X';
 
 export const createCharacter = (
     world: WorldProperties,
@@ -22,12 +22,14 @@ export const createCharacter = (
             h: 1,
             scaledH: world.unitScale,
             face: 'up',
-            grounded: groundCheck(pos, level.getTile),
+            grounded: groundCheck(level, pos.x, pos.y + 1),
             vx: 0.05,
             vy: 0.05,
             fill: '#009',
             level,
         };
+
+        if (!char.grounded) char.face = 'down';
 
         if (pos.x === -1 || pos.y === -1) throw Error('Player Start Position not found on level map');
 
@@ -42,15 +44,13 @@ export const createCharacter = (
 
             const newStartPosition = level.startPos(level.map);
 
-            // groundCheck()
-
             pos.x = newStartPosition.x;
             pos.y = newStartPosition.y;
 
             char.scaledX = pos.x * world.unitScale;
             char.scaledY = pos.y * world.unitScale;
 
-            char.grounded = true; // needs checking if standing on ground
+            char.grounded = groundCheck(level, pos.x, pos.y + 1);
         };
 
         const draw = {
@@ -86,22 +86,21 @@ export const createCharacter = (
                 if (!char.grounded) {
                     pos.y += char.vy;
 
-                    //     if (
-                    //         char.face === 'down' && // = going up
-                    //         char.level.getTile(Math.floor(pos.x + world.xOffset + 0.9), Math.floor(pos.y)) === 'X'
-                    //     ) {
-                    //         char.grounded = true;
-                    //         pos.y = Math.floor(pos.y + 1);
-                    //     } else if (
-                    //         char.face === 'up' && // = going down
-                    //         char.level.getTile(Math.floor(pos.x + world.xOffset + 0.9), Math.floor(pos.y + 1)) === 'X'
-                    //     ) {
-                    //         char.grounded = true;
-                    //         pos.y = Math.floor(pos.y);
-                    //     }
+                    if (
+                        char.face === 'down' &&
+                        char.level.getTile(Math.floor(pos.x), Math.floor(pos.y + 0.95)) === 'X'
+                    ) {
+                        char.grounded = true;
+                        char.face = 'up';
+                        pos.y = Math.floor(pos.y);
+                    } else if (char.face === 'up' && char.level.getTile(Math.floor(pos.x), Math.floor(pos.y)) === 'X') {
+                        char.grounded = true;
+                        char.face = 'down';
+                        pos.y = Math.floor(pos.y + 1);
+                    }
                 }
 
-                // Side movement check, grounded not important
+                // Side movement check, independant of grounded
                 // if (
                 //     char.level.getTile(Math.floor(pos.x + world.xOffset + 0.9), Math.floor(pos.y)) === 'X' ||
                 //     char.level.getTile(Math.floor(pos.x + world.xOffset + 0.9), Math.floor(pos.y + 0.9)) === 'X'
@@ -120,7 +119,7 @@ export const createCharacter = (
                 // Needs a different check while not gorounded? (depends on playstyle)
                 char.vy = -char.vy;
                 char.grounded = false;
-                char.face = char.vy > 0 ? 'up' : 'down';
+                char.face = char.vy > 0 ? 'down' : 'up';
             }
         });
 
