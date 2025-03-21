@@ -64,7 +64,6 @@ export const getCanvasInput = (canvas: HTMLCanvasElement, engine: Engine) => {
             id: Symbol(),
             type,
             listener: ({code}: KeyboardEvent) => {
-                console.log(code);
                 for (let i = 0; i < 4; i++) {
                     if (code === keys[i]) {
                         move[i] = type === 'keydown';
@@ -111,13 +110,12 @@ export const getCanvasInput = (canvas: HTMLCanvasElement, engine: Engine) => {
         inputHandler[listener.type].push(listener);
 
     const removeListener = (type: keyof InputListenerEventMap, id: symbol) => {
+        // Use Library (Error) log
         const index = inputHandler[type].findIndex(input => input.id === id);
 
-        if (index === -1) return false;
+        inputHandler[type].splice(index, index !== -1 ? index : 0);
 
-        inputHandler[type].splice(index, 1);
-
-        return true;
+        return index !== -1;
     };
 
     canvas.addEventListener('mousedown', mouseEvent => {

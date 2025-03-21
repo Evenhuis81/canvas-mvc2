@@ -122,12 +122,13 @@ const showStats = (
     canvas: HTMLCanvasElement,
     level: ReverseLevel,
 ) => {
-    const posPointer = createElement('pointer', {
+    const posPointer = createElement('circle-pointer', {
         x: charProps.scaledX,
-        y: charProps.scaledY,
+        y: charProps.scaledY - world.unitScale / 2,
         r: 5,
         fill: '#f00',
         text: 'Character Position',
+        textAlign: 'center',
     });
 
     const face = createElement('text', {
@@ -142,7 +143,7 @@ const showStats = (
         text: `xOffset: ${world.xOffset.toFixed(2)}`,
     });
 
-    const checkYLeft = createElement('pointer', {
+    const checkYLeft = createElement('circle-pointer', {
         x: charProps.scaledX,
         y: charProps.scaledY + world.unitScale / 2,
         r: 5,
@@ -151,7 +152,7 @@ const showStats = (
         textAlign: 'end',
     });
 
-    const checkYRight = createElement('pointer', {
+    const checkYRight = createElement('circle-pointer', {
         x: charProps.scaledX + world.unitScale,
         y: charProps.scaledY + world.unitScale / 2,
         r: 5,
