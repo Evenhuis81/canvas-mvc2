@@ -1,3 +1,5 @@
+import {BaseID} from '.';
+import {Engine} from './engine';
 import {Circle, Pos, Rect} from './shapes';
 
 type InsideRect = (rect: Rect) => boolean;
@@ -10,24 +12,33 @@ export type LibraryInput = {
         x: number;
         y: number;
         insideShape: Inside;
-        // insideRect: InsideRect;
-        // insideCircle: InsideCircle;
     };
     touch: {
         x: number;
         y: number;
         insideShape: Inside;
-        // insideRect: InsideRect;
-        // insideCircle: InsideCircle;
         ended: boolean;
     };
     keyboard: {
         keyHeld: Record<string, boolean>;
     };
-    addMovement: (key: string, obj: Pos) => void;
+    addMovement: (id: BaseID, keys: InputKeys, obj: Pos, vel: {vx: number; vy: number}, engine: Engine) => void;
+    removeMovement: (id: BaseID, engine: Engine) => void;
     addListener: <K extends keyof InputListenerEventMap>(listener: InputListener<K>) => void;
     removeListener: (type: keyof InputListenerEventMap, id: symbol) => boolean;
 };
+
+type KeyUp = string;
+type KeyDown = string;
+type KeyLeft = string;
+type KeyRight = string;
+type MoveUp = boolean;
+type MoveDown = boolean;
+type MoveLeft = boolean;
+type MoveRight = boolean;
+
+export type InputMove = [MoveUp, MoveDown, MoveLeft, MoveRight];
+export type InputKeys = [KeyUp, KeyDown, KeyLeft, KeyRight];
 
 export type InputListenerEventMap = {
     mousedown: MouseEvent;
@@ -48,7 +59,7 @@ export type InputListener<K extends keyof InputListenerEventMap> = {
     type: K;
     listener: (event: HTMLElementEventMap[K]) => void;
     id: symbol;
-    shape: InputShape | undefined;
+    shape?: InputShape;
 };
 
 export type InputShape = (Circle & {inputType: 'circle'}) | (Rect & {inputType: 'rect'});

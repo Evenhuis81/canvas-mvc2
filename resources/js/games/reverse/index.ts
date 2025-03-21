@@ -77,33 +77,34 @@ export default () => {
         pos: charPos,
     } = createCharacter(world, context, canvas, level);
 
-    activateMovement(charPos, input);
+    input.addMovement('reverse', ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'], charPos, charProps);
 
     // engine.setUpdate({fn: () => {
     // world.xOffset -= world.xSpeed * 2;
     // }});
 
-    engine.setUpdate(charUpdate);
+    // engine.setUpdate(charUpdate);
+
+    engine.setUpdate({
+        fn: () => {
+            charProps.scaledX = charPos.x * world.unitScale;
+            charProps.scaledY = charPos.y * world.unitScale;
+        },
+    });
 
     engine.setDraw(levelDraw);
     engine.setDraw(charDraw);
 
     showStats(Object.assign(charProps, {pos: charPos}), world, entity.create, engine, canvas, level);
 
-    engine.setUpdate({
-        fn: () => {
-            if (input.keyboard.keyHeld['ArrowLeft']) world.xOffset -= 0.05;
-            if (input.keyboard.keyHeld['ArrowRight']) world.xOffset += 0.05;
-        },
-    });
+    // engine.setUpdate({
+    //     fn: () => {
+    //         if (input.keyboard.keyHeld['ArrowLeft']) world.xOffset -= 0.05;
+    //         if (input.keyboard.keyHeld['ArrowRight']) world.xOffset += 0.05;
+    //     },
+    // });
 
     library.runEngine();
-};
-
-const activateMovement = (pos: Pos, input: LibraryInput) => {
-    const keys = ['up', 'down', 'left', 'right'];
-
-    //
 };
 
 const showStats = (

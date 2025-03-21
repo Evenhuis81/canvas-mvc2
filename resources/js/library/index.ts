@@ -24,7 +24,7 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
 
     setCanvas(canvas, container, options);
 
-    const input = getCanvasInput(canvas);
+    const input = getCanvasInput(canvas, engine);
 
     const stats = createLibraryStatistics(engine, context, options?.engineStats);
 

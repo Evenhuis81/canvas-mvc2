@@ -1,5 +1,14 @@
 import type {Circle, Pos, Rect} from './types/shapes';
-import type {InputListener, InputListenerEventMap, InputListenerStore, InputShape} from './types/input';
+import type {
+    InputKeys,
+    InputListener,
+    InputListenerEventMap,
+    InputListenerStore,
+    InputMove,
+    InputShape,
+} from './types/input';
+import {Engine} from './types/engine';
+import {BaseID} from './types';
 
 const resizeCB: (() => void)[] = [];
 const consoleToggleCB: (() => void)[] = [];
@@ -39,12 +48,63 @@ const inputHandler: InputListenerStore = {
     touchend: [],
 };
 
-export const getCanvasInput = (canvas: HTMLCanvasElement) => {
+const movement: Record<BaseID, [InputListener<'keydown'>, InputListener<'keyup'>]> = {};
+
+export const getCanvasInput = (canvas: HTMLCanvasElement, engine: Engine) => {
     let canvasRect = canvas.getBoundingClientRect();
     const {mouse, keyboard, touch} = getInputProperties();
 
-    const addMovement = (key: string, obj: Pos) => {
-        //
+    const addMovement = (id: BaseID, keys: InputKeys, obj: Pos, vel: {vx: number; vy: number}) => {
+        // TODO::Add to Library (Error) Log
+        if (movement[id]) return console.log(`movement with id ${id.toString()} already exists`);
+
+        const move: InputMove = [false, false, false, false];
+
+        const createInputListener = <T extends 'keydown' | 'keyup'>(type: T) => ({
+            id: Symbol(),
+            type,
+            listener: ({code}: KeyboardEvent) => {
+                console.log(code);
+                for (let i = 0; i < 4; i++) {
+                    if (code === keys[i]) {
+                        move[i] = type === 'keydown';
+
+                        break;
+                    }
+                }
+            },
+        });
+
+        const keydown = createInputListener('keydown');
+        const keyup = createInputListener('keyup');
+
+        movement[id] = [keydown, keyup];
+
+        addListener(keydown);
+        addListener(keyup);
+
+        engine.setUpdate({
+            id,
+            name: 'input movement',
+            fn: () => {
+                if (move[0]) obj.y -= vel.vy;
+                if (move[1]) obj.y += vel.vy;
+                if (move[2]) obj.x -= vel.vx;
+                if (move[3]) obj.x += vel.vx;
+            },
+        });
+    };
+
+    const removeMovement = (id: BaseID) => {
+        // TODO::Add to Library (Error) Log
+        if (!movement[id]) return console.log(`movement with id ${id.toString()} does not exist`);
+
+        engine.removeUpdate(id);
+
+        removeListener('keydown', movement[id][0].id);
+        removeListener('keyup', movement[id][1].id);
+
+        delete movement[id];
     };
 
     const addListener = <K extends keyof InputListenerEventMap>(listener: InputListener<K>) =>
@@ -165,6 +225,7 @@ export const getCanvasInput = (canvas: HTMLCanvasElement) => {
         }),
         touch: Object.assign(touch, {insideShape: (shape: InputShape) => pressedInside(touch, shape)}),
         addMovement,
+        removeMovement,
         addListener,
         removeListener,
         keyboard,
