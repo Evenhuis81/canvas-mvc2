@@ -1,5 +1,8 @@
+import {Entity} from 'library/types/entity';
 import type {WorldProperties} from '.';
 import type {ReverseLevel} from './level';
+import type {CreateElement} from 'library/entity';
+import type {ShapeMap} from 'library/entity/defaults/shapes';
 
 const groundCheck = (level: ReverseLevel, x: number, y: number): boolean => level.getTile(x, y) === 'X';
 
@@ -8,25 +11,17 @@ export const createCharacter = (
     ctx: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement,
     level: ReverseLevel,
+    createElement: CreateElement<ShapeMap>,
 ) => {
-    const pos = level.startPos(level.map);
+    const cc = createElement('arrow-pointer');
 
-    const char = {
-        scaledX: pos.x * world.unitScale,
-        scaledY: pos.y * world.unitScale,
-        w: 1,
-        scaledW: world.unitScale,
-        h: 1,
-        scaledH: world.unitScale,
-        face: 'up',
-        grounded: groundCheck(level, pos.x, pos.y + 1),
-        vx: 0.05,
-        vy: 0.05,
-        fill: '#009',
-        level,
-    };
+    const startPosition = level.startPos(level.map);
 
-    if (!char.grounded) char.face = 'down';
+    const {pos, collisions, vel, ...props} = createCharacterProperties(startPosition, world, level);
+
+    console.log(collisions);
+
+    if (!props.grounded) props.face = 'down';
 
     if (pos.x === -1 || pos.y === -1) throw Error('Player Start Position not found on level map');
 
@@ -37,17 +32,17 @@ export const createCharacter = (
     pos.x += xDiff;
 
     const setLevel = (lvl: ReverseLevel) => {
-        char.level = lvl;
+        props.level = lvl;
 
         const newStartPosition = level.startPos(level.map);
 
         pos.x = newStartPosition.x;
         pos.y = newStartPosition.y;
 
-        char.scaledX = pos.x * world.unitScale;
-        char.scaledY = pos.y * world.unitScale;
+        props.scaledX = pos.x * world.unitScale;
+        props.scaledY = pos.y * world.unitScale;
 
-        char.grounded = groundCheck(level, pos.x, pos.y + 1);
+        props.grounded = groundCheck(level, pos.x, pos.y + 1);
     };
 
     const draw = {
@@ -58,22 +53,22 @@ export const createCharacter = (
 
             ctx.beginPath();
 
-            char.face === 'up' ? faceUp() : faceDown();
+            props.face === 'up' ? faceUp() : faceDown();
 
             ctx.fill();
         },
     };
 
     const faceUp = () => {
-        ctx.moveTo(char.scaledX + char.scaledW / 2, char.scaledY);
-        ctx.lineTo(char.scaledX + char.scaledW, char.scaledY + char.scaledH);
-        ctx.lineTo(char.scaledX, char.scaledY + char.scaledH);
+        ctx.moveTo(props.scaledX + props.scaledW / 2, props.scaledY);
+        ctx.lineTo(props.scaledX + props.scaledW, props.scaledY + props.scaledH);
+        ctx.lineTo(props.scaledX, props.scaledY + props.scaledH);
     };
 
     const faceDown = () => {
-        ctx.moveTo(char.scaledX + char.scaledW / 2, char.scaledY + char.scaledH); //  + char.scaledH
-        ctx.lineTo(char.scaledX + char.scaledW, char.scaledY); // -char.scaledH
-        ctx.lineTo(char.scaledX, char.scaledY); // -char.scaledH
+        ctx.moveTo(props.scaledX + props.scaledW / 2, props.scaledY + props.scaledH); //  + props.scaledH
+        ctx.lineTo(props.scaledX + props.scaledW, props.scaledY); // -props.scaledH
+        ctx.lineTo(props.scaledX, props.scaledY); // -props.scaledH
     };
 
     let lastWorldOffsetX = world.xOffset;
@@ -86,56 +81,84 @@ export const createCharacter = (
             xInterval = world.xOffset - lastWorldOffsetX;
             lastWorldOffsetX = world.xOffset;
 
-            if (!char.grounded) pos.y += char.vy;
+            if (!props.grounded) pos.y += vel.vy;
 
-            const topLeft = char.level.getTile(pos.x, pos.y);
-            const bottomLeft = char.level.getTile(pos.x, pos.y + 1);
-            const topRight = char.level.getTile(pos.x + 1, pos.y);
-            const bottomRight = char.level.getTile(pos.x + 1, pos.y + 1);
+            const topLeft = props.level.getTile(pos.x, pos.y);
+            const bottomLeft = props.level.getTile(pos.x, pos.y + 1);
+            const topRight = props.level.getTile(pos.x + 1, pos.y);
+            const bottomRight = props.level.getTile(pos.x + 1, pos.y + 1);
 
             // X Movement Check, before Y check, else it may 'snap' into unwanted position
             if (
                 false
-                // char.level.getTile(Math.floor(pos.x + world.xOffset + 0.95), Math.floor(pos.y)) === 'X' ||
-                // char.level.getTile(Math.floor(pos.x + world.xOffset + 0.95), Math.floor(pos.y + 0.95)) === 'X'
+                // props.level.getTile(Math.floor(pos.x + world.xOffset + 0.95), Math.floor(pos.y)) === 'X' ||
+                // props.level.getTile(Math.floor(pos.x + world.xOffset + 0.95), Math.floor(pos.y + 0.95)) === 'X'
             ) {
                 pos.x += xInterval;
             }
 
             if (
                 false
-                // char.level.getTile(Math.floor(pos.x - world.xOffset), Math.floor(pos.y + 0.95)) === 'X' ||
-                // char.level.getTile(Math.floor(pos.x - world.xOffset + 0.95), Math.floor(pos.y + 0.95)) === 'X'
+                // props.level.getTile(Math.floor(pos.x - world.xOffset), Math.floor(pos.y + 0.95)) === 'X' ||
+                // props.level.getTile(Math.floor(pos.x - world.xOffset + 0.95), Math.floor(pos.y + 0.95)) === 'X'
             ) {
-                char.grounded = true;
-                char.face = 'up';
+                props.grounded = true;
+                props.face = 'up';
                 pos.y = Math.floor(pos.y);
             }
 
             if (
-                // char.level.getTile(Math.floor(pos.x - world.xOffset), Math.floor(pos.y)) === 'X' ||
-                // char.level.getTile(Math.floor(pos.x - world.xOffset + 0.95), Math.floor(pos.y)) === 'X'
+                // props.level.getTile(Math.floor(pos.x - world.xOffset), Math.floor(pos.y)) === 'X' ||
+                // props.level.getTile(Math.floor(pos.x - world.xOffset + 0.95), Math.floor(pos.y)) === 'X'
                 false
             ) {
-                char.grounded = true;
-                char.face = 'down';
+                props.grounded = true;
+                props.face = 'down';
                 pos.y = Math.floor(pos.y + 1);
             }
 
-            char.scaledX = pos.x * world.unitScale;
-            char.scaledY = pos.y * world.unitScale;
+            props.scaledX = pos.x * world.unitScale;
+            props.scaledY = pos.y * world.unitScale;
         },
     };
 
     canvas.addEventListener('keyup', ({code}) => {
-        if (code === 'Space' && char.grounded) {
+        if (code === 'Space' && props.grounded) {
             // See comment in update, can be fixed here with a check before 'ungrounding'.
             // Needs a different check while not gorounded? (depends on playstyle)
-            char.vy = -char.vy;
-            char.grounded = false;
-            char.face = char.vy > 0 ? 'down' : 'up';
+            vel.vy = -vel.vy;
+            props.grounded = false;
+            props.face = vel.vy > 0 ? 'down' : 'up';
         }
     });
 
-    return {draw, update, char, pos, setLevel};
+    return {draw, update, properties: props, pos, setLevel};
 };
+
+const createCharacterProperties = (
+    startPosition: {x: number; y: number},
+    world: WorldProperties,
+    level: ReverseLevel,
+) => ({
+    pos: {x: startPosition.x, y: startPosition.y},
+    scaledX: startPosition.x * world.unitScale,
+    scaledY: startPosition.y * world.unitScale,
+    w: 1,
+    scaledW: world.unitScale,
+    h: 1,
+    scaledH: world.unitScale,
+    face: 'up',
+    grounded: groundCheck(level, startPosition.x, startPosition.y + 1),
+    vel: {
+        vx: 0.05,
+        vy: 0.05,
+    },
+    fill: '#009',
+    level,
+    collisions: {
+        topLeft: level.getTile(startPosition.x, startPosition.y),
+        bottomLeft: level.getTile(startPosition.x, startPosition.y + 1),
+        topRight: level.getTile(startPosition.x + 1, startPosition.y),
+        bottomRight: level.getTile(startPosition.x + 1, startPosition.y + 1),
+    },
+});

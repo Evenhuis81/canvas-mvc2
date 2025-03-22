@@ -19,7 +19,7 @@
 19. LevelOffset is floating point, collision checks integer will not work;
 20. After movement for library input, next task is to set it up properly with good documentation;
 21. Error log library is due, search files for comment on this;
-
+22. Tasks reverse: stats onscreen & -onCharacter for pos, vel, face, collisions,
 
 
 // Notes on sun @forum, 18-08-2024+:

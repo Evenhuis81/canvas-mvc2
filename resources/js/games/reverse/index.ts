@@ -1,12 +1,11 @@
 import {initialize} from 'library/index';
 import {createCharacter} from './character';
-import {ReverseLevel, createLevelDraw, getLevel} from './level';
+import {createLevelDraw, getLevel} from './level';
+import type {ReverseLevel} from './level';
 import type {LibraryOptions} from 'library/types';
-import type {CreateElement} from 'library/entity';
 import type {ShapeMap} from 'library/entity/defaults/shapes';
 import type {Engine} from 'library/types/engine';
-import {Pos} from 'library/types/shapes';
-import {LibraryInput} from 'library/types/input';
+import type {CreateElement} from 'library/entity';
 
 const libraryID = 'reverse';
 
@@ -73,9 +72,9 @@ export default () => {
     const {
         draw: charDraw,
         update: charUpdate,
-        char: charProps,
+        properties: charProps,
         pos: charPos,
-    } = createCharacter(world, context, canvas, level);
+    } = createCharacter(world, context, canvas, level, entity.create);
 
     // input.addMovement('reverse', ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'], charPos, charProps);
 

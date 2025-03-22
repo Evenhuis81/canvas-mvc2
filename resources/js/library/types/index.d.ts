@@ -32,7 +32,6 @@ export type WithRequired<T, K extends keyof T> = T & {[P in K]-?: T[P]};
 export type BaseID = string | number | symbol;
 
 export interface LibraryResources {
-    // id: string | number;
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
     engine: Engine;
@@ -41,8 +40,6 @@ export interface LibraryResources {
     runEngineOnce: () => void;
     createPhaser: () => Phaser;
     createEntity: CreateEntity;
-    // container: HTMLDivElement;
-    // sv: StaticView; // empty
 }
 
 export interface StatisticOptions {
