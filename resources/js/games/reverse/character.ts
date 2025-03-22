@@ -30,7 +30,7 @@ export const createCharacter = (
 
     if (pos.x === -1 || pos.y === -1) throw Error('Player Start Position not found on level map');
 
-    // Positioning player in middle and shifting world view with same amount
+    // Positioning player in middle and shifting world view to fit player
     const middleMapX = Math.floor(world.xUnits / 2);
     const xDiff = middleMapX - pos.x;
     world.xOffset += xDiff;
@@ -86,20 +86,26 @@ export const createCharacter = (
             xInterval = world.xOffset - lastWorldOffsetX;
             lastWorldOffsetX = world.xOffset;
 
-            pos.y += char.vy;
+            if (!char.grounded) pos.y += char.vy;
+
+            const topLeft = char.level.getTile(pos.x, pos.y);
+            const bottomLeft = char.level.getTile(pos.x, pos.y + 1);
+            const topRight = char.level.getTile(pos.x + 1, pos.y);
+            const bottomRight = char.level.getTile(pos.x + 1, pos.y + 1);
 
             // X Movement Check, before Y check, else it may 'snap' into unwanted position
             if (
-                char.level.getTile(Math.floor(pos.x + world.xOffset + 0.95), Math.floor(pos.y)) === 'X' ||
-                char.level.getTile(Math.floor(pos.x + world.xOffset + 0.95), Math.floor(pos.y + 0.95)) === 'X'
+                false
+                // char.level.getTile(Math.floor(pos.x + world.xOffset + 0.95), Math.floor(pos.y)) === 'X' ||
+                // char.level.getTile(Math.floor(pos.x + world.xOffset + 0.95), Math.floor(pos.y + 0.95)) === 'X'
             ) {
-                // This needs deltatime to be accurate
-                // pos.x -= xInterval;
+                pos.x += xInterval;
             }
 
             if (
-                char.level.getTile(Math.floor(pos.x - world.xOffset), Math.floor(pos.y + 0.95)) === 'X' ||
-                char.level.getTile(Math.floor(pos.x - world.xOffset + 0.95), Math.floor(pos.y + 0.95)) === 'X'
+                false
+                // char.level.getTile(Math.floor(pos.x - world.xOffset), Math.floor(pos.y + 0.95)) === 'X' ||
+                // char.level.getTile(Math.floor(pos.x - world.xOffset + 0.95), Math.floor(pos.y + 0.95)) === 'X'
             ) {
                 char.grounded = true;
                 char.face = 'up';
@@ -107,8 +113,9 @@ export const createCharacter = (
             }
 
             if (
-                char.level.getTile(Math.floor(pos.x - world.xOffset), Math.floor(pos.y)) === 'X' ||
-                char.level.getTile(Math.floor(pos.x - world.xOffset + 0.95), Math.floor(pos.y)) === 'X'
+                // char.level.getTile(Math.floor(pos.x - world.xOffset), Math.floor(pos.y)) === 'X' ||
+                // char.level.getTile(Math.floor(pos.x - world.xOffset + 0.95), Math.floor(pos.y)) === 'X'
+                false
             ) {
                 char.grounded = true;
                 char.face = 'down';

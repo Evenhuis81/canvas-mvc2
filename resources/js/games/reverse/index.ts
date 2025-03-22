@@ -77,13 +77,15 @@ export default () => {
         pos: charPos,
     } = createCharacter(world, context, canvas, level);
 
-    input.addMovement('reverse', ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'], charPos, charProps);
+    // input.addMovement('reverse', ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'], charPos, charProps);
 
-    // engine.setUpdate({fn: () => {
-    // world.xOffset -= world.xSpeed * 2;
-    // }});
+    engine.setUpdate({
+        fn: () => {
+            world.xOffset -= world.xSpeed * 2;
+        },
+    });
 
-    // engine.setUpdate(charUpdate);
+    engine.setUpdate(charUpdate);
 
     engine.setUpdate({
         fn: () => {
