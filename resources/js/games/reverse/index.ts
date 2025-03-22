@@ -87,6 +87,7 @@ export default () => {
     ];
 
     input.addMovement('reverse', keys, handlers);
+    // input.removeMovement('reverse');
 
     engine.setUpdate({
         fn: () => {

@@ -28,22 +28,9 @@ export type LibraryInput = {
     removeListener: (type: keyof InputListenerEventMap, id: symbol) => boolean;
 };
 
-export type AddMovement = (id: BaseID, keys: InputKeys, handlers: (() => void)[]) => void;
+export type AddMovement = (id: BaseID, keys: string[], handlers: (() => void)[]) => void;
 
-export type RemoveMovement = (id: BaseID, engine: Engine) => void;
-
-type KeyUp = string;
-type KeyDown = string;
-type KeyLeft = string;
-type KeyRight = string;
-type MoveUp = boolean;
-type MoveDown = boolean;
-type MoveLeft = boolean;
-type MoveRight = boolean;
-
-// type InputMove = [MoveUp, MoveDown, MoveLeft, MoveRight];
-// type InputKeys = [KeyUp, KeyDown, KeyLeft, KeyRight];
-type InputKeys = string[];
+export type RemoveMovement = (id: BaseID) => void;
 
 export type InputListenerEventMap = {
     mousedown: MouseEvent;
