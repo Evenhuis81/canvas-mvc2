@@ -74,6 +74,8 @@ export const createCharacter = (
     let lastWorldOffsetX = world.xOffset;
     let xInterval = 0;
 
+    console.log(level);
+
     const update = {
         id: `reverse-character-update`,
         name: 'Update Character',
@@ -81,12 +83,12 @@ export const createCharacter = (
             xInterval = world.xOffset - lastWorldOffsetX;
             lastWorldOffsetX = world.xOffset;
 
-            if (!props.grounded) pos.y += vel.vy;
+            // if (!props.grounded) pos.y += vel.vy;
 
-            const topLeft = props.level.getTile(pos.x, pos.y);
-            const bottomLeft = props.level.getTile(pos.x, pos.y + 1);
-            const topRight = props.level.getTile(pos.x + 1, pos.y);
-            const bottomRight = props.level.getTile(pos.x + 1, pos.y + 1);
+            collisions.topLeft = props.level.getTile(Math.floor(pos.x), Math.floor(pos.y));
+            collisions.bottomLeft = props.level.getTile(Math.floor(pos.x), Math.floor(pos.y) + 1);
+            collisions.topRight = props.level.getTile(Math.floor(pos.x) + 1, Math.floor(pos.y));
+            collisions.bottomRight = props.level.getTile(Math.floor(pos.x) + 1, Math.floor(pos.y) + 1);
 
             // X Movement Check, before Y check, else it may 'snap' into unwanted position
             if (
@@ -126,13 +128,13 @@ export const createCharacter = (
         if (code === 'Space' && props.grounded) {
             // See comment in update, can be fixed here with a check before 'ungrounding'.
             // Needs a different check while not gorounded? (depends on playstyle)
-            vel.vy = -vel.vy;
+            vel.y = -vel.y;
             props.grounded = false;
-            props.face = vel.vy > 0 ? 'down' : 'up';
+            props.face = vel.y > 0 ? 'down' : 'up';
         }
     });
 
-    return {draw, update, properties: props, pos, setLevel};
+    return {draw, update, properties: props, pos, vel, collisions, setLevel};
 };
 
 const createCharacterProperties = (
@@ -150,8 +152,8 @@ const createCharacterProperties = (
     face: 'up',
     grounded: groundCheck(level, startPosition.x, startPosition.y + 1),
     vel: {
-        vx: 0.05,
-        vy: 0.05,
+        x: 0.05,
+        y: 0.05,
     },
     fill: '#009',
     level,

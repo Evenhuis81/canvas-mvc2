@@ -13,25 +13,33 @@ export type ReverseLevel = {
     startPos: (levelMap: LevelMap) => {x: number; y: number};
 };
 
-export const getLevel = (levelID: number): ReverseLevel => ({
-    id: levelID,
-    map: levels[levelID],
-    width: levels[levelID][0].length,
-    height: levels[levelID].length,
-    getTile: (x, y) => {
-        if (x >= 0 && x < levels[levelID][0].length && y >= 0 && y < levels[levelID].length)
-            return levels[levelID][y][x];
+export const getLevel = (levelID: number): ReverseLevel => {
+    const w = levels[levelID][0].length;
+    const h = levels[levelID].length;
 
-        return ' ';
-    },
-    setTile: (x, y, tileType) => {
-        if (tileType.length != 1) return;
+    const level = levels[levelID];
 
-        if (x >= 0 && x < levels[levelID][0].length && y >= 0 && y < levels[levelID].length)
-            levels[levelID][y][x] = tileType;
-    },
-    startPos: getStartPos,
-});
+    console.log(level);
+
+    return {
+        id: levelID,
+        map: levels[levelID],
+        width: w,
+        height: h,
+        getTile: (x, y) => {
+            if (x >= 0 && x < w && y >= 0 && y < h) return levels[levelID][y][x];
+
+            return ' ';
+        },
+        setTile: (x, y, tileType) => {
+            if (tileType.length != 1) return;
+
+            if (x >= 0 && x < levels[levelID][0].length && y >= 0 && y < levels[levelID].length)
+                levels[levelID][y][x] = tileType;
+        },
+        startPos: getStartPos,
+    };
+};
 
 export const createLevelDraw = (ctx: CanvasRenderingContext2D, world: WorldProperties, level: ReverseLevel) => ({
     id: level.id,

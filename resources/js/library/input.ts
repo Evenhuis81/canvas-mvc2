@@ -1,11 +1,11 @@
 import type {Circle, Pos, Rect} from './types/shapes';
 import type {
-    InputKeys,
+    AddMovement,
     InputListener,
     InputListenerEventMap,
     InputListenerStore,
-    InputMove,
     InputShape,
+    RemoveMovement,
 } from './types/input';
 import {Engine} from './types/engine';
 import {BaseID} from './types';
@@ -54,17 +54,18 @@ export const getCanvasInput = (canvas: HTMLCanvasElement, engine: Engine) => {
     let canvasRect = canvas.getBoundingClientRect();
     const {mouse, keyboard, touch} = getInputProperties();
 
-    const addMovement = (id: BaseID, keys: InputKeys, obj: Pos, vel: {vx: number; vy: number}) => {
+    const addMovement: AddMovement = (id, keys, handlers) => {
         // TODO::Add to Library (Error) Log
         if (movement[id]) return console.log(`movement with id ${id.toString()} already exists`);
+        if (keys.length !== handlers.length) return console.log('length of keys and handlers need to be the same');
 
-        const move: InputMove = [false, false, false, false];
+        const move = Array.from({length: keys.length}, () => false);
 
         const createInputListener = <T extends 'keydown' | 'keyup'>(type: T) => ({
             id: Symbol(),
             type,
             listener: ({code}: KeyboardEvent) => {
-                for (let i = 0; i < 4; i++) {
+                for (let i = 0; i < keys.length; i++) {
                     if (code === keys[i]) {
                         move[i] = type === 'keydown';
 
@@ -86,15 +87,12 @@ export const getCanvasInput = (canvas: HTMLCanvasElement, engine: Engine) => {
             id,
             name: 'input movement',
             fn: () => {
-                if (move[0]) obj.y -= vel.vy;
-                if (move[1]) obj.y += vel.vy;
-                if (move[2]) obj.x -= vel.vx;
-                if (move[3]) obj.x += vel.vx;
+                for (let i = 0; i < move.length; i++) if (move[i]) handlers[i]();
             },
         });
     };
 
-    const removeMovement = (id: BaseID) => {
+    const removeMovement: RemoveMovement = id => {
         // TODO::Add to Library (Error) Log
         if (!movement[id]) return console.log(`movement with id ${id.toString()} does not exist`);
 

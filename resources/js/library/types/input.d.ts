@@ -22,11 +22,15 @@ export type LibraryInput = {
     keyboard: {
         keyHeld: Record<string, boolean>;
     };
-    addMovement: (id: BaseID, keys: InputKeys, obj: Pos, vel: {vx: number; vy: number}, engine: Engine) => void;
-    removeMovement: (id: BaseID, engine: Engine) => void;
+    addMovement: AddMovement;
+    removeMovement: RemoveMovement;
     addListener: <K extends keyof InputListenerEventMap>(listener: InputListener<K>) => void;
     removeListener: (type: keyof InputListenerEventMap, id: symbol) => boolean;
 };
+
+export type AddMovement = (id: BaseID, keys: InputKeys, handlers: (() => void)[]) => void;
+
+export type RemoveMovement = (id: BaseID, engine: Engine) => void;
 
 type KeyUp = string;
 type KeyDown = string;
@@ -37,8 +41,9 @@ type MoveDown = boolean;
 type MoveLeft = boolean;
 type MoveRight = boolean;
 
-export type InputMove = [MoveUp, MoveDown, MoveLeft, MoveRight];
-export type InputKeys = [KeyUp, KeyDown, KeyLeft, KeyRight];
+// type InputMove = [MoveUp, MoveDown, MoveLeft, MoveRight];
+// type InputKeys = [KeyUp, KeyDown, KeyLeft, KeyRight];
+type InputKeys = string[];
 
 export type InputListenerEventMap = {
     mousedown: MouseEvent;
