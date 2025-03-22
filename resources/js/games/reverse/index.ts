@@ -5,7 +5,7 @@ import type {ReverseLevel} from './level';
 import type {LibraryOptions} from 'library/types';
 import type {ShapeMap} from 'library/entity/defaults/shapes';
 import type {Engine} from 'library/types/engine';
-import type {CreateElement} from 'library/entity';
+import type {CreateElement, EntityElement} from 'library/entity';
 
 const libraryID = 'reverse';
 
@@ -107,14 +107,16 @@ export default () => {
     engine.setDraw(levelDraw);
     engine.setDraw(charDraw);
 
-    characterElements(charProps, charPos, world, entity.create, engine, canvas, level);
-
     // engine.setUpdate({
     //     fn: () => {
     //         if (input.keyboard.keyHeld['ArrowLeft']) world.xOffset -= 0.05;
     //         if (input.keyboard.keyHeld['ArrowRight']) world.xOffset += 0.05;
     //     },
     // });
+
+    const cc = characterElements(charProps, world, entity.create, canvas);
+
+    //
 
     library.runEngine();
 };
@@ -127,12 +129,9 @@ const characterElements = (
         scaledY: number;
         face: string;
     },
-    pos: {x: number; y: number},
     world: WorldProperties,
     createElement: CreateElement<ShapeMap>,
-    engine: Engine,
     canvas: HTMLCanvasElement,
-    level: ReverseLevel,
 ) => {
     const posPointer = createElement('circle-pointer', {
         x: props.scaledX,
@@ -155,58 +154,49 @@ const characterElements = (
         text: `xOffset: ${world.xOffset.toFixed(2)}`,
     });
 
-    const checkYLeft = createElement('circle-pointer', {
+    // = just position (scaled)
+    const collisionTopLeft = createElement('circle-pointer', {
         x: props.scaledX,
-        y: props.scaledY + world.unitScale / 2,
+        y: props.scaledY,
         r: 5,
         fill: '#0f0',
-        text: `create pointer checkYLeft`,
+        text: `pointer collisionTopLeft`,
         textAlign: 'end',
     });
 
-    const checkYRight = createElement('circle-pointer', {
+    const collisionBottomLeft = createElement('circle-pointer', {
+        x: props.scaledX,
+        y: props.scaledY + world.unitScale,
+        r: 5,
+        fill: '#0f0',
+        text: `pointer collisionBottomLeft`,
+        textAlign: 'end',
+    });
+
+    const collisionTopRight = createElement('circle-pointer', {
         x: props.scaledX + world.unitScale,
-        y: props.scaledY + world.unitScale / 2,
+        y: props.scaledY,
         r: 5,
         fill: '#00f',
-        text: `create pointer checkYRight`,
+        text: `pointer collisionTopRight`,
+        textAlign: 'start',
     });
 
-    engine.setUpdate({
-        fn: () => {
-            // posPointer.sketch.x = props.scaledX;
-            // posPointer.sketch.y = props.scaledY;
-            // posPointer.sketch.text = `x: ${props.pos.x.toFixed(2)}, y: ${props.pos.y.toFixed(2)}`;
-
-            face.sketch.text = `face: ${props.face}`;
-            worldOffsetX.sketch.text = `xOffset: ${world.xOffset.toFixed(2)}`;
-
-            if (props.face === 'down') {
-                checkYLeft.sketch.x = props.scaledX;
-                checkYLeft.sketch.y = props.scaledY + world.unitScale;
-                checkYLeft.sketch.text = `Y left: ${level.getTile(Math.floor(pos.x), Math.floor(pos.y + 0.95))}`;
-                checkYRight.sketch.x = props.scaledX + world.unitScale;
-                checkYRight.sketch.y = props.scaledY + world.unitScale;
-                checkYRight.sketch.text = `Y right: ${level.getTile(
-                    Math.floor(pos.x + 0.95),
-                    Math.floor(pos.y + 0.95),
-                )}`;
-            } else {
-                checkYLeft.sketch.x = props.scaledX;
-                checkYLeft.sketch.y = props.scaledY;
-                checkYLeft.sketch.text = `Y left: ${level.getTile(Math.floor(pos.x), Math.floor(pos.y))}`;
-                checkYRight.sketch.x = props.scaledX + world.unitScale;
-                checkYRight.sketch.y = props.scaledY;
-                checkYRight.sketch.text = `Y right: ${level.getTile(Math.floor(pos.x + 0.95), Math.floor(pos.y))}`;
-            }
-        },
+    const collisionBottomRight = createElement('circle-pointer', {
+        x: props.scaledX + world.unitScale,
+        y: props.scaledY + world.unitScale,
+        r: 5,
+        fill: '#00f',
+        text: `pointer collisionBottomRight`,
+        textAlign: 'start',
     });
 
-    // posPointer.show();
-    face.show();
-    worldOffsetX.show();
-    checkYLeft.show();
-    checkYRight.show();
+    return {
+        topLeft: collisionTopLeft,
+        bottomLeft: collisionBottomLeft,
+        topRight: collisionTopRight,
+        bottomRight: collisionBottomRight,
+    };
 };
 
 //         tt.sketch.text = `scaledX: ${charProps.scaledX.toFixed(2)}, scaledY: ${charProps.scaledY.toFixed(2)}`;

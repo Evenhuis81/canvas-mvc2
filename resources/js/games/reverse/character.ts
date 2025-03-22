@@ -1,7 +1,6 @@
-import {Entity} from 'library/types/entity';
 import type {WorldProperties} from '.';
 import type {ReverseLevel} from './level';
-import type {CreateElement} from 'library/entity';
+import type {CreateElement, EntityElement} from 'library/entity';
 import type {ShapeMap} from 'library/entity/defaults/shapes';
 
 const groundCheck = (level: ReverseLevel, x: number, y: number): boolean => level.getTile(x, y) === 'X';
@@ -13,15 +12,18 @@ export const createCharacter = (
     level: ReverseLevel,
     createElement: CreateElement<ShapeMap>,
 ) => {
-    const cc = createElement('arrow-pointer');
-
     const startPosition = level.startPos(level.map);
 
     const {pos, collisions, vel, ...props} = createCharacterProperties(startPosition, world, level);
 
-    console.log(collisions);
+    props.grounded = groundCheck(level, startPosition.x, startPosition.y + 1);
 
-    if (!props.grounded) props.face = 'down';
+    // No ground means falling down with face down
+    if (!props.grounded) {
+        props.face = 'down';
+
+        vel.y = props.speed;
+    }
 
     if (pos.x === -1 || pos.y === -1) throw Error('Player Start Position not found on level map');
 
@@ -43,6 +45,18 @@ export const createCharacter = (
         props.scaledY = pos.y * world.unitScale;
 
         props.grounded = groundCheck(level, pos.x, pos.y + 1);
+    };
+
+    type Pointers = {
+        topLeft: EntityElement<ShapeMap, 'circle-pointer'>;
+        bottomLeft: EntityElement<ShapeMap, 'circle-pointer'>;
+        topRight: EntityElement<ShapeMap, 'circle-pointer'>;
+        bottomRight: EntityElement<ShapeMap, 'circle-pointer'>;
+    };
+
+    const setPointers = (pointers: Pointers) => {
+        const t = Object.entries(pointers);
+        console.log(t);
     };
 
     const draw = {
@@ -74,8 +88,6 @@ export const createCharacter = (
     let lastWorldOffsetX = world.xOffset;
     let xInterval = 0;
 
-    console.log(level);
-
     const update = {
         id: `reverse-character-update`,
         name: 'Update Character',
@@ -84,6 +96,7 @@ export const createCharacter = (
             lastWorldOffsetX = world.xOffset;
 
             // if (!props.grounded) pos.y += vel.vy;
+            pos.y += vel.y;
 
             collisions.topLeft = props.level.getTile(Math.floor(pos.x), Math.floor(pos.y));
             collisions.bottomLeft = props.level.getTile(Math.floor(pos.x), Math.floor(pos.y) + 1);
@@ -150,11 +163,12 @@ const createCharacterProperties = (
     h: 1,
     scaledH: world.unitScale,
     face: 'up',
-    grounded: groundCheck(level, startPosition.x, startPosition.y + 1),
+    grounded: true,
     vel: {
-        x: 0.05,
-        y: 0.05,
+        x: 0, // unused in this case
+        y: 0,
     },
+    speed: 0.05,
     fill: '#009',
     level,
     collisions: {

@@ -1,12 +1,12 @@
 import {Engine} from 'library/types/engine';
 import {EntitySketch} from 'library/types/entity';
 
-type Element<O extends object, K extends keyof O> = {sketch: O[K]; show: () => void; hide: () => void};
+export type EntityElement<O extends object, K extends keyof O> = {sketch: O[K]; show: () => void; hide: () => void};
 
 export type CreateElement<Shapes extends {[K in keyof Shapes]: Shapes[K]}> = <T extends keyof Shapes>(
     type: T,
     shapeConfig?: Partial<Shapes[T]>,
-) => Element<Shapes, T>;
+) => EntityElement<Shapes, T>;
 
 export type Entity = <Shapes extends {[K in keyof Shapes]: Shapes[K]}>(
     context: CanvasRenderingContext2D,
