@@ -77,16 +77,14 @@ export default () => {
         vel: charVel,
     } = createCharacter(world, context, canvas, level, entity.create);
 
-    const keys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+    const handlers = {
+        ArrowUp: () => (charPos.y -= charVel.y),
+        ArrowDown: () => (charPos.y += charVel.y),
+        ArrowLeft: () => (charPos.x -= charVel.x),
+        ArrowRight: () => (charPos.x += charVel.x),
+    };
 
-    const handlers = [
-        () => (charPos.y -= charVel.y),
-        () => (charPos.y += charVel.y),
-        () => (charPos.x -= charVel.x),
-        () => (charPos.x += charVel.x),
-    ];
-
-    input.addMovement('reverse', keys, handlers);
+    input.addMovement('reverse', handlers);
     // input.removeMovement('reverse');
 
     engine.setUpdate({
@@ -114,7 +112,7 @@ export default () => {
     //     },
     // });
 
-    const cc = characterElements(charProps, world, entity.create, canvas);
+    const elements = characterElements(charProps, world, entity.create, canvas);
 
     //
 

@@ -22,7 +22,7 @@ export const createCharacter = (
     if (!props.grounded) {
         props.face = 'down';
 
-        vel.y = props.speed;
+        // vel.y = props.speed;
     }
 
     if (pos.x === -1 || pos.y === -1) throw Error('Player Start Position not found on level map');

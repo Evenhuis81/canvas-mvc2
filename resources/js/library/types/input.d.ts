@@ -28,7 +28,7 @@ export type LibraryInput = {
     removeListener: (type: keyof InputListenerEventMap, id: symbol) => boolean;
 };
 
-export type AddMovement = (id: BaseID, keys: string[], handlers: (() => void)[]) => void;
+export type AddMovement = (id: BaseID, handlers: Record<string, () => void>) => void;
 
 export type RemoveMovement = (id: BaseID) => void;
 
