@@ -68,7 +68,7 @@ export type ShapeMap = {
     'arrow-pointer': Triangle & Circle & Text;
 };
 
-type Triangle = {
+export type Triangle = {
     x1: number;
     y1: number;
     x2: number;

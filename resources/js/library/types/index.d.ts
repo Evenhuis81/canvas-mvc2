@@ -2,6 +2,9 @@ import {Engine} from './engine';
 import {CreateEntity} from './entity';
 import {Phaser} from 'games/phaser/types';
 import {LibraryInput} from './input';
+import {CreateElement} from 'library/entity';
+import {Circle, Pos, Rect} from './shapes';
+import {ShapeMap, Triangle} from 'library/entity/defaults/shapes';
 
 /**
  * Removes undefined from tuples
@@ -39,7 +42,7 @@ export interface LibraryResources {
     runEngine: () => void;
     runEngineOnce: () => void;
     createPhaser: () => Phaser;
-    createEntity: CreateEntity;
+    createElement: CreateElement<ShapeMap>;
 }
 
 export interface StatisticOptions {

@@ -13,27 +13,62 @@ export type ReverseLevel = {
     startPos: (levelMap: LevelMap) => {x: number; y: number};
 };
 
-export const getLevel = (levelID: number): ReverseLevel => {
-    const w = levels[levelID][0].length;
-    const h = levels[levelID].length;
+const defaultOptions = {
+    scale: 10,
+    lineWidth: 2,
+    fillStyle: 'white',
+};
 
+export const getLevelRaster = (
+    ctx: CanvasRenderingContext2D,
+    width: number,
+    height: number,
+    options = defaultOptions,
+) => {
+    const {scale} = options;
+
+    const draw = () => {
+        ctx.beginPath();
+        ctx.fillStyle = options.fillStyle;
+        ctx.lineWidth = options.lineWidth;
+
+        for (let y = 0; y < height + 1; y++) {
+            ctx.moveTo(0, y * scale);
+            ctx.lineTo(width * scale, y * scale);
+
+            for (let x = 0; x < width + 1; x++) {
+                ctx.moveTo(x * scale, 0);
+                ctx.lineTo(x * scale, height * scale);
+            }
+
+            ctx.stroke();
+        }
+    };
+
+    return {
+        id: 'level-raster-draw',
+        name: 'Level Raster Draw',
+        fn: draw,
+    };
+};
+
+export const getLevel = (levelID: number): ReverseLevel => {
     const level = levels[levelID];
 
     return {
         id: levelID,
-        map: levels[levelID],
-        width: w,
-        height: h,
+        map: level,
+        width: level[0].length,
+        height: level.length,
         getTile: (x, y) => {
-            if (x >= 0 && x < w && y >= 0 && y < h) return levels[levelID][y][x];
+            if (x >= 0 && x < level[0].length && y >= 0 && y < level.length) return level[y][x];
 
             return ' ';
         },
         setTile: (x, y, tileType) => {
             if (tileType.length != 1) return;
 
-            if (x >= 0 && x < levels[levelID][0].length && y >= 0 && y < levels[levelID].length)
-                levels[levelID][y][x] = tileType;
+            if (x >= 0 && x < level[0].length && y >= 0 && y < level.length) level[y][x] = tileType;
         },
         startPos: getStartPos,
     };

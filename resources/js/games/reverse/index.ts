@@ -1,11 +1,12 @@
 import {initialize} from 'library/index';
 import {createCharacter} from './character';
-import {createLevelDraw, getLevel} from './level';
+import {createLevelDraw, getLevel, getLevelRaster} from './level';
 import type {ReverseLevel} from './level';
 import type {LibraryOptions} from 'library/types';
 import type {ShapeMap} from 'library/entity/defaults/shapes';
 import type {Engine} from 'library/types/engine';
 import type {CreateElement, EntityElement} from 'library/entity';
+import {getTV} from 'library/views/tv';
 
 const libraryID = 'reverse';
 
@@ -61,9 +62,13 @@ const setScreen = (canvas: HTMLCanvasElement) => {
 
 export default () => {
     const library = initialize(libraryID, libraryOptions);
-    const {canvas, context, engine, entity, input} = library;
+    const {canvas, context, engine, createElement, input} = library;
 
     setScreen(canvas);
+
+    const tv = getTV(context, input);
+
+    console.log(tv);
 
     const level = getLevel(1);
 
@@ -75,7 +80,7 @@ export default () => {
         properties: charProps,
         pos: charPos,
         vel: charVel,
-    } = createCharacter(world, context, canvas, level, entity.create);
+    } = createCharacter(world, context, canvas, level, createElement);
 
     const handlers = {
         ArrowUp: () => (charPos.y -= charProps.speed),
@@ -87,32 +92,20 @@ export default () => {
     input.addMovement('reverse', handlers);
     // input.removeMovement('reverse');
 
-    engine.setUpdate({
-        fn: () => {
-            // world.xOffset -= world.xSpeed * 2;
-        },
-    });
-
     engine.setUpdate(charUpdate);
-
-    // engine.setUpdate({
-    //     fn: () => {
-    //         charProps.scaledX = charPos.x * world.unitScale;
-    //         charProps.scaledY = charPos.y * world.unitScale;
-    //     },
-    // });
 
     engine.setDraw(levelDraw);
     engine.setDraw(charDraw);
 
-    // engine.setUpdate({
-    //     fn: () => {
-    //         if (input.keyboard.keyHeld['ArrowLeft']) world.xOffset -= 0.05;
-    //         if (input.keyboard.keyHeld['ArrowRight']) world.xOffset += 0.05;
-    //     },
-    // });
+    const statElements = characterStatisticsElements(charProps, world, createElement, canvas);
 
-    const statElements = characterStatisticsElements(charProps, world, entity.create, canvas);
+    const levelRaster = getLevelRaster(context, level.width, level.height, {
+        scale: world.unitScale,
+        fillStyle: 'white',
+        lineWidth: 2,
+    });
+
+    engine.setDraw(levelRaster);
 
     library.runEngine();
 };

@@ -6,6 +6,8 @@
 // import {getTV} from 'games/library/transformedView';
 // import {setMouseInput} from 'games/library/input';
 
+import {getLevel} from '../levels';
+
 // const goToMenu = (
 // context: CanvasRenderingContext2D,
 // engine: Engine,
@@ -94,6 +96,8 @@
 
 // const startLevel = (levelNr: number) => {
 //     const level = getLevel(levelNr);
+
+getLevel;
 
 //     levelStore.set(level);
 
