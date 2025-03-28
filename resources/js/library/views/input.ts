@@ -1,3 +1,6 @@
+import {LibraryInput} from 'library/types/input';
+import {MethodsTV, PropertiesTV} from 'library/types/views';
+
 const mousedownHandler =
     ({startPan}: PropertiesTV, methods: MethodsTV) =>
     ({button, offsetX, offsetY}: MouseEvent) => {
@@ -10,9 +13,9 @@ const mousedownHandler =
     };
 
 const mousemoveHandler =
-    (props: PropertiesTV, {buttonHeld}: Input) =>
+    (props: PropertiesTV, {mouse}: LibraryInput) =>
     ({offsetX, offsetY}: MouseEvent) => {
-        if (buttonHeld[0]) {
+        if (mouse.buttonHeld[0]) {
             props.offset.x -= (offsetX - props.startPan.x) / props.scale.x;
             props.offset.y -= (offsetY - props.startPan.y) / props.scale.y;
 
@@ -30,7 +33,7 @@ const keydownHandler =
     };
 
 const wheelHandler =
-    ({zoom}: MethodsTV, {mouse}: Input) =>
+    ({zoom}: MethodsTV, {mouse}: LibraryInput) =>
     (evt: WheelEvent) => {
         if (evt.deltaY < 0) {
             zoom(mouse, 'in');
@@ -41,7 +44,7 @@ const wheelHandler =
         zoom(mouse, 'out');
     };
 
-export const setTVEvents = (props: PropertiesTV, methods: MethodsTV, input: Input) => {
+export const setTVEvents = (props: PropertiesTV, methods: MethodsTV, input: LibraryInput) => {
     // TODO::Test performance of multiple eventListeners on same element or 1 with a array loop (like engine)
     addEventListener('mousedown', mousedownHandler(props, methods));
     addEventListener('mousemove', mousemoveHandler(props, input));

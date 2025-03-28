@@ -1,3 +1,5 @@
+import {EngineUpdate} from './engine';
+
 type Zoom = 'in' | 'out';
 
 export interface StaticView {
@@ -9,7 +11,8 @@ type TransformedView = PropertiesTV & MethodsTV & PaintTV;
 export interface PaintTV {
     fillRect: (obj: TVFillRect) => void;
     strokeRect: (obj: TVStrokeRect) => void;
-    line: (obj: TVLine) => void;
+    // line: (obj: TVLine) => void;
+    line: (x1: number, y1: number, x2: number, y2: number) => void;
     text: (obj: TVText) => void;
     fillStrokeRect: (obj: TVFillStrokeRect) => void;
     roundFillStrokeRect: (obj: TVRoundFillStrokeRect) => void;
@@ -37,7 +40,7 @@ interface MethodsTV {
     setDefaults: (canvas: HTMLCanvasElement) => void;
     // getGrid: (context: CanvasRenderingContext2D) => Draw;
     setMiddle: (target: Vector) => void;
-    moveTo: (target: Vector, slowR?: number) => Update;
+    moveTo: (target: Vector, slowR?: number) => EngineUpdate;
     setUnitWeight: (unitLw: Vector) => void;
     delay: (lastPos: Vector, pos: Vector) => void;
 }

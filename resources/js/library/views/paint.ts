@@ -1,3 +1,5 @@
+import {MethodsTV, PropertiesTV} from 'library/types/views';
+
 export const getPaintMethods = (props: PropertiesTV, methods: MethodsTV, ctx: CanvasRenderingContext2D) => ({
     fillRect: createFillRect(props, methods, ctx),
     strokeRect: createStrokeRect(props, methods, ctx),
@@ -79,6 +81,20 @@ const createStrokeRect =
     };
 
 const createLine =
+    ({screen2}: PropertiesTV, {world2Screen2}: MethodsTV, ctx: CanvasRenderingContext2D) =>
+    (x1: number, y1: number, x2: number, y2: number) => {
+        world2Screen2(x1, y1, x2, y2);
+
+        // ctx.lineWidth = obj.lw * scale.x;
+        // ctx.strokeStyle = obj.stroke;
+
+        // ctx.beginPath();
+        ctx.moveTo(screen2.x, screen2.y);
+        ctx.lineTo(screen2.x2, screen2.y2);
+        // ctx.stroke();
+    };
+
+const createLine2 =
     ({screen2, scale}: PropertiesTV, {world2Screen2}: MethodsTV, ctx: CanvasRenderingContext2D) =>
     (obj: TVLine) => {
         world2Screen2(obj.x, obj.y, obj.x2, obj.y2);

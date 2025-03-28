@@ -68,6 +68,24 @@ export default () => {
 
     const tv = getTV(context, input);
 
+    tv.setScale({x: world.unitScale, y: world.unitScale});
+    tv.setScaleFactor(0.99);
+    tv.setScreenSize({x: canvas.width, y: canvas.height});
+    // tv.setUnitWeight({x: 1 / world.xUnits, y: 1 / world.xUnits});
+    //     tv.setWorldBorders(vector2(0, 0, level.width, level.height));
+    //     tv.setOffset(vector(-6 + level.playerStart.x, -6 + level.playerStart.y));
+    //     const player = getPlayer(level.playerStart);
+    //     playerStore.set(player);
+    //     // bunch up all updates and shows and set them in order somewhere else (expand setUpdate/Show)
+    //     engine.setUpdate(player.update);
+    //     // when a component use the gamestore, make create functions so they can be used at a later point
+    //     const levelShow = level.createShow(level.map, level.coins, tv);
+    //     engine.setDraw(levelShow);
+    //     engine.setDraw(player.show);
+
+    //     engine.showsOverview();
+    //     engine.updatesOverview();
+
     console.log(tv);
 
     const level = getLevel(1);
@@ -99,10 +117,10 @@ export default () => {
 
     const statElements = characterStatisticsElements(charProps, world, createElement, canvas);
 
-    const levelRaster = getLevelRaster(context, level.width, level.height, {
+    const levelRaster = getLevelRaster(context, tv, level.width, level.height, {
         scale: world.unitScale,
-        fillStyle: 'white',
-        lineWidth: 2,
+        strokeStyle: 'white',
+        lineWidth: 1 / world.xUnits,
     });
 
     engine.setDraw(levelRaster);

@@ -1,3 +1,4 @@
+import {TransformedView} from 'library/types/views';
 import {WorldProperties} from '.';
 import {levels} from './levelMap';
 
@@ -16,11 +17,12 @@ export type ReverseLevel = {
 const defaultOptions = {
     scale: 10,
     lineWidth: 2,
-    fillStyle: 'white',
+    strokeStyle: 'white',
 };
 
 export const getLevelRaster = (
     ctx: CanvasRenderingContext2D,
+    tv: TransformedView,
     width: number,
     height: number,
     options = defaultOptions,
@@ -28,17 +30,22 @@ export const getLevelRaster = (
     const {scale} = options;
 
     const draw = () => {
+        ctx.strokeStyle = options.strokeStyle;
+        ctx.lineWidth = options.lineWidth * tv.scale.x;
+
+        console.log(tv.scale.x);
+
         ctx.beginPath();
-        ctx.fillStyle = options.fillStyle;
-        ctx.lineWidth = options.lineWidth;
 
         for (let y = 0; y < height + 1; y++) {
-            ctx.moveTo(0, y * scale);
-            ctx.lineTo(width * scale, y * scale);
+            // ctx.moveTo(0, y * scale);
+            // ctx.lineTo(width * scale, y * scale);
+            tv.line(0, y, width, y);
 
             for (let x = 0; x < width + 1; x++) {
-                ctx.moveTo(x * scale, 0);
-                ctx.lineTo(x * scale, height * scale);
+                // ctx.moveTo(x * scale, 0);
+                // ctx.lineTo(x * scale, height * scale);
+                tv.line(x, 0, x, height);
             }
 
             ctx.stroke();
