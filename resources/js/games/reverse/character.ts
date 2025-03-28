@@ -156,19 +156,16 @@ const createCharacterProperties = (
     level: ReverseLevel,
 ) => ({
     pos: {x: startPosition.x, y: startPosition.y},
+    vel: {x: 0, y: 0},
+    w: 1,
+    h: 1,
     scaledX: startPosition.x * world.unitScale,
     scaledY: startPosition.y * world.unitScale,
-    w: 1,
     scaledW: world.unitScale,
-    h: 1,
     scaledH: world.unitScale,
+    speed: 0.05,
     face: 'up',
     grounded: true,
-    vel: {
-        x: 0, // unused in this case
-        y: 0,
-    },
-    speed: 0.05,
     fill: '#009',
     level,
     collisions: {

@@ -57,7 +57,6 @@ export const getCanvasInput = (canvas: HTMLCanvasElement, engine: Engine) => {
     const addMovement: AddMovement = (id, handlers) => {
         // TODO::Add to Library (Error) Log
         if (movement[id]) return console.log(`movement with id ${id.toString()} already exists`);
-        // if (keys.length !== handlers.length) return console.log('length of keys and handlers need to be the same');
 
         const keys = Object.keys(handlers);
 
@@ -89,12 +88,7 @@ export const getCanvasInput = (canvas: HTMLCanvasElement, engine: Engine) => {
             id,
             name: 'input movement',
             fn: () => {
-                for (let i = 0; i < move.length; i++)
-                    if (move[i]) {
-                        // handlers[keys[i]]();
-                        console.log(keys[i]);
-                        console.log(handlers[keys[i]]);
-                    }
+                for (let i = 0; i < move.length; i++) if (move[i]) handlers[keys[i]]();
             },
         });
     };

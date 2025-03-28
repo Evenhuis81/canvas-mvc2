@@ -78,10 +78,10 @@ export default () => {
     } = createCharacter(world, context, canvas, level, entity.create);
 
     const handlers = {
-        ArrowUp: () => (charPos.y -= charVel.y),
-        ArrowDown: () => (charPos.y += charVel.y),
-        ArrowLeft: () => (charPos.x -= charVel.x),
-        ArrowRight: () => (charPos.x += charVel.x),
+        ArrowUp: () => (charPos.y -= charProps.speed),
+        ArrowDown: () => (charPos.y += charProps.speed),
+        ArrowLeft: () => (charPos.x -= charProps.speed),
+        ArrowRight: () => (charPos.x += charProps.speed),
     };
 
     input.addMovement('reverse', handlers);
@@ -112,14 +112,12 @@ export default () => {
     //     },
     // });
 
-    const elements = characterElements(charProps, world, entity.create, canvas);
-
-    //
+    const statElements = characterStatisticsElements(charProps, world, entity.create, canvas);
 
     library.runEngine();
 };
 
-const characterElements = (
+const characterStatisticsElements = (
     props: {
         scaledW: number;
         scaledH: number;

@@ -19,8 +19,6 @@ export const getLevel = (levelID: number): ReverseLevel => {
 
     const level = levels[levelID];
 
-    console.log(level);
-
     return {
         id: levelID,
         map: levels[levelID],
