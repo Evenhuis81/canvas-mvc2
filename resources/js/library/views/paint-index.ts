@@ -11,7 +11,13 @@ type CreatePaintDraw<F extends TestF> = (
 
 export type SetPaint = <T extends string, F extends TestF>(name: T, draw: CreatePaintDraw<F>) => void;
 
-export const createPaintMethods = (props: PropertiesTV, methods: MethodsTV, ctx: CanvasRenderingContext2D) => {
+type CreatePaintMethods = (
+    props: PropertiesTV,
+    methods: MethodsTV,
+    ctx: CanvasRenderingContext2D,
+) => {setPaint: SetPaint; paintStore: Record<string, TestF>};
+
+export const createPaintMethods: CreatePaintMethods = (props, methods, ctx) => {
     // type PaintDraw = <Draw extends Function>() => void;
 
     const paintStore: Record<string, TestF> = {};
@@ -22,6 +28,7 @@ export const createPaintMethods = (props: PropertiesTV, methods: MethodsTV, ctx:
 
     return {
         setPaint,
+        paintStore: {...paintStore},
     };
 
     // base: paintBase(props, methods, ctx),

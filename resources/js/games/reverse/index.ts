@@ -60,13 +60,20 @@ const setScreen = (canvas: HTMLCanvasElement) => {
     world.xMargin = (canvas.width - world.unitScale * 16) / 2;
 };
 
+const libraryGenericPaint = {
+    line: (props: PropertiesTV, methods: MethodsTV, context: CanvasRenderingContext2D) => (x1: number) => {
+        console.log(x1);
+    },
+};
+
 export default () => {
-    const library = initialize(libraryID, libraryOptions);
+    const library = initialize(libraryGenericPaint, libraryID, libraryOptions);
     const {canvas, context, engine, createElement, input, views} = library;
 
     setScreen(canvas);
 
-    views.setPaint('line', (props, methods, context) => x1 => {});
+    views.paintStore.line;
+    // const lineMethods = views.paintStore.line(112, '');
 
     // views.setPaint('line', (properties: PropertiesTV, methods: MethodsTV, ctx: CanvasRenderingContext2D) => (x1: number, y1: number, x2: number, y2: number) => {
     //     const screen = methods.world2Screen2(x1, y1, x2, y2);

@@ -10,7 +10,19 @@ import {createDefaultSketch} from './entity/defaults';
 import {MethodsTV, PropertiesTV} from './types/views';
 import {createViews} from './views';
 
-export const initialize = (id?: string | number, options?: Partial<LibraryOptions>): LibraryResources => {
+type LibraryGenericPaintMethods<Methods extends object> = {
+    [K in keyof Methods]: (
+        props: PropertiesTV,
+        methods: MethodsTV,
+        context: CanvasRenderingContext2D,
+    ) => (...args: unknown[]) => void;
+};
+
+export const initialize = <L extends object>(
+    paintMethods: L,
+    id?: string | number,
+    options?: Partial<LibraryOptions>,
+): LibraryResources<L> => {
     const libraryID = id ?? uid();
 
     const canvas = getCanvas(options);
@@ -32,6 +44,8 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
 
     const createElement = entity(context, engine, createDefaultSketch).create;
 
+    const {setPaint} = createViews(context);
+
     return {
         // stats,
         canvas,
@@ -43,7 +57,8 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
         createPhaser: () => getCreatePhaser(engine),
         createElement,
         views: {
-            setPaint: createViews(context),
+            setPaint,
+            paintStore: paintMethods,
         },
     };
 };

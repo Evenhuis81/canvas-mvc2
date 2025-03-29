@@ -35,7 +35,7 @@ export type WithRequired<T, K extends keyof T> = T & {[P in K]-?: T[P]};
 
 export type BaseID = string | number | symbol;
 
-export interface LibraryResources {
+export interface LibraryResources<L extends object> {
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
     engine: Engine;
@@ -46,6 +46,7 @@ export interface LibraryResources {
     createElement: CreateElement<ShapeMap>; // TODO::Make generic
     views: {
         setPaint: SetPaint;
+        paintStore: L;
     };
 }
 

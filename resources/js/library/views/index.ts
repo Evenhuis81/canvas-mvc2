@@ -10,7 +10,7 @@ type PaintBase = {
 
 type PaintObjects<O extends object> = {[K in keyof O]: O[K]};
 
-export const createViews = <Base extends PaintObjects<PaintBase>>(
+export const createViews = (
     context: CanvasRenderingContext2D,
     // paintBase: Base,
 ) => {
