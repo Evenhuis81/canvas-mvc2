@@ -13,6 +13,7 @@ export const getTV = (context: CanvasRenderingContext2D, input: LibraryInput): T
     // Make optional
     setTVEvents(properties, methods, input);
 
+    // separate/abstract theese
     return {
         ...properties,
         ...paintMethods,
@@ -27,8 +28,8 @@ const properties = {
     screen2: vector2(),
     world: vector(10, 10),
     screenSize: vector(300, 150),
-    worldTL: vector(),
-    worldBR: vector(10, 10),
+    worldTL: vector(), // part of world borders
+    worldBR: vector(10, 10), // part of world borders
     startPan: vector(),
     worldBeforeZoom: vector(),
     worldAfterZoom: vector(),
@@ -36,7 +37,7 @@ const properties = {
     worldView: vector2(),
     orientation: '',
     unitWeight: vector(1, 1),
-    history: Array(10).fill(vector()),
+    history: Array(10).fill(vector()), // separate
 };
 
 const screen2World = (x: number, y: number) => {

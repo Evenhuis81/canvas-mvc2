@@ -1,11 +1,9 @@
-/* eslint-disable complexity */
-/* eslint-disable max-lines-per-function */
-/* eslint-disable no-param-reassign */
+import type {TransformedView} from 'library/types/views';
 import {getCoinMap, getLevelMap} from './levels';
 import {vector} from 'library/vector';
 
 const getEmptyXFromRow = (levelMapRow: MapElement[], emptiesRow: number[], count = 0) => {
-    // This works only if right side ends with no '.' or 'S'
+    // This works only if right side doesn't ends with '.' or 'S'.
     while (levelMapRow[count] === '.' || levelMapRow[count] === 'S') count++;
 
     emptiesRow.push(count);
@@ -29,7 +27,7 @@ const getEmptyX = (levelMap: LevelMap) => {
 
 const createMapDraw = (
     levelMap: LevelMap,
-    coinMap: CoinMap,
+    // coinMap: CoinMap,
     tv: TransformedView,
     screenWidth: number,
     screenHeight: number,
@@ -41,12 +39,10 @@ const createMapDraw = (
 
     const noEmptyX = getEmptyX(levelMap);
 
-    // eslint-disable-next-line complexity
     return {
         id: 4,
         name: 'level',
         fn: () => {
-            // remove
             alpha += alphaVel;
 
             if (alpha > 1) {

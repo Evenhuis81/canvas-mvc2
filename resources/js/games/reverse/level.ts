@@ -15,7 +15,6 @@ export type ReverseLevel = {
 };
 
 const defaultOptions = {
-    scale: 10,
     lineWidth: 2,
     strokeStyle: 'white',
 };
@@ -31,8 +30,6 @@ export const getLevelRaster = (
         ctx.strokeStyle = options.strokeStyle;
         ctx.lineWidth = options.lineWidth * tv.scale.x;
 
-        console.log(tv.scale.x);
-
         ctx.beginPath();
 
         for (let y = 0; y < height + 1; y++) {
@@ -41,9 +38,9 @@ export const getLevelRaster = (
             for (let x = 0; x < width + 1; x++) {
                 tv.line(x, 0, x, height);
             }
-
-            ctx.stroke();
         }
+
+        ctx.stroke();
     };
 
     return {

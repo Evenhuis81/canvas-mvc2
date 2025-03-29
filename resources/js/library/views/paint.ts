@@ -1,16 +1,22 @@
 import {MethodsTV, PropertiesTV} from 'library/types/views';
 
-export const getPaintMethods = (props: PropertiesTV, methods: MethodsTV, ctx: CanvasRenderingContext2D) => ({
-    fillRect: createFillRect(props, methods, ctx),
-    strokeRect: createStrokeRect(props, methods, ctx),
-    line: createLine(props, methods, ctx),
-    text: createFillText(props, methods, ctx),
-    fillStrokeRect: createFillStrokeRect(props, methods, ctx),
-    roundFillStrokeRect: createRoundFillStrokeRect(props, methods, ctx),
-    roundRectStroke: createRoundRectStroke(props, methods, ctx),
-    fillCircle: createFillCircle(props, methods, ctx),
-    strokeCircle: createStrokeCircle(props, methods, ctx),
-    fillStrokeCircle: createFillStrokeCircle(props, methods, ctx),
+export const createOldPaintMethods = (props: PropertiesTV, methods: MethodsTV, ctx: CanvasRenderingContext2D) => ({
+    base: {
+        //
+    },
+});
+
+export const getPaintMethods = () => ({
+    // fillRect: createFillRect(props, methods, ctx),
+    // strokeRect: createStrokeRect(props, methods, ctx),
+    // line: createLine(props, methods, ctx),
+    // text: createFillText(props, methods, ctx),
+    // fillStrokeRect: createFillStrokeRect(props, methods, ctx),
+    // roundFillStrokeRect: createRoundFillStrokeRect(props, methods, ctx),
+    // roundRectStroke: createRoundRectStroke(props, methods, ctx),
+    // fillCircle: createFillCircle(props, methods, ctx),
+    // strokeCircle: createStrokeCircle(props, methods, ctx),
+    // fillStrokeCircle: createFillStrokeCircle(props, methods, ctx),
 });
 
 const createFillStrokeCircle =

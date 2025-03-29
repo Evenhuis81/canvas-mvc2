@@ -1,19 +1,3 @@
-/* eslint-disable max-lines-per-function */
-// import {gameStore} from './store';
-// import {getCanvas, getContext2D} from 'library/canvas';
-// import {getEngine} from 'library/engine';
-// import {enableStatistics} from 'library/statistics';
-// import {getTV} from 'games/library/transformedView';
-// import {setMouseInput} from 'games/library/input';
-
-import {getLevel} from '../levels';
-
-// const goToMenu = (
-// context: CanvasRenderingContext2D,
-// engine: Engine,
-// tv: TransformedView,
-// canvas: HTMLCanvasElement,
-// ) => {
 // buttons:
 // 1. start
 // 2. settings
@@ -27,14 +11,8 @@ import {getLevel} from '../levels';
 // 10. save game
 
 // const button = getButton(buttonObj);
-
 // const startButton = getStartButton(context);
 // engine.setDraw(startButton.show);
-
-// addEventListener('mouseup', () => {
-//     if (startButton.inside()) startLevel(2, tv, context, canvas, engine);
-// });
-// };
 
 // export default {
 //     setup: () => {
@@ -96,9 +74,6 @@ import {getLevel} from '../levels';
 
 // const startLevel = (levelNr: number) => {
 //     const level = getLevel(levelNr);
-
-getLevel;
-
 //     levelStore.set(level);
 
 //     const {tv, canvas, engine} = resources.state;
@@ -106,7 +81,7 @@ getLevel;
 
 //     const scale = canvas.width / 24;
 
-//     tv.setUnitWeight({x: 1 / scale, y: 1 / scale});
+//     tv.setUnitWeight({x: 1 / scale, y: 1 / scale}); // calculate where needed
 
 //     tv.setScale(vector(scale, scale));
 //     tv.setScreenSize(vector(canvas.width, canvas.height));

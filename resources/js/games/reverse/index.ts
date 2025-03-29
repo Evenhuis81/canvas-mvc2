@@ -69,24 +69,13 @@ export default () => {
     const tv = getTV(context, input);
 
     tv.setScale({x: world.unitScale, y: world.unitScale});
-    tv.setScaleFactor(0.99);
+    tv.setScaleFactor(0.95); // create switch/slider to adjust this and other setttings
     tv.setScreenSize({x: canvas.width, y: canvas.height});
-    // tv.setUnitWeight({x: 1 / world.xUnits, y: 1 / world.xUnits});
-    //     tv.setWorldBorders(vector2(0, 0, level.width, level.height));
-    //     tv.setOffset(vector(-6 + level.playerStart.x, -6 + level.playerStart.y));
-    //     const player = getPlayer(level.playerStart);
-    //     playerStore.set(player);
-    //     // bunch up all updates and shows and set them in order somewhere else (expand setUpdate/Show)
-    //     engine.setUpdate(player.update);
-    //     // when a component use the gamestore, make create functions so they can be used at a later point
-    //     const levelShow = level.createShow(level.map, level.coins, tv);
-    //     engine.setDraw(levelShow);
-    //     engine.setDraw(player.show);
-
-    //     engine.showsOverview();
+    //     tv.setUnitWeight({x: 1 / world.xUnits, y: 1 / world.xUnits}); // unused?
+    //     tv.setWorldBorders(vector2(0, 0, level.width, level.height)); // optional under extras?
+    //     tv.setOffset(vector(-6 + level.playerStart.x, -6 + level.playerStart.y)); // requires documentation and example(s)
+    //     engine.showsOverview(); // part of statistics ?
     //     engine.updatesOverview();
-
-    console.log(tv);
 
     const level = getLevel(1);
 
@@ -97,7 +86,7 @@ export default () => {
         update: charUpdate,
         properties: charProps,
         pos: charPos,
-        vel: charVel,
+        // vel: charVel,
     } = createCharacter(world, context, canvas, level, createElement);
 
     const handlers = {
@@ -111,8 +100,7 @@ export default () => {
     // input.removeMovement('reverse');
 
     engine.setUpdate(charUpdate);
-
-    engine.setDraw(levelDraw);
+    // engine.setDraw(levelDraw);
     engine.setDraw(charDraw);
 
     const statElements = characterStatisticsElements(charProps, world, createElement, canvas);
@@ -120,7 +108,6 @@ export default () => {
     statElements.bottomLeft.show();
 
     const levelRaster = getLevelRaster(context, tv, level.width, level.height, {
-        scale: world.unitScale,
         strokeStyle: 'white',
         lineWidth: 0.2 / world.xUnits,
     });

@@ -67,6 +67,7 @@ export const createDefaultSketch = (
         return {shape, draw};
     },
     'arrow-pointer': () => {
+        // unfinished
         const shape = {...defaultShapes['arrow-pointer']};
 
         const draw = () => {
