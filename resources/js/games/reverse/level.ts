@@ -27,8 +27,6 @@ export const getLevelRaster = (
     height: number,
     options = defaultOptions,
 ) => {
-    const {scale} = options;
-
     const draw = () => {
         ctx.strokeStyle = options.strokeStyle;
         ctx.lineWidth = options.lineWidth * tv.scale.x;
@@ -38,13 +36,9 @@ export const getLevelRaster = (
         ctx.beginPath();
 
         for (let y = 0; y < height + 1; y++) {
-            // ctx.moveTo(0, y * scale);
-            // ctx.lineTo(width * scale, y * scale);
             tv.line(0, y, width, y);
 
             for (let x = 0; x < width + 1; x++) {
-                // ctx.moveTo(x * scale, 0);
-                // ctx.lineTo(x * scale, height * scale);
                 tv.line(x, 0, x, height);
             }
 
@@ -81,27 +75,34 @@ export const getLevel = (levelID: number): ReverseLevel => {
     };
 };
 
-export const createLevelDraw = (ctx: CanvasRenderingContext2D, world: WorldProperties, level: ReverseLevel) => ({
+export const createLevelDraw = (
+    ctx: CanvasRenderingContext2D,
+    tv: TransformedView,
+    world: WorldProperties,
+    level: ReverseLevel,
+) => ({
     id: level.id,
     name: `level${level.id}-draw`,
     fn: () => {
         ctx.strokeStyle = '#ccc';
-        ctx.lineWidth = 1;
+        ctx.lineWidth = tv.scale.x * (1 / world.xUnits);
 
         for (let y = 0; y < level.height; y++) {
             for (let x = 0; x < level.width; x++) {
                 if (level.map[y][x] === 'X') {
-                    ctx.beginPath();
+                    // ctx.beginPath();
 
-                    ctx.roundRect(
-                        (x + 0.2 + world.xOffset) * world.unitScale,
-                        (y + 0.2 + world.yOffset) * world.unitScale,
-                        world.unitScale * 0.6,
-                        world.unitScale * 0.6,
-                        3,
-                    );
+                    // ctx.roundRect(
+                    //     (x + 0.2 + world.xOffset) * world.unitScale,
+                    //     (y + 0.2 + world.yOffset) * world.unitScale,
+                    //     world.unitScale * 0.6,
+                    //     world.unitScale * 0.6,
+                    //     3,
+                    // );
 
-                    ctx.stroke();
+                    tv.roundRectStroke(x + 0.2 + world.xOffset, y + 0.2 + world.yOffset, 0.6, 0.6, 3);
+
+                    // ctx.stroke();
                 }
             }
         }

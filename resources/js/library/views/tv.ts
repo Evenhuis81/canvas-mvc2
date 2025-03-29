@@ -5,8 +5,9 @@ import {getPaintMethods} from './paint';
 import {setTVEvents} from './input';
 import {vec, vector, vector2} from '../vector';
 import {LibraryInput} from 'library/types/input';
+import {TransformedView} from 'library/types/views';
 
-export const getTV = (context: CanvasRenderingContext2D, input: LibraryInput) => {
+export const getTV = (context: CanvasRenderingContext2D, input: LibraryInput): TransformedView => {
     const paintMethods = getPaintMethods(properties, methods, context);
 
     // Make optional

@@ -90,7 +90,7 @@ export default () => {
 
     const level = getLevel(1);
 
-    const levelDraw = createLevelDraw(context, world, level);
+    const levelDraw = createLevelDraw(context, tv, world, level);
 
     const {
         draw: charDraw,
@@ -117,10 +117,12 @@ export default () => {
 
     const statElements = characterStatisticsElements(charProps, world, createElement, canvas);
 
+    statElements.bottomLeft.show();
+
     const levelRaster = getLevelRaster(context, tv, level.width, level.height, {
         scale: world.unitScale,
         strokeStyle: 'white',
-        lineWidth: 1 / world.xUnits,
+        lineWidth: 0.2 / world.xUnits,
     });
 
     engine.setDraw(levelRaster);

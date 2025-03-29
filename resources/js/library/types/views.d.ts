@@ -16,6 +16,7 @@ export interface PaintTV {
     text: (obj: TVText) => void;
     fillStrokeRect: (obj: TVFillStrokeRect) => void;
     roundFillStrokeRect: (obj: TVRoundFillStrokeRect) => void;
+    roundRectStroke: (x: number, y: number, w: number, h: number, radii: number) => void;
     fillCircle: (obj: TVFillCircle) => void;
     strokeCircle: (obj: TVStrokeCircle) => void;
     fillStrokeCircle: (obj: TVFillStrokeCircle) => void;

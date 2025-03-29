@@ -7,6 +7,7 @@ export const getPaintMethods = (props: PropertiesTV, methods: MethodsTV, ctx: Ca
     text: createFillText(props, methods, ctx),
     fillStrokeRect: createFillStrokeRect(props, methods, ctx),
     roundFillStrokeRect: createRoundFillStrokeRect(props, methods, ctx),
+    roundRectStroke: createRoundRectStroke(props, methods, ctx),
     fillCircle: createFillCircle(props, methods, ctx),
     strokeCircle: createStrokeCircle(props, methods, ctx),
     fillStrokeCircle: createFillStrokeCircle(props, methods, ctx),
@@ -150,5 +151,15 @@ const createRoundFillStrokeRect =
         ctx.beginPath();
         ctx.roundRect(screen.x, screen.y, obj.w * scale.x, obj.h * scale.y, obj.r * scale.x);
         ctx.fill();
+        ctx.stroke();
+    };
+
+const createRoundRectStroke =
+    ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
+    (x: number, y: number, w: number, h: number, radii: number) => {
+        world2Screen(x, y);
+
+        ctx.beginPath();
+        ctx.roundRect(screen.x, screen.y, w * scale.x, h * scale.y, radii);
         ctx.stroke();
     };
