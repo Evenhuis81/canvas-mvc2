@@ -7,6 +7,8 @@ import type {Engine} from './types/engine';
 import type {LibraryOptions, LibraryResources} from './types';
 import {entity} from './entity';
 import {createDefaultSketch} from './entity/defaults';
+import {MethodsTV, PropertiesTV} from './types/views';
+import {createViews} from './views';
 
 export const initialize = (id?: string | number, options?: Partial<LibraryOptions>): LibraryResources => {
     const libraryID = id ?? uid();
@@ -40,6 +42,9 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
         runEngineOnce: () => engine.runOnce(),
         createPhaser: () => getCreatePhaser(engine),
         createElement,
+        views: {
+            setPaint: createViews(context),
+        },
     };
 };
 

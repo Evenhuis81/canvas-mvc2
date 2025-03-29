@@ -1,12 +1,30 @@
-import {MethodsTV, PropertiesTV} from 'library/types/views';
+import type {MethodsTV, PropertiesTV} from 'library/types/views';
+// import paintBase from './paint-base';
 
-export const createOldPaintMethods = (props: PropertiesTV, methods: MethodsTV, ctx: CanvasRenderingContext2D) => ({
-    base: {
-        //
-    },
-});
+type TestF = (...args: any[]) => void;
 
-export const getPaintMethods = () => ({
+type CreatePaintDraw<F extends TestF> = (
+    properties: PropertiesTV,
+    methods: MethodsTV,
+    ctx: CanvasRenderingContext2D,
+) => F;
+
+export type SetPaint = <T extends string, F extends TestF>(name: T, draw: CreatePaintDraw<F>) => void;
+
+export const createPaintMethods = (props: PropertiesTV, methods: MethodsTV, ctx: CanvasRenderingContext2D) => {
+    // type PaintDraw = <Draw extends Function>() => void;
+
+    const paintStore: Record<string, TestF> = {};
+
+    const setPaint: SetPaint = (name, draw) => {
+        paintStore[name] = draw(props, methods, ctx);
+    };
+
+    return {
+        setPaint,
+    };
+
+    // base: paintBase(props, methods, ctx),
     // fillRect: createFillRect(props, methods, ctx),
     // strokeRect: createStrokeRect(props, methods, ctx),
     // line: createLine(props, methods, ctx),
@@ -17,7 +35,7 @@ export const getPaintMethods = () => ({
     // fillCircle: createFillCircle(props, methods, ctx),
     // strokeCircle: createStrokeCircle(props, methods, ctx),
     // fillStrokeCircle: createFillStrokeCircle(props, methods, ctx),
-});
+};
 
 const createFillStrokeCircle =
     (props: PropertiesTV, methods: MethodsTV, ctx: CanvasRenderingContext2D) => (obj: TVFillStrokeCircle) => {
@@ -85,20 +103,6 @@ const createStrokeRect =
 
         ctx.beginPath();
         ctx.strokeRect(screen.x, screen.y, obj.w * scale.x, obj.h * scale.y);
-    };
-
-const createLine =
-    ({screen2}: PropertiesTV, {world2Screen2}: MethodsTV, ctx: CanvasRenderingContext2D) =>
-    (x1: number, y1: number, x2: number, y2: number) => {
-        world2Screen2(x1, y1, x2, y2);
-
-        // ctx.lineWidth = obj.lw * scale.x;
-        // ctx.strokeStyle = obj.stroke;
-
-        // ctx.beginPath();
-        ctx.moveTo(screen2.x, screen2.y);
-        ctx.lineTo(screen2.x2, screen2.y2);
-        // ctx.stroke();
     };
 
 const createLine2 =

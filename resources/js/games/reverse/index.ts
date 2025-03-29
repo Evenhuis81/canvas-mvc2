@@ -5,8 +5,8 @@ import type {ReverseLevel} from './level';
 import type {LibraryOptions} from 'library/types';
 import type {ShapeMap} from 'library/entity/defaults/shapes';
 import type {Engine} from 'library/types/engine';
-import type {CreateElement, EntityElement} from 'library/entity';
-import {getTV} from 'library/views/tv';
+import type {CreateElement} from 'library/entity';
+import {MethodsTV, PropertiesTV} from 'library/types/views';
 
 const libraryID = 'reverse';
 
@@ -62,15 +62,27 @@ const setScreen = (canvas: HTMLCanvasElement) => {
 
 export default () => {
     const library = initialize(libraryID, libraryOptions);
-    const {canvas, context, engine, createElement, input} = library;
+    const {canvas, context, engine, createElement, input, views} = library;
 
     setScreen(canvas);
 
-    const tv = getTV(context, input);
+    views.setPaint('line', (props, methods, context) => x1 => {});
 
-    tv.setScale({x: world.unitScale, y: world.unitScale});
-    tv.setScaleFactor(0.95); // create switch/slider to adjust this and other setttings
-    tv.setScreenSize({x: canvas.width, y: canvas.height});
+    // views.setPaint('line', (properties: PropertiesTV, methods: MethodsTV, ctx: CanvasRenderingContext2D) => (x1: number, y1: number, x2: number, y2: number) => {
+    //     const screen = methods.world2Screen2(x1, y1, x2, y2);
+
+    //     ctx.moveTo(screen.x1, screen.y1);
+    //     ctx.lineTo(screen.x2, screen.y2);
+    // });
+
+    // views.paint.
+
+    // const tv = getTV(context, input);
+
+    // tv.setScale({x: world.unitScale, y: world.unitScale});
+    // tv.setScaleFactor(0.95); // create switch/slider to adjust this and other setttings
+    // tv.setScreenSize({x: canvas.width, y: canvas.height});
+
     //     tv.setUnitWeight({x: 1 / world.xUnits, y: 1 / world.xUnits}); // unused?
     //     tv.setWorldBorders(vector2(0, 0, level.width, level.height)); // optional under extras?
     //     tv.setOffset(vector(-6 + level.playerStart.x, -6 + level.playerStart.y)); // requires documentation and example(s)
@@ -79,7 +91,7 @@ export default () => {
 
     const level = getLevel(1);
 
-    const levelDraw = createLevelDraw(context, tv, world, level);
+    // const levelDraw = createLevelDraw(context, tv, world, level);
 
     const {
         draw: charDraw,
@@ -107,12 +119,12 @@ export default () => {
 
     statElements.bottomLeft.show();
 
-    const levelRaster = getLevelRaster(context, tv, level.width, level.height, {
-        strokeStyle: 'white',
-        lineWidth: 0.2 / world.xUnits,
-    });
+    // const levelRaster = getLevelRaster(context, tv, level.width, level.height, {
+    //     strokeStyle: 'white',
+    //     lineWidth: 0.2 / world.xUnits,
+    // });
 
-    engine.setDraw(levelRaster);
+    // engine.setDraw(levelRaster);
 
     library.runEngine();
 };

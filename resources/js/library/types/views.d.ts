@@ -1,10 +1,8 @@
 import {EngineUpdate} from './engine';
 
-type Zoom = 'in' | 'out';
+export type LibraryViews = {};
 
-export interface StaticView {
-    // paint: Paint;
-}
+type Zoom = 'in' | 'out';
 
 type TransformedView = PropertiesTV & MethodsTV & PaintTV;
 
@@ -25,7 +23,7 @@ export interface PaintTV {
 interface MethodsTV {
     screen2World: (x: number, y: number) => void;
     world2Screen: (x: number, y: number) => void;
-    world2Screen2: (x: number, y: number, x2: number, y2: number) => void;
+    world2Screen2: (x1: number, y1: number, x2: number, y2: number) => {x1: number; y1: number; x2: number; y2: number};
     zoomMechanic: {
         in: () => void;
         out: () => void;

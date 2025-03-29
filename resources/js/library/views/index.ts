@@ -1,24 +1,30 @@
-/* eslint-disable complexity */
-/* eslint-disable max-lines-per-function */
-/* eslint-disable prefer-destructuring */
-import {getPaintMethods} from './paint';
-import {setTVEvents} from './input';
+// import {setTVEvents} from './input';
 import {vec, vector, vector2} from '../vector';
-import {LibraryInput} from 'library/types/input';
-import {TransformedView} from 'library/types/views';
+// import type {LibraryInput} from 'library/types/input';
+import {LibraryViews} from 'library/types/views';
+import {createPaintMethods} from './paint-index';
 
-export const getTV = (context: CanvasRenderingContext2D, input: LibraryInput): TransformedView => {
-    const paintMethods = getPaintMethods(properties, methods, context);
+type PaintBase = {
+    line: (x1: number, y1: number, x2: number, y2: number) => () => void;
+};
 
-    // Make optional
-    setTVEvents(properties, methods, input);
+type PaintObjects<O extends object> = {[K in keyof O]: O[K]};
 
-    // separate/abstract theese
-    return {
-        ...properties,
-        ...paintMethods,
-        ...methods,
-    };
+export const createViews = <Base extends PaintObjects<PaintBase>>(
+    context: CanvasRenderingContext2D,
+    // paintBase: Base,
+) => {
+    const paintMethods = createPaintMethods(properties, methods, context);
+
+    // Make optional, with user defined input keys/mousebuttons/touches
+    // setTVEvents(properties, methods, input);
+
+    // return {
+    // ...properties,
+    // ...paintMethods,
+    // ...methods,
+    // };
+    return paintMethods;
 };
 
 const properties = {
@@ -50,12 +56,12 @@ const world2Screen = (x: number, y: number) => {
     properties.screen.y = (y - properties.offset.y) * properties.scale.y;
 };
 
-const world2Screen2 = (x: number, y: number, x2: number, y2: number) => {
-    properties.screen2.x = (x - properties.offset.x) * properties.scale.x;
-    properties.screen2.y = (y - properties.offset.y) * properties.scale.y;
-    properties.screen2.x2 = (x2 - properties.offset.x) * properties.scale.x;
-    properties.screen2.y2 = (y2 - properties.offset.y) * properties.scale.y;
-};
+const world2Screen2 = (x: number, y: number, x2: number, y2: number) => ({
+    x1: (x - properties.offset.x) * properties.scale.x,
+    y1: (y - properties.offset.y) * properties.scale.y,
+    x2: (x2 - properties.offset.x) * properties.scale.x,
+    y2: (y2 - properties.offset.y) * properties.scale.y,
+});
 
 const getMiddleScreen = () => vector(properties.screenSize.x / 2, properties.screenSize.y / 2);
 

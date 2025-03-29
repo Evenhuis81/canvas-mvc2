@@ -5,6 +5,7 @@ import {LibraryInput} from './input';
 import {CreateElement} from 'library/entity';
 import {Circle, Pos, Rect} from './shapes';
 import {ShapeMap, Triangle} from 'library/entity/defaults/shapes';
+import {SetPaint} from 'library/views/paint-index';
 
 /**
  * Removes undefined from tuples
@@ -42,7 +43,10 @@ export interface LibraryResources {
     runEngine: () => void;
     runEngineOnce: () => void;
     createPhaser: () => Phaser;
-    createElement: CreateElement<ShapeMap>;
+    createElement: CreateElement<ShapeMap>; // TODO::Make generic
+    views: {
+        setPaint: SetPaint;
+    };
 }
 
 export interface StatisticOptions {

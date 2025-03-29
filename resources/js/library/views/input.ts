@@ -45,7 +45,6 @@ const wheelHandler =
     };
 
 export const setTVEvents = (props: PropertiesTV, methods: MethodsTV, input: LibraryInput) => {
-    // TODO::Test performance of multiple eventListeners on same element or 1 with a array loop (like engine)
     addEventListener('mousedown', mousedownHandler(props, methods));
     addEventListener('mousemove', mousemoveHandler(props, input));
     addEventListener('keydown', keydownHandler(methods));
