@@ -1,3 +1,5 @@
+import {Line} from 'library/types/shapes';
+
 export const defaultShapes: ShapeMap = {
     rect: {
         x: 200,
@@ -53,6 +55,12 @@ export const defaultShapes: ShapeMap = {
         textAlign: 'center',
         textBaseLine: 'middle',
     },
+    line: {
+        x1: 0,
+        y1: 0,
+        x2: 0,
+        y2: 0,
+    },
 };
 
 type Pos = {
@@ -66,6 +74,7 @@ export type ShapeMap = {
     text: Text & Pos;
     'circle-pointer': Circle & Text & Pos;
     'arrow-pointer': Triangle & Circle & Text;
+    line: Line;
 };
 
 export type Triangle = {

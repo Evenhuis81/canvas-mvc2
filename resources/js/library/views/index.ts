@@ -10,10 +10,7 @@ type PaintBase = {
 
 type PaintObjects<O extends object> = {[K in keyof O]: O[K]};
 
-export const createViews = (
-    context: CanvasRenderingContext2D,
-    // paintBase: Base,
-) => {
+export const createViews = (context: CanvasRenderingContext2D) => {
     const paintMethods = createPaintMethods(properties, methods, context);
 
     // Make optional, with user defined input keys/mousebuttons/touches
@@ -24,7 +21,7 @@ export const createViews = (
     // ...paintMethods,
     // ...methods,
     // };
-    return paintMethods;
+    return {tv: {}, sv: {}};
 };
 
 const properties = {

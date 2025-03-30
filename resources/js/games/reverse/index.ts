@@ -60,31 +60,32 @@ const setScreen = (canvas: HTMLCanvasElement) => {
     world.xMargin = (canvas.width - world.unitScale * 16) / 2;
 };
 
-const libraryGenericPaint = {
-    line: (props: PropertiesTV, methods: MethodsTV, context: CanvasRenderingContext2D) => (x1: number) => {
-        console.log(x1);
-    },
-};
-
 export default () => {
-    const library = initialize(libraryGenericPaint, libraryID, libraryOptions);
-    const {canvas, context, engine, createElement, input, views} = library;
+    const library = initialize(libraryID, libraryOptions);
+    const {
+        canvas,
+        context,
+        engine,
+        createElement,
+        input,
+        views: {tv, sv},
+    } = library;
 
     setScreen(canvas);
 
-    views.paintStore.line;
-    // const lineMethods = views.paintStore.line(112, '');
+    const createElement;
 
-    // views.setPaint('line', (properties: PropertiesTV, methods: MethodsTV, ctx: CanvasRenderingContext2D) => (x1: number, y1: number, x2: number, y2: number) => {
-    //     const screen = methods.world2Screen2(x1, y1, x2, y2);
+    tv.line();
+    // views.setPaint(
+    //     'line',
+    //     (properties: PropertiesTV, methods: MethodsTV, ctx: CanvasRenderingContext2D) =>
+    //         (shape: {x1: number, y1: number, x2: number, y2: number, x1}) => {
+    //             const screen = methods.world2Screen2(shape);
 
-    //     ctx.moveTo(screen.x1, screen.y1);
-    //     ctx.lineTo(screen.x2, screen.y2);
-    // });
-
-    // views.paint.
-
-    // const tv = getTV(context, input);
+    //             ctx.moveTo(screen.x1, screen.y1);
+    //             ctx.lineTo(screen.x2, screen.y2);
+    //         },
+    // );
 
     // tv.setScale({x: world.unitScale, y: world.unitScale});
     // tv.setScaleFactor(0.95); // create switch/slider to adjust this and other setttings
@@ -98,7 +99,7 @@ export default () => {
 
     const level = getLevel(1);
 
-    // const levelDraw = createLevelDraw(context, tv, world, level);
+    const levelDraw = createLevelDraw(context, tv, world, level);
 
     const {
         draw: charDraw,
@@ -108,18 +109,18 @@ export default () => {
         // vel: charVel,
     } = createCharacter(world, context, canvas, level, createElement);
 
-    const handlers = {
-        ArrowUp: () => (charPos.y -= charProps.speed),
-        ArrowDown: () => (charPos.y += charProps.speed),
-        ArrowLeft: () => (charPos.x -= charProps.speed),
-        ArrowRight: () => (charPos.x += charProps.speed),
+    const movement = {
+        KeyW: () => (charPos.y -= charProps.speed),
+        KeyS: () => (charPos.y += charProps.speed),
+        KeyA: () => (charPos.x -= charProps.speed),
+        KeyD: () => (charPos.x += charProps.speed),
     };
 
-    input.addMovement('reverse', handlers);
+    input.addMovement('reverse', movement);
     // input.removeMovement('reverse');
 
     engine.setUpdate(charUpdate);
-    // engine.setDraw(levelDraw);
+    engine.setDraw(levelDraw);
     engine.setDraw(charDraw);
 
     const statElements = characterStatisticsElements(charProps, world, createElement, canvas);

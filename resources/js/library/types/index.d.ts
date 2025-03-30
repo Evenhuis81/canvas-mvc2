@@ -6,6 +6,7 @@ import {CreateElement} from 'library/entity';
 import {Circle, Pos, Rect} from './shapes';
 import {ShapeMap, Triangle} from 'library/entity/defaults/shapes';
 import {SetPaint} from 'library/views/paint-index';
+import {StaticView, TransformedView} from './views';
 
 /**
  * Removes undefined from tuples
@@ -35,7 +36,7 @@ export type WithRequired<T, K extends keyof T> = T & {[P in K]-?: T[P]};
 
 export type BaseID = string | number | symbol;
 
-export interface LibraryResources<L extends object> {
+export interface LibraryResources {
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
     engine: Engine;
@@ -45,8 +46,8 @@ export interface LibraryResources<L extends object> {
     createPhaser: () => Phaser;
     createElement: CreateElement<ShapeMap>; // TODO::Make generic
     views: {
-        setPaint: SetPaint;
-        paintStore: L;
+        tv: TransformedView;
+        sv: StaticView;
     };
 }
 

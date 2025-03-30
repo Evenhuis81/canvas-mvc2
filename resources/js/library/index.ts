@@ -6,23 +6,11 @@ import {uid} from './helpers';
 import type {Engine} from './types/engine';
 import type {LibraryOptions, LibraryResources} from './types';
 import {entity} from './entity';
-import {createDefaultSketch} from './entity/defaults';
+import {createDefaultSketch} from './entity/defaults/sketch';
 import {MethodsTV, PropertiesTV} from './types/views';
 import {createViews} from './views';
 
-type LibraryGenericPaintMethods<Methods extends object> = {
-    [K in keyof Methods]: (
-        props: PropertiesTV,
-        methods: MethodsTV,
-        context: CanvasRenderingContext2D,
-    ) => (...args: unknown[]) => void;
-};
-
-export const initialize = <L extends object>(
-    paintMethods: L,
-    id?: string | number,
-    options?: Partial<LibraryOptions>,
-): LibraryResources<L> => {
+export const initialize = (id?: string | number, options?: Partial<LibraryOptions>): LibraryResources => {
     const libraryID = id ?? uid();
 
     const canvas = getCanvas(options);
@@ -40,14 +28,9 @@ export const initialize = <L extends object>(
 
     const input = getCanvasInput(canvas, engine);
 
-    // const stats = createLibraryStatistics(engine, context, options?.engineStats);
-
     const createElement = entity(context, engine, createDefaultSketch).create;
 
-    const {setPaint} = createViews(context);
-
     return {
-        // stats,
         canvas,
         context,
         engine,
@@ -56,10 +39,7 @@ export const initialize = <L extends object>(
         runEngineOnce: () => engine.runOnce(),
         createPhaser: () => getCreatePhaser(engine),
         createElement,
-        views: {
-            setPaint,
-            paintStore: paintMethods,
-        },
+        views: createViews(context),
     };
 };
 

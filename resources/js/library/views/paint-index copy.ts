@@ -11,11 +11,37 @@ type CreatePaintDraw<F extends TestF> = (
 
 export type SetPaint = <T extends string, F extends TestF>(name: T, draw: CreatePaintDraw<F>) => void;
 
-type CreatePaintMethods = (props: PropertiesTV, methods: MethodsTV, ctx: CanvasRenderingContext2D) => void;
-// {setPaint: SetPaint; paintStore: Record<string, TestF>};
+type CreatePaintMethods = (
+    props: PropertiesTV,
+    methods: MethodsTV,
+    ctx: CanvasRenderingContext2D,
+) => {setPaint: SetPaint; paintStore: Record<string, TestF>};
 
 export const createPaintMethods: CreatePaintMethods = (props, methods, ctx) => {
-    // line:
+    // type PaintDraw = <Draw extends Function>() => void;
+
+    const paintStore: Record<string, TestF> = {};
+
+    const setPaint: SetPaint = (name, draw) => {
+        paintStore[name] = draw(props, methods, ctx);
+    };
+
+    return {
+        setPaint,
+        paintStore: {...paintStore},
+    };
+
+    // base: paintBase(props, methods, ctx),
+    // fillRect: createFillRect(props, methods, ctx),
+    // strokeRect: createStrokeRect(props, methods, ctx),
+    // line: createLine(props, methods, ctx),
+    // text: createFillText(props, methods, ctx),
+    // fillStrokeRect: createFillStrokeRect(props, methods, ctx),
+    // roundFillStrokeRect: createRoundFillStrokeRect(props, methods, ctx),
+    // roundRectStroke: createRoundRectStroke(props, methods, ctx),
+    // fillCircle: createFillCircle(props, methods, ctx),
+    // strokeCircle: createStrokeCircle(props, methods, ctx),
+    // fillStrokeCircle: createFillStrokeCircle(props, methods, ctx),
 };
 
 const createFillStrokeCircle =

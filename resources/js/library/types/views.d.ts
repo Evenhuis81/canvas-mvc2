@@ -4,7 +4,18 @@ export type LibraryViews = {};
 
 type Zoom = 'in' | 'out';
 
-type TransformedView = PropertiesTV & MethodsTV & PaintTV;
+export type TransformedView = {};
+export type StaticView = {};
+
+// type TransformedView = PropertiesTV & MethodsTV & PaintTV;
+
+type LibraryGenericPaintMethods<Methods extends object> = {
+    [K in keyof Methods]: (
+        props: PropertiesTV,
+        methods: MethodsTV,
+        context: CanvasRenderingContext2D,
+    ) => (...args: unknown[]) => void;
+};
 
 export interface PaintTV {
     fillRect: (obj: TVFillRect) => void;
