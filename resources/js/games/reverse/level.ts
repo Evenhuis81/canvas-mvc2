@@ -14,9 +14,9 @@ export type ReverseLevel = {
     startPos: (levelMap: LevelMap) => {x: number; y: number};
 };
 
-const defaultOptions = {
+const raster = {
     lineWidth: 2,
-    strokeStyle: 'white',
+    strokeStyle: '#fff',
 };
 
 export const getLevelRaster = (
@@ -24,7 +24,7 @@ export const getLevelRaster = (
     tv: TransformedView,
     width: number,
     height: number,
-    options = defaultOptions,
+    options = raster,
 ) => {
     const draw = () => {
         ctx.strokeStyle = options.strokeStyle;
@@ -33,10 +33,10 @@ export const getLevelRaster = (
         ctx.beginPath();
 
         for (let y = 0; y < height + 1; y++) {
-            tv.line(0, y, width, y);
+            tv.paint.line(0, y, width, y);
 
             for (let x = 0; x < width + 1; x++) {
-                tv.line(x, 0, x, height);
+                tv.paint.line(x, 0, x, height);
             }
         }
 
@@ -86,21 +86,8 @@ export const createLevelDraw = (
 
         for (let y = 0; y < level.height; y++) {
             for (let x = 0; x < level.width; x++) {
-                if (level.map[y][x] === 'X') {
-                    // ctx.beginPath();
-
-                    // ctx.roundRect(
-                    //     (x + 0.2 + world.xOffset) * world.unitScale,
-                    //     (y + 0.2 + world.yOffset) * world.unitScale,
-                    //     world.unitScale * 0.6,
-                    //     world.unitScale * 0.6,
-                    //     3,
-                    // );
-
-                    tv.roundRectStroke(x + 0.2 + world.xOffset, y + 0.2 + world.yOffset, 0.6, 0.6, 3);
-
-                    // ctx.stroke();
-                }
+                if (level.map[y][x] === 'X')
+                    tv.paint.roundRectStroke(x + 0.2 + world.xOffset, y + 0.2 + world.yOffset, 0.6, 0.6, 3);
             }
         }
     },

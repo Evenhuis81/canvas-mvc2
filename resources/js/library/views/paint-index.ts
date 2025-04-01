@@ -1,156 +1,148 @@
-import type {MethodsTV, PropertiesTV} from 'library/types/views';
-// import paintBase from './paint-base';
+import {TVMethods, TVProperties} from 'library/types/views';
 
-type TestF = (...args: any[]) => void;
+export const createPaint = (props: TVProperties, methods: TVMethods, ctx: CanvasRenderingContext2D) => ({
+    line: (x1: number, y1: number, x2: number, y2: number) => {
+        const screen = methods.w2S2(x1, y1, x2, y2);
 
-type CreatePaintDraw<F extends TestF> = (
-    properties: PropertiesTV,
-    methods: MethodsTV,
-    ctx: CanvasRenderingContext2D,
-) => F;
+        ctx.moveTo(screen.x1, screen.y1);
+        ctx.lineTo(screen.x2, screen.y2);
+    },
+    roundRectStroke: createRoundRectStroke(props, methods, ctx), // Temp
+});
 
-export type SetPaint = <T extends string, F extends TestF>(name: T, draw: CreatePaintDraw<F>) => void;
+// const createFillStrokeCircle =
+//     (props: PropertiesTV, methods: MethodsTV, ctx: CanvasRenderingContext2D) => (obj: TVFillStrokeCircle) => {
+//         methods.world2Screen(obj.x, obj.y);
 
-type CreatePaintMethods = (props: PropertiesTV, methods: MethodsTV, ctx: CanvasRenderingContext2D) => void;
-// {setPaint: SetPaint; paintStore: Record<string, TestF>};
+//         ctx.strokeStyle = obj.stroke;
+//         ctx.fillStyle = obj.fill;
+//         ctx.lineWidth = obj.lw / props.scale.x;
 
-export const createPaintMethods: CreatePaintMethods = (props, methods, ctx) => {
-    // line:
-};
+//         ctx.beginPath();
 
-const createFillStrokeCircle =
-    (props: PropertiesTV, methods: MethodsTV, ctx: CanvasRenderingContext2D) => (obj: TVFillStrokeCircle) => {
-        methods.world2Screen(obj.x, obj.y);
+//         ctx.arc(props.screen.x, props.screen.y, obj.r * props.scale.x, obj.rS, obj.rE);
 
-        ctx.strokeStyle = obj.stroke;
-        ctx.fillStyle = obj.fill;
-        ctx.lineWidth = obj.lw / props.scale.x;
+//         ctx.fill();
+//         ctx.stroke();
+//     };
 
-        ctx.beginPath();
+// const createStrokeCircle =
+//     ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
+//     (obj: TVStrokeCircle) => {
+//         world2Screen(obj.x, obj.y);
 
-        ctx.arc(props.screen.x, props.screen.y, obj.r * props.scale.x, obj.rS, obj.rE);
+//         ctx.strokeStyle = obj.stroke;
 
-        ctx.fill();
-        ctx.stroke();
-    };
+//         ctx.lineWidth = obj.lw * scale.x;
 
-const createStrokeCircle =
-    ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
-    (obj: TVStrokeCircle) => {
-        world2Screen(obj.x, obj.y);
+//         ctx.beginPath();
 
-        ctx.strokeStyle = obj.stroke;
+//         ctx.arc(screen.x, screen.y, obj.r * scale.x, obj.rS, obj.rE);
 
-        ctx.lineWidth = obj.lw * scale.x;
+//         ctx.stroke();
+//     };
 
-        ctx.beginPath();
+// const createFillCircle =
+//     ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
+//     (obj: TVFillCircle) => {
+//         world2Screen(obj.x, obj.y);
 
-        ctx.arc(screen.x, screen.y, obj.r * scale.x, obj.rS, obj.rE);
+//         ctx.fillStyle = obj.fill;
 
-        ctx.stroke();
-    };
+//         ctx.beginPath();
 
-const createFillCircle =
-    ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
-    (obj: TVFillCircle) => {
-        world2Screen(obj.x, obj.y);
+//         ctx.arc(screen.x, screen.y, obj.r * scale.x, 0, Math.PI * 2);
 
-        ctx.fillStyle = obj.fill;
+//         ctx.fill();
+//     };
 
-        ctx.beginPath();
+// const createFillRect =
+//     ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
+//     (obj: TVFillRect) => {
+//         world2Screen(obj.x, obj.y);
 
-        ctx.arc(screen.x, screen.y, obj.r * scale.x, 0, Math.PI * 2);
+//         ctx.fillStyle = obj.fill;
 
-        ctx.fill();
-    };
+//         ctx.fillRect(screen.x, screen.y, obj.w * scale.x, obj.h * scale.y);
+//     };
 
-const createFillRect =
-    ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
-    (obj: TVFillRect) => {
-        world2Screen(obj.x, obj.y);
+// const createStrokeRect =
+//     ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
+//     (obj: TVStrokeRect) => {
+//         world2Screen(obj.x, obj.y);
 
-        ctx.fillStyle = obj.fill;
+//         ctx.strokeStyle = obj.stroke;
+//         ctx.lineWidth = obj.lw * scale.x;
 
-        ctx.fillRect(screen.x, screen.y, obj.w * scale.x, obj.h * scale.y);
-    };
+//         ctx.beginPath();
+//         ctx.strokeRect(screen.x, screen.y, obj.w * scale.x, obj.h * scale.y);
+//     };
 
-const createStrokeRect =
-    ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
-    (obj: TVStrokeRect) => {
-        world2Screen(obj.x, obj.y);
+// const createLine2 =
+//     ({screen2, scale}: PropertiesTV, {world2Screen2}: MethodsTV, ctx: CanvasRenderingContext2D) =>
+//     (obj: TVLine) => {
+//         world2Screen2(obj.x, obj.y, obj.x2, obj.y2);
 
-        ctx.strokeStyle = obj.stroke;
-        ctx.lineWidth = obj.lw * scale.x;
+//         ctx.lineWidth = obj.lw * scale.x;
+//         ctx.strokeStyle = obj.stroke;
 
-        ctx.beginPath();
-        ctx.strokeRect(screen.x, screen.y, obj.w * scale.x, obj.h * scale.y);
-    };
+//         ctx.beginPath();
+//         ctx.moveTo(screen2.x, screen2.y);
+//         ctx.lineTo(screen2.x2, screen2.y2);
+//         ctx.stroke();
+//     };
 
-const createLine2 =
-    ({screen2, scale}: PropertiesTV, {world2Screen2}: MethodsTV, ctx: CanvasRenderingContext2D) =>
-    (obj: TVLine) => {
-        world2Screen2(obj.x, obj.y, obj.x2, obj.y2);
+// const createFillText =
+//     ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
+//     (obj: TVText) => {
+//         world2Screen(obj.x, obj.y);
 
-        ctx.lineWidth = obj.lw * scale.x;
-        ctx.strokeStyle = obj.stroke;
+//         const font = `${obj.fontSize ? obj.fontSize * scale.x : 24 * scale.x}px ${obj.font ?? 'monospace'}`;
 
-        ctx.beginPath();
-        ctx.moveTo(screen2.x, screen2.y);
-        ctx.lineTo(screen2.x2, screen2.y2);
-        ctx.stroke();
-    };
+//         ctx.font = font;
+//         ctx.textAlign = 'center';
+//         ctx.textBaseline = 'middle';
+//         ctx.fillStyle = obj.fill;
 
-const createFillText =
-    ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
-    (obj: TVText) => {
-        world2Screen(obj.x, obj.y);
+//         ctx.fillText(obj.txt, screen.x, screen.y);
+//     };
 
-        const font = `${obj.fontSize ? obj.fontSize * scale.x : 24 * scale.x}px ${obj.font ?? 'monospace'}`;
+// const createFillStrokeRect =
+//     ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
+//     (obj: TVFillStrokeRect) => {
+//         world2Screen(obj.x, obj.y);
 
-        ctx.font = font;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = obj.fill;
+//         ctx.strokeStyle = obj.stroke;
+//         ctx.fillStyle = obj.fill;
+//         ctx.lineWidth = obj.lw * scale.x;
 
-        ctx.fillText(obj.txt, screen.x, screen.y);
-    };
+//         ctx.beginPath();
+//         ctx.rect(screen.x, screen.y, obj.w * scale.x, obj.h * scale.y);
+//         ctx.fill();
+//         ctx.stroke();
+//     };
 
-const createFillStrokeRect =
-    ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
-    (obj: TVFillStrokeRect) => {
-        world2Screen(obj.x, obj.y);
+// const createRoundFillStrokeRect =
+//     ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
+//     (obj: TVRoundFillStrokeRect) => {
+//         world2Screen(obj.x, obj.y);
 
-        ctx.strokeStyle = obj.stroke;
-        ctx.fillStyle = obj.fill;
-        ctx.lineWidth = obj.lw * scale.x;
+//         ctx.strokeStyle = obj.stroke;
+//         ctx.fillStyle = obj.fill;
+//         ctx.lineWidth = obj.lw * scale.x;
 
-        ctx.beginPath();
-        ctx.rect(screen.x, screen.y, obj.w * scale.x, obj.h * scale.y);
-        ctx.fill();
-        ctx.stroke();
-    };
-
-const createRoundFillStrokeRect =
-    ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
-    (obj: TVRoundFillStrokeRect) => {
-        world2Screen(obj.x, obj.y);
-
-        ctx.strokeStyle = obj.stroke;
-        ctx.fillStyle = obj.fill;
-        ctx.lineWidth = obj.lw * scale.x;
-
-        ctx.beginPath();
-        ctx.roundRect(screen.x, screen.y, obj.w * scale.x, obj.h * scale.y, obj.r * scale.x);
-        ctx.fill();
-        ctx.stroke();
-    };
+//         ctx.beginPath();
+//         ctx.roundRect(screen.x, screen.y, obj.w * scale.x, obj.h * scale.y, obj.r * scale.x);
+//         ctx.fill();
+//         ctx.stroke();
+//     };
 
 const createRoundRectStroke =
-    ({screen, scale}: PropertiesTV, {world2Screen}: MethodsTV, ctx: CanvasRenderingContext2D) =>
+    (props: TVProperties, {w2S}: TVMethods, ctx: CanvasRenderingContext2D) =>
     (x: number, y: number, w: number, h: number, radii: number) => {
-        world2Screen(x, y);
+        const screen = w2S(x, y);
 
         ctx.beginPath();
-        ctx.roundRect(screen.x, screen.y, w * scale.x, h * scale.y, radii);
+        ctx.roundRect(screen.x, screen.y, w * props.scale.x, h * props.scale.y, radii);
         ctx.stroke();
     };

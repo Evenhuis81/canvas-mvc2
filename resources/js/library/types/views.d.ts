@@ -1,21 +1,55 @@
-import {EngineUpdate} from './engine';
-
-export type LibraryViews = {};
-
-type Zoom = 'in' | 'out';
-
-export type TransformedView = {};
-export type StaticView = {};
+import {Pos, Pos2} from './shapes';
 
 // type TransformedView = PropertiesTV & MethodsTV & PaintTV;
+// export type TransformedView = {};
+// export type StaticView = {};
+// export type LibraryViews = {};
+// type Zoom = 'in' | 'out';
 
-type LibraryGenericPaintMethods<Methods extends object> = {
-    [K in keyof Methods]: (
-        props: PropertiesTV,
-        methods: MethodsTV,
-        context: CanvasRenderingContext2D,
-    ) => (...args: unknown[]) => void;
+type TVProperties = {
+    offset: Pos;
+    scale: Pos;
 };
+
+type TVMethods = {
+    s2W: (x: number, y: number) => WorldPos;
+    w2S: (xT: number, yT: number) => ScreenPos;
+    w2S2: (xT1: number, yT1: number, xT2: number, yT2: number) => ScreenPos2;
+    setScale: (scale: Pos) => void;
+    setOffset: (offset: Pos) => void;
+};
+
+type TVPaint = {
+    line: (x1: number, y1: number, x2: number, y2: number) => void;
+    roundRectStroke: (x: number, y: number, w: number, h: number, radii: number) => void;
+};
+
+export type TransformedView = TVProperties & TVMethods & {paint: TVPaint};
+
+export type WorldPos = {xT: number; yT: number};
+export type ScreenPos = Pos;
+export type ScreenPos2 = Pos2;
+// export type WorldPos2 = {xT1: number; yT1: number; xT2: number; yT2: number};
+// export type TVPos = Pos & TransformedPos;
+// export type TVPos2 = Pos2 & TransformedPos2;
+
+// type TestF = (...args: any[]) => void;
+
+// type CreatePaintDraw<F extends TestF> = (
+//     properties: PropertiesTV,
+//     methods: MethodsTV,
+//     ctx: CanvasRenderingContext2D,
+// ) => F;
+
+// export type SetPaint = <T extends string, F extends TestF>(name: T, draw: CreatePaintDraw<F>) => void;
+
+// type LibraryGenericPaintMethods<Methods extends object, K extends unknown[]> = {
+//     [K in keyof Methods]: (
+//         props: PropertiesTV,
+//         methods: MethodsTV,
+//         context: CanvasRenderingContext2D,
+//     ) => (...args: K[]) => void;
+// };
 
 export interface PaintTV {
     fillRect: (obj: TVFillRect) => void;
@@ -31,28 +65,29 @@ export interface PaintTV {
     fillStrokeCircle: (obj: TVFillStrokeCircle) => void;
 }
 
+// TODO::Simplify and abstract to different themes
 interface MethodsTV {
     screen2World: (x: number, y: number) => void;
     world2Screen: (x: number, y: number) => void;
     world2Screen2: (x1: number, y1: number, x2: number, y2: number) => {x1: number; y1: number; x2: number; y2: number};
-    zoomMechanic: {
-        in: () => void;
-        out: () => void;
-    };
-    zoom: (scalePos: Vector, type: Zoom) => void;
-    getMiddleScreen: () => Vector;
-    setWorldView: (x: number, y: number, x2: number, y2: number) => void;
+    // zoomMechanic: {
+    //     in: () => void;
+    //     out: () => void;
+    // };
+    // zoom: (scalePos: Vector, type: Zoom) => void;
+    // getMiddleScreen: () => Vector;
+    // setWorldView: (x: number, y: number, x2: number, y2: number) => void;
     setScale: (scale: Vector) => void;
     setScaleFactor: (factor: number) => void;
     setScreenSize: (size: Vector) => void;
-    setWorldBorders: (borders: Vector2) => void;
+    // setWorldBorders: (borders: Vector2) => void;
     setOffset: (offset: Vector) => void;
-    setDefaults: (canvas: HTMLCanvasElement) => void;
+    // setDefaults: (canvas: HTMLCanvasElement) => void;
+    // setMiddle: (target: Vector) => void;
+    // moveTo: (target: Vector, slowR?: number) => EngineUpdate;
+    // setUnitWeight: (unitLw: Vector) => void;
+    // delay: (lastPos: Vector, pos: Vector) => void;
     // getGrid: (context: CanvasRenderingContext2D) => Draw;
-    setMiddle: (target: Vector) => void;
-    moveTo: (target: Vector, slowR?: number) => EngineUpdate;
-    setUnitWeight: (unitLw: Vector) => void;
-    delay: (lastPos: Vector, pos: Vector) => void;
 }
 
 interface PropertiesTV {

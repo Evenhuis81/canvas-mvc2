@@ -73,9 +73,9 @@ export default () => {
 
     setScreen(canvas);
 
-    const createElement;
+    // const createElement;
 
-    tv.line();
+    // tv.line();
     // views.setPaint(
     //     'line',
     //     (properties: PropertiesTV, methods: MethodsTV, ctx: CanvasRenderingContext2D) =>
