@@ -4,7 +4,6 @@ import {Pos, Pos2} from './shapes';
 // export type TransformedView = {};
 // export type StaticView = {};
 // export type LibraryViews = {};
-// type Zoom = 'in' | 'out';
 
 type TVProperties = {
     offset: Pos;
@@ -21,6 +20,7 @@ type TVMethods = {
     w2S2: (xT1: number, yT1: number, xT2: number, yT2: number) => ScreenPos2;
     setScale: (scale: Pos) => void;
     setOffset: (offset: Pos) => void;
+    getMiddleScreen: () => Pos;
 };
 
 type TVPaint = {
@@ -28,7 +28,17 @@ type TVPaint = {
     roundRectStroke: (x: number, y: number, w: number, h: number, radii: number) => void;
 };
 
-export type TransformedView = TVProperties & TVMethods & {paint: TVPaint};
+export type TransformedView = TVProperties &
+    TVMethods & {
+        paint: TVPaint;
+        mouseInput: {
+            activate: () => void;
+            deactivate: () => void;
+        };
+        keyboardInput: {
+            //
+        };
+    };
 
 export type WorldPos = {xT: number; yT: number};
 export type ScreenPos = Pos;

@@ -30,6 +30,11 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
 
     const createElement = entity(context, engine, createDefaultSketch).create;
 
+    const views = createViews(context, input);
+
+    // TODO::Make this an option
+    views.tv.mouseInput.activate();
+
     return {
         canvas,
         context,
@@ -39,7 +44,7 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
         runEngineOnce: () => engine.runOnce(),
         createPhaser: () => getCreatePhaser(engine),
         createElement,
-        views: createViews(context, input),
+        views,
     };
 };
 

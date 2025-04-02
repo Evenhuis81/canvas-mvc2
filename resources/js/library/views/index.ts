@@ -1,21 +1,19 @@
 import {TVMethods, TVProperties, TransformedView} from 'library/types/views';
 import {createPaint} from './paint-index';
 import {LibraryInput} from 'library/types/input';
-import {tvInput} from './input';
+import {createInputTV} from './input';
 
 export const createViews = (context: CanvasRenderingContext2D, input: LibraryInput): {tv: TransformedView} => {
     const tvProperties = createProperties();
-    const methods = createMethods(tvProperties, input);
+    const methods = createMethods(tvProperties);
     const paint = createPaint(tvProperties, methods, context);
 
-    const mouseInput = tvInput(tvProperties, methods, input);
+    const inputTV = createInputTV(tvProperties, methods, input);
 
-    mouseInput.activate();
-
-    return {tv: Object.assign(tvProperties, methods, {paint: paint})};
+    return {tv: Object.assign(tvProperties, methods, {paint}, inputTV)};
 };
 
-const createMethods = (props: TVProperties, input: LibraryInput): TVMethods => ({
+const createMethods = (props: TVProperties): TVMethods => ({
     s2W: (x, y) => ({
         xT: x / props.scale.x + props.offset.x,
         yT: y / props.scale.y + props.offset.y,
@@ -30,14 +28,9 @@ const createMethods = (props: TVProperties, input: LibraryInput): TVMethods => (
         x2: (xT2 - props.offset.x) * props.scale.x,
         y2: (yT2 - props.offset.y) * props.scale.y,
     }),
-    setScale: scale => {
-        props.scale.x = scale.x;
-        props.scale.y = scale.y;
-    },
-    setOffset: offset => {
-        props.offset.x = offset.x;
-        props.offset.y = offset.y;
-    },
+    setScale: scale => (props.scale = scale),
+    setOffset: offset => (props.offset = offset),
+    screenMiddle: () => pos(context.canvas.width / 2, properties.screenSize.y / 2),
 });
 
 // const pos2 = (x1 = 0, y1 = 0, x2 = 0, y2 = 0) => ({x1, y1, x2, y2});
@@ -64,13 +57,6 @@ const createProperties = (): TVProperties => ({
     // history: Array(10).fill(pos()), // separate
 });
 
-// const w2S2 = (obj: TVPos2) => {
-//     obj.oX1 = (obj.x1 - props.offset.x) * props.scale.x;
-//     obj.oX1 = (obj.y1 - props.offset.y) * props.scale.y;
-//     obj.oX1 = (obj.x2 - props.offset.x) * props.scale.x;
-//     obj.oX1 = (obj.y2 - props.offset.y) * props.scale.y;
-// };
-
 // const setWorldView = (x: number, y: number, x2: number, y2: number) => {
 // properties.worldView.x = x / properties.scale.x + properties.offset.x;
 // properties.worldView.y = y / properties.scale.y + properties.offset.y;
@@ -81,10 +67,6 @@ const createProperties = (): TVProperties => ({
 // const setScreenSize = (size: Vector) => {
 //     properties.screenSize.x = size.x;
 //     properties.screenSize.y = size.y;
-// };
-
-// const setScaleFactor = (factor: number) => {
-//     properties.scaleFactor = factor;
 // };
 
 // const setDefaults = (canvas: HTMLCanvasElement) => {
@@ -106,13 +88,7 @@ const createProperties = (): TVProperties => ({
 // };
 
 // const methods = {
-// s2W,
-// w2S,
-// setScale,
-// setOffset,
-// w2S2,
 // setWorldView,
-// setScaleFactor,
 // setScreenSize,
 // setDefaults,
 // };

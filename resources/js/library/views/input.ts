@@ -2,7 +2,8 @@ import {LibraryInput} from 'library/types/input';
 import {Pos} from 'library/types/shapes';
 import {TVMethods, TVProperties} from 'library/types/views';
 
-export const tvInput = ({startPan, offset, scale}: TVProperties, {s2W}: TVMethods, input: LibraryInput) => {
+export const createInputTV = (properties: TVProperties, methods: TVMethods, input: LibraryInput) => {
+    const {startPan, offset, scale} = properties;
     const inputID = Symbol();
 
     const mousedown = ({button, offsetX, offsetY}: MouseEvent) => {
@@ -22,7 +23,7 @@ export const tvInput = ({startPan, offset, scale}: TVProperties, {s2W}: TVMethod
         }
     };
 
-    const zoom = createZoom(properties);
+    const zoom = createZoom(properties, methods);
 
     const wheelZoom = (evt: WheelEvent) => {
         if (evt.deltaY < 0) return zoom(input.mouse, 'in');
@@ -30,7 +31,7 @@ export const tvInput = ({startPan, offset, scale}: TVProperties, {s2W}: TVMethod
         zoom(input.mouse, 'out');
     };
 
-    const activate = () => {
+    const activateMouse = () => {
         input.addListener({
             id: inputID,
             type: 'mousedown',
@@ -44,22 +45,35 @@ export const tvInput = ({startPan, offset, scale}: TVProperties, {s2W}: TVMethod
         input.addListener({
             id: inputID,
             type: 'wheel',
-            listener: wheel,
+            listener: wheelZoom,
         });
     };
 
-    const deactivate = () => {
+    const deactivateMouse = () => {
         input.removeListener('mousedown', inputID);
         input.removeListener('mousemove', inputID);
     };
 
-    return {activate, deactivate};
+    // TODO::Create zooming update that smoothly scales instead of react on keydown
+    // const keydownHandler =
+    //     ({zoom, getMiddleScreen}: TVMethods) =>
+    //     ({code}: KeyboardEvent) => {
+    //         if (code === 'KeyQ') zoom(getMiddleScreen(), 'out');
+    //         else if (code === 'KeyE') zoom(getMiddleScreen(), 'in');
+    //     };
+
+    return {
+        mouseInput: {
+            activate: activateMouse,
+            deactivate: deactivateMouse,
+        },
+        keyboardInput: {
+            //
+        },
+    };
 };
 
-const createZoom = (
-    {offset, worldBeforeZoom, worldAfterZoom, scale, scaleFactor}: TVProperties,
-    methods: TVMethods,
-) => {
+const createZoom = ({offset, worldBeforeZoom, worldAfterZoom, scale, scaleFactor}: TVProperties, {s2W}: TVMethods) => {
     const mechanic = {
         in: () => {
             scale.x /= scaleFactor.x;
@@ -71,43 +85,14 @@ const createZoom = (
         },
     };
 
-    return {
-        zoom: (zoomPos: Pos, type: 'in' | 'out') => {
-            worldBeforeZoom = methods.s2W(zoomPos.x, zoomPos.y);
+    return (zoomPos: Pos, type: 'in' | 'out') => {
+        worldBeforeZoom = s2W(zoomPos.x, zoomPos.y);
 
-            mechanic[type]();
+        mechanic[type]();
 
-            worldAfterZoom = methods.s2W(zoomPos.x, zoomPos.y);
+        worldAfterZoom = s2W(zoomPos.x, zoomPos.y);
 
-            offset.x += worldBeforeZoom.xT - worldAfterZoom.xT;
-            offset.y += worldBeforeZoom.yT - worldAfterZoom.yT;
-        },
+        offset.x += worldBeforeZoom.xT - worldAfterZoom.xT;
+        offset.y += worldBeforeZoom.yT - worldAfterZoom.yT;
     };
 };
-
-// TODO::Create zooming update that smoothly scales instead of react on keydown
-// const keydownHandler =
-//     ({zoom, getMiddleScreen}: TVMethods) =>
-//     ({code}: KeyboardEvent) => {
-//         if (code === 'KeyQ') zoom(getMiddleScreen(), 'out');
-//         else if (code === 'KeyE') zoom(getMiddleScreen(), 'in');
-//     };
-
-// const wheelHandler =
-//     ({zoom}: TVMethods, {mouse}: LibraryInput) =>
-//     (evt: WheelEvent) => {
-//         if (evt.deltaY < 0) {
-//             zoom(mouse, 'in');
-
-//             return;
-//         }
-
-//         zoom(mouse, 'out');
-//     };
-
-// export const setTVEvents = (props: TVProperties, methods: TVMethods, input: LibraryInput) => {
-//     addEventListener('mousedown', mousedownHandler(props, methods));
-//     addEventListener('mousemove', mousemoveHandler(props, input));
-//     addEventListener('keydown', keydownHandler(methods));
-//     addEventListener('wheel', wheelHandler(methods, input));
-// };
