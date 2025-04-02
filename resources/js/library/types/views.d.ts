@@ -9,6 +9,7 @@ import {Pos, Pos2} from './shapes';
 type TVProperties = {
     offset: Pos;
     scale: Pos;
+    startPan: Pos;
 };
 
 type TVMethods = {

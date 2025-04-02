@@ -67,7 +67,7 @@ export default () => {
         engine,
         createElement,
         input,
-        views: {tv, sv},
+        views: {tv},
     } = library;
 
     setScreen(canvas);
