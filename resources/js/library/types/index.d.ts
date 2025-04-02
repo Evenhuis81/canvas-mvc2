@@ -1,12 +1,9 @@
 import {Engine} from './engine';
-import {CreateEntity} from './entity';
 import {Phaser} from 'games/phaser/types';
 import {LibraryInput} from './input';
 import {CreateElement} from 'library/entity';
-import {Circle, Pos, Rect} from './shapes';
-import {ShapeMap, Triangle} from 'library/entity/defaults/shapes';
-import {SetPaint} from 'library/views/paint-index';
-import {StaticView, TransformedView} from './views';
+import {ShapeMap} from 'library/entity/defaults/shapes';
+import {TransformedView} from './views';
 
 /**
  * Removes undefined from tuples
@@ -47,7 +44,7 @@ export interface LibraryResources {
     createElement: CreateElement<ShapeMap>; // TODO::Make generic
     views: {
         tv: TransformedView;
-        sv: StaticView;
+        // sv: StaticView;
     };
 }
 

@@ -1,8 +1,8 @@
 import {LibraryInput} from 'library/types/input';
-import {MethodsTV, PropertiesTV} from 'library/types/views';
+import {TVMethods, TVProperties} from 'library/types/views';
 
 const mousedownHandler =
-    ({startPan}: PropertiesTV, methods: MethodsTV) =>
+    ({startPan}: TVProperties, methods: TVMethods) =>
     ({button, offsetX, offsetY}: MouseEvent) => {
         if (button === 0) {
             startPan.x = offsetX;
@@ -13,7 +13,7 @@ const mousedownHandler =
     };
 
 const mousemoveHandler =
-    (props: PropertiesTV, {mouse}: LibraryInput) =>
+    (props: TVProperties, {mouse}: LibraryInput) =>
     ({offsetX, offsetY}: MouseEvent) => {
         if (mouse.buttonHeld[0]) {
             props.offset.x -= (offsetX - props.startPan.x) / props.scale.x;
@@ -26,14 +26,14 @@ const mousemoveHandler =
 
 // TODO::Create zooming update that smoothly scales instead of react on keydown
 const keydownHandler =
-    ({zoom, getMiddleScreen}: MethodsTV) =>
+    ({zoom, getMiddleScreen}: TVMethods) =>
     ({code}: KeyboardEvent) => {
         if (code === 'KeyQ') zoom(getMiddleScreen(), 'out');
         else if (code === 'KeyE') zoom(getMiddleScreen(), 'in');
     };
 
 const wheelHandler =
-    ({zoom}: MethodsTV, {mouse}: LibraryInput) =>
+    ({zoom}: TVMethods, {mouse}: LibraryInput) =>
     (evt: WheelEvent) => {
         if (evt.deltaY < 0) {
             zoom(mouse, 'in');
@@ -44,7 +44,7 @@ const wheelHandler =
         zoom(mouse, 'out');
     };
 
-export const setTVEvents = (props: PropertiesTV, methods: MethodsTV, input: LibraryInput) => {
+export const setTVEvents = (props: TVProperties, methods: TVMethods, input: LibraryInput) => {
     addEventListener('mousedown', mousedownHandler(props, methods));
     addEventListener('mousemove', mousemoveHandler(props, input));
     addEventListener('keydown', keydownHandler(methods));

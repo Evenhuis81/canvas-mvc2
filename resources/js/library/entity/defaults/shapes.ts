@@ -55,12 +55,12 @@ export const defaultShapes: ShapeMap = {
         textAlign: 'center',
         textBaseLine: 'middle',
     },
-    line: {
-        x1: 0,
-        y1: 0,
-        x2: 0,
-        y2: 0,
-    },
+    // line: {
+    //     x1: 0,
+    //     y1: 0,
+    //     x2: 0,
+    //     y2: 0,
+    // },
 };
 
 type Pos = {
@@ -74,7 +74,7 @@ export type ShapeMap = {
     text: Text & Pos;
     'circle-pointer': Circle & Text & Pos;
     'arrow-pointer': Triangle & Circle & Text;
-    line: Line;
+    // line: Line;
 };
 
 export type Triangle = {

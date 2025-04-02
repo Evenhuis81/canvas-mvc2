@@ -32,6 +32,9 @@ const createMethods = (props: TVProperties): TVMethods => ({
         props.offset.x = offset.x;
         props.offset.y = offset.y;
     },
+    setMouseZoom: () => {
+        //
+    },
 });
 
 // const pos2 = (x1 = 0, y1 = 0, x2 = 0, y2 = 0) => ({x1, y1, x2, y2});
@@ -41,6 +44,9 @@ const createProperties = (): TVProperties => ({
     // Core Properties:
     offset: pos(),
     scale: pos(1, 1),
+    // scaleFactor: 0.95,
+    // worldBeforeZoom: pos(),
+    // worldAfterZoom: pos(),
     // screen: pos(),
     // screen2: vector2(),
     // world: pos(10, 10),
@@ -48,9 +54,6 @@ const createProperties = (): TVProperties => ({
     // worldTL: pos(), // part of world borders
     // worldBR: pos(10, 10), // part of world borders
     // startPan: pos(),
-    // worldBeforeZoom: pos(),
-    // worldAfterZoom: pos(),
-    // scaleFactor: 0.95,
     // worldView: pos2(),
     // orientation: '',
     // unitWeight: pos(1, 1),

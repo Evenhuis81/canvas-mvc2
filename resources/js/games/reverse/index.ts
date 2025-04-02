@@ -6,7 +6,6 @@ import type {LibraryOptions} from 'library/types';
 import type {ShapeMap} from 'library/entity/defaults/shapes';
 import type {Engine} from 'library/types/engine';
 import type {CreateElement} from 'library/entity';
-import {MethodsTV, PropertiesTV} from 'library/types/views';
 
 const libraryID = 'reverse';
 
