@@ -1,6 +1,5 @@
 import {BaseID} from '.';
-import {Engine} from './engine';
-import {Circle, Pos, Rect} from './shapes';
+import {Circle, Rect} from './shapes';
 
 type InsideRect = (rect: Rect) => boolean;
 type InsideCircle = (circle: Circle) => boolean;
@@ -41,6 +40,7 @@ export type InputListenerEventMap = {
     touchstart: TouchEvent;
     touchmove: TouchEvent;
     touchend: TouchEvent;
+    wheel: WheelEvent;
 };
 
 export type InputListenerStore = {

@@ -70,23 +70,9 @@ export default () => {
         views: {tv},
     } = library;
 
-    setScreen(canvas);
+    setScreen(canvas); // Requires update (for alignment)
 
-    // const createElement;
-
-    // tv.line();
-    // views.setPaint(
-    //     'line',
-    //     (properties: PropertiesTV, methods: MethodsTV, ctx: CanvasRenderingContext2D) =>
-    //         (shape: {x1: number, y1: number, x2: number, y2: number, x1}) => {
-    //             const screen = methods.world2Screen2(shape);
-
-    //             ctx.moveTo(screen.x1, screen.y1);
-    //             ctx.lineTo(screen.x2, screen.y2);
-    //         },
-    // );
-
-    // tv.setScale({x: world.unitScale, y: world.unitScale});
+    tv.setScale({x: world.unitScale, y: world.unitScale});
     // tv.setScaleFactor(0.95); // create switch/slider to adjust this and other setttings
     // tv.setScreenSize({x: canvas.width, y: canvas.height});
 
@@ -118,20 +104,16 @@ export default () => {
     input.addMovement('reverse', movement);
     // input.removeMovement('reverse');
 
-    engine.setUpdate(charUpdate);
-    engine.setDraw(levelDraw);
-    engine.setDraw(charDraw);
+    // engine.setUpdate(charUpdate);
+    // engine.setDraw(levelDraw);
+    // engine.setDraw(charDraw);
 
     const statElements = characterStatisticsElements(charProps, world, createElement, canvas);
+    // statElements.bottomLeft.show();
 
-    statElements.bottomLeft.show();
+    const levelRaster = getLevelRaster(context, tv, level.width, level.height);
 
-    // const levelRaster = getLevelRaster(context, tv, level.width, level.height, {
-    //     strokeStyle: 'white',
-    //     lineWidth: 0.2 / world.xUnits,
-    // });
-
-    // engine.setDraw(levelRaster);
+    engine.setDraw(levelRaster);
 
     library.runEngine();
 };

@@ -39,7 +39,7 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
         runEngineOnce: () => engine.runOnce(),
         createPhaser: () => getCreatePhaser(engine),
         createElement,
-        views: createViews(context),
+        views: createViews(context, input),
     };
 };
 

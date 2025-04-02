@@ -1,4 +1,5 @@
 import {LibraryInput} from 'library/types/input';
+import {Pos} from 'library/types/shapes';
 import {TVMethods, TVProperties} from 'library/types/views';
 
 export const tvInput = ({startPan, offset, scale}: TVProperties, {s2W}: TVMethods, input: LibraryInput) => {
@@ -8,7 +9,6 @@ export const tvInput = ({startPan, offset, scale}: TVProperties, {s2W}: TVMethod
         if (button === 0) {
             startPan.x = offsetX;
             startPan.y = offsetY;
-            // s2W(offsetX, offsetY); // = set to world vector, why?
         }
     };
 
@@ -22,31 +22,68 @@ export const tvInput = ({startPan, offset, scale}: TVProperties, {s2W}: TVMethod
         }
     };
 
-    // type: K;
-    // listener: (event: HTMLElementEventMap[K]) => void;
-    // id: symbol;
+    const zoom = createZoom(properties);
+
+    const wheelZoom = (evt: WheelEvent) => {
+        if (evt.deltaY < 0) return zoom(input.mouse, 'in');
+
+        zoom(input.mouse, 'out');
+    };
+
     const activate = () => {
         input.addListener({
             id: inputID,
             type: 'mousedown',
             listener: mousedown,
         });
+        input.addListener({
+            id: inputID,
+            type: 'mousemove',
+            listener: mousemove,
+        });
+        input.addListener({
+            id: inputID,
+            type: 'wheel',
+            listener: wheel,
+        });
     };
 
-    const deactivate = () => {};
+    const deactivate = () => {
+        input.removeListener('mousedown', inputID);
+        input.removeListener('mousemove', inputID);
+    };
+
+    return {activate, deactivate};
 };
 
-const mousemoveHandler =
-    (props: TVProperties, {mouse}: LibraryInput) =>
-    ({offsetX, offsetY}: MouseEvent) => {
-        if (mouse.buttonHeld[0]) {
-            props.offset.x -= (offsetX - props.startPan.x) / props.scale.x;
-            props.offset.y -= (offsetY - props.startPan.y) / props.scale.y;
-
-            props.startPan.x = offsetX;
-            props.startPan.y = offsetY;
-        }
+const createZoom = (
+    {offset, worldBeforeZoom, worldAfterZoom, scale, scaleFactor}: TVProperties,
+    methods: TVMethods,
+) => {
+    const mechanic = {
+        in: () => {
+            scale.x /= scaleFactor.x;
+            scale.y /= scaleFactor.y;
+        },
+        out: () => {
+            scale.x *= scaleFactor.x;
+            scale.y *= scaleFactor.y;
+        },
     };
+
+    return {
+        zoom: (zoomPos: Pos, type: 'in' | 'out') => {
+            worldBeforeZoom = methods.s2W(zoomPos.x, zoomPos.y);
+
+            mechanic[type]();
+
+            worldAfterZoom = methods.s2W(zoomPos.x, zoomPos.y);
+
+            offset.x += worldBeforeZoom.xT - worldAfterZoom.xT;
+            offset.y += worldBeforeZoom.yT - worldAfterZoom.yT;
+        },
+    };
+};
 
 // TODO::Create zooming update that smoothly scales instead of react on keydown
 // const keydownHandler =

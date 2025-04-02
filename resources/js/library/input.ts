@@ -46,6 +46,7 @@ const inputHandler: InputListenerStore = {
     touchstart: [],
     touchmove: [],
     touchend: [],
+    wheel: [],
 };
 
 const movement: Record<BaseID, [InputListener<'keydown'>, InputListener<'keyup'>]> = {};
@@ -116,6 +117,12 @@ export const getCanvasInput = (canvas: HTMLCanvasElement, engine: Engine) => {
 
         return index !== -1;
     };
+
+    canvas.addEventListener('wheel', wheelEvent => {
+        inputHandler.wheel.forEach(input => {
+            input.listener(wheelEvent);
+        });
+    });
 
     canvas.addEventListener('mousedown', mouseEvent => {
         touch.ended = false;

@@ -1,13 +1,16 @@
 import {TVMethods, TVProperties, TransformedView} from 'library/types/views';
 import {createPaint} from './paint-index';
 import {LibraryInput} from 'library/types/input';
+import {tvInput} from './input';
 
 export const createViews = (context: CanvasRenderingContext2D, input: LibraryInput): {tv: TransformedView} => {
     const tvProperties = createProperties();
     const methods = createMethods(tvProperties, input);
     const paint = createPaint(tvProperties, methods, context);
 
-    const mouseInput = tvInput();
+    const mouseInput = tvInput(tvProperties, methods, input);
+
+    mouseInput.activate();
 
     return {tv: Object.assign(tvProperties, methods, {paint: paint})};
 };
@@ -39,15 +42,16 @@ const createMethods = (props: TVProperties, input: LibraryInput): TVMethods => (
 
 // const pos2 = (x1 = 0, y1 = 0, x2 = 0, y2 = 0) => ({x1, y1, x2, y2});
 const pos = (x = 0, y = 0) => ({x, y});
+const worldPos = (xT = 0, yT = 0) => ({xT, yT});
 
 const createProperties = (): TVProperties => ({
     // Core Properties:
     offset: pos(),
     scale: pos(1, 1),
     startPan: pos(),
-    // scaleFactor: 0.95,
-    // worldBeforeZoom: pos(),
-    // worldAfterZoom: pos(),
+    scaleFactor: pos(0.95, 0.95),
+    worldBeforeZoom: worldPos(),
+    worldAfterZoom: worldPos(),
     // screen: pos(),
     // screen2: vector2(),
     // world: pos(10, 10),

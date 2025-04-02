@@ -10,6 +10,9 @@ type TVProperties = {
     offset: Pos;
     scale: Pos;
     startPan: Pos;
+    scaleFactor: Pos;
+    worldBeforeZoom: WorldPos;
+    worldAfterZoom: WorldPos;
 };
 
 type TVMethods = {

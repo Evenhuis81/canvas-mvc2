@@ -26,9 +26,14 @@ export const getLevelRaster = (
     height: number,
     options = raster,
 ) => {
+    const unitSize = ctx.canvas.width / 16; // 48.75
+    const lW = 1 / unitSize;
+
     const draw = () => {
         ctx.strokeStyle = options.strokeStyle;
-        ctx.lineWidth = options.lineWidth * tv.scale.x;
+        ctx.lineWidth = lW * tv.scale.x;
+
+        // console.log(tv.scale.x); // 48.75 / 24.365
 
         ctx.beginPath();
 
