@@ -20,7 +20,7 @@ type TVMethods = {
     w2S2: (xT1: number, yT1: number, xT2: number, yT2: number) => ScreenPos2;
     setScale: (scale: Pos) => void;
     setOffset: (offset: Pos) => void;
-    getMiddleScreen: () => Pos;
+    screenMiddle: () => Pos;
 };
 
 type TVPaint = {

@@ -1,8 +1,9 @@
+import {Engine} from 'library/types/engine';
 import {LibraryInput} from 'library/types/input';
 import {Pos} from 'library/types/shapes';
 import {TVMethods, TVProperties} from 'library/types/views';
 
-export const createInputTV = (properties: TVProperties, methods: TVMethods, input: LibraryInput) => {
+export const createInputTV = (properties: TVProperties, methods: TVMethods, input: LibraryInput, engine: Engine) => {
     const {startPan, offset, scale} = properties;
     const inputID = Symbol();
 
@@ -54,13 +55,46 @@ export const createInputTV = (properties: TVProperties, methods: TVMethods, inpu
         input.removeListener('mousemove', inputID);
     };
 
-    // TODO::Create zooming update that smoothly scales instead of react on keydown
-    // const keydownHandler =
-    //     ({zoom, getMiddleScreen}: TVMethods) =>
-    //     ({code}: KeyboardEvent) => {
-    //         if (code === 'KeyQ') zoom(getMiddleScreen(), 'out');
-    //         else if (code === 'KeyE') zoom(getMiddleScreen(), 'in');
-    //     };
+    const keyboard = {
+        out: 'KeyQ',
+        in: 'KeyE',
+        outActive: false,
+        inActive: false,
+    };
+
+    const keydown = ({code}: KeyboardEvent) => {
+        if (code === keyboard.out) keyboard.outActive = true;
+        else if (code === keyboard.in) keyboard.inActive = true;
+    };
+
+    const keyup = ({code}: KeyboardEvent) => {
+        if (code === keyboard.out) keyboard.outActive = false;
+        else if (code === keyboard.in) keyboard.inActive = false;
+    };
+
+    const activateKeyboard = () => {
+        input.addListener({
+            id: inputID,
+            type: 'keydown',
+            listener: keydown,
+        });
+        input.addListener({
+            id: inputID,
+            type: 'keyup',
+            listener: keyup,
+        });
+    };
+
+    const deactivateKeyboard = () => {
+        input.removeListener('keydown', inputID);
+        input.removeListener('keyup', inputID);
+        engine.setUpdate({fn: keyboardUpdate});
+    };
+
+    const keyboardUpdate = () => {
+        if (keyboard.outActive) zoom(methods.screenMiddle(), 'out');
+        if (keyboard.inActive) zoom(methods.screenMiddle(), 'in');
+    };
 
     return {
         mouseInput: {
@@ -68,7 +102,8 @@ export const createInputTV = (properties: TVProperties, methods: TVMethods, inpu
             deactivate: deactivateMouse,
         },
         keyboardInput: {
-            //
+            activate: activateKeyboard,
+            deactivate: deactivateKeyboard,
         },
     };
 };

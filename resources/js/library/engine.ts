@@ -95,22 +95,27 @@ const createLoop = (properties: EngineProperties, functions: EngineFunctionMap, 
     return loop;
 };
 
-const defaultUpdate: Omit<UpdateOrDraw<'update'>, 'fn'> = {
+const defaultUpdate: Omit<UpdateOrDraw<'update'>, 'fn' | 'id'> = {
     type: 'update',
-    id: 'noUpdateID',
+    // id: 'noUpdateID',
     name: 'noUpdateName',
 };
 
-const defaultDraw: Omit<UpdateOrDraw<'draw'>, 'fn'> = {
+const defaultDraw: Omit<UpdateOrDraw<'draw'>, 'fn' | 'id'> = {
     type: 'draw',
-    id: 'noDrawID',
+    // id: 'noDrawID',
     name: 'noDrawName',
 };
 
 const createSetAndRemoveUpdatesAndDraws = (functions: EngineFunctionMap) => {
     const setDraw = (draw: EngineDraw) => functions.draw.push({...defaultDraw, ...draw});
 
-    const setUpdate = (update: EngineUpdate) => functions.update.push({...defaultUpdate, ...update});
+    const setUpdate = (update: EngineUpdate) => {
+        if (!update.id) update.id = 'noID';
+        const fn = {...defaultUpdate, ...update};
+
+        functions.update.push(fn);
+    };
 
     const handle: EngineSet = (updateOrDraw, set = true) => {
         // TODO::Check for doubles

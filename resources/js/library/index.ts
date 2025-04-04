@@ -30,7 +30,7 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
 
     const createElement = entity(context, engine, createDefaultSketch).create;
 
-    const views = createViews(context, input);
+    const views = createViews(context, input, engine);
 
     // TODO::Make this an option
     views.tv.mouseInput.activate();
