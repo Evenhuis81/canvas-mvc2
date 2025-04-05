@@ -2,7 +2,7 @@ import {TVMethods, TVProperties} from 'library/types/views';
 
 export const createPaint = (props: TVProperties, methods: TVMethods, ctx: CanvasRenderingContext2D) => ({
     line: (x1: number, y1: number, x2: number, y2: number) => {
-        const screen = methods.w2S2(x1, y1, x2, y2);
+        const screen = methods.world2Screen2(x1, y1, x2, y2);
 
         ctx.moveTo(screen.x1, screen.y1);
         ctx.lineTo(screen.x2, screen.y2);
@@ -140,9 +140,9 @@ export const createPaint = (props: TVProperties, methods: TVMethods, ctx: Canvas
 //     };
 
 const createRoundRectStroke =
-    (props: TVProperties, {w2S}: TVMethods, ctx: CanvasRenderingContext2D) =>
+    (props: TVProperties, {world2Screen}: TVMethods, ctx: CanvasRenderingContext2D) =>
     (x: number, y: number, w: number, h: number, radii: number) => {
-        const screen = w2S(x, y);
+        const screen = world2Screen(x, y);
 
         ctx.beginPath();
         ctx.roundRect(screen.x, screen.y, w * props.scale.x, h * props.scale.y, radii);

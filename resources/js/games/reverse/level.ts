@@ -1,6 +1,7 @@
 import {TransformedView} from 'library/types/views';
 import {WorldProperties} from '.';
 import {levels} from './levelMap';
+import {Pos} from 'library/types/shapes';
 
 type LevelMap = string[][];
 
@@ -9,39 +10,34 @@ export type ReverseLevel = {
     map: LevelMap;
     width: number;
     height: number;
+    visibleTilesX: number;
+    visibleTilesY: number;
     getTile: (x: number, y: number) => string;
     setTile: (x: number, y: number, levelCharacter: string) => void;
     startPos: (levelMap: LevelMap) => {x: number; y: number};
 };
 
-const raster = {
-    lineWidth: 2,
-    strokeStyle: '#fff',
-};
-
-export const getLevelRaster = (
+export const createLevelRaster = (
     ctx: CanvasRenderingContext2D,
-    tv: TransformedView,
-    width: number,
-    height: number,
-    options = raster,
+    line: (x1: number, y1: number, x2: number, y2: number) => void,
+    level: ReverseLevel,
+    scale: Pos,
 ) => {
-    const unitSize = ctx.canvas.width / 16; // 48.75
-    const lW = 1 / unitSize;
+    const unitSize = ctx.canvas.width / level.visibleTilesX;
+    const lineWidth = 1 / unitSize;
+    const strokeStyle = '#fff';
 
     const draw = () => {
-        ctx.strokeStyle = options.strokeStyle;
-        ctx.lineWidth = lW * tv.scale.x;
-
-        // console.log(tv.scale.x);
+        ctx.strokeStyle = strokeStyle;
+        ctx.lineWidth = lineWidth * scale.x;
 
         ctx.beginPath();
 
-        for (let y = 0; y < height + 1; y++) {
-            tv.paint.line(0, y, width, y);
+        for (let y = 0; y < level.height + 1; y++) {
+            line(0, y, level.width, y);
 
-            for (let x = 0; x < width + 1; x++) {
-                tv.paint.line(x, 0, x, height);
+            for (let x = 0; x < level.width + 1; x++) {
+                line(x, 0, x, level.height);
             }
         }
 
@@ -63,6 +59,8 @@ export const getLevel = (levelID: number): ReverseLevel => {
         map: level,
         width: level[0].length,
         height: level.length,
+        visibleTilesX: 16,
+        visibleTilesY: level.length,
         getTile: (x, y) => {
             if (x >= 0 && x < level[0].length && y >= 0 && y < level.length) return level[y][x];
 

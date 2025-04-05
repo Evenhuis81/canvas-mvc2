@@ -15,9 +15,9 @@ type TVProperties = {
 };
 
 type TVMethods = {
-    s2W: (x: number, y: number) => WorldPos;
-    w2S: (xT: number, yT: number) => ScreenPos;
-    w2S2: (xT1: number, yT1: number, xT2: number, yT2: number) => ScreenPos2;
+    screen2World: (x: number, y: number) => WorldPos;
+    world2Screen: (xT: number, yT: number) => ScreenPos;
+    world2Screen2: (xT1: number, yT1: number, xT2: number, yT2: number) => ScreenPos2;
     setScale: (scale: Pos) => void;
     setOffset: (offset: Pos) => void;
     screenMiddle: () => Pos;

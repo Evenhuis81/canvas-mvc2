@@ -168,7 +168,7 @@ const moveTo = (target: Vector, slowR = 2) => {
 
             const strengthFactor = 2000;
 
-            const worldMiddle = s2W(getMiddleScreen());
+            const worldMiddle = screen2World(getMiddleScreen());
 
             strength.x = worldMiddle.x - target.x;
             strength.y = worldMiddle.y - target.y;
@@ -212,7 +212,7 @@ export const delay = (lastPos: Vector, currentPos: Vector) => {
     properties.offset.y += properties.history[0].y;
 };
 
-const s2W = (source: Vector) =>
+const screen2World = (source: Vector) =>
     vector(source.x / properties.scale.x + properties.offset.x, source.y / properties.scale.y + properties.offset.y);
 
 const setUnitWeight = (unitWeight: Vector) => {

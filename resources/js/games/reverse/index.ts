@@ -1,6 +1,6 @@
 import {initialize} from 'library/index';
 import {createCharacter} from './character';
-import {createLevelDraw, getLevel, getLevelRaster} from './level';
+import {createLevelDraw, getLevel, createLevelRaster} from './level';
 import type {ReverseLevel} from './level';
 import type {LibraryOptions} from 'library/types';
 import type {ShapeMap} from 'library/entity/defaults/shapes';
@@ -111,7 +111,7 @@ export default () => {
     const statElements = characterStatisticsElements(charProps, world, createElement, canvas);
     // statElements.bottomLeft.show();
 
-    const levelRaster = getLevelRaster(context, tv, level.width, level.height);
+    const levelRaster = createLevelRaster(context, tv.paint.line, level, tv.scale);
 
     engine.setDraw(levelRaster);
 

@@ -1,8 +1,7 @@
-import {BaseID} from 'library/types';
-import {Engine} from 'library/types/engine';
-import {LibraryInput} from 'library/types/input';
-import {Pos} from 'library/types/shapes';
-import {TVMethods, TVProperties} from 'library/types/views';
+import type {Engine} from 'library/types/engine';
+import type {LibraryInput} from 'library/types/input';
+import type {Pos} from 'library/types/shapes';
+import type {TVMethods, TVProperties} from 'library/types/views';
 
 export const createInputTV = (properties: TVProperties, methods: TVMethods, input: LibraryInput, engine: Engine) => {
     const inputID = Symbol();
@@ -55,52 +54,20 @@ export const createInputTV = (properties: TVProperties, methods: TVMethods, inpu
         input.removeListener('mousemove', inputID);
     };
 
-    const keyboard = {
-        out: 'KeyQ',
-        in: 'KeyE',
-        outActive: false,
-        inActive: false,
-    };
-
-    const keydown = ({code}: KeyboardEvent) => {
-        if (code === keyboard.out) keyboard.outActive = true;
-        else if (code === keyboard.in) keyboard.inActive = true;
-    };
-
-    const keyup = ({code}: KeyboardEvent) => {
-        if (code === keyboard.out) keyboard.outActive = false;
-        else if (code === keyboard.in) keyboard.inActive = false;
+    const keyboardUpdate = () => {
+        if (input.keyboard.keyHeld['KeyQ']) zoom(methods.screenMiddle(), 'out');
+        if (input.keyboard.keyHeld['KeyE']) zoom(methods.screenMiddle(), 'in');
     };
 
     const activateKeyboard = () => {
-        // input.addListener({
-        //     id: inputID,
-        //     type: 'keydown',
-        //     listener: keydown,
-        // });
-        // input.addListener({
-        //     id: inputID,
-        //     type: 'keyup',
-        //     listener: keyup,
-        // });
-
-        keyboardID = engine.setUpdate({fn: keyboardUpdate});
+        engine.setUpdate({
+            id: inputID,
+            fn: keyboardUpdate,
+        });
     };
-
-    let keyboardID: BaseID;
 
     const deactivateKeyboard = () => {
-        input.removeListener('keydown', inputID);
-        input.removeListener('keyup', inputID);
-
-        engine.removeUpdate(keyboardID);
-    };
-
-    const keyboardUpdate = () => {
-        // if (keyboard.outActive) zoom(methods.screenMiddle(), 'out');
-        // if (keyboard.inActive) zoom(methods.screenMiddle(), 'in');
-        if (input.keyboard.keyHeld['KeyQ']) zoom(methods.screenMiddle(), 'out');
-        if (keyboard.inActive) zoom(methods.screenMiddle(), 'in');
+        engine.removeUpdate(inputID);
     };
 
     return {
@@ -115,13 +82,11 @@ export const createInputTV = (properties: TVProperties, methods: TVMethods, inpu
     };
 };
 
-const createZoom = (props: TVProperties, {s2W}: TVMethods) => {
+const createZoom = (props: TVProperties, {screen2World}: TVMethods) => {
     const mechanic = {
         in: () => {
             props.scale.x /= props.scaleFactor.x;
             props.scale.y /= props.scaleFactor.y;
-
-            console.log(props.scale.x, props.scaleFactor.x);
         },
         out: () => {
             props.scale.x *= props.scaleFactor.x;
@@ -130,11 +95,11 @@ const createZoom = (props: TVProperties, {s2W}: TVMethods) => {
     };
 
     return (zoomPos: Pos, type: 'in' | 'out') => {
-        props.worldBeforeZoom = s2W(zoomPos.x, zoomPos.y);
+        props.worldBeforeZoom = screen2World(zoomPos.x, zoomPos.y);
 
         mechanic[type]();
 
-        props.worldAfterZoom = s2W(zoomPos.x, zoomPos.y);
+        props.worldAfterZoom = screen2World(zoomPos.x, zoomPos.y);
 
         props.offset.x += props.worldBeforeZoom.xT - props.worldAfterZoom.xT;
         props.offset.y += props.worldBeforeZoom.yT - props.worldAfterZoom.yT;

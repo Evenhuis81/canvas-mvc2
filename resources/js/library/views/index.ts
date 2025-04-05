@@ -19,15 +19,15 @@ export const createViews = (
 };
 
 const createMethods = (props: TVProperties, context: CanvasRenderingContext2D): TVMethods => ({
-    s2W: (x, y) => ({
+    screen2World: (x, y) => ({
         xT: x / props.scale.x + props.offset.x,
         yT: y / props.scale.y + props.offset.y,
     }),
-    w2S: (xT, yT) => ({
+    world2Screen: (xT, yT) => ({
         x: (xT - props.offset.x) * props.scale.x,
         y: (yT - props.offset.y) * props.scale.y,
     }),
-    w2S2: (xT1, yT1, xT2, yT2) => ({
+    world2Screen2: (xT1, yT1, xT2, yT2) => ({
         x1: (xT1 - props.offset.x) * props.scale.x,
         y1: (yT1 - props.offset.y) * props.scale.y,
         x2: (xT2 - props.offset.x) * props.scale.x,
@@ -38,28 +38,24 @@ const createMethods = (props: TVProperties, context: CanvasRenderingContext2D): 
     screenMiddle: () => pos(context.canvas.width / 2, context.canvas.height / 2),
 });
 
-// const pos2 = (x1 = 0, y1 = 0, x2 = 0, y2 = 0) => ({x1, y1, x2, y2});
 const pos = (x = 0, y = 0) => ({x, y});
+const pos2 = (x1 = 0, y1 = 0, x2 = 0, y2 = 0) => ({x1, y1, x2, y2});
 const worldPos = (xT = 0, yT = 0) => ({xT, yT});
 
 const createProperties = (): TVProperties => ({
-    // Core Properties:
     offset: pos(),
     scale: pos(1, 1),
     startPan: pos(),
-    scaleFactor: pos(0.95, 0.95),
+    scaleFactor: pos(0.99, 0.99),
     worldBeforeZoom: worldPos(),
     worldAfterZoom: worldPos(),
-    // screen: pos(),
-    // screen2: vector2(),
-    // world: pos(10, 10),
     // screenSize: pos(300, 150),
     // worldTL: pos(), // part of world borders
     // worldBR: pos(10, 10), // part of world borders
     // worldView: pos2(),
     // orientation: '',
     // unitWeight: pos(1, 1),
-    // history: Array(10).fill(pos()), // separate
+    // history: Array(10).fill(pos()),
 });
 
 // const setWorldView = (x: number, y: number, x2: number, y2: number) => {
@@ -72,28 +68,4 @@ const createProperties = (): TVProperties => ({
 // const setScreenSize = (size: Vector) => {
 //     properties.screenSize.x = size.x;
 //     properties.screenSize.y = size.y;
-// };
-
-// const setDefaults = (canvas: HTMLCanvasElement) => {
-//     const {width, height} = canvas;
-
-//     let scaleXY: number;
-
-//     if (width > height) {
-//         scaleXY = height / 12;
-//         properties.orientation = 'landscape';
-//     } else {
-//         scaleXY = width / 12;
-//         properties.orientation = 'portrait';
-//     }
-
-//     setScale(vector(scaleXY, scaleXY));
-//     setScaleFactor(0.9);
-//     setScreenSize(vector(width, height));
-// };
-
-// const methods = {
-// setWorldView,
-// setScreenSize,
-// setDefaults,
 // };

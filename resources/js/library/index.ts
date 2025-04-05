@@ -7,7 +7,6 @@ import type {Engine} from './types/engine';
 import type {LibraryOptions, LibraryResources} from './types';
 import {entity} from './entity';
 import {createDefaultSketch} from './entity/defaults/sketch';
-import {MethodsTV, PropertiesTV} from './types/views';
 import {createViews} from './views';
 
 export const initialize = (id?: string | number, options?: Partial<LibraryOptions>): LibraryResources => {
@@ -18,7 +17,7 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
 
     const engine = createEngine(libraryID);
 
-    // Always first draw in engine setDraw
+    // Always first draw in engine draw
     if (options?.clear) clearOn(engine, context);
     if (options?.dotMiddle) dotOn(engine, context);
 
