@@ -33,7 +33,7 @@ export const getLevelRaster = (
         ctx.strokeStyle = options.strokeStyle;
         ctx.lineWidth = lW * tv.scale.x;
 
-        // console.log(tv.scale.x); // 48.75 / 24.365
+        // console.log(tv.scale.x);
 
         ctx.beginPath();
 

@@ -1,7 +1,7 @@
 import {TVMethods, TVProperties, TransformedView} from 'library/types/views';
 import {createPaint} from './paint-index';
 import {LibraryInput} from 'library/types/input';
-import {createInputTV} from './input';
+import {createInputTV} from './input-tv';
 import {Engine} from 'library/types/engine';
 
 export const createViews = (

@@ -36,7 +36,8 @@ export type TransformedView = TVProperties &
             deactivate: () => void;
         };
         keyboardInput: {
-            //
+            activate: () => void;
+            deactivate: () => void;
         };
     };
 

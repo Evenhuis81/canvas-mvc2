@@ -97,24 +97,29 @@ const createLoop = (properties: EngineProperties, functions: EngineFunctionMap, 
 
 const defaultUpdate: Omit<UpdateOrDraw<'update'>, 'fn' | 'id'> = {
     type: 'update',
-    // id: 'noUpdateID',
     name: 'noUpdateName',
 };
 
 const defaultDraw: Omit<UpdateOrDraw<'draw'>, 'fn' | 'id'> = {
     type: 'draw',
-    // id: 'noDrawID',
     name: 'noDrawName',
 };
 
 const createSetAndRemoveUpdatesAndDraws = (functions: EngineFunctionMap) => {
-    const setDraw = (draw: EngineDraw) => functions.draw.push({...defaultDraw, ...draw});
+    const setDraw = (draw: EngineDraw): BaseID => {
+        const id = draw.id ?? Symbol();
 
-    const setUpdate = (update: EngineUpdate) => {
-        if (!update.id) update.id = 'noID';
-        const fn = {...defaultUpdate, ...update};
+        functions.draw.push({...defaultDraw, ...draw, id});
 
-        functions.update.push(fn);
+        return id;
+    };
+
+    const setUpdate = (update: EngineUpdate): BaseID => {
+        const id = update.id ?? Symbol();
+
+        functions.update.push({...defaultUpdate, ...update, id});
+
+        return id;
     };
 
     const handle: EngineSet = (updateOrDraw, set = true) => {

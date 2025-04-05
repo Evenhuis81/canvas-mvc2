@@ -6,6 +6,8 @@ export const createPaint = (props: TVProperties, methods: TVMethods, ctx: Canvas
 
         ctx.moveTo(screen.x1, screen.y1);
         ctx.lineTo(screen.x2, screen.y2);
+
+        // console.log(props.scale);
     },
     roundRectStroke: createRoundRectStroke(props, methods, ctx), // Temp
 });

@@ -34,6 +34,7 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
 
     // TODO::Make this an option
     views.tv.mouseInput.activate();
+    views.tv.keyboardInput.activate();
 
     return {
         canvas,

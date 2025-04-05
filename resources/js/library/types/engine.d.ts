@@ -32,8 +32,8 @@ export interface Engine {
     runOnce: () => void;
     halt: () => void;
     handle: EngineSet;
-    setUpdate: (update: EngineUpdate) => void;
-    setDraw: (draw: EngineDraw) => void;
+    setUpdate: (update: EngineUpdate) => BaseID;
+    setDraw: (draw: EngineDraw) => BaseID;
     removeUpdate: (id: BaseID) => void;
     removeDraw: (id: BaseID) => void;
     info: EngineInfo;
