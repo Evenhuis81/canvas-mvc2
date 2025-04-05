@@ -22,14 +22,15 @@ export const createLevelRaster = (
     line: (x1: number, y1: number, x2: number, y2: number) => void,
     level: ReverseLevel,
     scale: Pos,
+    lineWidth = 1,
+    strokeStyle = '#fff',
 ) => {
     const unitSize = ctx.canvas.width / level.visibleTilesX;
-    const lineWidth = 1 / unitSize;
-    const strokeStyle = '#fff';
+    const scaledLineWidth = lineWidth / unitSize;
 
     const draw = () => {
         ctx.strokeStyle = strokeStyle;
-        ctx.lineWidth = lineWidth * scale.x;
+        ctx.lineWidth = scaledLineWidth * scale.x;
 
         ctx.beginPath();
 

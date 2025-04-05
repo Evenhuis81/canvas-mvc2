@@ -9,7 +9,8 @@ type TVProperties = {
     offset: Pos;
     scale: Pos;
     startPan: Pos;
-    scaleFactor: Pos;
+    scaleMouse: number;
+    scaleKeyboard: number;
     worldBeforeZoom: WorldPos;
     worldAfterZoom: WorldPos;
 };

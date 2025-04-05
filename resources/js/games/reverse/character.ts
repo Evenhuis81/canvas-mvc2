@@ -14,15 +14,13 @@ export const createCharacter = (
 ) => {
     const startPosition = level.startPos(level.map);
 
-    const {pos, collisions, vel, ...props} = createCharacterProperties(startPosition, world, level);
+    const {pos, collisions, vel, tri, ...props} = createCharacterProperties(startPosition, world, level);
 
     props.grounded = groundCheck(level, startPosition.x, startPosition.y + 1);
 
     // No ground means falling down with face down
     if (!props.grounded) {
         props.face = 'down';
-
-        // vel.y = props.speed;
     }
 
     if (pos.x === -1 || pos.y === -1) throw Error('Player Start Position not found on level map');
@@ -67,7 +65,7 @@ export const createCharacter = (
 
             ctx.beginPath();
 
-            props.face === 'up' ? faceUp() : faceDown();
+            vel.y < 0 ? faceUp() : faceDown();
 
             ctx.fill();
         },
@@ -157,6 +155,14 @@ const createCharacterProperties = (
 ) => ({
     pos: {x: startPosition.x, y: startPosition.y},
     vel: {x: 0, y: 0},
+    tri: {
+        x1: startPosition.x + 0.5,
+        y1: startPosition.y,
+        x2: startPosition.x + 1,
+        y2: startPosition.y + 1,
+        x3: startPosition.x,
+        y3: startPosition.y + 1,
+    },
     w: 1,
     h: 1,
     scaledX: startPosition.x * world.unitScale,

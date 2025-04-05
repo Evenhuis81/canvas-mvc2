@@ -59,7 +59,7 @@ const setScreen = (canvas: HTMLCanvasElement) => {
     world.xMargin = (canvas.width - world.unitScale * 16) / 2;
 };
 
-export default () => {
+export default async () => {
     const library = initialize(libraryID, libraryOptions);
     const {
         canvas,
@@ -70,17 +70,19 @@ export default () => {
         views: {tv},
     } = library;
 
+    const img = new Image();
+    img.src = 'https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png';
+    await img.decode();
+
     setScreen(canvas); // Requires update (for alignment)
 
     tv.setScale({x: world.unitScale, y: world.unitScale});
-    // tv.setScaleFactor(0.95); // create switch/slider to adjust this and other setttings
     // tv.setScreenSize({x: canvas.width, y: canvas.height});
-
-    //     tv.setUnitWeight({x: 1 / world.xUnits, y: 1 / world.xUnits}); // unused?
-    //     tv.setWorldBorders(vector2(0, 0, level.width, level.height)); // optional under extras?
-    //     tv.setOffset(vector(-6 + level.playerStart.x, -6 + level.playerStart.y)); // requires documentation and example(s)
-    //     engine.showsOverview(); // part of statistics ?
-    //     engine.updatesOverview();
+    // tv.setUnitWeight({x: 1 / world.xUnits, y: 1 / world.xUnits}); // unused?
+    // tv.setWorldBorders(vector2(0, 0, level.width, level.height)); // optional under extras?
+    // tv.setOffset(vector(-6 + level.playerStart.x, -6 + level.playerStart.y)); // requires documentation and example(s)
+    // engine.showsOverview(); // part of statistics?
+    // engine.updatesOverview();
 
     const level = getLevel(1);
 

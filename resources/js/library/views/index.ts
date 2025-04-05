@@ -46,9 +46,10 @@ const createProperties = (): TVProperties => ({
     offset: pos(),
     scale: pos(1, 1),
     startPan: pos(),
-    scaleFactor: pos(0.99, 0.99),
     worldBeforeZoom: worldPos(),
     worldAfterZoom: worldPos(),
+    scaleMouse: 0.95,
+    scaleKeyboard: 0.99,
     // screenSize: pos(300, 150),
     // worldTL: pos(), // part of world borders
     // worldBR: pos(10, 10), // part of world borders

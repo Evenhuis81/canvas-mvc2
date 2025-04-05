@@ -26,9 +26,9 @@ export const createInputTV = (properties: TVProperties, methods: TVMethods, inpu
     const zoom = createZoom(properties, methods);
 
     const wheelZoom = (evt: WheelEvent) => {
-        if (evt.deltaY < 0) return zoom(input.mouse, 'in');
+        if (evt.deltaY < 0) return zoom('in', input.mouse, properties.scaleMouse);
 
-        zoom(input.mouse, 'out');
+        zoom('out', input.mouse, properties.scaleMouse);
     };
 
     const activateMouse = () => {
@@ -55,8 +55,8 @@ export const createInputTV = (properties: TVProperties, methods: TVMethods, inpu
     };
 
     const keyboardUpdate = () => {
-        if (input.keyboard.keyHeld['KeyQ']) zoom(methods.screenMiddle(), 'out');
-        if (input.keyboard.keyHeld['KeyE']) zoom(methods.screenMiddle(), 'in');
+        if (input.keyboard.keyHeld['KeyQ']) zoom('out', methods.screenMiddle(), properties.scaleKeyboard);
+        if (input.keyboard.keyHeld['KeyE']) zoom('in', methods.screenMiddle(), properties.scaleKeyboard);
     };
 
     const activateKeyboard = () => {
@@ -84,20 +84,20 @@ export const createInputTV = (properties: TVProperties, methods: TVMethods, inpu
 
 const createZoom = (props: TVProperties, {screen2World}: TVMethods) => {
     const mechanic = {
-        in: () => {
-            props.scale.x /= props.scaleFactor.x;
-            props.scale.y /= props.scaleFactor.y;
+        in: (scaleFactor: number) => {
+            props.scale.x /= scaleFactor;
+            props.scale.y /= scaleFactor;
         },
-        out: () => {
-            props.scale.x *= props.scaleFactor.x;
-            props.scale.y *= props.scaleFactor.y;
+        out: (scaleFactor: number) => {
+            props.scale.x *= scaleFactor;
+            props.scale.y *= scaleFactor;
         },
     };
 
-    return (zoomPos: Pos, type: 'in' | 'out') => {
+    return (type: 'in' | 'out', zoomPos: Pos, scaleFactor: number) => {
         props.worldBeforeZoom = screen2World(zoomPos.x, zoomPos.y);
 
-        mechanic[type]();
+        mechanic[type](scaleFactor);
 
         props.worldAfterZoom = screen2World(zoomPos.x, zoomPos.y);
 
