@@ -67,14 +67,6 @@ const setScreen = (canvas: HTMLCanvasElement) => {
 };
 
 export default async () => {
-    window.onload = () => {
-        console.log('loaded');
-    };
-    // window.addEventListener('load', () => {
-    //     console.log('reverse mounted');
-    //     // reverse();
-    // });
-
     const library = await initialize(libraryID, libraryOptions);
     const {
         canvas,
@@ -85,8 +77,6 @@ export default async () => {
         views: {tv},
         images,
     } = library;
-
-    console.log(images.length);
 
     setScreen(canvas); // Requires update (for alignment)
 
@@ -115,19 +105,68 @@ export default async () => {
         KeyS: () => (charPos.y += charProps.speed),
         KeyA: () => (charPos.x -= charProps.speed),
         KeyD: () => (charPos.x += charProps.speed),
+        ArrowUp: () => (triangle.y -= charProps.speed),
+        ArrowDown: () => (triangle.y += charProps.speed),
+        ArrowLeft: () => (triangle.x -= charProps.speed),
+        ArrowRight: () => (triangle.x += charProps.speed),
     };
 
     input.addMovement('reverse', movement);
     // input.removeMovement('reverse');
 
-    // engine.setUpdate(charUpdate);
+    engine.setUpdate(charUpdate);
     // engine.setDraw(levelDraw);
-    // engine.setDraw(charDraw);
+    engine.setDraw(charDraw);
 
     const statElements = characterStatisticsElements(charProps, world, createElement, canvas);
     // statElements.bottomLeft.show();
 
     const levelRaster = createLevelRaster(context, tv.paint.line, level, tv.scale);
+
+    const movement2 = {
+        //
+    };
+
+    // input.addMovement('triangle', movement2);
+
+    const triangle = {
+        img: images[0].container,
+        x: 2,
+        y: 5,
+        w: world.unitScale,
+        h: world.unitScale,
+        angle: 0,
+    };
+
+    const imageDraw = () => {
+        context.save();
+
+        context.translate(triangle.x * world.unitScale, triangle.y * world.unitScale);
+
+        context.rotate(triangle.angle);
+
+        context.drawImage(triangle.img, 0, 0, triangle.w, triangle.h);
+
+        context.restore();
+
+        context.beginPath();
+
+        context.fillStyle = '#fff';
+
+        context.font = 'bold 24px monospace';
+
+        context.fillText(
+            triangle.angle.toString(),
+            (triangle.x + 1) * world.unitScale,
+            (triangle.y + 0.5) * world.unitScale,
+        );
+    };
+
+    const imageUpdate = () => {
+        triangle.angle += 0.01;
+    };
+
+    engine.setDraw({fn: imageDraw});
 
     engine.setDraw(levelRaster);
 
