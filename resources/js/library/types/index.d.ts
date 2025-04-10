@@ -46,6 +46,7 @@ export interface LibraryResources {
         tv: TransformedView;
         // sv: StaticView;
     };
+    images: ImageProperties[];
 }
 
 export interface StatisticOptions {
@@ -63,6 +64,12 @@ interface CanvasOptions {
     contextMenu: boolean;
 }
 
+type ImageProperties = {
+    id: BaseID;
+    filename: string;
+    container: HTMLImageElement;
+};
+
 export interface LibraryOptions extends CanvasOptions {
     containerID: string;
     center: boolean;
@@ -71,6 +78,7 @@ export interface LibraryOptions extends CanvasOptions {
     dotMiddle: boolean;
     dualView: boolean;
     engineStats: boolean;
+    images: ImageProperties[];
     // statistics: Partial<StatisticOptions>;
 }
 

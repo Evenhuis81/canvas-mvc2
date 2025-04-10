@@ -4,12 +4,30 @@ import {getCanvasInput} from 'library/input';
 import {getCreatePhaser} from 'games/phaser/phaser'; // refactor to default export in style of 'createEntity'
 import {uid} from './helpers';
 import type {Engine} from './types/engine';
-import type {LibraryOptions, LibraryResources} from './types';
+import type {ImageProperties, LibraryOptions, LibraryResources} from './types';
 import {entity} from './entity';
 import {createDefaultSketch} from './entity/defaults/sketch';
 import {createViews} from './views';
 
-export const initialize = (id?: string | number, options?: Partial<LibraryOptions>): LibraryResources => {
+const setImages = async (image: ImageProperties) => {
+    const imagesLoaded: ImageProperties[] = [];
+    // images.forEach(async image => {
+    image.container.src = `assets/${image.filename}`;
+
+    await image.container.decode();
+
+    console.log(`image ${image.id.toString()} loaded`);
+
+    imagesLoaded.push(image);
+    // });
+
+    return imagesLoaded;
+};
+
+export const initialize = async (
+    id?: string | number,
+    options?: Partial<LibraryOptions>,
+): Promise<LibraryResources> => {
     const libraryID = id ?? uid();
 
     const canvas = getCanvas(options);
@@ -20,6 +38,9 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
     // Always first draw in engine draw
     if (options?.clear) clearOn(engine, context);
     if (options?.dotMiddle) dotOn(engine, context);
+
+    let imagesLoaded: ImageProperties[] = [];
+    if (options?.images) imagesLoaded = await setImages(options.images[0]);
 
     const container = options?.containerID ? getContainer(options.containerID) : createContainer(libraryID);
 
@@ -45,6 +66,7 @@ export const initialize = (id?: string | number, options?: Partial<LibraryOption
         createPhaser: () => getCreatePhaser(engine),
         createElement,
         views,
+        images: imagesLoaded,
     };
 };
 

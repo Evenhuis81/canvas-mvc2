@@ -15,6 +15,13 @@ const libraryOptions: Partial<LibraryOptions> = {
     clear: true,
     backgroundColor: '#000',
     dotMiddle: true,
+    images: [
+        {
+            id: 'tri',
+            filename: 'isoceles_triangle_transparant.png',
+            container: new Image(), // this should be optional
+        },
+    ],
 };
 
 export type WorldProperties = {
@@ -60,7 +67,15 @@ const setScreen = (canvas: HTMLCanvasElement) => {
 };
 
 export default async () => {
-    const library = initialize(libraryID, libraryOptions);
+    window.onload = () => {
+        console.log('loaded');
+    };
+    // window.addEventListener('load', () => {
+    //     console.log('reverse mounted');
+    //     // reverse();
+    // });
+
+    const library = await initialize(libraryID, libraryOptions);
     const {
         canvas,
         context,
@@ -68,11 +83,10 @@ export default async () => {
         createElement,
         input,
         views: {tv},
+        images,
     } = library;
 
-    const img = new Image();
-    img.src = 'https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png';
-    await img.decode();
+    console.log(images.length);
 
     setScreen(canvas); // Requires update (for alignment)
 
