@@ -27,6 +27,14 @@ type TVMethods = {
 type TVPaint = {
     line: (x1: number, y1: number, x2: number, y2: number) => void;
     roundRectStroke: (x: number, y: number, w: number, h: number, radii: number) => void;
+    imageTileRotation: (tri: ImageRotate) => void;
+};
+
+export type ImageRotate = {
+    img: HTMLImageElement;
+    x: number;
+    y: number;
+    angle: number;
 };
 
 export type TransformedView = TVProperties &

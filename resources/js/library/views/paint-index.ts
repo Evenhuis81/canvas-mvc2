@@ -1,4 +1,4 @@
-import {TVMethods, TVProperties} from 'library/types/views';
+import {ImageRotate, TVMethods, TVProperties} from 'library/types/views';
 
 export const createPaint = (props: TVProperties, methods: TVMethods, ctx: CanvasRenderingContext2D) => ({
     line: (x1: number, y1: number, x2: number, y2: number) => {
@@ -10,6 +10,7 @@ export const createPaint = (props: TVProperties, methods: TVMethods, ctx: Canvas
         // console.log(props.scale);
     },
     roundRectStroke: createRoundRectStroke(props, methods, ctx), // Temp
+    imageTileRotation: createImageTileRotation(props, methods, ctx), // Also temporarily
 });
 
 // const createFillStrokeCircle =
@@ -147,4 +148,30 @@ const createRoundRectStroke =
         ctx.beginPath();
         ctx.roundRect(screen.x, screen.y, w * props.scale.x, h * props.scale.y, radii);
         ctx.stroke();
+    };
+
+// Test this (function parameters) VS Sketch (no function parameters) for efficiency
+const createImageTileRotation =
+    (props: TVProperties, {world2Screen}: TVMethods, ctx: CanvasRenderingContext2D) =>
+    (tri: ImageRotate) => {
+        const worldPos = world2Screen(tri.x - 0.5, tri.y - 0.5);
+        const worldPosText = world2Screen(tri.x + 1, tri.y);
+
+        ctx.save();
+
+        ctx.translate(worldPos.x, worldPos.y);
+
+        ctx.rotate(tri.angle);
+
+        ctx.drawImage(tri.img, 0, 0, props.scale.x, props.scale.x);
+
+        ctx.restore();
+
+        ctx.beginPath();
+
+        ctx.fillStyle = '#fff';
+
+        ctx.font = 'bold 24px monospace';
+
+        ctx.fillText(tri.angle.toString(), worldPosText.x, worldPosText.y);
     };

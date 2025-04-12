@@ -9,9 +9,10 @@ import {entity} from './entity';
 import {createDefaultSketch} from './entity/defaults/sketch';
 import {createViews} from './views';
 
-const setImages = async (image: ImageProperties) => {
+// TODO::setImages
+const setImage = async (image: ImageProperties) => {
     const imagesLoaded: ImageProperties[] = [];
-    // images.forEach(async image => {
+
     image.container.src = `assets/${image.filename}`;
 
     await image.container.decode();
@@ -19,7 +20,6 @@ const setImages = async (image: ImageProperties) => {
     console.log(`image ${image.id.toString()} loaded`);
 
     imagesLoaded.push(image);
-    // });
 
     return imagesLoaded;
 };
@@ -40,7 +40,7 @@ export const initialize = async (
     if (options?.dotMiddle) dotOn(engine, context);
 
     let imagesLoaded: ImageProperties[] = [];
-    if (options?.images) imagesLoaded = await setImages(options.images[0]);
+    if (options?.images) imagesLoaded = await setImage(options.images[0]);
 
     const container = options?.containerID ? getContainer(options.containerID) : createContainer(libraryID);
 

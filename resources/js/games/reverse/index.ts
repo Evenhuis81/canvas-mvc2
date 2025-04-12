@@ -123,52 +123,26 @@ export default async () => {
 
     const levelRaster = createLevelRaster(context, tv.paint.line, level, tv.scale);
 
-    const movement2 = {
-        //
-    };
-
-    // input.addMovement('triangle', movement2);
+    engine.setDraw(levelRaster);
 
     const triangle = {
         img: images[0].container,
         x: 2,
         y: 5,
-        w: world.unitScale,
-        h: world.unitScale,
         angle: 0,
     };
 
-    const imageDraw = () => {
-        context.save();
+    engine.setUpdate({
+        fn: () => {
+            triangle.angle += 0.01;
+        },
+    });
 
-        context.translate(triangle.x * world.unitScale, triangle.y * world.unitScale);
-
-        context.rotate(triangle.angle);
-
-        context.drawImage(triangle.img, 0, 0, triangle.w, triangle.h);
-
-        context.restore();
-
-        context.beginPath();
-
-        context.fillStyle = '#fff';
-
-        context.font = 'bold 24px monospace';
-
-        context.fillText(
-            triangle.angle.toString(),
-            (triangle.x + 1) * world.unitScale,
-            (triangle.y + 0.5) * world.unitScale,
-        );
-    };
-
-    const imageUpdate = () => {
-        triangle.angle += 0.01;
-    };
-
-    engine.setDraw({fn: imageDraw});
-
-    engine.setDraw(levelRaster);
+    engine.setDraw({
+        fn: () => {
+            tv.paint.imageTileRotation(triangle);
+        },
+    });
 
     library.runEngine();
 };
