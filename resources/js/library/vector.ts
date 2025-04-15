@@ -61,12 +61,14 @@ export const vec = {
         v.x *= scalar;
         v.y *= scalar;
     },
+    /** Set given Vector to a unit Vector (with length 1) */
     normalize: (v: Vector) => {
         const l = 1 / vec.mag(v);
 
         v.x = v.x * l;
         v.y = v.y * l;
     },
+    /** Set length for a given Vector */
     setMag: (v: Vector, scalar: number) => {
         vec.normalize(v);
         vec.multScalar(v, scalar);

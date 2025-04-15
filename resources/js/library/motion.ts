@@ -2,7 +2,7 @@ export const createTestVehicle = (ctx: CanvasRenderingContext2D, unitLength: num
     const props = {
         fillStyle: '#f00',
         strokeStyle: '#0f0',
-        maxSpeed: 1,
+        maxSpeed: 0.05,
     };
 
     const pos = {x: 0, y: 0};
@@ -15,6 +15,10 @@ export const createTestVehicle = (ctx: CanvasRenderingContext2D, unitLength: num
         vel.y += acc.y;
         pos.x += vel.x;
         pos.y += vel.y;
+    };
+
+    const steer = () => {
+        //
     };
 
     // TOOD::Use TransformedView
