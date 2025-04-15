@@ -73,4 +73,10 @@ export const vec = {
         vec.normalize(v);
         vec.multScalar(v, scalar);
     },
+    setHeading: (v: Vector, radians: number) => {
+        const m = vec.mag(v);
+
+        v.x = Math.cos(radians) * m;
+        v.y = Math.cos(radians) * m;
+    },
 };

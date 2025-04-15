@@ -19,7 +19,7 @@ export type ReverseLevel = {
 
 export const createLevelRaster = (
     ctx: CanvasRenderingContext2D,
-    line: (x1: number, y1: number, x2: number, y2: number) => void,
+    tv: TransformedView,
     level: ReverseLevel,
     scale: Pos,
     lineWidth = 1,
@@ -35,10 +35,10 @@ export const createLevelRaster = (
         ctx.beginPath();
 
         for (let y = 0; y < level.height + 1; y++) {
-            line(0, y, level.width, y);
+            tv.paint.line(0, y, level.width, y);
 
             for (let x = 0; x < level.width + 1; x++) {
-                line(x, 0, x, level.height);
+                tv.paint.line(x, 0, x, level.height);
             }
         }
 

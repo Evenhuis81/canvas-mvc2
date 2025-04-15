@@ -13,7 +13,7 @@ export const createViews = (
     const methods = createMethods(tvProperties, context);
     const paint = createPaint(tvProperties, methods, context);
 
-    const inputTV = createInputTV(tvProperties, methods, input, engine);
+    const inputTV = createInputTV(tvProperties, methods, input, engine, context.canvas.width, context.canvas.height);
 
     return {tv: Object.assign(tvProperties, methods, {paint}, inputTV)};
 };
@@ -39,7 +39,7 @@ const createMethods = (props: TVProperties, context: CanvasRenderingContext2D): 
 });
 
 const pos = (x = 0, y = 0) => ({x, y});
-const pos2 = (x1 = 0, y1 = 0, x2 = 0, y2 = 0) => ({x1, y1, x2, y2});
+// const pos2 = (x1 = 0, y1 = 0, x2 = 0, y2 = 0) => ({x1, y1, x2, y2});
 const worldPos = (xT = 0, yT = 0) => ({xT, yT});
 
 const createProperties = (): TVProperties => ({

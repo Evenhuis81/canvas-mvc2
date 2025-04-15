@@ -100,45 +100,45 @@ export default async () => {
     } = createCharacter(world, context, canvas, level, createElement);
 
     const movement = {
-        KeyW: () => (charPos.y -= charProps.speed),
-        KeyS: () => (charPos.y += charProps.speed),
-        KeyA: () => (charPos.x -= charProps.speed),
-        KeyD: () => (charPos.x += charProps.speed),
+        // KeyW: () => (charPos.y -= charProps.speed),
+        // KeyS: () => (charPos.y += charProps.speed),
+        // KeyA: () => (charPos.x -= charProps.speed),
+        // KeyD: () => (charPos.x += charProps.speed),
         // ArrowUp: () => (triangle.y -= charProps.speed),
         // ArrowDown: () => (triangle.y += charProps.speed),
         // ArrowLeft: () => (triangle.x -= charProps.speed),
         // ArrowRight: () => (triangle.x += charProps.speed),
-        KeyF: () => {
-            // rotate left
-        },
-        KeyG: () => {
-            // rotate right
-        },
-        KeyI: () => {
-            // up
-        },
-        KeyK: () => {
-            // down
-        },
-        KeyJ: () => {
-            // left
-        },
-        KeyL: () => {
-            // right
-        },
+        // KeyF: () => {
+        //     // rotate left
+        // },
+        // KeyG: () => {
+        //     // rotate right
+        // },
+        // KeyI: () => {
+        //     // up
+        // },
+        // KeyK: () => {
+        //     // down
+        // },
+        // KeyJ: () => {
+        //     // left
+        // },
+        // KeyL: () => {
+        //     // right
+        // },
     };
 
-    input.addMovement('reverse', movement);
+    // input.addMovement('reverse', movement);
     // input.removeMovement('reverse');
 
-    engine.setUpdate(charUpdate);
+    // engine.setUpdate(charUpdate);
     // engine.setDraw(levelDraw);
-    engine.setDraw(charDraw);
+    // engine.setDraw(charDraw);
 
-    const statElements = characterStatisticsElements(charProps, world, createElement, canvas);
+    // const statElements = characterStatisticsElements(charProps, world, createElement, canvas);
     // statElements.bottomLeft.show();
 
-    const levelRaster = createLevelRaster(context, tv.paint.line, level, tv.scale);
+    const levelRaster = createLevelRaster(context, tv, level, tv.scale);
 
     engine.setDraw(levelRaster);
 

@@ -3,13 +3,25 @@ import type {LibraryInput} from 'library/types/input';
 import type {Pos} from 'library/types/shapes';
 import type {TVMethods, TVProperties} from 'library/types/views';
 
-export const createInputTV = (properties: TVProperties, methods: TVMethods, input: LibraryInput, engine: Engine) => {
+export const createInputTV = (
+    properties: TVProperties,
+    methods: TVMethods,
+    input: LibraryInput,
+    engine: Engine,
+    canvasWidth: number,
+    canvasHeight: number,
+) => {
     const inputID = Symbol();
 
     const mousedown = ({button, offsetX, offsetY}: MouseEvent) => {
         if (button === 0) {
             properties.startPan.x = offsetX;
             properties.startPan.y = offsetY;
+
+            // clamp world to draw only if in screen
+            const worldTL = methods.screen2World(0, 0);
+            const worldBR = methods.screen2World(canvasWidth, canvasHeight);
+            console.log(worldTL.xT, worldTL.yT, worldBR.xT, worldBR.yT);
         }
     };
 
