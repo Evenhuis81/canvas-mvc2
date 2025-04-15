@@ -154,24 +154,27 @@ const createRoundRectStroke =
 const createImageTileRotation =
     (props: TVProperties, {world2Screen}: TVMethods, ctx: CanvasRenderingContext2D) =>
     (tri: ImageRotate) => {
-        const worldPos = world2Screen(tri.x - 0.5, tri.y - 0.5);
-        const worldPosText = world2Screen(tri.x + 1, tri.y);
+        const worldPos = world2Screen(tri.x + 0.5, tri.y + 0.5);
+        // const worldPosText = world2Screen(tri.x + 1, tri.y);
 
         ctx.save();
 
+        // ctx.translate(tri.x * props.scale.x, tri.y * props.scale.x);
         ctx.translate(worldPos.x, worldPos.y);
 
         ctx.rotate(tri.angle);
 
-        ctx.drawImage(tri.img, 0, 0, props.scale.x, props.scale.x);
+        ctx.drawImage(tri.img, -0.5 * props.scale.x, -0.5 * props.scale.x, props.scale.x, props.scale.x);
 
         ctx.restore();
 
-        ctx.beginPath();
+        // ctx.translate(-0.5 * props.scale.x, -0.5 * props.scale.x);
 
-        ctx.fillStyle = '#fff';
+        // ctx.beginPath();
 
-        ctx.font = 'bold 24px monospace';
+        // ctx.fillStyle = '#fff';
 
-        ctx.fillText(tri.angle.toString(), worldPosText.x, worldPosText.y);
+        // ctx.font = 'bold 24px monospace';
+
+        // ctx.fillText(tri.angle.toString(), worldPosText.x, worldPosText.y);
     };

@@ -33,7 +33,9 @@ export interface Engine {
     halt: () => void;
     handle: EngineSet;
     setUpdate: (update: EngineUpdate) => BaseID;
+    setBaseUpdate: (update: EngineUpdate['fn']) => symbol;
     setDraw: (draw: EngineDraw) => BaseID;
+    setBaseDraw: (draw: EngineDraw['fn']) => symbol;
     removeUpdate: (id: BaseID) => void;
     removeDraw: (id: BaseID) => void;
     info: EngineInfo;

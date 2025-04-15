@@ -45,7 +45,8 @@ export const createEngine = (libraryID: BaseID): Engine => {
 
     const halt = () => (properties.stop = true);
 
-    const {handle, setUpdate, setDraw, removeUpdate, removeDraw} = createSetAndRemoveUpdatesAndDraws(functions);
+    const {handle, setUpdate, setBaseUpdate, setDraw, setBaseDraw, removeUpdate, removeDraw} =
+        createSetAndRemoveUpdatesAndDraws(functions);
 
     const info = createInfo(functions, updateEvent);
 
@@ -59,7 +60,9 @@ export const createEngine = (libraryID: BaseID): Engine => {
         info,
         handle,
         setUpdate,
+        setBaseUpdate,
         setDraw,
+        setBaseDraw,
         removeUpdate,
         removeDraw,
         createStats,
@@ -114,10 +117,34 @@ const createSetAndRemoveUpdatesAndDraws = (functions: EngineFunctionMap) => {
         return id;
     };
 
+    const setBaseDraw = (drawFn: EngineDraw['fn']) => {
+        const id = Symbol();
+
+        setDraw({
+            id,
+            name: defaultDraw.name,
+            fn: drawFn,
+        });
+
+        return id;
+    };
+
     const setUpdate = (update: EngineUpdate): BaseID => {
         const id = update.id ?? Symbol();
 
         functions.update.push({...defaultUpdate, ...update, id});
+
+        return id;
+    };
+
+    const setBaseUpdate = (updateFn: EngineUpdate['fn']) => {
+        const id = Symbol();
+
+        setUpdate({
+            id,
+            name: defaultUpdate.name,
+            fn: updateFn,
+        });
 
         return id;
     };
@@ -142,7 +169,9 @@ const createSetAndRemoveUpdatesAndDraws = (functions: EngineFunctionMap) => {
 
     return {
         setUpdate,
+        setBaseUpdate,
         setDraw,
+        setBaseDraw,
         handle,
         removeUpdate,
         removeDraw,

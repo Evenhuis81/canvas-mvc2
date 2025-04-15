@@ -6,6 +6,7 @@ import type {LibraryOptions} from 'library/types';
 import type {ShapeMap} from 'library/entity/defaults/shapes';
 import type {Engine} from 'library/types/engine';
 import type {CreateElement} from 'library/entity';
+import {createTestVehicle} from 'library/motion';
 
 const libraryID = 'reverse';
 
@@ -109,6 +110,24 @@ export default async () => {
         ArrowDown: () => (triangle.y += charProps.speed),
         ArrowLeft: () => (triangle.x -= charProps.speed),
         ArrowRight: () => (triangle.x += charProps.speed),
+        KeyF: () => {
+            // rotate left
+        },
+        KeyG: () => {
+            // rotate right
+        },
+        KeyI: () => {
+            // up
+        },
+        KeyK: () => {
+            // down
+        },
+        KeyJ: () => {
+            // left
+        },
+        KeyL: () => {
+            // right
+        },
     };
 
     input.addMovement('reverse', movement);
@@ -132,17 +151,13 @@ export default async () => {
         angle: 0,
     };
 
-    engine.setUpdate({
-        fn: () => {
-            triangle.angle += 0.01;
-        },
-    });
+    engine.setBaseUpdate(() => (triangle.angle += 0.01));
+    engine.setBaseDraw(() => tv.paint.imageTileRotation(triangle));
 
-    engine.setDraw({
-        fn: () => {
-            tv.paint.imageTileRotation(triangle);
-        },
-    });
+    const testVehicle = createTestVehicle(context, world.unitScale);
+
+    engine.setBaseUpdate(testVehicle.update);
+    engine.setBaseDraw(testVehicle.draw);
 
     library.runEngine();
 };
