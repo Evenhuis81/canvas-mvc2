@@ -21,7 +21,8 @@ export const createInputTV = (
             // clamp world to draw only if in screen
             const worldTL = methods.screen2World(0, 0);
             const worldBR = methods.screen2World(canvasWidth, canvasHeight);
-            console.log(worldTL.xT, worldTL.yT, worldBR.xT, worldBR.yT);
+
+            // console.log(worldTL.xT, worldTL.yT, worldBR.xT, worldBR.yT);)
         }
     };
 
@@ -81,6 +82,14 @@ export const createInputTV = (
     const deactivateKeyboard = () => {
         engine.removeUpdate(inputID);
     };
+
+    // input.addListener({
+    //     type: 'keyup',
+    //     listener: ({code}) => {
+    //         console.log(code);
+    //     },
+    //     id: Symbol(),
+    // });
 
     return {
         mouseInput: {

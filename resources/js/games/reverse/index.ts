@@ -1,7 +1,7 @@
 import {initialize} from 'library/index';
 import {createCharacter} from './character';
 import {createLevelDraw, getLevel, createLevelRaster} from './level';
-import {createTestVehicle} from 'library/motion';
+import {createVehicle} from 'library/motion';
 import type {LibraryOptions} from 'library/types';
 import type {ShapeMap} from 'library/entity/defaults/shapes';
 import type {CreateElement} from 'library/entity';
@@ -91,15 +91,26 @@ export default async () => {
 
     const levelDraw = createLevelDraw(context, tv, world, level);
 
-    const {
-        draw: charDraw,
-        update: charUpdate,
-        properties: charProps,
-        pos: charPos,
-        // vel: charVel,
-    } = createCharacter(world, context, canvas, level, createElement);
+    // const {
+    //     draw: charDraw,
+    //     update: charUpdate,
+    //     properties: charProps,
+    //     pos: charPos,
+    //     // vel: charVel,
+    // } = createCharacter(world, context, canvas, level, createElement);
+
+    const vehicle = createVehicle(tv, context, world.unitScale);
 
     const movement = {
+        KeyA: () => {
+            // vehicle turn left
+        },
+        KeyD: () => {
+            // vehicle turn right
+        },
+        Space: () => {
+            // Thrust
+        },
         // KeyW: () => (charPos.y -= charProps.speed),
         // KeyS: () => (charPos.y += charProps.speed),
         // KeyA: () => (charPos.x -= charProps.speed),
@@ -152,10 +163,8 @@ export default async () => {
     // engine.setBaseUpdate(() => (triangle.angle += 0.01));
     // engine.setBaseDraw(() => tv.paint.imageTileRotation(triangle));
 
-    const testVehicle = createTestVehicle(context, world.unitScale);
-
-    engine.setBaseUpdate(testVehicle.update);
-    engine.setBaseDraw(testVehicle.draw);
+    engine.setBaseUpdate(vehicle.update);
+    engine.setBaseDraw(vehicle.draw);
 
     library.runEngine();
 };
