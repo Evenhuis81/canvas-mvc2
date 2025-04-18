@@ -83,14 +83,6 @@ export const createInputTV = (
         engine.removeUpdate(inputID);
     };
 
-    // input.addListener({
-    //     type: 'keyup',
-    //     listener: ({code}) => {
-    //         console.log(code);
-    //     },
-    //     id: Symbol(),
-    // });
-
     return {
         mouseInput: {
             activate: activateMouse,

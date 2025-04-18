@@ -1,10 +1,5 @@
 import {Pos, Pos2} from './shapes';
 
-// type TransformedView = PropertiesTV & MethodsTV & PaintTV;
-// export type TransformedView = {};
-// export type StaticView = {};
-// export type LibraryViews = {};
-
 type TVProperties = {
     offset: Pos;
     scale: Pos;
@@ -13,6 +8,8 @@ type TVProperties = {
     scaleKeyboard: number;
     worldBeforeZoom: WorldPos;
     worldAfterZoom: WorldPos;
+    unitSize: Pos;
+    visibleUnits: Pos;
 };
 
 type TVMethods = {

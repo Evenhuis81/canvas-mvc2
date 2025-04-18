@@ -17,41 +17,6 @@ export type ReverseLevel = {
     startPos: (levelMap: LevelMap) => {x: number; y: number};
 };
 
-export const createLevelRaster = (
-    ctx: CanvasRenderingContext2D,
-    tv: TransformedView,
-    level: ReverseLevel,
-    scale: Pos,
-    lineWidth = 1,
-    strokeStyle = '#fff',
-) => {
-    const unitSize = ctx.canvas.width / level.visibleTilesX;
-    const scaledLineWidth = lineWidth / unitSize;
-
-    const draw = () => {
-        ctx.strokeStyle = strokeStyle;
-        ctx.lineWidth = scaledLineWidth * scale.x;
-
-        ctx.beginPath();
-
-        for (let y = 0; y < level.height + 1; y++) {
-            tv.paint.line(0, y, level.width, y);
-
-            for (let x = 0; x < level.width + 1; x++) {
-                tv.paint.line(x, 0, x, level.height);
-            }
-        }
-
-        ctx.stroke();
-    };
-
-    return {
-        id: 'level-raster-draw',
-        name: 'Level Raster Draw',
-        fn: draw,
-    };
-};
-
 export const getLevel = (levelID: number): ReverseLevel => {
     const level = levels[levelID];
 

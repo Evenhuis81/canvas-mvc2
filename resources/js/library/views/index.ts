@@ -3,13 +3,24 @@ import {createPaint} from './paint-index';
 import {LibraryInput} from 'library/types/input';
 import {createInputTV} from './input-tv';
 import {Engine} from 'library/types/engine';
+import {Pos} from 'library/types/shapes';
+
+type ViewConfig = {
+    visibleUnits: Pos;
+};
 
 export const createViews = (
     context: CanvasRenderingContext2D,
     input: LibraryInput,
     engine: Engine,
+    config: ViewConfig = {visibleUnits: {x: 10, y: 10}},
 ): {tv: TransformedView} => {
     const tvProperties = createProperties();
+
+    // Set Properties
+    tvProperties.unitSize.x = context.canvas.width / config.visibleUnits.x;
+    tvProperties.unitSize.y = context.canvas.height / config.visibleUnits.y;
+
     const methods = createMethods(tvProperties, context);
     const paint = createPaint(tvProperties, methods, context);
 
@@ -35,28 +46,30 @@ const createMethods = (props: TVProperties, context: CanvasRenderingContext2D): 
     }),
     setScale: scale => (props.scale = scale),
     setOffset: offset => (props.offset = offset),
-    screenMiddle: () => pos(context.canvas.width / 2, context.canvas.height / 2),
+    screenMiddle: () => vector(context.canvas.width / 2, context.canvas.height / 2),
 });
 
-const pos = (x = 0, y = 0) => ({x, y});
+const vector = (x = 0, y = 0) => ({x, y});
 // const pos2 = (x1 = 0, y1 = 0, x2 = 0, y2 = 0) => ({x1, y1, x2, y2});
-const worldPos = (xT = 0, yT = 0) => ({xT, yT});
+const worldVector = (xT = 0, yT = 0) => ({xT, yT});
 
 const createProperties = (): TVProperties => ({
-    offset: pos(),
-    scale: pos(1, 1),
-    startPan: pos(),
-    worldBeforeZoom: worldPos(),
-    worldAfterZoom: worldPos(),
+    offset: vector(),
+    scale: vector(1, 1),
+    startPan: vector(),
+    worldBeforeZoom: worldVector(),
+    worldAfterZoom: worldVector(),
     scaleMouse: 0.95,
     scaleKeyboard: 0.99,
-    // screenSize: pos(300, 150),
-    // worldTL: pos(), // part of world borders
-    // worldBR: pos(10, 10), // part of world borders
+    unitSize: vector(0, 0),
+    visibleUnits: vector(0, 0),
+    // screenSize: vector(300, 150),
+    // worldTL: vector(), // part of world borders
+    // worldBR: vector(10, 10), // part of world borders
     // worldView: pos2(),
     // orientation: '',
-    // unitWeight: pos(1, 1),
-    // history: Array(10).fill(pos()),
+    // unitWeight: vector(1, 1),
+    // history: Array(10).fill(vector()),
 });
 
 // const setWorldView = (x: number, y: number, x2: number, y2: number) => {

@@ -1,10 +1,11 @@
 import {initialize} from 'library/index';
 import {createCharacter} from './character';
-import {createLevelDraw, getLevel, createLevelRaster} from './level';
+import {createLevelDraw, getLevel} from './level';
 import {createVehicle} from 'library/motion';
 import type {LibraryOptions} from 'library/types';
 import type {ShapeMap} from 'library/entity/defaults/shapes';
 import type {CreateElement} from 'library/entity';
+import {createRaster} from 'library/views/raster';
 
 const libraryID = 'reverse';
 
@@ -87,9 +88,9 @@ export default async () => {
     // engine.showsOverview(); // part of statistics?
     // engine.updatesOverview();
 
-    const level = getLevel(1);
+    // const level = getLevel(1);
 
-    const levelDraw = createLevelDraw(context, tv, world, level);
+    // const levelDraw = createLevelDraw(context, tv, world, level);
 
     // const {
     //     draw: charDraw,
@@ -149,7 +150,7 @@ export default async () => {
     // const statElements = characterStatisticsElements(charProps, world, createElement, canvas);
     // statElements.bottomLeft.show();
 
-    const levelRaster = createLevelRaster(context, tv, level, tv.scale);
+    const levelRaster = createRaster(context, tv);
 
     engine.setDraw(levelRaster);
 
