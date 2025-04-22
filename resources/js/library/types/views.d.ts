@@ -35,6 +35,17 @@ type TVPaint = {
         radii: number,
     ) => void;
     imageTileRotation: (tri: ImageRotate) => void;
+    triangle: (
+        x1: number,
+        y1: number,
+        x2: number,
+        y2: number,
+        x3: number,
+        y3: number,
+        fillStyle: string,
+        strokeStyle: string,
+        lineWidth: number,
+    ) => void;
 };
 
 export type ImageRotate = {

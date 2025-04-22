@@ -94,13 +94,13 @@ export default async () => {
 
     const levelDraw = createLevelDraw(context, tv, level);
 
-    // const {
-    //     draw: charDraw,
-    //     update: charUpdate,
-    //     properties: charProps,
-    //     pos: charPos,
-    //     // vel: charVel,
-    // } = createCharacter(world, context, canvas, level, createElement);
+    const {
+        draw: charDraw,
+        update: charUpdate,
+        properties: charProps,
+        pos: charPos,
+        // vel: charVel,
+    } = createCharacter(context, tv);
 
     // const vehicle = createVehicle(tv, context, world.unitScale);
 

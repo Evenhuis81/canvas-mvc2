@@ -1,86 +1,28 @@
-import type {WorldProperties} from '.';
-import type {ReverseLevel} from './level';
-import type {CreateElement, EntityElement} from 'library/entity';
-import type {ShapeMap} from 'library/entity/defaults/shapes';
+import {TransformedView} from 'library/types/views';
 
-const groundCheck = (level: ReverseLevel, x: number, y: number): boolean => level.getTile(x, y) === 'X';
-
-export const createCharacter = (
-    world: WorldProperties,
-    ctx: CanvasRenderingContext2D,
-    canvas: HTMLCanvasElement,
-    level: ReverseLevel,
-    createElement: CreateElement<ShapeMap>,
-) => {
-    const startPosition = level.startPos(level.map);
-
-    const {pos, collisions, vel, tri, ...props} = createCharacterProperties(startPosition, world, level);
-
-    props.grounded = groundCheck(level, startPosition.x, startPosition.y + 1);
-
-    // No ground means falling down with face down
-    if (!props.grounded) {
-        props.face = 'down';
-    }
-
-    if (pos.x === -1 || pos.y === -1) throw Error('Player Start Position not found on level map');
-
-    // Positioning player in middle and shifting world view to fit player
-    const middleMapX = Math.floor(world.xUnits / 2);
-    const xDiff = middleMapX - pos.x;
-    world.xOffset += xDiff;
-    pos.x += xDiff;
-
-    const setLevel = (lvl: ReverseLevel) => {
-        props.level = lvl;
-
-        const newStartPosition = level.startPos(level.map);
-
-        pos.x = newStartPosition.x;
-        pos.y = newStartPosition.y;
-
-        props.scaledX = pos.x * world.unitScale;
-        props.scaledY = pos.y * world.unitScale;
-
-        props.grounded = groundCheck(level, pos.x, pos.y + 1);
-    };
-
-    type Pointers = {
-        topLeft: EntityElement<ShapeMap, 'circle-pointer'>;
-        bottomLeft: EntityElement<ShapeMap, 'circle-pointer'>;
-        topRight: EntityElement<ShapeMap, 'circle-pointer'>;
-        bottomRight: EntityElement<ShapeMap, 'circle-pointer'>;
-    };
-
-    const setPointers = (pointers: Pointers) => {
-        const t = Object.entries(pointers);
-        console.log(t);
-    };
+export const createCharacter = (ctx: CanvasRenderingContext2D, tv: TransformedView) => {
+    const {pos, vel, tri, ...props} = createCharacterProperties();
 
     const draw = {
         id: `reverse-character-draw`,
         name: 'Draw Character',
         fn: () => {
-            ctx.fillStyle = '#009';
-
-            ctx.beginPath();
-
-            vel.y < 0 ? faceUp() : faceDown();
-
-            ctx.fill();
+            tv.paint.triangle(tri.x1, tri.y1, tri.x2, tri.y2, tri.x3, tri.y3, props.fill, props.stroke, props.lw);
         },
     };
 
+    // vel.y < 0 ? faceUp() : faceDown();
+
     const faceUp = () => {
-        ctx.moveTo(props.scaledX + props.scaledW / 2, props.scaledY);
-        ctx.lineTo(props.scaledX + props.scaledW, props.scaledY + props.scaledH);
-        ctx.lineTo(props.scaledX, props.scaledY + props.scaledH);
+        // ctx.moveTo(props.scaledX + props.scaledW / 2, props.scaledY);
+        // ctx.lineTo(props.scaledX + props.scaledW, props.scaledY + props.scaledH);
+        // ctx.lineTo(props.scaledX, props.scaledY + props.scaledH);
     };
 
     const faceDown = () => {
-        ctx.moveTo(props.scaledX + props.scaledW / 2, props.scaledY + props.scaledH); //  + props.scaledH
-        ctx.lineTo(props.scaledX + props.scaledW, props.scaledY); // -props.scaledH
-        ctx.lineTo(props.scaledX, props.scaledY); // -props.scaledH
+        // ctx.moveTo(props.scaledX + props.scaledW / 2, props.scaledY + props.scaledH); //  + props.scaledH
+        // ctx.lineTo(props.scaledX + props.scaledW, props.scaledY); // -props.scaledH
+        // ctx.lineTo(props.scaledX, props.scaledY); // -props.scaledH
     };
 
     let lastWorldOffsetX = world.xOffset;
@@ -96,10 +38,10 @@ export const createCharacter = (
             // if (!props.grounded) pos.y += vel.vy;
             pos.y += vel.y;
 
-            collisions.topLeft = props.level.getTile(Math.floor(pos.x), Math.floor(pos.y));
-            collisions.bottomLeft = props.level.getTile(Math.floor(pos.x), Math.floor(pos.y) + 1);
-            collisions.topRight = props.level.getTile(Math.floor(pos.x) + 1, Math.floor(pos.y));
-            collisions.bottomRight = props.level.getTile(Math.floor(pos.x) + 1, Math.floor(pos.y) + 1);
+            collisions.topLeft = props.level.getRawTile(Math.floor(pos.x), Math.floor(pos.y));
+            collisions.bottomLeft = props.level.getRawTile(Math.floor(pos.x), Math.floor(pos.y) + 1);
+            collisions.topRight = props.level.getRawTile(Math.floor(pos.x) + 1, Math.floor(pos.y));
+            collisions.bottomRight = props.level.getRawTile(Math.floor(pos.x) + 1, Math.floor(pos.y) + 1);
 
             // X Movement Check, before Y check, else it may 'snap' into unwanted position
             if (
@@ -145,39 +87,85 @@ export const createCharacter = (
         }
     });
 
-    return {draw, update, properties: props, pos, vel, collisions, setLevel};
+    return {draw, update, properties: props, pos, vel};
 };
 
-const createCharacterProperties = (
-    startPosition: {x: number; y: number},
-    world: WorldProperties,
-    level: ReverseLevel,
-) => ({
-    pos: {x: startPosition.x, y: startPosition.y},
-    vel: {x: 0, y: 0},
-    tri: {
-        x1: startPosition.x + 0.5,
-        y1: startPosition.y,
-        x2: startPosition.x + 1,
-        y2: startPosition.y + 1,
-        x3: startPosition.x,
-        y3: startPosition.y + 1,
-    },
-    w: 1,
-    h: 1,
-    scaledX: startPosition.x * world.unitScale,
-    scaledY: startPosition.y * world.unitScale,
-    scaledW: world.unitScale,
-    scaledH: world.unitScale,
-    speed: 0.05,
-    face: 'up',
-    grounded: true,
-    fill: '#009',
-    level,
-    collisions: {
-        topLeft: level.getTile(startPosition.x, startPosition.y),
-        bottomLeft: level.getTile(startPosition.x, startPosition.y + 1),
-        topRight: level.getTile(startPosition.x + 1, startPosition.y),
-        bottomRight: level.getTile(startPosition.x + 1, startPosition.y + 1),
-    },
-});
+const createCharacterProperties = () =>
+    // startPosition: {x: number; y: number},
+    // world: WorldProperties,
+    // level: ReverseLevel,
+    ({
+        pos: {x: 0, y: 0},
+        vel: {x: 0, y: 0.01},
+        tri: {
+            x1: 0.5,
+            y1: 0,
+            x2: 1,
+            y2: 1,
+            x3: 0,
+            y3: 1,
+        },
+        speed: 0.05,
+        grounded: true,
+        fill: '#009',
+        stroke: '#930',
+        lw: 0.05,
+        // pos: {x: startPosition.x, y: startPosition.y},
+        // w: 1,
+        // h: 1,
+        // scaledX: startPosition.x * world.unitScale,
+        // scaledY: startPosition.y * world.unitScale,
+        // scaledW: world.unitScale,
+        // scaledH: world.unitScale,
+        // face: 'up',
+        // level,
+        // collisions: {
+        //     topLeft: level.getRawTile(startPosition.x, startPosition.y),
+        //     bottomLeft: level.getRawTile(startPosition.x, startPosition.y + 1),
+        //     topRight: level.getRawTile(startPosition.x + 1, startPosition.y),
+        //     bottomRight: level.getRawTile(startPosition.x + 1, startPosition.y + 1),
+        // },
+    });
+
+// const groundCheck = (level: ReverseLevel, x: number, y: number): boolean => level.getRawTile(x, y) === 'X';
+
+// if (pos.x === -1 || pos.y === -1) throw Error('Player Start Position not found on level map');
+
+// props.grounded = groundCheck(level, startPosition.x, startPosition.y + 1);
+
+// No ground means falling down with face down
+// if (!props.grounded) {
+//     props.face = 'down';
+// }
+
+// Positioning player in middle and shifting world view to fit player
+// const middleMapX = Math.floor(world.xUnits / 2);
+// const xDiff = middleMapX - pos.x;
+// world.xOffset += xDiff;
+// pos.x += xDiff;
+
+// const setLevel = (level: ReverseLevel) => {
+//     props.level = level;
+
+//     const newStartPosition = level.startPos();
+
+//     pos.x = newStartPosition.x;
+//     pos.y = newStartPosition.y;
+
+//     props.scaledX = pos.x * world.unitScale;
+//     props.scaledY = pos.y * world.unitScale;
+
+//     props.grounded = groundCheck(level, pos.x, pos.y + 1);
+// };
+
+// type Pointers = {
+//     topLeft: EntityElement<ShapeMap, 'circle-pointer'>;
+//     bottomLeft: EntityElement<ShapeMap, 'circle-pointer'>;
+//     topRight: EntityElement<ShapeMap, 'circle-pointer'>;
+//     bottomRight: EntityElement<ShapeMap, 'circle-pointer'>;
+// };
+
+// const setPointers = (pointers: Pointers) => {
+//     const t = Object.entries(pointers);
+//     console.log(t);
+// };

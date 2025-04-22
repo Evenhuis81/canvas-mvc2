@@ -1,6 +1,6 @@
 import type {TransformedView} from 'library/types/views';
-import type {WorldProperties} from '.';
 import {levels} from './levelMap';
+import {Pos} from 'library/types/shapes';
 
 type RawLevelMap = string[][];
 
@@ -26,7 +26,7 @@ export type ReverseLevel = {
     visibleTilesY: number;
     getRawTile: (x: number, y: number) => string;
     setRawTile: (x: number, y: number, tile: string) => void;
-    startPos: (rawLevelMap: RawLevelMap) => {x: number; y: number};
+    startPos: () => Pos;
 };
 
 const getLevelTiles = (rawLevelMap: RawLevelMap) => {
@@ -35,7 +35,7 @@ const getLevelTiles = (rawLevelMap: RawLevelMap) => {
 
 export const getLevel = (levelID: number): ReverseLevel => {
     const rawLevelMap = levels[levelID];
-    const level = getLevelTiles(rawLevel);
+    // const level = getLevelTiles(rawLevelMap);
 
     return {
         id: levelID,
@@ -61,7 +61,7 @@ export const getLevel = (levelID: number): ReverseLevel => {
 
             if (x >= 0 && x < rawLevelMap[0].length && y >= 0 && y < rawLevelMap.length) rawLevelMap[y][x] = tileType;
         },
-        startPos: getStartPos,
+        startPos: createGetStartPos(rawLevelMap),
     };
 };
 
@@ -83,7 +83,7 @@ export const createLevelDraw = (ctx: CanvasRenderingContext2D, tv: TransformedVi
     },
 });
 
-const getStartPos = (levelMap: RawLevelMap) => {
+const createGetStartPos = (levelMap: RawLevelMap) => () => {
     let x = -1;
     let y = -1;
 
