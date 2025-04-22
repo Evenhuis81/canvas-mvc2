@@ -3,23 +3,13 @@ import {createPaint} from './paint-index';
 import {LibraryInput} from 'library/types/input';
 import {createInputTV} from './input-tv';
 import {Engine} from 'library/types/engine';
-import {Pos} from 'library/types/shapes';
-
-type ViewConfig = {
-    visibleUnits: Pos;
-};
 
 export const createViews = (
     context: CanvasRenderingContext2D,
     input: LibraryInput,
     engine: Engine,
-    config: ViewConfig = {visibleUnits: {x: 10, y: 10}},
 ): {tv: TransformedView} => {
     const tvProperties = createProperties();
-
-    // Set Properties
-    tvProperties.unitSize.x = context.canvas.width / config.visibleUnits.x;
-    tvProperties.unitSize.y = context.canvas.height / config.visibleUnits.y;
 
     const methods = createMethods(tvProperties, context);
     const paint = createPaint(tvProperties, methods, context);
@@ -47,6 +37,12 @@ const createMethods = (props: TVProperties, context: CanvasRenderingContext2D): 
     setScale: scale => (props.scale = scale),
     setOffset: offset => (props.offset = offset),
     screenMiddle: () => vector(context.canvas.width / 2, context.canvas.height / 2),
+    setUnitProperties: (unitsX, unitsY, unitsVisibleX, unitsVisibleY) => {
+        props.units.x = unitsX;
+        props.units.y = unitsY;
+        props.unitsVisible.x = unitsVisibleX;
+        props.unitsVisible.y = unitsVisibleY;
+    },
 });
 
 const vector = (x = 0, y = 0) => ({x, y});
@@ -61,8 +57,9 @@ const createProperties = (): TVProperties => ({
     worldAfterZoom: worldVector(),
     scaleMouse: 0.95,
     scaleKeyboard: 0.99,
+    units: vector(10, 10),
     unitSize: vector(0, 0),
-    visibleUnits: vector(0, 0),
+    unitsVisible: vector(0, 0),
     // screenSize: vector(300, 150),
     // worldTL: vector(), // part of world borders
     // worldBR: vector(10, 10), // part of world borders

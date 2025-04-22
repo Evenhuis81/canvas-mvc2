@@ -1,68 +1,89 @@
-import {TransformedView} from 'library/types/views';
-import {WorldProperties} from '.';
+import type {TransformedView} from 'library/types/views';
+import type {WorldProperties} from '.';
 import {levels} from './levelMap';
-import {Pos} from 'library/types/shapes';
 
-type LevelMap = string[][];
+type RawLevelMap = string[][];
+
+type LevelMap = Tile[][];
+
+type Tile = EmptyTile | SolidTile;
+
+type EmptyTile = {
+    type: 'empty';
+};
+
+type SolidTile = {
+    type: 'solid';
+};
 
 export type ReverseLevel = {
     id: number;
+    rawMap: RawLevelMap;
     map: LevelMap;
-    width: number;
-    height: number;
+    tilesX: number;
+    tilesY: number;
     visibleTilesX: number;
     visibleTilesY: number;
-    getTile: (x: number, y: number) => string;
-    setTile: (x: number, y: number, levelCharacter: string) => void;
-    startPos: (levelMap: LevelMap) => {x: number; y: number};
+    getRawTile: (x: number, y: number) => string;
+    setRawTile: (x: number, y: number, tile: string) => void;
+    startPos: (rawLevelMap: RawLevelMap) => {x: number; y: number};
+};
+
+const getLevelTiles = (rawLevelMap: RawLevelMap) => {
+    //
 };
 
 export const getLevel = (levelID: number): ReverseLevel => {
-    const level = levels[levelID];
+    const rawLevelMap = levels[levelID];
+    const level = getLevelTiles(rawLevel);
 
     return {
         id: levelID,
-        map: level,
-        width: level[0].length,
-        height: level.length,
-        visibleTilesX: 16,
-        visibleTilesY: level.length,
-        getTile: (x, y) => {
-            if (x >= 0 && x < level[0].length && y >= 0 && y < level.length) return level[y][x];
+        rawMap: rawLevelMap,
+        map: [
+            [
+                {
+                    type: 'empty',
+                },
+            ],
+        ],
+        tilesX: rawLevelMap[0].length,
+        tilesY: rawLevelMap.length,
+        visibleTilesX: 12,
+        visibleTilesY: rawLevelMap.length,
+        getRawTile: (x, y) => {
+            if (x >= 0 && x < rawLevelMap[0].length && y >= 0 && y < rawLevelMap.length) return rawLevelMap[y][x];
 
             return ' ';
         },
-        setTile: (x, y, tileType) => {
+        setRawTile: (x, y, tileType) => {
             if (tileType.length != 1) return;
 
-            if (x >= 0 && x < level[0].length && y >= 0 && y < level.length) level[y][x] = tileType;
+            if (x >= 0 && x < rawLevelMap[0].length && y >= 0 && y < rawLevelMap.length) rawLevelMap[y][x] = tileType;
         },
         startPos: getStartPos,
     };
 };
 
-export const createLevelDraw = (
-    ctx: CanvasRenderingContext2D,
-    tv: TransformedView,
-    world: WorldProperties,
-    level: ReverseLevel,
-) => ({
+export const createLevelDraw = (ctx: CanvasRenderingContext2D, tv: TransformedView, level: ReverseLevel) => ({
     id: level.id,
     name: `level${level.id}-draw`,
     fn: () => {
-        ctx.strokeStyle = '#ccc';
-        ctx.lineWidth = tv.scale.x * (1 / world.xUnits);
+        const topLeft = tv.screen2World(0, 0);
+        const bottomRight = tv.screen2World(ctx.canvas.width, ctx.canvas.height);
 
-        for (let y = 0; y < level.height; y++) {
-            for (let x = 0; x < level.width; x++) {
-                if (level.map[y][x] === 'X')
-                    tv.paint.roundRectStroke(x + 0.2 + world.xOffset, y + 0.2 + world.yOffset, 0.6, 0.6, 3);
+        for (let y = 0; y < level.tilesY; y++) {
+            if (y > topLeft.yT && y < bottomRight.yT) {
+                for (let x = 0; x < level.tilesX; x++) {
+                    if (x > topLeft.xT && x < bottomRight.xT && level.rawMap[y][x] === 'X')
+                        tv.paint.roundRectStroke(x, y, 0.6, 0.6, '#ccc', 0.02, 0.06);
+                }
             }
         }
     },
 });
 
-const getStartPos = (levelMap: LevelMap) => {
+const getStartPos = (levelMap: RawLevelMap) => {
     let x = -1;
     let y = -1;
 

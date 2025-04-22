@@ -80,7 +80,11 @@ export default async () => {
 
     setScreen(canvas); // Requires update (for alignment)
 
+    const level = getLevel(1);
+
     tv.setScale({x: world.unitScale, y: world.unitScale});
+    tv.setUnitProperties(level.tilesX, level.tilesY, level.visibleTilesX, level.visibleTilesY);
+
     // tv.setScreenSize({x: canvas.width, y: canvas.height});
     // tv.setUnitWeight({x: 1 / world.xUnits, y: 1 / world.xUnits}); // unused?
     // tv.setWorldBorders(vector2(0, 0, level.width, level.height)); // optional under extras?
@@ -88,9 +92,7 @@ export default async () => {
     // engine.showsOverview(); // part of statistics?
     // engine.updatesOverview();
 
-    // const level = getLevel(1);
-
-    // const levelDraw = createLevelDraw(context, tv, world, level);
+    const levelDraw = createLevelDraw(context, tv, level);
 
     // const {
     //     draw: charDraw,
@@ -100,7 +102,7 @@ export default async () => {
     //     // vel: charVel,
     // } = createCharacter(world, context, canvas, level, createElement);
 
-    const vehicle = createVehicle(tv, context, world.unitScale);
+    // const vehicle = createVehicle(tv, context, world.unitScale);
 
     const movement = {
         KeyA: () => {
@@ -144,15 +146,15 @@ export default async () => {
     // input.removeMovement('reverse');
 
     // engine.setUpdate(charUpdate);
-    // engine.setDraw(levelDraw);
+    engine.setDraw(levelDraw);
     // engine.setDraw(charDraw);
 
     // const statElements = characterStatisticsElements(charProps, world, createElement, canvas);
     // statElements.bottomLeft.show();
 
-    const levelRaster = createRaster(context, tv);
+    // const levelRaster = createRaster(context, tv);
 
-    engine.setDraw(levelRaster);
+    // engine.setDraw(levelRaster);
 
     // const triangle = {
     //     img: images[0].container,
@@ -164,8 +166,8 @@ export default async () => {
     // engine.setBaseUpdate(() => (triangle.angle += 0.01));
     // engine.setBaseDraw(() => tv.paint.imageTileRotation(triangle));
 
-    engine.setBaseUpdate(vehicle.update);
-    engine.setBaseDraw(vehicle.draw);
+    // engine.setBaseUpdate(vehicle.update);
+    // engine.setBaseDraw(vehicle.draw);
 
     library.runEngine();
 };

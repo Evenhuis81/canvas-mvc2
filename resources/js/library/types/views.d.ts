@@ -8,8 +8,9 @@ type TVProperties = {
     scaleKeyboard: number;
     worldBeforeZoom: WorldPos;
     worldAfterZoom: WorldPos;
+    units: Pos;
     unitSize: Pos;
-    visibleUnits: Pos;
+    unitsVisible: Pos;
 };
 
 type TVMethods = {
@@ -19,11 +20,20 @@ type TVMethods = {
     setScale: (scale: Pos) => void;
     setOffset: (offset: Pos) => void;
     screenMiddle: () => Pos;
+    setUnitProperties: (xUnits: number, yUnits: number, visibleUnitsX: number, visibleUnitsY: number) => void;
 };
 
 type TVPaint = {
     line: (x1: number, y1: number, x2: number, y2: number) => void;
-    roundRectStroke: (x: number, y: number, w: number, h: number, radii: number) => void;
+    roundRectStroke: (
+        x: number,
+        y: number,
+        w: number,
+        h: number,
+        strokeStyle: string,
+        lineWidth: number,
+        radii: number,
+    ) => void;
     imageTileRotation: (tri: ImageRotate) => void;
 };
 

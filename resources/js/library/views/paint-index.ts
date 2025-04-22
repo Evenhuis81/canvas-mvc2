@@ -6,8 +6,6 @@ export const createPaint = (props: TVProperties, methods: TVMethods, ctx: Canvas
 
         ctx.moveTo(screen.x1, screen.y1);
         ctx.lineTo(screen.x2, screen.y2);
-
-        // console.log(props.scale);
     },
     roundRectStroke: createRoundRectStroke(props, methods, ctx), // Temp
     imageTileRotation: createImageTileRotation(props, methods, ctx), // Also temporarily
@@ -140,13 +138,25 @@ export const createPaint = (props: TVProperties, methods: TVMethods, ctx: Canvas
 //         ctx.stroke();
 //     };
 
+// const createRoundRectStroke =
+//     (props: TVProperties, {world2Screen}: TVMethods, ctx: CanvasRenderingContext2D) =>
+//     (x: number, y: number, w: number, h: number, radii: number) => {
+//         const screen = world2Screen(x, y);
+
+//         ctx.beginPath();
+//         ctx.roundRect(screen.x, screen.y, w * props.scale.x, h * props.scale.y, radii);
+//         ctx.stroke();
+//     };
+
 const createRoundRectStroke =
     (props: TVProperties, {world2Screen}: TVMethods, ctx: CanvasRenderingContext2D) =>
-    (x: number, y: number, w: number, h: number, radii: number) => {
-        const screen = world2Screen(x, y);
+    (x: number, y: number, w: number, h: number, strokeStyle: string, lineWidth: number, radii: number) => {
+        const screen = world2Screen(x - w / 2, y - h / 2);
+        ctx.strokeStyle = strokeStyle;
+        ctx.lineWidth = lineWidth * props.scale.x;
 
         ctx.beginPath();
-        ctx.roundRect(screen.x, screen.y, w * props.scale.x, h * props.scale.y, radii);
+        ctx.roundRect(screen.x, screen.y, w * props.scale.x, h * props.scale.y, radii * props.scale.x);
         ctx.stroke();
     };
 
