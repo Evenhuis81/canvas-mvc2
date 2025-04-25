@@ -12,3 +12,22 @@ export const pickString = <T extends string>(str: T[]) => {
     // last pick if other percentages fail (to round it up to 1)
     return str[-1];
 };
+
+function convertToSRT(inputText: string) {
+    const lines = inputText.trim().split('\n');
+    let srt = '';
+    let counter = 1;
+
+    for (const line of lines) {
+        const match = line.match(/^\[(\d{2}:\d{2}(?::\d{2})?\.\d{3}) --> (\d{2}:\d{2}(?::\d{2})?\.\d{3})\]\s*(.*)$/);
+        if (match) {
+            const start = match[1].replace('.', ',');
+            const end = match[2].replace('.', ',');
+            const text = match[3];
+
+            srt += `${counter++}\n${start} --> ${end}\n${text}\n\n`;
+        }
+    }
+
+    return srt.trim();
+}

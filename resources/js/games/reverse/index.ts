@@ -83,7 +83,7 @@ export default async () => {
     const level = getLevel(1);
 
     tv.setScale({x: world.unitScale, y: world.unitScale});
-    tv.setUnitProperties(level.tilesX, level.tilesY, level.visibleTilesX, level.visibleTilesY);
+    tv.setTileProperties(level.tilesX, level.tilesY, level.visibleTilesX, level.visibleTilesY);
 
     // tv.setScreenSize({x: canvas.width, y: canvas.height});
     // tv.setUnitWeight({x: 1 / world.xUnits, y: 1 / world.xUnits}); // unused?
@@ -100,7 +100,7 @@ export default async () => {
         properties: charProps,
         pos: charPos,
         // vel: charVel,
-    } = createCharacter(context, tv);
+    } = createCharacter(tv, input);
 
     // const vehicle = createVehicle(tv, context, world.unitScale);
 
@@ -145,9 +145,9 @@ export default async () => {
     // input.addMovement('reverse', movement);
     // input.removeMovement('reverse');
 
-    // engine.setUpdate(charUpdate);
-    engine.setDraw(levelDraw);
-    // engine.setDraw(charDraw);
+    engine.setUpdate(charUpdate);
+    // engine.setDraw(levelDraw);
+    engine.setDraw(charDraw);
 
     // const statElements = characterStatisticsElements(charProps, world, createElement, canvas);
     // statElements.bottomLeft.show();

@@ -8,9 +8,9 @@ type TVProperties = {
     scaleKeyboard: number;
     worldBeforeZoom: WorldPos;
     worldAfterZoom: WorldPos;
-    units: Pos;
-    unitSize: Pos;
-    unitsVisible: Pos;
+    tiles: Pos;
+    // tileSize: Pos;
+    tilesVisible: Pos;
 };
 
 type TVMethods = {
@@ -20,7 +20,7 @@ type TVMethods = {
     setScale: (scale: Pos) => void;
     setOffset: (offset: Pos) => void;
     screenMiddle: () => Pos;
-    setUnitProperties: (xUnits: number, yUnits: number, visibleUnitsX: number, visibleUnitsY: number) => void;
+    setTileProperties: (tilesX: number, tilesY: number, tilesVisibleX: number, tilesVisibleY: number) => void;
 };
 
 type TVPaint = {
@@ -35,17 +35,7 @@ type TVPaint = {
         radii: number,
     ) => void;
     imageTileRotation: (tri: ImageRotate) => void;
-    triangle: (
-        x1: number,
-        y1: number,
-        x2: number,
-        y2: number,
-        x3: number,
-        y3: number,
-        fillStyle: string,
-        strokeStyle: string,
-        lineWidth: number,
-    ) => void;
+    triangle: (x: number, y: number, fillStyle: string, strokeStyle: string, lineWidth: number) => void;
 };
 
 export type ImageRotate = {

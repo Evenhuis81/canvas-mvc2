@@ -8,6 +8,7 @@ export const createPaint = (props: TVProperties, methods: TVMethods, ctx: Canvas
         ctx.lineTo(screen.x2, screen.y2);
     },
     roundRectStroke: createRoundRectStroke(props, methods, ctx), // Temp
+    triangle: createTriangle(props, methods, ctx),
     imageTileRotation: createImageTileRotation(props, methods, ctx), // Also temporarily
 });
 
@@ -162,34 +163,23 @@ const createRoundRectStroke =
 
 const createTriangle =
     (props: TVProperties, {world2Screen}: TVMethods, ctx: CanvasRenderingContext2D) =>
-    (
-        x1: number,
-        y1: number,
-        x2: number,
-        y2: number,
-        x3: number,
-        y3: number,
-        fillStyle: string,
-        strokeStyle: string,
-        lineWidth: number,
-    ) => {
-        const screen1 = world2Screen(x1, y1);
-        const screen2 = world2Screen(x2, y2);
-        const screen3 = world2Screen(x3, y3);
+    (x: number, y: number, fillStyle: string, strokeStyle: string, lineWidth: number) => {
+        const screen = world2Screen(x, y);
 
         ctx.fillStyle = fillStyle;
         ctx.strokeStyle = strokeStyle;
         ctx.lineWidth = lineWidth * props.scale.x;
 
         ctx.beginPath();
+        ctx.moveTo(screen.x + props.scale.x / 2, screen.y);
+        ctx.lineTo(screen.x + props.scale.x, screen.y + props.scale.y);
+        ctx.lineTo(screen.x, screen.y + props.scale.y);
+        ctx.closePath();
 
-        // TV triangle method
-
-        // ctx.roundRect(screen.x, screen.y, w * props.scale.x, h * props.scale.y, radii * props.scale.x);
         ctx.fill();
         ctx.stroke();
     };
-// Test this (function parameters) VS Sketch (no function parameters) for efficiency
+
 const createImageTileRotation =
     (props: TVProperties, {world2Screen}: TVMethods, ctx: CanvasRenderingContext2D) =>
     (tri: ImageRotate) => {
