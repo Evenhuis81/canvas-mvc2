@@ -1,3 +1,4 @@
+import {Pos} from 'library/types/shapes';
 import {TransformedView} from 'library/types/views';
 
 // type RasterOptions = {
@@ -45,29 +46,49 @@ export const createTileDraw = <O extends object>(
     ctx: CanvasRenderingContext2D,
     tv: TransformedView,
     tiles: {[T in keyof O]: O[T]},
-    raster: Array<keyof O[]>,
+    raster: Array<Array<keyof O>>,
+    tilesVisible: Pos = {x: 16, y: 9},
     // rasterOptions?: Partial<RasterOptions>,
 ) => {
     // const options = {...defaultOptions, rasterOptions};
 
-    // const t = raster[0][0];
+    if (!raster.length) throw Error('no tiles in raster, aborting...');
 
-    // const r = tiles[t]
+    // const tilesX = raster[0].length;
+    // const tilesY = raster.length;
 
-    raster.forEach(r => {
-        //
-    });
+    const last = {
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+    };
 
     return {
-        id: 'level-raster-draw',
-        name: 'Level Raster Draw',
+        id: 'tv-raster-draw',
+        name: 'Transformed View Raster Draw',
         fn: () => {
             // ctx.strokeStyle = options.strokeStyle;
             // ctx.lineWidth = options.lineWidth * tv.scale.x;
 
             const topLeft = tv.screen2World(0, 0);
             const bottomRight = tv.screen2World(ctx.canvas.width, ctx.canvas.height);
-            ctx.beginPath();
+
+            // ctx.beginPath();
+
+            // Calculate starting tile visible on screen
+            const top = Math.floor(topLeft.yT);
+            const left = Math.floor(topLeft.xT);
+            const bottom = Math.floor(bottomRight.yT);
+            const right = Math.floor(bottomRight.xT);
+
+            if (last.top !== top || last.left !== left || last.bottom !== bottom || last.right !== right) {
+                console.log('changed', top, left, bottom, right);
+
+                return;
+            }
+
+            console.log('topLeft/BottomRight unchanged');
 
             // for (let y = 0; y < options.yUnits + 1; y++) {
             //     if (y > topLeft.yT && y < bottomRight.yT) tv.paint.line(0, y, options.xUnits, y);
@@ -77,7 +98,7 @@ export const createTileDraw = <O extends object>(
             //     if (x > topLeft.xT && x < bottomRight.xT) tv.paint.line(x, 0, x, options.yUnits);
             // }
 
-            ctx.stroke();
+            // ctx.stroke();
         },
     };
 };

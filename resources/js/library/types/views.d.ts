@@ -8,9 +8,9 @@ type TVProperties = {
     scaleKeyboard: number;
     worldBeforeZoom: WorldPos;
     worldAfterZoom: WorldPos;
-    tiles: Pos;
-    // tileSize: Pos;
     tilesVisible: Pos;
+    // tiles: Pos;
+    // tileSize: Pos;
 };
 
 type TVMethods = {
@@ -20,7 +20,7 @@ type TVMethods = {
     setScale: (scale: Pos) => void;
     setOffset: (offset: Pos) => void;
     screenMiddle: () => Pos;
-    setTileProperties: (tilesX: number, tilesY: number, tilesVisibleX: number, tilesVisibleY: number) => void;
+    setVisibleTiles: (tilesVisibleX: number, tilesVisibleY: number) => void;
 };
 
 type TVPaint = {

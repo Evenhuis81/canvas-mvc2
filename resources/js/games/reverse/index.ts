@@ -5,7 +5,7 @@ import {createVehicle} from 'library/motion';
 import type {LibraryOptions} from 'library/types';
 import type {ShapeMap} from 'library/entity/defaults/shapes';
 import type {CreateElement} from 'library/entity';
-import {createRaster, createTileDraw} from 'library/views/raster';
+import {createTileDraw} from 'library/views/raster';
 
 const libraryID = 'reverse';
 
@@ -41,7 +41,7 @@ export default async () => {
     const scale = canvas.width / 12;
 
     tv.setScale({x: scale, y: scale});
-    tv.setTileProperties(level.tilesX, level.tilesY, level.visibleTilesX, level.visibleTilesY);
+    tv.setVisibleTiles(level.visibleTilesX, level.visibleTilesY);
 
     const testRaster: Array<Array<'X' | 'O'>> = [
         ['X', 'O', 'X'],
@@ -106,9 +106,9 @@ export default async () => {
     // input.addMovement('reverse', movement);
     // input.removeMovement('reverse');
 
-    engine.setUpdate(charUpdate);
-    // engine.setDraw(levelDraw);
-    engine.setDraw(charDraw);
+    // engine.setUpdate(charUpdate);
+    engine.setDraw(tileDraw);
+    // engine.setDraw(charDraw);
 
     library.runEngine();
 

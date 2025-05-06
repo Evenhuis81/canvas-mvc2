@@ -37,12 +37,16 @@ const createMethods = (props: TVProperties, context: CanvasRenderingContext2D): 
     setScale: scale => (props.scale = scale),
     setOffset: offset => (props.offset = offset),
     screenMiddle: () => vector(context.canvas.width / 2, context.canvas.height / 2),
-    setTileProperties: (tilesX, tilesY, tilesVisibleX, tilesVisibleY) => {
-        props.tiles.x = tilesX;
-        props.tiles.y = tilesY;
+    setVisibleTiles: (tilesVisibleX, tilesVisibleY) => {
         props.tilesVisible.x = tilesVisibleX;
         props.tilesVisible.y = tilesVisibleY;
     },
+    // setTileProperties: (tilesX, tilesY, tilesVisibleX, tilesVisibleY) => {
+    //     props.tiles.x = tilesX;
+    //     props.tiles.y = tilesY;
+    //     props.tilesVisible.x = tilesVisibleX;
+    //     props.tilesVisible.y = tilesVisibleY;
+    // },
 });
 
 const vector = (x = 0, y = 0) => ({x, y});
@@ -57,9 +61,9 @@ const createProperties = (): TVProperties => ({
     worldAfterZoom: worldVector(),
     scaleMouse: 0.95,
     scaleKeyboard: 0.99,
-    tiles: vector(10, 10),
+    tilesVisible: vector(16, 9),
+    // tiles: vector(10, 10),
     // tileSize: vector(0, 0),
-    tilesVisible: vector(0, 0),
     // screenSize: vector(300, 150),
     // worldTL: vector(), // part of world borders
     // worldBR: vector(10, 10), // part of world borders
