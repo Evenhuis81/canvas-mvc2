@@ -8,12 +8,12 @@ import {TransformedView} from 'library/types/views';
 //     yUnits: number;
 // };
 
-// const defaultOptions: RasterOptions = {
-//     lineWidth: 0.02,
-//     strokeStyle: '#aaa',
-//     xUnits: 10,
-//     yUnits: 10,
-// };
+const defaultOptions = {
+    lineWidth: 0.02,
+    strokeStyle: '#aaa',
+    //     xUnits: 10,
+    //     yUnits: 10,
+};
 
 const testRaster = [
     ['X', 'O', 'X'],
@@ -45,9 +45,9 @@ const testTiles = {
 export const createTileDraw = <O extends object>(
     ctx: CanvasRenderingContext2D,
     tv: TransformedView,
-    tiles: {[T in keyof O]: O[T]},
+    // tiles: {[T in keyof O]: O[T]},
     raster: Array<Array<keyof O>>,
-    tilesVisible: Pos = {x: 16, y: 9},
+    // tilesVisible: Pos = {x: 16, y: 9},
     // rasterOptions?: Partial<RasterOptions>,
 ) => {
     // const options = {...defaultOptions, rasterOptions};
@@ -68,13 +68,8 @@ export const createTileDraw = <O extends object>(
         id: 'tv-raster-draw',
         name: 'Transformed View Raster Draw',
         fn: () => {
-            // ctx.strokeStyle = options.strokeStyle;
-            // ctx.lineWidth = options.lineWidth * tv.scale.x;
-
             const topLeft = tv.screen2World(0, 0);
             const bottomRight = tv.screen2World(ctx.canvas.width, ctx.canvas.height);
-
-            // ctx.beginPath();
 
             // Calculate starting tile visible on screen
             const top = Math.floor(topLeft.yT);
@@ -85,20 +80,32 @@ export const createTileDraw = <O extends object>(
             if (last.top !== top || last.left !== left || last.bottom !== bottom || last.right !== right) {
                 console.log('changed', top, left, bottom, right);
 
+                last.top = top;
+                last.left = left;
+                last.bottom = bottom;
+                last.right = right;
+
                 return;
+            } else {
+                console.log('topLeft/BottomRight unchanged');
             }
 
-            console.log('topLeft/BottomRight unchanged');
+            ctx.strokeStyle = defaultOptions.strokeStyle;
+            ctx.lineWidth = defaultOptions.lineWidth * tv.scale.x;
 
-            // for (let y = 0; y < options.yUnits + 1; y++) {
-            //     if (y > topLeft.yT && y < bottomRight.yT) tv.paint.line(0, y, options.xUnits, y);
-            // }
+            ctx.beginPath();
 
-            // for (let x = 0; x < options.xUnits + 1; x++) {
-            //     if (x > topLeft.xT && x < bottomRight.xT) tv.paint.line(x, 0, x, options.yUnits);
-            // }
+            for (let y = top; y < bottom; y++) {
+                // if (y > topLeft.yT && y < bottomRight.yT) tv.paint.line(0, y, bottom, y);
+                // tv.paint.line(, y, bottom, y);
+            }
 
-            // ctx.stroke();
+            for (let x = left; x < right; x++) {
+                // if (x > topLeft.xT && x < bottomRight.xT) tv.paint.line(x, 0, x, defaultOptions.yUnits);
+                // tv.paint.line(x, 0, x, );
+            }
+
+            ctx.stroke();
         },
     };
 };
