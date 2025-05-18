@@ -71,14 +71,14 @@ export const createTileDraw = <O extends object>(
             const topLeft = tv.screen2World(0, 0);
             const bottomRight = tv.screen2World(ctx.canvas.width, ctx.canvas.height);
 
-            // Calculate starting tile visible on screen
+            // Calculate starting tile visible on screen rounded to int (outside included if tile is on 'edge')
             const top = Math.floor(topLeft.yT);
             const left = Math.floor(topLeft.xT);
-            const bottom = Math.floor(bottomRight.yT);
-            const right = Math.floor(bottomRight.xT);
+            const bottom = Math.ceil(bottomRight.yT);
+            const right = Math.ceil(bottomRight.xT);
 
-            if (last.top !== top || last.left !== left || last.bottom !== bottom || last.right !== right) {
-                console.log('changed', top, left, bottom, right);
+            if (last.top !== top || last.left !== left) {
+                console.log('changed (T-L-B-R)', top, left, bottom, right);
 
                 last.top = top;
                 last.left = left;
@@ -87,7 +87,7 @@ export const createTileDraw = <O extends object>(
 
                 return;
             } else {
-                console.log('topLeft/BottomRight unchanged');
+                // console.log('topLeft/BottomRight unchanged');
             }
 
             ctx.strokeStyle = defaultOptions.strokeStyle;
@@ -95,17 +95,45 @@ export const createTileDraw = <O extends object>(
 
             ctx.beginPath();
 
-            for (let y = top; y < bottom; y++) {
+            // Temp: Just raster, later: any tileRaster
+            let yTop = top >= 0 ? top : 0;
+            let yBottom = bottom <= raster.length ? bottom : raster.length;
+            let xLeft = left >= 0 ? left : 0;
+            let xRight = right <= raster[0].length ? right : raster[0].length;
+
+            // Already fit for tile, not lines
+            let linesDrawnX = 0;
+            let linesDrawnY = 0;
+
+            for (let y = yTop; y < yBottom + 1; y++) {
                 // if (y > topLeft.yT && y < bottomRight.yT) tv.paint.line(0, y, bottom, y);
-                // tv.paint.line(, y, bottom, y);
+
+                tv.paint.line(xLeft, y, xRight, y);
+
+                linesDrawnY++;
             }
 
-            for (let x = left; x < right; x++) {
+            // ctx.stroke();
+
+            // ctx.beginPath();
+
+            for (let x = xLeft; x < xRight + 1; x++) {
                 // if (x > topLeft.xT && x < bottomRight.xT) tv.paint.line(x, 0, x, defaultOptions.yUnits);
-                // tv.paint.line(x, 0, x, );
+
+                tv.paint.line(x, yTop, x, yBottom);
+
+                linesDrawnX++;
             }
 
             ctx.stroke();
+
+            ctx.font = '24px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#fff';
+
+            ctx.fillText(`lines Drawn X: ${linesDrawnX.toString()}`, 200, 120);
+            ctx.fillText(`lines Drawn Y: ${linesDrawnY.toString()}`, 200, 150);
         },
     };
 };

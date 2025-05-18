@@ -79,7 +79,7 @@ export default async () => {
         },
     };
 
-    const tileDraw = createTileDraw(context, tv, testTiles, testRaster);
+    const tileDraw = createTileDraw(context, tv, testRaster);
 
     // const levelDraw = createLevelDraw(context, tv, level);
 
