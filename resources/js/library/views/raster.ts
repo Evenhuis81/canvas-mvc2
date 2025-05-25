@@ -31,7 +31,12 @@ type Ix = {
     fill: string;
 };
 
-const testTiles = {
+type TestTiles = {
+    X: Ix;
+    O: Oh;
+};
+
+const testTiles: TestTiles = {
     X: {
         type: 'X',
         fill: '#0f0',
@@ -42,20 +47,21 @@ const testTiles = {
     },
 };
 
-export const createTileDraw = <O extends object>(
+export const createTileDraw = <T extends TestTiles>(
     ctx: CanvasRenderingContext2D,
     tv: TransformedView,
     // tiles: {[T in keyof O]: O[T]},
-    raster: Array<Array<keyof O>>,
-    // tilesVisible: Pos = {x: 16, y: 9},
+    raster: Array<Array<keyof T>>,
     // rasterOptions?: Partial<RasterOptions>,
 ) => {
+    const tt = raster[0][0];
+
+    if (tt === 'X') {
+        tt['X'];
+    }
     // const options = {...defaultOptions, rasterOptions};
 
     if (!raster.length) throw Error('no tiles in raster, aborting...');
-
-    // const tilesX = raster[0].length;
-    // const tilesY = raster.length;
 
     const last = {
         top: 0,
@@ -74,8 +80,8 @@ export const createTileDraw = <O extends object>(
             // Calculate starting tile visible on screen rounded to int (outside included if tile is on 'edge')
             const top = Math.floor(topLeft.yT);
             const left = Math.floor(topLeft.xT);
-            const bottom = Math.ceil(bottomRight.yT);
-            const right = Math.ceil(bottomRight.xT);
+            const bottom = Math.floor(bottomRight.yT + 1);
+            const right = Math.floor(bottomRight.xT + 1);
 
             if (last.top !== top || last.left !== left) {
                 console.log('changed (T-L-B-R)', top, left, bottom, right);
@@ -84,10 +90,6 @@ export const createTileDraw = <O extends object>(
                 last.left = left;
                 last.bottom = bottom;
                 last.right = right;
-
-                return;
-            } else {
-                // console.log('topLeft/BottomRight unchanged');
             }
 
             ctx.strokeStyle = defaultOptions.strokeStyle;
@@ -95,22 +97,21 @@ export const createTileDraw = <O extends object>(
 
             ctx.beginPath();
 
-            // Temp: Just raster, later: any tileRaster
             let yTop = top >= 0 ? top : 0;
-            let yBottom = bottom <= raster.length ? bottom : raster.length;
+            let yBottom = bottom <= raster.length ? bottom : raster.length; // +1?
             let xLeft = left >= 0 ? left : 0;
-            let xRight = right <= raster[0].length ? right : raster[0].length;
+            let xRight = right <= raster[0].length ? right : raster[0].length; // +1?
 
             // Already fit for tile, not lines
-            let linesDrawnX = 0;
-            let linesDrawnY = 0;
+            let tilesDrawnX = 0;
+            let tilesDrawnY = 0;
 
             for (let y = yTop; y < yBottom + 1; y++) {
                 // if (y > topLeft.yT && y < bottomRight.yT) tv.paint.line(0, y, bottom, y);
 
                 tv.paint.line(xLeft, y, xRight, y);
 
-                linesDrawnY++;
+                tilesDrawnY++;
             }
 
             // ctx.stroke();
