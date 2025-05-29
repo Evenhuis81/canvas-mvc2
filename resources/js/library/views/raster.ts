@@ -57,7 +57,7 @@ export const createTileDraw = <T extends TestTiles>(
     const tt = raster[0][0];
 
     if (tt === 'X') {
-        tt['X'];
+        console.log(tt);
     }
     // const options = {...defaultOptions, rasterOptions};
 
@@ -78,8 +78,8 @@ export const createTileDraw = <T extends TestTiles>(
             const bottomRight = tv.screen2World(ctx.canvas.width, ctx.canvas.height);
 
             // Calculate starting tile visible on screen rounded to int (outside included if tile is on 'edge')
-            const top = Math.floor(topLeft.yT);
-            const left = Math.floor(topLeft.xT);
+            const top = Math.floor(topLeft.yT + 1);
+            const left = Math.floor(topLeft.xT + 1);
             const bottom = Math.floor(bottomRight.yT + 1);
             const right = Math.floor(bottomRight.xT + 1);
 
@@ -123,7 +123,7 @@ export const createTileDraw = <T extends TestTiles>(
 
                 tv.paint.line(x, yTop, x, yBottom);
 
-                linesDrawnX++;
+                tilesDrawnX++;
             }
 
             ctx.stroke();
@@ -133,8 +133,8 @@ export const createTileDraw = <T extends TestTiles>(
             ctx.textBaseline = 'middle';
             ctx.fillStyle = '#fff';
 
-            ctx.fillText(`lines Drawn X: ${linesDrawnX.toString()}`, 200, 120);
-            ctx.fillText(`lines Drawn Y: ${linesDrawnY.toString()}`, 200, 150);
+            ctx.fillText(`tiles X: ${tilesDrawnX.toString()}`, 200, 120);
+            ctx.fillText(`tiles Y: ${tilesDrawnY.toString()}`, 200, 150);
         },
     };
 };
