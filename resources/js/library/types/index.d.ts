@@ -47,6 +47,10 @@ export interface LibraryResources {
         // sv: StaticView;
     };
     images: ImageProperties[];
+    demo: {
+        start: (type: '2d' | '3d') => void;
+        stop: () => void;
+    };
 }
 
 export interface StatisticOptions {

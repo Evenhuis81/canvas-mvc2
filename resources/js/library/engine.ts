@@ -75,6 +75,7 @@ let frame = 0;
 
 const createLoop = (properties: EngineProperties, functions: EngineFunctionMap, event: EngineUpdateEvent) => {
     const loop = (timeStamp: DOMHighResTimeStamp) => {
+        console.log(frame);
         event.timePassed = timeStamp - event.lastTime;
 
         event.lastTime = timeStamp;
@@ -88,7 +89,7 @@ const createLoop = (properties: EngineProperties, functions: EngineFunctionMap, 
 
         properties.requestID = requestAnimationFrame(loop);
 
-        if (properties.stop) {
+        if (properties.stop && frame > 3) {
             cancelAnimationFrame(properties.requestID);
 
             properties.stop = false;

@@ -3,7 +3,7 @@ import {createEngine} from './engine';
 import {getCanvasInput} from 'library/input';
 import {getCreatePhaser} from 'games/phaser/phaser'; // refactor to default export in style of 'createEntity'
 import {uid} from './helpers';
-import type {Engine} from './types/engine';
+import type {Engine, UpdateOrDraw} from './types/engine';
 import type {ImageProperties, LibraryOptions, LibraryResources} from './types';
 import {entity} from './entity';
 import {createDefaultSketch} from './entity/defaults/sketch';
@@ -29,6 +29,7 @@ export const initialize = async (
     options?: Partial<LibraryOptions>,
 ): Promise<LibraryResources> => {
     const libraryID = id ?? uid();
+    let demoRunning = false;
 
     const canvas = getCanvas(options);
     const context = getContext2D(canvas);
@@ -56,6 +57,42 @@ export const initialize = async (
     views.tv.mouseInput.activate();
     views.tv.keyboardInput.activate();
 
+    const demoUpdate = createDemoUpdate();
+    const demoDraw = createDemoDraw(context);
+
+    const demo = {
+        start: (type: '2d' | '3d') => {
+            if (type === '3d') throw Error('3d not yet implemented');
+
+            if (demoRunning) {
+                console.log('2d demo is already running');
+
+                return;
+            }
+
+            engine.handle(demoUpdate);
+            engine.handle(demoDraw);
+
+            engine.run();
+
+            demoRunning = true;
+        },
+        stop: () => {
+            if (!demoRunning) {
+                console.log('2d demo is NOT running');
+
+                return;
+            }
+
+            demoRunning = false;
+
+            engine.handle(demoUpdate, false);
+            engine.handle(demoDraw, false);
+
+            engine.halt();
+        },
+    };
+
     return {
         canvas,
         context,
@@ -67,6 +104,7 @@ export const initialize = async (
         createElement,
         views,
         images: imagesLoaded,
+        demo,
     };
 };
 
@@ -130,3 +168,30 @@ const clear = (context: CanvasRenderingContext2D) => ({
     name: 'clearRect',
     fn: () => context.clearRect(0, 0, context.canvas.width, context.canvas.height),
 });
+
+const createDemoUpdate = (): UpdateOrDraw<'update'> => ({
+    type: 'update',
+    id: 'lib-2d-demo-update',
+    name: 'Library 2D Demo Update',
+    fn: () => {
+        demoObject.x++;
+    },
+});
+
+const createDemoDraw = (context: CanvasRenderingContext2D): UpdateOrDraw<'draw'> => ({
+    type: 'draw',
+    id: 'lib-2d-demo-draw',
+    name: 'Library 2D Demo Draw',
+    fn: () => {
+        console.log(context);
+    },
+});
+
+const demoObject = {
+    x: 200,
+    y: 150,
+    r: 20,
+    stroke: '#f00',
+    fill: '#00f',
+    lineWidth: 1,
+};

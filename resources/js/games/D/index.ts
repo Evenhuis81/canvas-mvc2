@@ -14,4 +14,12 @@ export default async () => {
     const library = await initialize(libraryID, libraryOptions);
 
     console.log(library);
+
+    const {engine, demo} = library;
+
+    demo.start('2d');
+
+    console.log('demo started');
+
+    demo.stop();
 };
