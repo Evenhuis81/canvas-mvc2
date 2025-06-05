@@ -1,4 +1,4 @@
-import {TVMethods, TVProperties, TransformedView} from 'library/types/views';
+import {StaticView, TVMethods, TVProperties, TransformedView} from 'library/types/views';
 import {createPaint} from './paint-index';
 import {LibraryInput} from 'library/types/input';
 import {createInputTV} from './input-tv';
@@ -8,7 +8,7 @@ export const createViews = (
     context: CanvasRenderingContext2D,
     input: LibraryInput,
     engine: Engine,
-): {tv: TransformedView} => {
+): {tv: TransformedView; sv: StaticView} => {
     const tvProperties = createProperties();
 
     const methods = createMethods(tvProperties, context);
@@ -16,7 +16,10 @@ export const createViews = (
 
     const inputTV = createInputTV(tvProperties, methods, input, engine, context.canvas.width, context.canvas.height);
 
-    return {tv: Object.assign(tvProperties, methods, {paint}, inputTV)};
+    return {
+        tv: Object.assign(tvProperties, methods, {paint}, inputTV),
+        sv: {},
+    };
 };
 
 const createMethods = (props: TVProperties, context: CanvasRenderingContext2D): TVMethods => ({

@@ -1,10 +1,7 @@
 import {initialize} from 'library/index';
 import {createCharacter} from './character';
-import {createLevelDraw, getLevel} from './level';
-import {createVehicle} from 'library/motion';
+import {getLevel} from './level';
 import type {LibraryOptions} from 'library/types';
-import type {ShapeMap} from 'library/entity/defaults/shapes';
-import type {CreateElement} from 'library/entity';
 import {createTileDraw} from 'library/views/raster';
 
 const libraryID = 'reverse';

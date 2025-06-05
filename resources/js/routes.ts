@@ -90,6 +90,14 @@ export const routes: RouteRecordRaw[] = [
             shouldBeLoggedIn: false,
         },
     },
+    {
+        path: '/dam',
+        component: () => import('./games/D/Dam.vue'),
+        name: 'Dam',
+        meta: {
+            shouldBeLoggedIn: false,
+        },
+    },
     // {
     //     path: '/statistics',
     //     component: () => import('./library/Statistics.vue'),

@@ -1,5 +1,7 @@
 import {Pos, Pos2} from './shapes';
 
+export type StaticView = {};
+
 type TVProperties = {
     offset: Pos;
     scale: Pos;
