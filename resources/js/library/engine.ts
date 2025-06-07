@@ -45,7 +45,7 @@ export const createEngine = (libraryID: BaseID): Engine => {
 
     const halt = () => (properties.stop = true);
 
-    const {set, setUpdate, setBaseUpdate, setDraw, setBaseDraw, removeUpdate, removeDraw} =
+    const {set, unset, setUpdate, setBaseUpdate, setDraw, setBaseDraw, removeUpdate, removeDraw} =
         createSetAndRemoveUpdatesAndDraws(functions);
 
     const info = createInfo(functions, updateEvent);
@@ -58,6 +58,7 @@ export const createEngine = (libraryID: BaseID): Engine => {
         runOnce,
         halt,
         set,
+        unset,
         info,
         setUpdate,
         setBaseUpdate,
@@ -75,7 +76,6 @@ let frame = 0;
 
 const createLoop = (properties: EngineProperties, functions: EngineFunctionMap, event: EngineUpdateEvent) => {
     const loop = (timeStamp: DOMHighResTimeStamp) => {
-        console.log(frame);
         event.timePassed = timeStamp - event.lastTime;
 
         event.lastTime = timeStamp;
@@ -131,6 +131,8 @@ const createSetAndRemoveUpdatesAndDraws = (functions: EngineFunctionMap) => {
         return id;
     };
 
+    const unset = (id: BaseID, type?: keyof EngineFunctionMap) => remove(id, type);
+
     const setDraw = (draw: EngineDraw): BaseID => {
         const id = draw.id ?? Symbol();
 
@@ -181,16 +183,35 @@ const createSetAndRemoveUpdatesAndDraws = (functions: EngineFunctionMap) => {
     const removeUpdate = (id: BaseID) => remove(id, 'update');
     const removeDraw = (id: BaseID) => remove(id, 'draw');
 
-    const remove = (id: BaseID, type: 'draw' | 'update') => {
-        const index = functions[type].findIndex(drawOrUpdate => drawOrUpdate.id === id);
+    const remove = (id: BaseID, type?: keyof EngineFunctionMap) => {
+        if (type) {
+            const index = functions[type].findIndex(drawOrUpdate => drawOrUpdate.id === id);
 
-        if (index === -1) throw Error(`${type} with id '${String(id)}' not found, nothing to remove`);
+            if (index === -1) throw Error(`${type} with id '${id.toString()}' not found, nothing removed from engine`);
 
-        functions[type].splice(index, 1);
+            functions[type].splice(index, 1);
+
+            return;
+        }
+
+        let index = functions.update.findIndex(update => update.id === id);
+        let removeType: keyof EngineFunctionMap = 'update';
+
+        if (index === -1) {
+            removeType = 'draw';
+
+            index = functions.draw.findIndex(dtraw => dtraw.id === id);
+
+            if (index === -1)
+                throw Error(`Update or Draw with ID '${id.toString()}' not found, nothing removed from engine`);
+        }
+
+        functions[removeType].splice(index, 1);
     };
 
     return {
         set,
+        unset,
         setUpdate,
         setBaseUpdate,
         setDraw,

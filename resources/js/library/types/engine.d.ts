@@ -36,7 +36,7 @@ export type EngineSet = <
     fn: U | V,
 ) => BaseID;
 
-export type EngineUnset = (type: keyof EngineFunction, id: BaseID) => void;
+export type EngineUnset = (id: BaseID, type?: keyof EngineFunction) => void;
 
 export interface Engine {
     run: () => void;

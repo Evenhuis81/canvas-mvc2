@@ -74,8 +74,8 @@ export const initialize = async (
                 return;
             }
 
-            const updateID = engine.set('update', demoUpdate);
-            const drawID = engine.set('draw', demoDraw);
+            engine.set('update', demoUpdate);
+            engine.set('draw', demoDraw);
 
             engine.run();
 
@@ -83,18 +83,15 @@ export const initialize = async (
         },
         stop: () => {
             if (!demoRunning) {
-                console.log('2d demo is NOT running');
+                console.log('2d demo is not running');
 
                 return;
             }
 
             demoRunning = false;
 
-            engine.unset('draw', drawID); // BaseID for demoDraw
-            engine.unset('update', ...); // BaseId for demoUpdate
-
-            // engine.handle(demoUpdate, false);
-            // engine.handle(demoDraw, false);
+            engine.unset(demoDraw.id);
+            engine.unset(demoUpdate.id);
 
             engine.halt();
         },
@@ -184,11 +181,21 @@ const createDemoUpdate = (): Omit<UpdateOrDraw<'update'>, 'type'> => ({
     },
 });
 
-const createDemoDraw = (context: CanvasRenderingContext2D): Omit<UpdateOrDraw<'draw'>, 'type'> => ({
+const createDemoDraw = (ctx: CanvasRenderingContext2D): Omit<UpdateOrDraw<'draw'>, 'type'> => ({
     id: 'lib-2d-demo-draw',
     name: 'Library 2D Demo Draw',
     fn: () => {
-        console.log(context);
+        const dob = {...demoObject};
+
+        ctx.fillStyle = dob.fill;
+        ctx.strokeStyle = dob.stroke;
+        ctx.lineWidth = dob.lineWidth;
+
+        ctx.beginPath();
+
+        ctx.arc(dob.x, dob.y, dob.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
     },
 });
 
