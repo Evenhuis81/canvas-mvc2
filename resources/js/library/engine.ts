@@ -45,7 +45,7 @@ export const createEngine = (libraryID: BaseID): Engine => {
 
     const halt = () => (properties.stop = true);
 
-    const {handle, setUpdate, setBaseUpdate, setDraw, setBaseDraw, removeUpdate, removeDraw} =
+    const {set, setUpdate, setBaseUpdate, setDraw, setBaseDraw, removeUpdate, removeDraw} =
         createSetAndRemoveUpdatesAndDraws(functions);
 
     const info = createInfo(functions, updateEvent);
@@ -57,8 +57,8 @@ export const createEngine = (libraryID: BaseID): Engine => {
         run,
         runOnce,
         halt,
+        set,
         info,
-        handle,
         setUpdate,
         setBaseUpdate,
         setDraw,
@@ -100,16 +100,37 @@ const createLoop = (properties: EngineProperties, functions: EngineFunctionMap, 
 };
 
 const defaultUpdate: Omit<UpdateOrDraw<'update'>, 'fn' | 'id'> = {
-    type: 'update',
+    // type: 'update',
     name: 'noUpdateName',
 };
 
 const defaultDraw: Omit<UpdateOrDraw<'draw'>, 'fn' | 'id'> = {
-    type: 'draw',
+    // type: 'draw',
     name: 'noDrawName',
 };
 
 const createSetAndRemoveUpdatesAndDraws = (functions: EngineFunctionMap) => {
+    const set: EngineSet = (type, fn) => {
+        if (typeof fn === 'function') {
+            const id = Symbol();
+
+            functions[type].push({
+                // type,
+                id,
+                name: `${type}-${id.toString()}`,
+                fn,
+            });
+
+            return id;
+        }
+
+        const id = fn.id ?? Symbol();
+
+        functions[type].push(Object.assign({id}, fn));
+
+        return id;
+    };
+
     const setDraw = (draw: EngineDraw): BaseID => {
         const id = draw.id ?? Symbol();
 
@@ -150,12 +171,12 @@ const createSetAndRemoveUpdatesAndDraws = (functions: EngineFunctionMap) => {
         return id;
     };
 
-    const handle: EngineSet = (updateOrDraw, set = true) => {
-        // TODO::Check for doubles
-        if (set) return functions[updateOrDraw.type].push(updateOrDraw);
+    // const handle: EngineSet = (updateOrDraw, set = true) => {
+    //     // TODO::Check for doubles
+    //     if (set) return functions[updateOrDraw.type].push(updateOrDraw);
 
-        return remove(updateOrDraw.id, updateOrDraw.type);
-    };
+    //     return remove(updateOrDraw.id, updateOrDraw.type);
+    // };
 
     const removeUpdate = (id: BaseID) => remove(id, 'update');
     const removeDraw = (id: BaseID) => remove(id, 'draw');
@@ -169,11 +190,12 @@ const createSetAndRemoveUpdatesAndDraws = (functions: EngineFunctionMap) => {
     };
 
     return {
+        set,
         setUpdate,
         setBaseUpdate,
         setDraw,
         setBaseDraw,
-        handle,
+        // handle,
         removeUpdate,
         removeDraw,
     };

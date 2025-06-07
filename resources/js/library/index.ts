@@ -4,7 +4,7 @@ import {getCanvasInput} from 'library/input';
 import {getCreatePhaser} from 'games/phaser/phaser'; // refactor to default export in style of 'createEntity'
 import {uid} from './helpers';
 import type {Engine, UpdateOrDraw} from './types/engine';
-import type {ImageProperties, LibraryOptions, LibraryResources} from './types';
+import type {BaseID, ImageProperties, LibraryOptions, LibraryResources} from './types';
 import {entity} from './entity';
 import {createDefaultSketch} from './entity/defaults/sketch';
 import {createViews} from './views';
@@ -62,7 +62,11 @@ export const initialize = async (
 
     const demo = {
         start: (type: '2d' | '3d') => {
-            if (type === '3d') throw Error('3d not yet implemented');
+            if (type === '3d') {
+                console.log('3d not yet implemented');
+
+                return;
+            }
 
             if (demoRunning) {
                 console.log('2d demo is already running');
@@ -70,8 +74,8 @@ export const initialize = async (
                 return;
             }
 
-            engine.handle(demoUpdate);
-            engine.handle(demoDraw);
+            const updateID = engine.set('update', demoUpdate);
+            const drawID = engine.set('draw', demoDraw);
 
             engine.run();
 
@@ -86,8 +90,11 @@ export const initialize = async (
 
             demoRunning = false;
 
-            engine.handle(demoUpdate, false);
-            engine.handle(demoDraw, false);
+            engine.unset('draw', drawID); // BaseID for demoDraw
+            engine.unset('update', ...); // BaseId for demoUpdate
+
+            // engine.handle(demoUpdate, false);
+            // engine.handle(demoDraw, false);
 
             engine.halt();
         },
@@ -169,8 +176,7 @@ const clear = (context: CanvasRenderingContext2D) => ({
     fn: () => context.clearRect(0, 0, context.canvas.width, context.canvas.height),
 });
 
-const createDemoUpdate = (): UpdateOrDraw<'update'> => ({
-    type: 'update',
+const createDemoUpdate = (): Omit<UpdateOrDraw<'update'>, 'type'> => ({
     id: 'lib-2d-demo-update',
     name: 'Library 2D Demo Update',
     fn: () => {
@@ -178,8 +184,7 @@ const createDemoUpdate = (): UpdateOrDraw<'update'> => ({
     },
 });
 
-const createDemoDraw = (context: CanvasRenderingContext2D): UpdateOrDraw<'draw'> => ({
-    type: 'draw',
+const createDemoDraw = (context: CanvasRenderingContext2D): Omit<UpdateOrDraw<'draw'>, 'type'> => ({
     id: 'lib-2d-demo-draw',
     name: 'Library 2D Demo Draw',
     fn: () => {

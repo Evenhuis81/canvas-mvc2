@@ -10,7 +10,7 @@ type EngineFunctionMap = {
 };
 
 type UpdateOrDraw<T extends keyof EngineFunction> = {
-    type: T;
+    // type: T;
     id: BaseID;
     name: string;
     fn: EngineFunction[T];
@@ -25,13 +25,26 @@ export type EngineUpdateEvent = {
     lastTime: number;
 };
 
-export type EngineSet = <T extends keyof EngineFunctionMap>(updateOrDraw: UpdateOrDraw<T>, set?: boolean) => void;
+// export type EngineSet = <T extends keyof EngineFunctionMap>(updateOrDraw: UpdateOrDraw<T>, set?: boolean) => void;
+
+export type EngineSet = <
+    T extends keyof EngineFunction,
+    U extends EngineFunction[T],
+    V extends Omit<UpdateOrDraw<T>, 'id'> & {id?: BaseID},
+>(
+    type: T,
+    fn: U | V,
+) => BaseID;
+
+export type EngineUnset = (type: keyof EngineFunction, id: BaseID) => void;
 
 export interface Engine {
     run: () => void;
     runOnce: () => void;
     halt: () => void;
-    handle: EngineSet;
+    // handle: EngineSet;
+    set: EngineSet;
+    unset: EngineUnset;
     setUpdate: (update: EngineUpdate) => BaseID;
     setBaseUpdate: (update: EngineUpdate['fn']) => symbol;
     setDraw: (draw: EngineDraw) => BaseID;
