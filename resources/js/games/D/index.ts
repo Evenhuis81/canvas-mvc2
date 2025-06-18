@@ -13,15 +13,16 @@ const libraryOptions: Partial<LibraryOptions> = {
 export default async () => {
     const library = await initialize(libraryID, libraryOptions);
 
-    const {demo} = library;
+    const {demo2d} = library;
 
-    demo.start('2d');
-    console.log('demo started');
+    demo2d.start();
 
-    const stopTimer = 5000;
+    // console.log('demo started');
 
-    setTimeout(() => {
-        demo.stop();
-        console.log('demo stopped');
-    }, stopTimer);
+    // const stopTimer = 5000;
+
+    // setTimeout(() => {
+    //     demo.stop();
+    //     console.log('demo stopped');
+    // }, stopTimer);
 };

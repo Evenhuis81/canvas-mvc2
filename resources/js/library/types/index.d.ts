@@ -1,7 +1,7 @@
-import {Engine} from './engine';
-import {Phaser} from 'games/phaser/types';
-import {LibraryInput} from './input';
 import {CreateElement} from 'library/entity';
+import {Engine} from './engine';
+import {LibraryInput} from './input';
+import {Phaser} from 'games/phaser/types';
 import {ShapeMap} from 'library/entity/defaults/shapes';
 import {TransformedView} from './views';
 
@@ -47,8 +47,8 @@ export interface LibraryResources {
         // sv: StaticView;
     };
     images: ImageProperties[];
-    demo: {
-        start: (type: '2d' | '3d') => void;
+    demo2d: {
+        start: () => void;
         stop: () => void;
     };
 }

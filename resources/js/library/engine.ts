@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import statistics from './stats/statistics';
-import {BaseID} from './types';
+import type {BaseID} from './types';
 import type {
     Engine,
     EngineDraw,
@@ -75,6 +75,7 @@ export const createEngine = (libraryID: BaseID): Engine => {
 let frame = 0;
 
 const createLoop = (properties: EngineProperties, functions: EngineFunctionMap, event: EngineUpdateEvent) => {
+    // eslint-disable-next-line complexity
     const loop = (timeStamp: DOMHighResTimeStamp) => {
         event.timePassed = timeStamp - event.lastTime;
 
@@ -100,12 +101,10 @@ const createLoop = (properties: EngineProperties, functions: EngineFunctionMap, 
 };
 
 const defaultUpdate: Omit<UpdateOrDraw<'update'>, 'fn' | 'id'> = {
-    // type: 'update',
     name: 'noUpdateName',
 };
 
 const defaultDraw: Omit<UpdateOrDraw<'draw'>, 'fn' | 'id'> = {
-    // type: 'draw',
     name: 'noDrawName',
 };
 
@@ -115,7 +114,6 @@ const createSetAndRemoveUpdatesAndDraws = (functions: EngineFunctionMap) => {
             const id = Symbol();
 
             functions[type].push({
-                // type,
                 id,
                 name: `${type}-${id.toString()}`,
                 fn,
@@ -125,8 +123,7 @@ const createSetAndRemoveUpdatesAndDraws = (functions: EngineFunctionMap) => {
         }
 
         const id = fn.id ?? Symbol();
-
-        functions[type].push(Object.assign({id}, fn));
+        functions[type].push({id, ...fn});
 
         return id;
     };

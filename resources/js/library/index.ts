@@ -1,13 +1,16 @@
+/* eslint-disable complexity */
+/* eslint-disable max-lines-per-function */
 import {createContainer, getCanvas, getContainer, getContext2D, setCanvas} from './canvas';
-import {createEngine} from './engine';
-import {getCanvasInput} from 'library/input';
-import {getCreatePhaser} from 'games/phaser/phaser'; // refactor to default export in style of 'createEntity'
-import {uid} from './helpers';
-import type {Engine, UpdateOrDraw} from './types/engine';
-import type {BaseID, ImageProperties, LibraryOptions, LibraryResources} from './types';
-import {entity} from './entity';
 import {createDefaultSketch} from './entity/defaults/sketch';
+import {createDemo2D} from './demo2d';
+import {createEngine} from './engine'; // refactor to default export in style of 'createEntity'
 import {createViews} from './views';
+import {entity} from './entity';
+import {getCanvasInput} from 'library/input';
+import {getCreatePhaser} from 'games/phaser/phaser';
+import {uid} from './helpers';
+import type {Engine} from './types/engine';
+import type {ImageProperties, LibraryOptions, LibraryResources} from './types';
 
 // TODO::setImages
 const setImage = async (image: ImageProperties) => {
@@ -29,7 +32,6 @@ export const initialize = async (
     options?: Partial<LibraryOptions>,
 ): Promise<LibraryResources> => {
     const libraryID = id ?? uid();
-    let demoRunning = false;
 
     const canvas = getCanvas(options);
     const context = getContext2D(canvas);
@@ -57,45 +59,7 @@ export const initialize = async (
     views.tv.mouseInput.activate();
     views.tv.keyboardInput.activate();
 
-    const demoUpdate = createDemoUpdate();
-    const demoDraw = createDemoDraw(context);
-
-    const demo = {
-        start: (type: '2d' | '3d') => {
-            if (type === '3d') {
-                console.log('3d not yet implemented');
-
-                return;
-            }
-
-            if (demoRunning) {
-                console.log('2d demo is already running');
-
-                return;
-            }
-
-            engine.set('update', demoUpdate);
-            engine.set('draw', demoDraw);
-
-            engine.run();
-
-            demoRunning = true;
-        },
-        stop: () => {
-            if (!demoRunning) {
-                console.log('2d demo is not running');
-
-                return;
-            }
-
-            demoRunning = false;
-
-            engine.unset(demoDraw.id);
-            engine.unset(demoUpdate.id);
-
-            engine.halt();
-        },
-    };
+    const demo2d = createDemo2D(context, engine);
 
     return {
         canvas,
@@ -108,7 +72,7 @@ export const initialize = async (
         createElement,
         views,
         images: imagesLoaded,
-        demo,
+        demo2d,
     };
 };
 
@@ -126,19 +90,19 @@ export const getLibraryOptions = (context: CanvasRenderingContext2D, engine: Eng
     };
 };
 
-const createLibraryStatistics = (engine: Engine, context: CanvasRenderingContext2D, activate?: boolean) => {
-    const engineStatistics = activate
-        ? engine.createStats(context)
-        : {
-              on: () => {},
-              off: () => {},
-          };
+// const createLibraryStatistics = (engine: Engine, context: CanvasRenderingContext2D, activate?: boolean) => {
+//     const engineStatistics = activate
+//         ? engine.createStats(context)
+//         : {
+//               on: () => {},
+//               off: () => {},
+//           };
 
-    // wether activate is true or false, always run on, if activate it will run the createStats on, else NOOP on
-    engineStatistics.on();
+//     // wether activate is true or false, always run on, if activate it will run the createStats on, else NOOP on
+//     engineStatistics.on();
 
-    return {engine: engineStatistics};
-};
+//     return {engine: engineStatistics};
+// };
 
 const clearOn = (engine: Engine, context: CanvasRenderingContext2D) => {
     engine.setDraw(clear(context));
@@ -172,38 +136,3 @@ const clear = (context: CanvasRenderingContext2D) => ({
     name: 'clearRect',
     fn: () => context.clearRect(0, 0, context.canvas.width, context.canvas.height),
 });
-
-const createDemoUpdate = (): Omit<UpdateOrDraw<'update'>, 'type'> => ({
-    id: 'lib-2d-demo-update',
-    name: 'Library 2D Demo Update',
-    fn: () => {
-        demoObject.x++;
-    },
-});
-
-const createDemoDraw = (ctx: CanvasRenderingContext2D): Omit<UpdateOrDraw<'draw'>, 'type'> => ({
-    id: 'lib-2d-demo-draw',
-    name: 'Library 2D Demo Draw',
-    fn: () => {
-        const dob = {...demoObject};
-
-        ctx.fillStyle = dob.fill;
-        ctx.strokeStyle = dob.stroke;
-        ctx.lineWidth = dob.lineWidth;
-
-        ctx.beginPath();
-
-        ctx.arc(dob.x, dob.y, dob.r, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-    },
-});
-
-const demoObject = {
-    x: 200,
-    y: 150,
-    r: 20,
-    stroke: '#f00',
-    fill: '#00f',
-    lineWidth: 1,
-};
