@@ -1,8 +1,8 @@
-import type {Engine, UpdateOrDraw} from './types/engine';
+import type {Engine, UpdateOrDraw} from '../types/engine';
 
 export const createDemo2D = (context: CanvasRenderingContext2D, engine: Engine) => {
     const demoUpdate = createDemoUpdate();
-    const demoDraw = createDemoDraw(context);
+    const demoDraw = createDemoDraw(context, {...demoObject});
     let demo2dRunning = false;
 
     return {
@@ -41,23 +41,24 @@ const createDemoUpdate = (): Omit<UpdateOrDraw<'update'>, 'type'> => ({
     id: 'lib-2d-demo-update',
     name: 'Library 2D Demo Update',
     fn: () => {
-        demoObject.x++;
+        // demoObject.x++;
+        // Use Phaser here for different updates in different phases
     },
 });
-
-const createDemoDraw = (ctx: CanvasRenderingContext2D): Omit<UpdateOrDraw<'draw'>, 'type'> => ({
+const createDemoDraw = (
+    ctx: CanvasRenderingContext2D,
+    dObj: typeof demoObject,
+): Omit<UpdateOrDraw<'draw'>, 'type'> => ({
     id: 'lib-2d-demo-draw',
     name: 'Library 2D Demo Draw',
     fn: () => {
-        const dob = {...demoObject};
-
-        ctx.fillStyle = dob.fill;
-        ctx.strokeStyle = dob.stroke;
-        ctx.lineWidth = dob.lineWidth;
+        ctx.fillStyle = dObj.fill;
+        ctx.strokeStyle = dObj.stroke;
+        ctx.lineWidth = dObj.lineWidth;
 
         ctx.beginPath();
 
-        ctx.arc(dob.x, dob.y, dob.r, 0, Math.PI * 2);
+        ctx.arc(dObj.x, dObj.y, dObj.r, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
     },

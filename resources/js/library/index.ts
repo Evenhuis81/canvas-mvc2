@@ -2,7 +2,7 @@
 /* eslint-disable max-lines-per-function */
 import {createContainer, getCanvas, getContainer, getContext2D, setCanvas} from './canvas';
 import {createDefaultSketch} from './entity/defaults/sketch';
-import {createDemo2D} from './demo2d';
+import {createDemo2D} from './demo/demo2d';
 import {createEngine} from './engine'; // refactor to default export in style of 'createEntity'
 import {createViews} from './views';
 import {entity} from './entity';

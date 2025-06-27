@@ -98,6 +98,14 @@ export const routes: RouteRecordRaw[] = [
             shouldBeLoggedIn: false,
         },
     },
+    {
+        path: '/demo2d',
+        component: () => import('./library/demo/Demo2D.vue'),
+        name: 'Demo2D',
+        meta: {
+            shouldBeLoggedIn: false,
+        },
+    },
     // {
     //     path: '/statistics',
     //     component: () => import('./library/Statistics.vue'),
