@@ -2,6 +2,9 @@
 // This should become a reesource, but with different 'themes' or statistic variants. (for different kind of options)
 // Create text object according to StaticView, with calculated options (like button, possible to 'lend' those)
 
+// TODO::Fix these with updateloop:
+// https://isaacsukin.com/news/2015/01/detailed-explanation-javascript-game-loops-and-timing#starting-stopping
+
 // type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
 // interface Person {

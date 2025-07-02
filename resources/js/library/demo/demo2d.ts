@@ -51,24 +51,25 @@ const createDemoDraw = (
 ): Omit<UpdateOrDraw<'draw'>, 'type'> => ({
     id: 'lib-2d-demo-draw',
     name: 'Library 2D Demo Draw',
-    fn: () => {
-        ctx.fillStyle = dObj.fill;
-        ctx.strokeStyle = dObj.stroke;
-        ctx.lineWidth = dObj.lineWidth;
-
-        ctx.beginPath();
-
-        ctx.arc(dObj.x, dObj.y, dObj.r, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-    },
+    fn: createPhase1(ctx, ctx.canvas, dObj),
 });
 
 const demoObject = {
     x: 200,
     y: 150,
-    r: 20,
+    r: 1,
     stroke: '#f00',
     fill: '#00f',
     lineWidth: 1,
 };
+
+const createPhase1 =
+    (ctx: CanvasRenderingContext2D, {width, height}: HTMLCanvasElement, dObj: typeof demoObject) =>
+    () => {
+        ctx.fillStyle = dObj.fill;
+
+        ctx.beginPath();
+
+        ctx.arc(width / 2, height / 2, dObj.r, 0, Math.PI * 2);
+        ctx.fill();
+    };
