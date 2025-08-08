@@ -23,10 +23,10 @@ onMounted(async () => {
 
     demo2d.start();
 
-    const stopTimer = 5000;
+    // const stopTimer = 5000;
 
-    setTimeout(() => {
-        demo2d.stop();
-    }, stopTimer);
+    // setTimeout(() => {
+    //     demo2d.stop();
+    // }, stopTimer);
 });
 </script>

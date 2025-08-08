@@ -41,7 +41,10 @@ const createDemoUpdate = (): Omit<UpdateOrDraw<'update'>, 'type'> => ({
     id: 'lib-2d-demo-update',
     name: 'Library 2D Demo Update',
     fn: () => {
-        // demoObject.x++;
+        demoObject.x++;
+
+        console.log('demo 2d update runing');
+
         // Use Phaser here for different updates in different phases
     },
 });
@@ -54,13 +57,15 @@ const createDemoDraw = (
     fn: createPhase1(ctx, ctx.canvas, dObj),
 });
 
+const startSize = 5;
+
 const demoObject = {
     x: 200,
     y: 150,
-    r: 1,
+    r: 5,
     stroke: '#f00',
     fill: '#00f',
-    lineWidth: 1,
+    lineWidth: startSize / 5,
 };
 
 const createPhase1 =
@@ -72,4 +77,5 @@ const createPhase1 =
 
         ctx.arc(width / 2, height / 2, dObj.r, 0, Math.PI * 2);
         ctx.fill();
+        ctx.stroke();
     };

@@ -33,30 +33,46 @@ export const createEngine = (libraryID: BaseID): Engine => {
         update: [],
     };
 
-    const preLoop = createPreLoop();
-
     const mainLoop = createMainLoop(properties, functions, updateEvent);
+
+    const afterPreLoop = () => {
+        console.log('after pre loop');
+
+        mainLoop(0);
+    };
+
+    const preLoop = createPreLoop(afterPreLoop);
 
     const run = () => {
         if (properties.active) return console.log('engine already running');
 
+        properties.active = true;
+
         preLoop();
     };
-    // loop(0);
 
-    // const runOnce = () => {
-    //     properties.stop = true;
+    const runOnce = () => {
+        properties.stop = true;
 
-    //     loop(0);
-    // };
+        //
+    };
 
-    // const halt = () => (properties.stop = true);
+    const halt = () => {
+        // TODO::Make this an actual halt. (now its 'stop', alternative properties to make this work, probablyy)
+        if (properties.stop) {
+            console.log('engine already has properties.stop = true');
+
+            return;
+        }
+
+        properties.stop = true;
+    };
 
     const {set, unset, setUpdate, setBaseUpdate, setDraw, setBaseDraw, removeUpdate, removeDraw} =
         createSetAndRemoveUpdatesAndDraws(functions);
 
+    // TODO::Complete overhaul, temporarily disable this to start from most simply/simplified status
     const info = createInfo(functions, updateEvent);
-
     const createStats = (context: CanvasRenderingContext2D) =>
         createEngineStats(libraryID, info, properties, context, setDraw, removeDraw);
 
@@ -97,6 +113,7 @@ const createPreLoop = (after: () => void) => {
 
 const createMainLoop = (properties: EngineProperties, functions: EngineFunctionMap, event: EngineUpdateEvent) => {
     const loop = (timeStamp: DOMHighResTimeStamp) => {
+        console.log('main loop runing');
         event.timePassed = timeStamp - event.lastTime;
 
         event.lastTime = timeStamp;

@@ -77,6 +77,7 @@ export type EngineInfo = {
 
 export type EngineProperties = {
     requestID: number;
+    active: boolean;
     stop: boolean;
     stats: boolean;
     statsActive: boolean;
