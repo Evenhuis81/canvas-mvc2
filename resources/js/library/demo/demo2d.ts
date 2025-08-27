@@ -1,8 +1,12 @@
 import type {Engine, UpdateOrDraw} from '../types/engine';
 
 export const createDemo2D = (context: CanvasRenderingContext2D, engine: Engine) => {
-    const demoUpdate = createDemoUpdate();
-    const demoDraw = createDemoDraw(context, {...demoObject});
+    const dObj = {...demoObject};
+    dObj.x = context.canvas.width / 2;
+    dObj.y = context.canvas.height / 2;
+
+    const demoUpdate = createDemoUpdate(dObj);
+    const demoDraw = createDemoDraw(context, dObj);
     let demo2dRunning = false;
 
     return {
@@ -37,13 +41,13 @@ export const createDemo2D = (context: CanvasRenderingContext2D, engine: Engine) 
     };
 };
 
-const createDemoUpdate = (): Omit<UpdateOrDraw<'update'>, 'type'> => ({
+const createDemoUpdate = (dObj: typeof demoObject): Omit<UpdateOrDraw<'update'>, 'type'> => ({
     id: 'lib-2d-demo-update',
     name: 'Library 2D Demo Update',
     fn: () => {
-        demoObject.x++;
+        dObj.x++;
 
-        console.log('demo 2d update runing');
+        // console.log('demo 2d update runing');
 
         // Use Phaser here for different updates in different phases
     },
@@ -54,7 +58,7 @@ const createDemoDraw = (
 ): Omit<UpdateOrDraw<'draw'>, 'type'> => ({
     id: 'lib-2d-demo-draw',
     name: 'Library 2D Demo Draw',
-    fn: createPhase1(ctx, ctx.canvas, dObj),
+    fn: createPhase1(ctx, dObj),
 });
 
 const startSize = 5;
@@ -68,14 +72,12 @@ const demoObject = {
     lineWidth: startSize / 5,
 };
 
-const createPhase1 =
-    (ctx: CanvasRenderingContext2D, {width, height}: HTMLCanvasElement, dObj: typeof demoObject) =>
-    () => {
-        ctx.fillStyle = dObj.fill;
+const createPhase1 = (ctx: CanvasRenderingContext2D, dObj: typeof demoObject) => () => {
+    ctx.fillStyle = dObj.fill;
 
-        ctx.beginPath();
+    ctx.beginPath();
 
-        ctx.arc(width / 2, height / 2, dObj.r, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-    };
+    ctx.arc(dObj.x, dObj.y, dObj.r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+};

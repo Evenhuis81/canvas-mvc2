@@ -113,7 +113,8 @@ const createPreLoop = (after: () => void) => {
 
 const createMainLoop = (properties: EngineProperties, functions: EngineFunctionMap, event: EngineUpdateEvent) => {
     const loop = (timeStamp: DOMHighResTimeStamp) => {
-        console.log('main loop runing');
+        // console.log('main loop runing');
+
         event.timePassed = timeStamp - event.lastTime;
 
         event.lastTime = timeStamp;
