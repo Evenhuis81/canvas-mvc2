@@ -18,13 +18,17 @@ const engineProperties = {
     stop: false,
     stats: false,
     statsActive: false,
+    frame: 0,
+};
+
+const engineUpdateEvent = {
     timePassed: 0,
     lastTime: 0,
-    frame: 0,
 };
 
 export const createEngine = (libraryID: BaseID): Engine => {
     const properties = {...engineProperties};
+    const updateEvent = {...engineUpdateEvent};
     const functions: EngineFunctionMap = {
         draw: [],
         update: [],
@@ -38,7 +42,7 @@ export const createEngine = (libraryID: BaseID): Engine => {
 
     // const preLoop = createPreLoop(afterPreLoop);
 
-    const loop = createLoop(properties, functions);
+    const loop = createLoop(properties, functions, updateEvent);
 
     const run = () => {
         if (properties.active) return console.log('engine already running');
@@ -46,6 +50,7 @@ export const createEngine = (libraryID: BaseID): Engine => {
         properties.active = true;
 
         // preLoop();
+        loop(0);
     };
 
     const runOnce = () => {
@@ -69,7 +74,7 @@ export const createEngine = (libraryID: BaseID): Engine => {
         createSetAndRemoveUpdatesAndDraws(functions);
 
     // TODO::Complete overhaul, temporarily disable this to start from most simply/simplified status
-    const info = createInfo(functions, properties);
+    const info = createInfo(functions, updateEvent);
     const createStats = (context: CanvasRenderingContext2D) =>
         createEngineStats(libraryID, info, properties, context, setDraw, removeDraw);
 
