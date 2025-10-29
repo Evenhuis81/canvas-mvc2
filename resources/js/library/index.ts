@@ -12,21 +12,6 @@ import {uid} from './helpers';
 import type {Engine} from './types/engine';
 import type {ImageProperties, LibraryOptions, LibraryResources} from './types';
 
-// TODO::setImages
-const setImage = async (image: ImageProperties) => {
-    const imagesLoaded: ImageProperties[] = [];
-
-    image.container.src = `assets/${image.filename}`;
-
-    await image.container.decode();
-
-    console.log(`image ${image.id.toString()} loaded`);
-
-    imagesLoaded.push(image);
-
-    return imagesLoaded;
-};
-
 export const initialize = async (
     id?: string | number,
     options?: Partial<LibraryOptions>,
@@ -88,6 +73,21 @@ export const getLibraryOptions = (context: CanvasRenderingContext2D, engine: Eng
         removeClear,
         removeDot,
     };
+};
+
+// TODO::setImages
+const setImage = async (image: ImageProperties) => {
+    const imagesLoaded: ImageProperties[] = [];
+
+    image.container.src = `assets/${image.filename}`;
+
+    await image.container.decode();
+
+    console.log(`image ${image.id.toString()} loaded`);
+
+    imagesLoaded.push(image);
+
+    return imagesLoaded;
 };
 
 // const createLibraryStatistics = (engine: Engine, context: CanvasRenderingContext2D, activate?: boolean) => {

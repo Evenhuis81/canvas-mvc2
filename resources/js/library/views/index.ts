@@ -1,8 +1,8 @@
-import {StaticView, TVMethods, TVProperties, TransformedView} from 'library/types/views';
-import {createPaint} from './paint-index';
-import {LibraryInput} from 'library/types/input';
 import {createInputTV} from './input-tv';
-import {Engine} from 'library/types/engine';
+import {createPaint} from './paint-index';
+import type {Engine} from 'library/types/engine';
+import type {LibraryInput} from 'library/types/input';
+import type {StaticView, TVMethods, TVProperties, TransformedView} from 'library/types/views';
 
 export const createViews = (
     context: CanvasRenderingContext2D,

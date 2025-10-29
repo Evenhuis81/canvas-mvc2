@@ -81,4 +81,7 @@ export type EngineProperties = {
     stop: boolean;
     stats: boolean;
     statsActive: boolean;
+    timePassed: number;
+    lastTime: number;
+    frame: number;
 };

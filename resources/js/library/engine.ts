@@ -12,43 +12,40 @@ import type {
     EngineUpdateEvent,
 } from './types/engine';
 
-const engineUpdateEvent = {
-    timePassed: 0,
-    lastTime: 0,
-};
-
 const engineProperties = {
     requestID: 0,
     active: false,
     stop: false,
     stats: false,
     statsActive: false,
+    timePassed: 0,
+    lastTime: 0,
+    frame: 0,
 };
 
 export const createEngine = (libraryID: BaseID): Engine => {
-    const updateEvent = {...engineUpdateEvent};
     const properties = {...engineProperties};
     const functions: EngineFunctionMap = {
         draw: [],
         update: [],
     };
 
-    const mainLoop = createMainLoop(properties, functions, updateEvent);
+    // const afterPreLoop = () => {
+    //     console.log('after pre loop');
 
-    const afterPreLoop = () => {
-        console.log('after pre loop');
+    //     mainLoop(0);
+    // };
 
-        mainLoop(0);
-    };
+    // const preLoop = createPreLoop(afterPreLoop);
 
-    const preLoop = createPreLoop(afterPreLoop);
+    const loop = createLoop(properties, functions);
 
     const run = () => {
         if (properties.active) return console.log('engine already running');
 
         properties.active = true;
 
-        preLoop();
+        // preLoop();
     };
 
     const runOnce = () => {
@@ -72,7 +69,7 @@ export const createEngine = (libraryID: BaseID): Engine => {
         createSetAndRemoveUpdatesAndDraws(functions);
 
     // TODO::Complete overhaul, temporarily disable this to start from most simply/simplified status
-    const info = createInfo(functions, updateEvent);
+    const info = createInfo(functions, properties);
     const createStats = (context: CanvasRenderingContext2D) =>
         createEngineStats(libraryID, info, properties, context, setDraw, removeDraw);
 
@@ -93,28 +90,26 @@ export const createEngine = (libraryID: BaseID): Engine => {
     };
 };
 
-const createPreLoop = (after: () => void) => {
-    let frame = 0;
+// const createPreLoop = (after: () => void) => {
+//     let frame = 0;
 
-    const loop = () => {
-        if (frame++ > 2) {
-            after();
+//     const loop = () => {
+//         if (frame++ > 2) {
+//             after();
 
-            return;
-        }
+//             return;
+//         }
 
-        frame++;
+//         frame++;
 
-        requestAnimationFrame(loop);
-    };
+//         requestAnimationFrame(loop);
+//     };
 
-    return loop;
-};
+//     return loop;
+// };
 
-const createMainLoop = (properties: EngineProperties, functions: EngineFunctionMap, event: EngineUpdateEvent) => {
+const createLoop = (properties: EngineProperties, functions: EngineFunctionMap, event: EngineUpdateEvent) => {
     const loop = (timeStamp: DOMHighResTimeStamp) => {
-        // console.log('main loop runing');
-
         event.timePassed = timeStamp - event.lastTime;
 
         event.lastTime = timeStamp;
