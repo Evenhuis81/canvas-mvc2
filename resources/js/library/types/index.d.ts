@@ -46,7 +46,7 @@ export interface LibraryResources {
         tv: TransformedView;
         // sv: StaticView;
     };
-    images: ImageProperties[];
+    // images: ImageProperties[];
     demo2d: {
         start: () => void;
         stop: () => void;
@@ -82,7 +82,7 @@ export interface LibraryOptions extends CanvasOptions {
     dotMiddle: boolean;
     dualView: boolean;
     engineStats: boolean;
-    images: ImageProperties[];
+    // images: ImageProperties[];
     // statistics: Partial<StatisticOptions>;
 }
 

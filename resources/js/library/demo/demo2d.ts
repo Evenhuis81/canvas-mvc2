@@ -46,10 +46,7 @@ const createDemoUpdate = (dObj: typeof demoObject): Omit<UpdateOrDraw<'update'>,
     name: 'Library 2D Demo Update',
     fn: () => {
         dObj.x++;
-
-        // console.log('demo 2d update runing');
-
-        // Use Phaser here for different updates in different phases
+        // TODO::Phaser for different updates in different phases
     },
 });
 const createDemoDraw = (
@@ -61,19 +58,20 @@ const createDemoDraw = (
     fn: createPhase1(ctx, dObj),
 });
 
-const startSize = 5;
-
 const demoObject = {
     x: 200,
     y: 150,
-    r: 5,
-    stroke: '#f00',
+    r: 0,
+    stroke: '#80f',
     fill: '#00f',
-    lineWidth: startSize / 5,
+    lineWidth: 0,
+    rV: 0, // radius Velocity
 };
 
 const createPhase1 = (ctx: CanvasRenderingContext2D, dObj: typeof demoObject) => () => {
     ctx.fillStyle = dObj.fill;
+    ctx.strokeStyle = dObj.stroke;
+    ctx.lineWidth = dObj.lineWidth;
 
     ctx.beginPath();
 
