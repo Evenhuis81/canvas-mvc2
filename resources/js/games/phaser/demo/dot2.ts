@@ -1,5 +1,6 @@
+/* eslint-disable max-lines-per-function */
+import type {LibraryResources} from 'library/types';
 import type {PhaserUpdateEvent} from '../types';
-import {LibraryResources} from 'library/types';
 
 export const startDotDemoPhaser2 = (library: LibraryResources) => {
     // const {context, canvas, engine} = resources[libraryID];
@@ -81,7 +82,8 @@ const createDotPhases: (sketch: DotSketch) => DotPhases = sketch => [
     },
 ];
 
-const createDotDrawBucket = (ctx: CanvasRenderingContext2D, type?: 'fill' | 'stroke' | 'fillStroke') => {
+// type?: 'fill' | 'stroke' | 'fillStroke'
+const createDotDrawBucket = (ctx: CanvasRenderingContext2D) => {
     const sketch = {...dotSketch};
     // const fill = {...dotSketch.fill};
     const stroke = {...dotSketch.stroke};

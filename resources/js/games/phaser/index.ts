@@ -1,7 +1,7 @@
 import {initialize} from 'library/index';
 // import {startDotDemoPhaser} from './demo/dot';
 import {startDotDemoPhaser2} from './demo/dot2';
-import {LibraryOptions} from 'library/types';
+import type {LibraryOptions} from 'library/types';
 
 const libraryID = 'phaser';
 
