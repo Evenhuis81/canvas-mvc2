@@ -1,6 +1,5 @@
+import {LibraryInputs} from './input';
 import {Pos, Pos2} from './shapes';
-
-export type StaticView = {};
 
 type TVProperties = {
     offset: Pos;
@@ -40,6 +39,10 @@ type TVPaint = {
     triangle: (x: number, y: number, fillStyle: string, strokeStyle: string, lineWidth: number) => void;
 };
 
+type SVPaint = {
+    //
+};
+
 export type ImageRotate = {
     img: HTMLImageElement;
     x: number;
@@ -50,15 +53,11 @@ export type ImageRotate = {
 export type TransformedView = TVProperties &
     TVMethods & {
         paint: TVPaint;
-        mouseInput: {
-            activate: () => void;
-            deactivate: () => void;
-        };
-        keyboardInput: {
-            activate: () => void;
-            deactivate: () => void;
-        };
-    };
+    } & LibraryInputs;
+
+export type StaticView = {
+    paint: SVPaint;
+} & LibraryInputs;
 
 export type WorldPos = {xT: number; yT: number};
 export type ScreenPos = Pos;

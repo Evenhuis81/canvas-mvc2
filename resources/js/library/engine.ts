@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import statistics from './stats/statistics';
 import type {BaseID} from './types';
 import type {
@@ -33,6 +34,14 @@ export const createEngine = (libraryID: BaseID): Engine => {
         update: [],
     };
 
+    // Note::
+    // -PreLoop
+    // -After Pre:  -BaseLoop or
+    //              -LoopSwitch (on/off)
+    //              -Optional (based on optiopns) Loop
+    //              -Statistics Loop
+    //              -PostLoop
+
     // const afterPreLoop = () => {
     //     console.log('after pre loop');
 
@@ -41,7 +50,8 @@ export const createEngine = (libraryID: BaseID): Engine => {
 
     // const preLoop = createPreLoop(afterPreLoop);
 
-    const loop = createLoop(properties, functions, updateEvent);
+    // const loop = createLoop(properties, functions, updateEvent);
+    const baseLoop = createLoopBase(functions, updateEvent);
 
     const run = () => {
         if (properties.active) return console.log('engine already running');
@@ -49,11 +59,12 @@ export const createEngine = (libraryID: BaseID): Engine => {
         properties.active = true;
 
         // preLoop();
-        loop(0);
+        baseLoop(0);
     };
 
     const runOnce = () => {
-        properties.stop = true;
+        run();
+        // properties.stop = true;
 
         //
     };
@@ -111,6 +122,12 @@ export const createEngine = (libraryID: BaseID): Engine => {
 
 //     return loop;
 // };
+
+const createLoopBase = (functions: EngineFunctionMap, event: EngineUpdateEvent) => (timestamp: DOMHighResTimeStamp) => {
+    for (const update of functions.update) update.fn(event);
+
+    for (const draw of functions.draw) draw.fn(timestamp);
+};
 
 const createLoop = (properties: EngineProperties, functions: EngineFunctionMap, event: EngineUpdateEvent) => {
     const loop = (timeStamp: DOMHighResTimeStamp) => {

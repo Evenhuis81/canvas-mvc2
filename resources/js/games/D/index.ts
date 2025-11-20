@@ -1,3 +1,4 @@
+import {EngineUpdate} from 'library/types/engine';
 import {initialize} from 'library/index';
 import type {LibraryOptions} from 'library/types';
 
@@ -10,19 +11,35 @@ const libraryOptions: Partial<LibraryOptions> = {
     backgroundColor: '#000',
 };
 
-export default async () => {
-    const library = await initialize(libraryID, libraryOptions);
+export default () => {
+    // const library = await initialize(libraryID, libraryOptions);
+    const library = initialize(libraryID, libraryOptions);
 
-    const {demo2d} = library;
+    // const {sv} = library.views;
 
-    demo2d.start();
+    const {engine} = library;
 
-    // console.log('demo started');
+    const damUpdate: EngineUpdate = {
+        id: Symbol(),
+        fn: () => {
+            console.log('d');
+        },
+    };
 
-    // const stopTimer = 5000;
+    engine.setUpdate(damUpdate);
 
-    // setTimeout(() => {
-    //     demo.stop();
-    //     console.log('demo stopped');
-    // }, stopTimer);
+    engine.runOnce();
 };
+
+// const {demo2d} = library;
+
+// demo2d.start();
+
+// console.log('demo started');
+
+// const stopTimer = 5000;
+
+// setTimeout(() => {
+//     demo.stop();
+//     console.log('demo stopped');
+// }, stopTimer);

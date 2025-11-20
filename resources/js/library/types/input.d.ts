@@ -27,6 +27,21 @@ export type LibraryInput = {
     removeListener: (type: keyof InputListenerEventMap, id: symbol) => boolean;
 };
 
+export type LibraryInputs = {
+    keyboardInput: LibraryKeyboardInput;
+    mouseInput: LibraryMouseInput;
+};
+
+type LibraryKeyboardInput = {
+    activate: () => void;
+    deactivate: () => void;
+};
+
+type LibraryMouseInput = {
+    activate: () => void;
+    deactivate: () => void;
+};
+
 export type AddMovement = (id: BaseID, handlers: Record<string, () => void>) => void;
 
 export type RemoveMovement = (id: BaseID) => void;

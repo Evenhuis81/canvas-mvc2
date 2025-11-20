@@ -3,7 +3,7 @@ import {Engine} from './engine';
 import {LibraryInput} from './input';
 import {Phaser} from 'games/phaser/types';
 import {ShapeMap} from 'library/entity/defaults/shapes';
-import {TransformedView} from './views';
+import {StaticView, TransformedView} from './views';
 
 /**
  * Removes undefined from tuples
@@ -44,7 +44,7 @@ export interface LibraryResources {
     createElement: CreateElement<ShapeMap>; // TODO::Make generic
     views: {
         tv: TransformedView;
-        // sv: StaticView;
+        sv: StaticView;
     };
     // images: ImageProperties[];
     demo2d: {
