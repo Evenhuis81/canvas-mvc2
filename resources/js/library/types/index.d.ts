@@ -82,6 +82,7 @@ export interface LibraryOptions extends CanvasOptions {
     dotMiddle: boolean;
     dualView: boolean;
     engineStats: boolean;
+    // statistics: boolean;
     // images: ImageProperties[];
     // statistics: Partial<StatisticOptions>;
 }

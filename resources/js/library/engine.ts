@@ -26,8 +26,8 @@ const engineUpdateEvent = {
     lastTime: 0,
 };
 
-export const createEngine = (libraryID: BaseID): Engine => {
-    const properties = {...engineProperties};
+export const createEngine = (libraryID: BaseID, engineOptions?: Partial<typeof engineProperties>): Engine => {
+    const properties = {...engineProperties, engineOptions};
     const updateEvent = {...engineUpdateEvent};
     const functions: EngineFunctionMap = {
         draw: [],
@@ -51,7 +51,7 @@ export const createEngine = (libraryID: BaseID): Engine => {
     // const preLoop = createPreLoop(afterPreLoop);
 
     // const loop = createLoop(properties, functions, updateEvent);
-    const baseLoop = createLoopBase(functions, updateEvent);
+    const baseLoop = createLoop(properties, functions, updateEvent);
 
     const run = () => {
         if (properties.active) return console.log('engine already running');
@@ -63,9 +63,8 @@ export const createEngine = (libraryID: BaseID): Engine => {
     };
 
     const runOnce = () => {
-        run();
+        // run();
         // properties.stop = true;
-
         //
     };
 
@@ -123,11 +122,12 @@ export const createEngine = (libraryID: BaseID): Engine => {
 //     return loop;
 // };
 
-const createLoopBase = (functions: EngineFunctionMap, event: EngineUpdateEvent) => (timestamp: DOMHighResTimeStamp) => {
-    for (const update of functions.update) update.fn(event);
+// const createLoopBase =
+// (functions: EngineFunctionMap, event: EngineUpdateEvent) => (timestamp: DOMHighResTimeStamp) => {
+//     for (const update of functions.update) update.fn(event);
 
-    for (const draw of functions.draw) draw.fn(timestamp);
-};
+//     for (const draw of functions.draw) draw.fn(timestamp);
+// };
 
 const createLoop = (properties: EngineProperties, functions: EngineFunctionMap, event: EngineUpdateEvent) => {
     const loop = (timeStamp: DOMHighResTimeStamp) => {

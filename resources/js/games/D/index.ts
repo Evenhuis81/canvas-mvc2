@@ -1,4 +1,4 @@
-import {EngineUpdate} from 'library/types/engine';
+// import {EngineUpdate} from 'library/types/engine';
 import {initialize} from 'library/index';
 import type {LibraryOptions} from 'library/types';
 
@@ -19,16 +19,16 @@ export default () => {
 
     const {engine} = library;
 
-    const damUpdate: EngineUpdate = {
+    const damUpdate = {
         id: Symbol(),
         fn: () => {
-            console.log('d');
+            //
         },
     };
 
     engine.setUpdate(damUpdate);
 
-    engine.runOnce();
+    engine.run();
 };
 
 // const {demo2d} = library;
