@@ -1,13 +1,13 @@
 import type {Engine, UpdateOrDraw} from '../types/engine';
 
 export const createDemo2D = (context: CanvasRenderingContext2D, engine: Engine) => {
+    let demo2dRunning = false;
     const dObj = {...demoObject};
     dObj.x = context.canvas.width / 2;
     dObj.y = context.canvas.height / 2;
 
     const demoUpdate = createDemoUpdate(dObj, context);
     const demoDraw = createDemoDraw(context, dObj);
-    let demo2dRunning = false;
 
     return {
         start: () => {
@@ -54,7 +54,17 @@ const createDemoUpdate = (
 
         dObj.r += dObj.rV;
 
-        if (dObj.r > dObj.rMax || dObj.r < dObj.rMin) dObj.rV = -dObj.rV;
+        if (dObj.r > dObj.rMax) {
+            dObj.rV = -dObj.rV;
+            dObj.r = dObj.rMax;
+
+            return;
+        }
+
+        if (dObj.r < dObj.rMin) {
+            dObj.rV = -dObj.rV;
+            dObj.r = dObj.rMin;
+        }
 
         // TODO::Phaser for different updates in different phases
     },
