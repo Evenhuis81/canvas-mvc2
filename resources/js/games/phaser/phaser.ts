@@ -1,8 +1,8 @@
-import type {Phaser, PhaserDraw, PhaserMethods, PhaserPhase, PhaserProperties} from './types';
+/* eslint-disable max-lines-per-function */
 import type {Engine, EngineUpdate, EngineUpdateEvent} from 'library/types/engine';
+import type {Phaser, PhaserDraw, PhaserMethods, PhaserPhase, PhaserProperties} from './types';
 
 // Using get for library initiation (trying to let everything flow through library, no more direct use of engine, etc.)
-// export const getCreatePhaser = (engine: Engine) => createPhaser(engine);
 
 let idCount = 0; // Make part of libraryStats or Statitics module, more will be added for other library modules
 
@@ -21,6 +21,8 @@ const createProperties: () => PhaserProperties = () => ({
     },
 });
 
+// Too general for name, use bette naming convention
+// Create pazue
 const createMethods: (
     props: PhaserProperties,
     phaserDraw: PhaserDraw[],
