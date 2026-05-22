@@ -2,12 +2,28 @@
 import type {LibraryResources} from 'library/types';
 import type {PhaserUpdateEvent} from '../types';
 
+const createDotPhaserDraw2 = (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) => {
+    console.log(canvas);
+    console.log(context);
+
+    return {
+        draw2: {
+            // Dot2
+            // Vel
+            // Acc
+            //
+        },
+    };
+};
+
 export const startDotDemoPhaser2 = (library: LibraryResources) => {
     // const {context, canvas, engine} = resources[libraryID];
-
     const phaser = library.createPhaser();
 
     const {sketch, ...draw} = createDotPhaserDraw(library.canvas, library.context);
+    const {draw2} = createDotPhaserDraw2(library.canvas, library.context);
+
+    console.log(draw2);
 
     phaser.setDraw(draw);
 

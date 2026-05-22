@@ -56,3 +56,9 @@
 // 3. onClick:  -loadAnimation
 //              -dissapear / appear effects (slide / fade)
 // 4. make button object dynamic for property changes for button methods (point 2 and 3)
+
+// Post-Burn: (schedule planning)
+// 1. Idea
+// 2. Prerequisites
+// 3. Planning
+// 4. Execution
