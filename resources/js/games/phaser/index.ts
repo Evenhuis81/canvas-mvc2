@@ -8,6 +8,8 @@ const libraryID = 'phaser';
 export default () => {
     const library = initialize(libraryID, libraryOptions);
 
+    // onMounted(() => phaser().runEngine());
+
     startDotDemoPhaser2(library);
 
     return library;

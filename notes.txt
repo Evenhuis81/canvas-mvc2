@@ -62,3 +62,9 @@
 // 2. Prerequisites
 // 3. Planning
 // 4. Execution
+
+// New Project, simplify at first, really draw out all the different elements into seperate pieces, with annotations
+// Copy existing parts if needed, but take only the basic elements and statt from there
+// Learn from reverse engineering and adjust accordingly
+// Sort out music on phone, tablet, pc, flash-drives, external harddrives
+//

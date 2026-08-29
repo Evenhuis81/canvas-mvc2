@@ -4,8 +4,6 @@ import type {Phaser, PhaserDraw, PhaserMethods, PhaserPhase, PhaserProperties} f
 
 // Using get for library initiation (trying to let everything flow through library, no more direct use of engine, etc.)
 
-// onMounted(() => phaser().runEngine());
-
 let idCount = 0; // Make part of libraryStats or Statitics module, more will be added for other library modules
 
 const createProperties: () => PhaserProperties = () => ({
