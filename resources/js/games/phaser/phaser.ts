@@ -4,13 +4,15 @@ import type {Phaser, PhaserDraw, PhaserMethods, PhaserPhase, PhaserProperties} f
 
 // Using get for library initiation (trying to let everything flow through library, no more direct use of engine, etc.)
 
+// onMounted(() => phaser().runEngine());
+
 let idCount = 0; // Make part of libraryStats or Statitics module, more will be added for other library modules
 
 const createProperties: () => PhaserProperties = () => ({
     id: `phaser-${idCount++}`,
     timer: 0,
     totalTime: 0,
-    active: false,
+    active: false, // Use ID for this? (ID needed if no more than 1 phasser allowed to be active?)
     phase: {
         id: 0,
         duration: 0,
@@ -21,8 +23,8 @@ const createProperties: () => PhaserProperties = () => ({
     },
 });
 
-// Too general for name, use bette naming convention
-// Create pazue
+// Too general for name, use better naming convention
+// Create pauze (?)
 const createMethods: (
     props: PhaserProperties,
     phaserDraw: PhaserDraw[],
@@ -33,6 +35,7 @@ const createMethods: (
         if (!phaserDraw[0]) return;
 
         if (phaserDraw[0].pre) phaserDraw[0].pre(); // PreDraw
+        // console.log('phaserDraw.pre()', phaserDraw[0].pre);
 
         engine.setDraw({id: `${props.id}-draw`, fn: phaserDraw[0].draw});
     },

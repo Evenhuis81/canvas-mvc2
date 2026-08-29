@@ -2,35 +2,21 @@
 import type {LibraryResources} from 'library/types';
 import type {PhaserUpdateEvent} from '../types';
 
-const createDotPhaserDraw2 = (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) => {
-    console.log(canvas);
-    console.log(context);
-
-    return {
-        draw2: {
-            // Dot2
-            // Vel
-            // Acc
-            //
-        },
-    };
-};
-
 export const startDotDemoPhaser2 = (library: LibraryResources) => {
     // const {context, canvas, engine} = resources[libraryID];
     const phaser = library.createPhaser();
 
     const {sketch, ...draw} = createDotPhaserDraw(library.canvas, library.context);
-    const {draw2} = createDotPhaserDraw2(library.canvas, library.context);
-
-    console.log(draw2);
+    // const {draw2} = createDotPhaserDraw2(library.canvas, library.context);
 
     phaser.setDraw(draw);
+    console.log('log draw', draw);
 
-    const durationSpeedFactor = 2;
+    const durationSpeedFactor = 1;
 
     createDotPhases(sketch).forEach(phase => {
         phase.duration = phase.duration / durationSpeedFactor;
+
         phaser.setPhase(phase);
     });
 
@@ -46,10 +32,10 @@ const createDotPhaserDraw = (canvas: HTMLCanvasElement, context: CanvasRendering
             sketch.y = canvas.height / 2;
             sketch.stroke.a = 0;
 
-            console.log('preDraw');
+            // console.log('preDraw');
         },
         post: () => {
-            console.log('postDraw');
+            // console.log('postDraw');
         },
         remove: true,
         draw,
@@ -59,8 +45,8 @@ const createDotPhaserDraw = (canvas: HTMLCanvasElement, context: CanvasRendering
 
 const createDotPhases: (sketch: DotSketch) => DotPhases = sketch => [
     {
-        duration: 2000, // only duration acts like a pauze
-        pre: () => console.log('prePhase 1, duration only 2000ms / speedFactor'),
+        duration: 5000, // only duration (without draw/update?) acts like a pauze
+        pre: () => console.log('prePhase 1, duration only 5000ms / speedFactor'),
     },
     {
         duration: 3000,
