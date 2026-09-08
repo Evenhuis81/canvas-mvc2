@@ -1,24 +1,28 @@
-import {initialize} from 'library/index';
+import {libPhaser} from 'library/index';
+import {onMounted} from 'vue';
 // import {startDotDemoPhaser} from './demo/dot';
-import {startDotDemoPhaser2} from './demo/dot2';
-import type {LibraryOptions} from 'library/types';
+// import {startDotDemoPhaser2} from './demo/dot2';
+// import type {LibraryOptions} from 'library/types';
 
-const libraryID = 'phaser';
+// const libraryID = 'phaser';
 
 export default () => {
-    const library = initialize(libraryID, libraryOptions);
+    const library = libPhaser();
 
     // onMounted(() => phaser().runEngine());
+    onMounted(() => library.runEngineOnce());
 
-    startDotDemoPhaser2(library);
+    console.log(library);
+
+    // startDotDemoPhaser2(library);
 
     return library;
 };
 
-const libraryOptions: Partial<LibraryOptions> = {
-    containerID: `${libraryID}-container`,
-    full: true,
-    clear: true,
-    backgroundColor: '#000',
-    engineStats: true,
-};
+// const libraryOptions: Partial<LibraryOptions> = {
+//     containerID: `${libraryID}-container`,
+//     full: true,
+//     clear: true,
+//     backgroundColor: '#000',
+//     engineStats: true,
+// };

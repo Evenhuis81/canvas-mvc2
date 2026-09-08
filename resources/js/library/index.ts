@@ -10,6 +10,23 @@ import {uid} from './helpers';
 import type {Engine} from './types/engine';
 import type {LibraryOptions, LibraryResources} from './types';
 
+export const libPhaser = () => {
+    const libId = 'libPhaser';
+    const canvas = getCanvas();
+    const context = getContext2D(canvas);
+    const engine = createEngine(libId);
+    const container = createContainer(libId);
+    setCanvas(canvas, container, {full: true});
+
+    return {
+        canvas,
+        context,
+        engine,
+        runEngine: () => engine.run(),
+        runEngineOnce: () => engine.runOnce(),
+    };
+};
+
 export const initialize = (id?: string | number, options?: Partial<LibraryOptions>): LibraryResources => {
     const libraryID = id ?? uid();
 
