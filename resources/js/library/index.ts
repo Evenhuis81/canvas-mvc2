@@ -18,6 +18,8 @@ export const libPhaser = () => {
     const container = createContainer(libId);
     setCanvas(canvas, container, {full: true});
 
+    console.log(container);
+
     return {
         canvas,
         context,

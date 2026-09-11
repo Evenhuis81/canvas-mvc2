@@ -1,5 +1,5 @@
-import {uid} from './helpers';
 import {CanvasOptions, LibraryOptions} from './types';
+import {uid} from './helpers';
 
 const defaultCanvasOptions = {
     backgroundColor: '#999',
@@ -13,6 +13,7 @@ export const setCanvas = (
     container: HTMLDivElement,
     options?: Partial<LibraryOptions>,
 ): void => {
+    // console.log(container);
     setContainer(canvas, container);
 
     setLibraryOptions(canvas, options);
@@ -62,6 +63,8 @@ const setLibraryOptions = (canvas: HTMLCanvasElement, options?: Partial<LibraryO
 export const createContainer = (id?: string | number) => {
     const container = document.createElement('div');
 
+    console.log(id);
+
     container.setAttribute('id', id ? `${id}-container` : `${uid()}-container`);
 
     return container;
@@ -76,6 +79,7 @@ export const getContainer = (containerID: string) => {
 };
 
 export const setContainer = (canvas: HTMLCanvasElement, container: HTMLDivElement) => {
+    console.log(container);
     container.style.display = 'flex';
     container.style.width = '100vw';
     container.style.height = '100vh';

@@ -10,7 +10,7 @@ export default () => {
     const library = libPhaser();
 
     // onMounted(() => phaser().runEngine());
-    onMounted(() => library.runEngineOnce());
+    onMounted(() => library.runEngine());
 
     console.log(library);
 
