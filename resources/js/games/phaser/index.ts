@@ -6,7 +6,7 @@ import {onMounted} from 'vue';
 
 // const libraryID = 'phaser';
 
-export default () => {
+export const phaser = () => {
     const library = libPhaser();
 
     // onMounted(() => phaser().runEngine());

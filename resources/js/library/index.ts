@@ -13,12 +13,11 @@ import type {LibraryOptions, LibraryResources} from './types';
 export const libPhaser = () => {
     const libId = 'libPhaser';
     const canvas = getCanvas();
-    const context = getContext2D(canvas);
+    const ct2 = canvas.getContext('2d')?.clearRect(1, 2, 10, 20);
+    const context = getContext2D(canvas, '2d');
     const engine = createEngine(libId);
     const container = createContainer(libId);
     setCanvas(canvas, container, {full: true});
-
-    console.log(container);
 
     return {
         canvas,

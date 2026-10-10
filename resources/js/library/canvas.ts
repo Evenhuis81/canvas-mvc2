@@ -42,10 +42,10 @@ export const getCanvas = (options?: Partial<CanvasOptions>) => {
     return canvas;
 };
 
-export const getContext2D = (canvas: HTMLCanvasElement) => {
-    const context = canvas.getContext('2d');
+export const getContext2D = (canvas: HTMLCanvasElement, id?: string) => {
+    const context = canvas.getContext(id ? id : '2d');
 
-    if (!(context instanceof CanvasRenderingContext2D)) throw new Error("can't get 2D context from canvas");
+    // if (!(context instanceof CanvasRenderingContext2D)) throw new Error("can't get 2D context from canvas");
 
     return context;
 };
@@ -79,7 +79,6 @@ export const getContainer = (containerID: string) => {
 };
 
 export const setContainer = (canvas: HTMLCanvasElement, container: HTMLDivElement) => {
-    console.log(container);
     container.style.display = 'flex';
     container.style.width = '100vw';
     container.style.height = '100vh';

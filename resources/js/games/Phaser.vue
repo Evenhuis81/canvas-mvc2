@@ -1,10 +1,10 @@
 <template>
-    <div id="phaser-container" />
+    <div />
 </template>
 
 <script setup lang="ts">
 import {onMounted} from 'vue';
-import phaser from './phaser';
+import {phaser} from './phaser';
 
 onMounted(() => phaser().runEngine());
 </script>
