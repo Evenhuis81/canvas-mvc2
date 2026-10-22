@@ -1,4 +1,4 @@
-import {createContainer, getCanvas, getContainer, getContext2D, setCanvas} from './canvas';
+import {createContainer, getCanvas, getContainer, getContainerID, getContext2D, setCanvas} from './canvas';
 import {createDefaultSketch} from './entity/defaults/sketch';
 import {createDemo2D} from './demo/demo2d';
 import {createEngine} from './engine'; // refactor to default export in style of 'createEntity'
@@ -13,7 +13,7 @@ import type {LibraryOptions, LibraryResources} from './types';
 export const libPhaser = () => {
     const libId = 'libPhaser';
     const canvas = getCanvas();
-    const ct2 = canvas.getContext('2d')?.clearRect(1, 2, 10, 20);
+    // const ct2 = canvas.getContext('2d')?.clearRect(1, 2, 10, 20);
     const context = getContext2D(canvas, '2d');
     const engine = createEngine(libId);
     const container = createContainer(libId);
@@ -31,12 +31,16 @@ export const libPhaser = () => {
 export const initialize = (id?: string | number, options?: Partial<LibraryOptions>): LibraryResources => {
     const libraryID = id ?? uid();
 
+    // const container = options?.containerID ? getContainer(options.containerID) : createContainer(libraryID);
+    const containerID = getContainerID(options?.containerID);
+
+    const container = getContainer(containerID);
+
     const canvas = getCanvas(options);
+
     const context = getContext2D(canvas);
 
     const engine = createEngine(libraryID);
-
-    const container = options?.containerID ? getContainer(options.containerID) : createContainer(libraryID);
 
     setCanvas(canvas, container, options);
 

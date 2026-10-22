@@ -1,27 +1,31 @@
 <template>
-    <div id="demo2d-container" />
+    <!-- <div id="demo2d-container" /> -->
+    <div />
 </template>
 
 <script lang="ts" setup>
 import {initialize} from 'library/index';
 import {onMounted} from 'vue';
-import type {LibraryOptions} from 'library/types';
+// import type {LibraryOptions} from 'library/types';
 
-const libraryID = 'demo2d';
+// const libraryID = 'demo2d';
+// const libraryOptions: Partial<LibraryOptions> = {
+//     containerID: `${libraryID}-container`,
+//     full: true,
+//     clear: true,
+//     backgroundColor: '#000',
+// };
 
-const libraryOptions: Partial<LibraryOptions> = {
-    containerID: `${libraryID}-container`,
-    full: true,
-    clear: true,
-    backgroundColor: '#000',
-};
+onMounted(() => {
+    // const library = await initialize(libraryID, libraryOptions);
+    // const library = initialize(libraryID, libraryOptions);
+    const library = initialize();
 
-onMounted(async () => {
-    const library = await initialize(libraryID, libraryOptions);
+    console.log(library);
 
-    const {demo2d} = library;
+    // const {demo2d} = library;
 
-    demo2d.start();
+    // demo2d.start();
 
     // const stopTimer = 5000;
 

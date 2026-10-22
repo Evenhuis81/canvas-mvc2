@@ -1,5 +1,28 @@
-import {CanvasOptions, LibraryOptions} from './types';
+import {LibraryOptions} from './types';
 import {uid} from './helpers';
+
+// Creates a canvas element and returns it
+export const createCanvas = () => document.createElement('canvas');
+// export const getCanvas = (options?: Partial<CanvasOptions>) => {
+// {
+// const canvasOptions = {...defaultCanvasOptions, ...options};
+
+// const canvas =
+
+// if (!canvasOptions.contextMenu) {
+//     canvas.addEventListener('contextmenu', e => {
+//         e.preventDefault();
+
+//         return false;
+//     });
+// }
+
+// canvas.width = canvasOptions.width;
+// canvas.height = canvasOptions.height;
+// canvas.style.backgroundColor = canvasOptions.backgroundColor;
+
+//     return canvas;
+// };
 
 const defaultCanvasOptions = {
     backgroundColor: '#999',
@@ -22,26 +45,6 @@ export const setCanvas = (
 // Make this an internal option object
 let count = 199;
 
-export const getCanvas = (options?: Partial<CanvasOptions>) => {
-    const canvasOptions = {...defaultCanvasOptions, ...options};
-
-    const canvas = document.createElement('canvas');
-
-    if (!canvasOptions.contextMenu) {
-        canvas.addEventListener('contextmenu', e => {
-            e.preventDefault();
-
-            return false;
-        });
-    }
-
-    canvas.width = canvasOptions.width;
-    canvas.height = canvasOptions.height;
-    canvas.style.backgroundColor = canvasOptions.backgroundColor;
-
-    return canvas;
-};
-
 export const getContext2D = (canvas: HTMLCanvasElement, id?: string) => {
     const context = canvas.getContext(id ? id : '2d');
 
@@ -60,20 +63,35 @@ const setLibraryOptions = (canvas: HTMLCanvasElement, options?: Partial<LibraryO
     }
 };
 
+/**
+ * Returns either existing containerID or newly created one
+ *
+ * @param id {string|undefined} optional id for container
+ * @returns {string}
+ */
+export const getContainerID = (id?: string | undefined) => (id ? id : `${uid()}-container`);
+
+/**
+ * Fetch an already existing HTMLDivElement as container
+ * @throws Error if container is not found with the provided id
+ *
+ * @param containerID
+ * @returns {HTMLDivElement} as container
+ */
+export const getContainer = (containerID: string) => {
+    const container = document.getElementById(containerID);
+
+    if (!(container instanceof HTMLDivElement)) throw new Error(`can't find div with id '${containerID}'`);
+
+    return container;
+};
+
 export const createContainer = (id?: string | number) => {
     const container = document.createElement('div');
 
     console.log(id);
 
     container.setAttribute('id', id ? `${id}-container` : `${uid()}-container`);
-
-    return container;
-};
-
-export const getContainer = (containerID: string) => {
-    const container = document.getElementById(containerID);
-
-    if (!(container instanceof HTMLDivElement)) throw new Error(`can't find div with id '${containerID}'`);
 
     return container;
 };
