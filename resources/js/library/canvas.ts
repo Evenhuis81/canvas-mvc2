@@ -69,27 +69,32 @@ const setLibraryOptions = (canvas: HTMLCanvasElement, options?: Partial<LibraryO
  * @param id {string|undefined} optional id for container
  * @returns {string}
  */
-export const getContainerID = (id?: string | undefined) => (id ? id : `${uid()}-container`);
+export const getContainerID = (id?: string | undefined): string => (id ? id : `${uid()}-container`);
 
 /**
  * Fetch an already existing HTMLDivElement as container
  * @throws Error if container is not found with the provided id
  *
- * @param containerID
- * @returns {HTMLDivElement} as container
+ * @param id {string} id for container
+ * @returns {HTMLDivElement} container
  */
-export const getContainer = (containerID: string) => {
-    const container = document.getElementById(containerID);
+export const getContainer = (id: string): HTMLDivElement => {
+    const container = document.getElementById(id);
 
-    if (!(container instanceof HTMLDivElement)) throw new Error(`can't find div with id '${containerID}'`);
+    if (!(container instanceof HTMLDivElement)) throw new Error(`can't find div with id '${id}'`);
 
     return container;
 };
 
-export const createContainer = (id?: string | number) => {
+/**
+ * Create a new HTMLDivElement as container
+ * @throws Error if container is not found with the provided id
+ *
+ * @param id {string}
+ * @returns {HTMLDivElement} as container
+ */
+export const createContainer = (id: string): HTMLDivElement => {
     const container = document.createElement('div');
-
-    console.log(id);
 
     container.setAttribute('id', id ? `${id}-container` : `${uid()}-container`);
 

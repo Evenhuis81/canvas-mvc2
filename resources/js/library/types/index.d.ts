@@ -11,10 +11,10 @@ import {StaticView, TransformedView} from './views';
 export type FilterUndefined<T extends unknown[]> = T extends []
     ? []
     : T extends [infer H, ...infer R]
-    ? H extends undefined
-        ? FilterUndefined<R>
-        : [H, ...FilterUndefined<R>]
-    : T;
+      ? H extends undefined
+          ? FilterUndefined<R>
+          : [H, ...FilterUndefined<R>]
+      : T;
 
 type DeepPartial<T> = T extends object
     ? {
@@ -75,6 +75,7 @@ type ImageProperties = {
 };
 
 export interface LibraryOptions extends CanvasOptions {
+    id: number | string;
     containerID: string;
     center: boolean;
     full: boolean; // full tab (innerWidth, innerHeight)
